@@ -27,14 +27,17 @@ The most frequent actions (put something in, take some out, tick off the shoppin
 
 ## Scope
 
-| Area | Examples | Status |
-| --- | --- | --- |
-| Freezer | Upright and chest freezers, the freezer compartment of a fridge, with their drawers, baskets or shelves | Built |
-| Fridge | Shelves, door, vegetable drawer | Planned |
-| Pantry and kitchen cupboards | Dry goods, tins, spices, drinks, baking supplies | Planned |
-| Household supplies | Cleaning products, laundry, toiletries, paper goods, batteries, light bulbs | Planned |
+The household is split into three storage domains. Each one beyond the freezer can be switched on or off in Config → Optional features; switching one off hides its items and keeps them.
 
-What is built today works for every area in principle (products, quantities, restock rules, shopping list), but the storage layout, the wording and the reminders are written for freezers. The architecture document describes how they generalise (section 10.7).
+| Domain | Storage places | Examples | Default | Status |
+| --- | --- | --- | --- | --- |
+| Freezer | Upright and chest freezers, the freezer compartment of a fridge | Frozen vegetables, meat, homemade meals | Always on | Built |
+| Pantry | Fridge, pantry, kitchen cupboards, cellar | Milk, eggs, bread, pasta, tins, spices, drinks | On | Planned |
+| Household supplies | Cleaning cupboard, bathroom cabinet, laundry room, garden shed, garage | Dish soap, toilet paper, detergent, potting soil, batteries, plasters | Off | Planned |
+
+Possessions that are not used up (tools, furniture, electronics) are out of scope.
+
+What is built today works for every domain in principle (products, quantities, restock rules, shopping list), but the storage layout, the wording and the reminders are written for freezers. The architecture document describes how they generalise (section 10.7) and designs pantry management (10.8) and household supplies (10.9).
 
 ## What exists today
 
@@ -53,19 +56,17 @@ The code still uses the original freezer names (`apps/freezer_app`, `Freezer`, `
 
 ## Planned
 
-In rough order:
+In order:
 
-1. **Storage areas beyond the freezer:** fridge, pantry, cupboard and supply storage kinds with their own templates and default compartment names.
-2. **Dates that fit each area:** a neutral "stored on" date instead of "frozen on", best-before dates as a first-class reminder trigger, and an optional "opened on" date for things that spoil once opened.
-3. **A household catalog:** seeded categories and products for the pantry, fridge and household supplies, next to the existing frozen foods.
-4. **Wording for the whole household:** "use soon" instead of "eat soon", a "Stock" tab instead of "Freezer", discard reasons that are not freezer specific.
-5. **Restock for non-food items:** household supplies are mostly about never running out, so restock rules and the shopping list become the main tool for them.
+1. **Household foundation:** neutral wording ("Use soon", a "Stock" tab with a domain switch that only appears when more than one domain is on), storage domains, and two new module contributions (storage kinds and seeded catalog). Shelf lives can be entered in days, weeks or months, so a product can be good for just one or two days. Best-before and "opened on" dates become reminder triggers.
+2. **Pantry management** (optional, on by default): fridge, pantry and cupboard storage places, a best-before date on every item with quick chips (+1 day, +3 days, +1 week), "mark as opened" with a shelf life after opening (milk 3 days), and a pantry catalog. Items that go off tomorrow appear in today's "Use soon" card and tomorrow's digest.
+3. **Household supplies** (optional, off by default): storage places such as the cleaning cupboard or garden shed, and a catalog of cleaning, laundry, bathroom, kitchen paper, garden, pet, first aid, technical, baby and office supplies. Adding a supply offers to set a minimum right away, because the point is never running out. Expiry dates are only used where they exist (medicine, sun cream, batteries). Supplies never count as food waste.
 
 Later ideas: consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning.
 
 ## Documents
 
-- [`design/architecture.html`](design/architecture.html): the architecture the code follows, the technology decisions, the privacy measures and the plan for generalising from freezer to household. Open it in a browser.
+- [`design/architecture.html`](design/architecture.html): the architecture the code follows, the technology decisions, the privacy measures and the plan for generalising from freezer to household, including the pantry and household supplies modules. Open it in a browser.
 - [`design/ui-examples.html`](design/ui-examples.html): interactive screen examples of the app as built today (freezer). Open it in a browser.
 - [`release-notes/`](release-notes): notes for each published release.
 
@@ -73,10 +74,13 @@ Later ideas: consumption forecasts, QR labels for homemade meals, home-screen wi
 
 | Term | Meaning | Name in code today |
 | --- | --- | --- |
+| Storage domain | Freezer, pantry or household supplies; the unit that is switched on or off | (planned) |
 | Storage place | A freezer, fridge, pantry or cupboard | `Freezer` |
 | Storage kind | What kind of storage place it is | `StorageKind` |
 | Compartment | A drawer, basket or shelf inside a storage place | `Compartment` |
 | Product | Something the household keeps, such as peas or dish soap | `Product` |
 | Stock batch | One physical package or box with its own date and remaining amount | `StockBatch` |
+| Shelf life | How long a product keeps, in days, weeks or months; optionally a shorter one after opening | `recommendedMaximumStorageDays` |
+| Best before | The date printed on the package, called "expires" for supplies | `bestBeforeOn` |
 | Movement | One recorded change: added, used, thrown away, moved or corrected | `InventoryMovement` |
 | Restock rule | The minimum and target amount of a product to keep at home | `RestockRule` |
