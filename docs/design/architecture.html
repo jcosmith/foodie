@@ -222,7 +222,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <a href="#planned-features">10. Planned features</a>
       <a href="#statistics-design">10.6 Statistics in depth</a>
       <a href="#household-scope">10.7 From freezer to household</a>
-      <a href="#pantry-management">10.8 Pantry management</a>
+      <a href="#pantry-management">10.8 Fridge and pantry</a>
       <a href="#household-supplies">10.9 Household supplies</a>
       <a href="#receipt-scanning">10.10 Receipt scanning</a>
       <a href="#privacy">11. Privacy by construction</a>
@@ -238,7 +238,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
   <main>
     <header class="document-header">
       <h1>Foodie: Architecture Design (v3)</h1>
-      <div class="document-meta">Architecture of a multilingual, offline, privacy-first Flutter app for household inventory · Version 3 · 3 October 2026 · food first, household supplies as optional basics now and in full later · one bottom-navigation tab per storage domain · widens the scope from the freezer to the whole household (section 10.7) and designs two optional modules: pantry management with best-before dates and shelf lives down to a single day (10.8), household supplies for non-food articles (10.9), and an optional receipt scanner with on-device text recognition and a searchable receipt archive (10.10). Version 2 added freezer layout editing, the Config tab and interactive statistics.</div>
+      <div class="document-meta">Architecture of a multilingual, offline, privacy-first Flutter app for household inventory · Version 3 · 3 October 2026 · food first, household supplies as optional basics now and in full later · one bottom-navigation tab per storage domain (Freezer, Fridge, Pantry, Household), plus Lists and More · widens the scope from the freezer to the whole household (section 10.7) and designs two optional modules: pantry management with best-before dates and shelf lives down to a single day (10.8), household supplies for non-food articles (10.9), and an optional receipt scanner with on-device text recognition and a searchable receipt archive (10.10). Version 2 added freezer layout editing, the Config tab and interactive statistics.</div>
     </header>
 
     <!-- 1 -->
@@ -246,10 +246,10 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <h2>1. Summary</h2>
       <p><strong>Mission.</strong> Foodie helps a private household know what it has at home, what to use first and what to buy. It started with the freezer; the goal is every place a household keeps things it regularly stocks up on: freezer, fridge, pantry, kitchen cupboards and household supplies such as cleaning products or toiletries. Three principles hold for all of it: no data ever leaves the app, the code is modular and readable Flutter for phones, and the UI is clean, simple and self-explanatory.</p>
       <div class="callout">
-        <strong>Built versus planned.</strong> The code (release 0.1.1) implements everything below for freezers. Products, quantities, the movement log, restock, the shopping list, statistics, pictures and scanning are not freezer specific. The storage layout, the dates on a batch, the reminders, the seeded catalog and the wording are, and section 10.7 describes how they generalise. Sections 10.8 to 10.10 design three optional modules on top: pantry management, household supplies and receipt scanning. Names in code such as <code>Freezer</code> and <code>frozenOn</code> describe what exists today.
+        <strong>Built versus planned.</strong> The code (release 0.1.1) implements everything below for freezers. Products, quantities, the movement log, restock, the shopping list, statistics, pictures and scanning are not freezer specific. The storage layout, the dates on a batch, the reminders, the seeded catalog and the wording are, and section 10.7 describes how they generalise. Sections 10.8 to 10.10 design the optional modules on top: fridge and pantry, household supplies and receipt scanning. Names in code such as <code>Freezer</code> and <code>frozenOn</code> describe what exists today.
       </div>
       <div class="callout">
-        <strong>Priorities.</strong> Food comes first: the freezer, then the pantry and fridge, then receipt scanning, until all of it is set up for regular use. Household supplies (cleaning, bathroom, garden and more) get their bare bones early, off by default so the user can switch them on, and their full feature set afterwards. Every design decision for the food features must keep that expansion open; section 10.7 lists the rules that make sure it does.
+        <strong>Priorities.</strong> Food comes first: the freezer, then the fridge and pantry, then receipt scanning, until all of it is set up for regular use. Household supplies (cleaning, bathroom, garden and more) get their bare bones early, off by default so the user can switch them on, and their full feature set afterwards. Every design decision for the food features must keep that expansion open; section 10.7 lists the rules that make sure it does.
       </div>
       <p>The app is built as a <strong>Dart pub workspace</strong> of small packages: one thin <strong>app shell</strong> that composes everything, eight <strong>core packages</strong> that provide shared infrastructure, and eight <strong>feature packages</strong> that each own one user-facing capability. Every feature follows the same four-layer clean architecture (presentation, application, domain, data) and plugs into the shell through a single <code>FeatureModule</code> contract, which is what makes new features cheap to add.</p>
       <p>All data lives in one encrypted SQLite database on the device (Drift + SQLCipher). An append-only <strong>inventory movement log</strong> records every addition, consumption, discard and move; statistics, restock suggestions and habit analysis are all derived from that log. Features coordinate through an in-process <strong>domain event bus</strong>, but events are only triggers: the database is always the source of truth, so a lost event never corrupts state.</p>
@@ -374,7 +374,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <details class="decision">
         <summary><span>D8 · Navigation: go_router with module-contributed routes</span><span class="badge is-ok">Feasible</span></summary>
         <div class="decision-body">
-          <h5>Choice</h5><p>The shell builds one <code>GoRouter</code> from routes contributed by modules, with a <code>StatefulShellRoute</code> for the bottom navigation (today: Home, Freezer, Shopping list, Insights, Config; planned: Home, one tab per enabled storage domain, Shopping list, see 10.7). Notification taps deep-link into routes.</p>
+          <h5>Choice</h5><p>The shell builds one <code>GoRouter</code> from routes contributed by modules, with a <code>StatefulShellRoute</code> for the bottom navigation (today: Home, Freezer, Shopping list, Insights, Config; planned: Home, one tab per enabled storage domain, Lists, More, see 10.7). Notification taps deep-link into routes.</p>
           <h5>Risk</h5><p>Route path collisions between modules. Mitigation: each module prefixes its paths with its identifier, and the registry asserts uniqueness at start-up in debug builds.</p>
         </div>
       </details>
@@ -612,7 +612,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Quick actions</td><td>Barcode scanning adds "Scan to add" and "Scan to remove" to the floating add menu; receipt scanning (planned) adds "Scan receipt". Later: a home-screen shortcut.</td></tr>
           <tr><td>Item visual provider</td><td>Item pictures supplies photos to inventory lists; without the module, lists fall back to the category icon.</td></tr>
           <tr><td>Module availability</td><td>Optional modules (barcode scanning) can be switched off in the Config tab; their contributions disappear without a restart.</td></tr>
-          <tr><td>Storage kinds (planned)</td><td>Pantry contributes fridge, pantry and cupboard kinds; household supplies contributes cleaning cupboard, bathroom cabinet and garden shed (10.7).</td></tr>
+          <tr><td>Storage kinds (planned)</td><td>Fridge contributes fridge kinds, pantry contributes pantry and cupboard kinds; household supplies contributes cleaning cupboard, bathroom cabinet and garden shed (10.7).</td></tr>
           <tr><td>Seeded catalog (planned)</td><td>Each domain module brings its own categories and products, translated like the freezer catalog.</td></tr>
           <tr><td>Schema (via core_database)</td><td>New tables in a new feature folder plus one numbered migration.</td></tr>
           <tr><td>Backup participation</td><td>Automatic: the backup copies the whole database, so new tables are included without extra code.</td></tr>
@@ -724,7 +724,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       </ul>
 
       <h3>10.5 The Config tab and language selection</h3>
-      <p>The former settings module becomes <code>feature_configuration</code>, reached through a fifth bottom-navigation tab, "Config". Material guidelines allow three to five destinations, so five is the ceiling: future modules add <em>sections</em> to Config, never new tabs. The one planned exception is the storage domains (10.7): each enabled domain is a tab, and to make room Config moves to a gear icon in the top app bar and Insights opens from Home.</p>
+      <p>The former settings module becomes <code>feature_configuration</code>, reached through a fifth bottom-navigation tab, "Config". Material guidelines allow three to five destinations, so five is the ceiling: future modules add <em>sections</em> to Config, never new tabs. The planned exception is the storage domains (10.7): each enabled domain is a tab, so Config ("Options") and Insights ("Statistics") move into a "More" tab, and the shopping list and the receipt archive share a "Lists" tab.</p>
       <div class="table-wrapper"><table>
         <thead><tr><th>Section (top to bottom)</th><th>Contents</th><th>Contributed by</th></tr></thead>
         <tbody>
@@ -733,7 +733,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Appearance</td><td>System, light or dark theme; text size follows the system</td><td>configuration</td></tr>
           <tr><td>Reminders</td><td>Digest time, lock-screen privacy, storage limits per category</td><td>storage_reminders</td></tr>
           <tr><td>Restock</td><td>Minimum quantities per product</td><td>restock</td></tr>
-          <tr><td>Optional features</td><td>Barcode scanning on or off; item pictures on or off; planned: Freezer and Pantry tabs (on by default), Household tab and receipt scanning (both off by default)</td><td>configuration (reads <code>ModuleAvailability</code>)</td></tr>
+          <tr><td>Optional features</td><td>Barcode scanning on or off; item pictures on or off; planned: Freezer, Fridge and Pantry tabs (on by default), Household tab and receipt scanning (both off by default); planned home of this whole table: Options in the More tab</td><td>configuration (reads <code>ModuleAvailability</code>)</td></tr>
           <tr><td>Backup and export</td><td>Encrypted backup, restore, CSV export, last backup date</td><td>data_portability</td></tr>
           <tr><td>About and privacy</td><td>"Your data never leaves this phone", licences, version</td><td>configuration</td></tr>
         </tbody>
@@ -832,20 +832,24 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <p>The household scope reuses the existing architecture. No new layer is needed; the work is generalising names, dates and seeded data that were written for freezers, adding two optional feature modules (10.8 and 10.9), and two new contributions to the module contract. Nothing in 10.7 to 10.9 is built yet.</p>
 
       <h4>Storage domains</h4>
-      <p>Every storage kind belongs to one of three <em>storage domains</em>. A domain is the unit a household switches on or off, and each enabled domain is its own tab in the bottom navigation.</p>
+      <p>Every storage kind belongs to one of four <em>storage domains</em>. A domain is the unit a household switches on or off, and each enabled domain is its own tab in the bottom navigation.</p>
       <div class="table-wrapper"><table>
         <thead><tr><th>Domain</th><th>Storage kinds</th><th>Owned by</th><th>Availability</th></tr></thead>
         <tbody>
           <tr><td>Freezer</td><td>Upright, chest, fridge freezer compartment (exist today)</td><td>freezer (moved out of storage_layout and product_catalog)</td><td>Optional, on by default</td></tr>
-          <tr><td>Pantry</td><td>Fridge, pantry, kitchen cupboard, cellar, drinks crate</td><td>pantry (10.8)</td><td>Optional, on by default</td></tr>
+          <tr><td>Fridge</td><td>Fridge, drinks fridge, wine fridge</td><td>fridge (10.8)</td><td>Optional, on by default</td></tr>
+          <tr><td>Pantry</td><td>Pantry, kitchen cupboard, cellar, drinks crate</td><td>pantry (10.8)</td><td>Optional, on by default</td></tr>
           <tr><td>Household</td><td>Cleaning cupboard, bathroom cabinet, laundry room, garden shed, garage, storage room</td><td>household_supplies (10.9)</td><td>Optional, off by default; bare bones early, full features later</td></tr>
         </tbody>
       </table></div>
       <h4>One tab per domain</h4>
-      <p>The switches in Config → Optional features add or remove the domain's tab: "Freezer", "Pantry", "Household". A new install shows Freezer and Pantry; the user switches Household on when they want it. Each domain module contributes its tab through the existing <code>navigationDestination</code> getter and uses the existing <code>ModuleAvailability.optional(isEnabledByDefault: …)</code> mechanism, so a switch takes effect instantly, without a restart.</p>
+      <p>The switches in Options → Tabs add or remove the domain's tab: "Freezer", "Fridge", "Pantry", "Household". A new install shows Freezer, Fridge and Pantry; the user switches Household on when they want it. Each domain module contributes its tab through the existing <code>navigationDestination</code> getter and uses the existing <code>ModuleAvailability.optional(isEnabledByDefault: …)</code> mechanism, so a switch takes effect instantly, without a restart.</p>
       <ul>
-        <li><strong>Bottom navigation:</strong> Home · enabled domain tabs · List. That is three to five tabs for any combination, within Material's limit. Config moves to a gear icon in the top app bar of every tab; Insights opens from Home (its KPI tiles lead there) and keeps its full screens.</li>
-        <li><strong>One screen, three tabs:</strong> the inventory provides one generic stock screen (search, grouping by storage place, use-first sorting) that each domain tab mounts with its own domain. A domain module adds its storage kinds, catalog and labels, not its own list screen.</li>
+        <li><strong>Bottom navigation:</strong> Home · Freezer · Fridge · Pantry · Household · Lists · More, each domain tab only while it is switched on. A new install has six tabs (Home, Freezer, Fridge, Pantry, Lists, More); with Household on it has seven.</li>
+        <li><strong>Lists</strong> holds the shopping list and, while receipt scanning is on, the receipt archive, as two segments at the top. Bought things live next to things to buy.</li>
+        <li><strong>More</strong> holds Statistics (today's Insights screens, unchanged) and Options (today's Config: tabs, optional features, language, appearance, reminders, backup, about and privacy). Future modules add sections to Options or entries to More, never new tabs.</li>
+        <li><strong>Beyond five tabs:</strong> Material recommends three to five destinations. Six or seven stays usable on phones because labels are one short word with an icon, and tab order is fixed so muscle memory holds. A household that switches off what it does not use gets back to five or fewer.</li>
+        <li><strong>One screen, every domain tab:</strong> the inventory provides one generic stock screen (search, grouping by storage place, use-first sorting) that each domain tab mounts with its own domain. A domain module adds its storage kinds, catalog and labels, not its own list screen.</li>
         <li><strong>Switching a domain off</strong> removes its tab and everything it contributes elsewhere: its items in Home's "Use soon" card, its shopping-list entries and its restock rules pause, and its storage places drop out of pickers. Nothing is deleted, and switching it back on brings the tab and everything in it back as it was. Backups always contain every domain.</li>
         <li><strong>At least one domain stays on.</strong> The last enabled switch is disabled with a short explanation, so the app never has nothing to show.</li>
         <li><strong>The freezer becomes a domain module</strong> like the other two: <code>feature_freezer</code> takes over the freezer storage kinds and templates from storage_layout and the frozen-food catalog from product_catalog. This is a move, not a change in behaviour; storage_layout and product_catalog become domain-neutral.</li>
@@ -862,7 +866,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Shelf life</td><td>Stored in days (<code>recommendedMaximumStorageDays</code>), but the product editor only accepts whole months</td><td>A duration field with a unit picker (days, weeks, months) so "2 days" is possible. Plus an optional <code>shelfLifeAfterOpeningDays</code> per product or category. No schema change for the first part.</td><td>product_catalog</td></tr>
           <tr><td>When to use first</td><td><code>StorageAgePolicy</code>: storage age against the maximum storage days</td><td>A <code>UseByPolicy</code> that takes the earliest of storedOn + shelf life, bestBeforeOn, and openedOn + shelf life after opening. Items with none of the three (most supplies) never get a reminder.</td><td>inventory, storage_reminders</td></tr>
           <tr><td>Discard reasons</td><td><code>tooOld</code>, <code>freezerBurn</code>, <code>unwanted</code>, <code>other</code></td><td>Add <code>expired</code> and <code>spoiled</code>; <code>freezerBurn</code> is only offered for freezer kinds.</td><td>inventory, statistics</td></tr>
-          <tr><td>Navigation and wording</td><td>Five fixed tabs; "Eat soon", "Add to freezer"</td><td>Home · Freezer · Pantry · Household (each only while enabled) · List, with Config behind a gear icon and Insights opened from Home. "Use soon" on Home; "Add" inside each domain tab adds to that domain.</td><td>app shell, inventory, configuration, all ARB files</td></tr>
+          <tr><td>Navigation and wording</td><td>Five fixed tabs; "Eat soon", "Add to freezer"</td><td>Home · Freezer · Fridge · Pantry · Household · Lists · More (domain tabs only while enabled); Lists = shopping list and receipts, More = Statistics and Options. "Use soon" on Home; "Add" inside each domain tab adds to that domain.</td><td>app shell, inventory, restock, statistics, configuration, all ARB files</td></tr>
           <tr><td>Statistics</td><td>Freezer and drawer filter, freezer map, duration buckets from "&lt; 1 month"</td><td>A storage domain filter; the map shows any storage place. Duration buckets follow the data (days and weeks for short-lived food). Waste figures count food domains only, so used-up dish soap is never "waste".</td><td>statistics</td></tr>
           <tr><td>App shell</td><td><code>apps/freezer_app</code>, app name "Freezer"</td><td>Renamed together with the app's display name and icon. The Android application id stays, so updates keep working without reinstalling.</td><td>app shell, release workflow</td></tr>
         </tbody>
@@ -884,18 +888,19 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Simplicity:</strong> a household that only wants the freezer switches the pantry off and sees one stock tab, as today. Five bottom-navigation tabs stay the ceiling.</li>
       </ul>
 
-      <h3 id="pantry-management">10.8 Pantry management (planned, optional, on by default)</h3>
-      <p>New package: <code>feature_pantry</code>. It covers food kept outside the freezer: fridge, pantry shelves, kitchen cupboards, cellar. What sets it apart from the freezer is time. Frozen food lasts months; milk lasts days, bread two or three, fresh herbs one. Best-before dates and opened packages matter more than storage age.</p>
+      <h3 id="pantry-management">10.8 Fridge and pantry (planned, optional, both on by default)</h3>
+      <p>New packages: <code>feature_fridge</code> (the Fridge tab) and <code>feature_pantry</code> (the Pantry tab). Together they cover food kept outside the freezer. Both are thin domain modules: the best-before, opened-on and shelf-life machinery lives in inventory and product_catalog (10.7), so the two only add storage kinds, catalogs and wording, and a household can switch each one on or off on its own. What sets them apart from the freezer is time. Frozen food lasts months; milk lasts days, bread two or three, fresh herbs one. Best-before dates and opened packages matter more than storage age.</p>
       <ul>
-        <li><strong>Storage kinds and templates:</strong> fridge (shelves, door, vegetable drawer), pantry (shelves), kitchen cupboard (shelves), cellar, drinks crate. Contributed through <code>storageKindContributions</code>; the layout editor, the move flow and archiving work unchanged.</li>
+        <li><strong>Storage kinds and templates:</strong> Fridge tab: fridge (shelves, door, vegetable drawer), drinks fridge, wine fridge. Pantry tab: pantry (shelves), kitchen cupboard (shelves), cellar, drinks crate. Contributed through <code>storageKindContributions</code>; the layout editor, the move flow and archiving work unchanged.</li>
         <li><strong>Best-before date:</strong> the add sheet shows a "Best before" field for pantry kinds, pre-filled from the product's typical shelf life (bought today + 7 days for yoghurt) and editable with a date picker or quick chips (+1 day, +3 days, +1 week). Barcode "scan to add" opens the same sheet.</li>
         <li><strong>Short shelf lives:</strong> shelf life is entered in days, weeks or months. One day is the minimum (fresh herbs, bakery rolls, fresh fish). The reminder digest is already daily, so an item that goes off tomorrow shows up in tomorrow's digest and on today's "Use soon" card.</li>
         <li><strong>Opened packages:</strong> "Mark as opened" on a batch records <code>openedOn</code>. Products can carry a shelf life after opening (milk 3 days, pesto 5 days, jam 4 weeks); the earliest date wins. Opening is one tap on the batch, never a required step.</li>
         <li><strong>Use soon:</strong> the existing dashboard card and digest show pantry items next to freezer items, ordered by date. Badges read "Use by Thu", "Use today", "Past best before" (best-before is a quality date, so the wording never says "dangerous"). Status uses colour, icon and word, as today.</li>
         <li><strong>Moving between domains:</strong> moving a batch from the fridge to the freezer is the existing move use case. The batch keeps its storedOn date and the freezer's storage duration takes over; the app offers "Frozen today" as the new date because freezing resets the clock for most food.</li>
-        <li><strong>Seeded catalog:</strong> dairy and eggs, fresh fruit and vegetables, bread and bakery, meat and fish (fresh), dry goods (pasta, rice, flour, cereals), tins and jars, spices and condiments, oils and vinegar, baking, breakfast and spreads, snacks, drinks. Each product has a typical shelf life and, where it matters, a shelf life after opening.</li>
+        <li><strong>Seeded catalog:</strong> fridge: dairy and eggs, fresh fruit and vegetables, meat and fish (fresh), cold cuts, ready meals and leftovers, opened jars and sauces. Pantry: bread and bakery, dry goods (pasta, rice, flour, cereals), tins and jars, spices and condiments, oils and vinegar, baking, breakfast and spreads, snacks, drinks. Each product has a typical shelf life and, where it matters, a shelf life after opening.</li>
         <li><strong>Restock:</strong> unchanged. Staples (pasta, flour, coffee, eggs) are the typical restock rules.</li>
-        <li><strong>Switched off:</strong> the Pantry tab disappears. Pantry items leave the "Use soon" card and pickers, and restock rules for pantry products pause, so they do not fill the shopping list. Nothing is deleted.</li>
+        <li><strong>Switched off:</strong> the Fridge or Pantry tab disappears. Its items leave the "Use soon" card and pickers, and restock rules for its products pause, so they do not fill the shopping list. Nothing is deleted.</li>
+        <li><strong>Fridge, freezer compartment:</strong> the freezer compartment of a fridge stays a freezer storage kind, because what matters is the temperature, not the appliance.</li>
       </ul>
       <div class="callout"><strong>Data model:</strong> <code>stock_batches.opened_on</code> (nullable date), <code>products.shelf_life_after_opening_days</code> and <code>categories.shelf_life_after_opening_days</code> (nullable), <code>categories.storage_domain</code>. <code>best_before_on</code> already exists. One migration, shared with the renames in 10.7.</div>
 
@@ -941,7 +946,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       </table></div>
       <h4>Receipt archive and search</h4>
       <ul>
-        <li><strong>Where:</strong> a "Receipts" screen reached from the shopping list tab (bought things live next to things to buy) and from the receipt scanner. No new bottom-navigation tab.</li>
+        <li><strong>Where:</strong> the "Receipts" segment of the Lists tab, next to the shopping list, and the end of every receipt scan. No tab of its own.</li>
         <li><strong>Search:</strong> full-text search over the recognised text and the parsed item names, with filters for store, period and amount. "olive oil" finds every receipt that mentions it; results highlight the matching line and open the receipt image at that line.</li>
         <li><strong>Index:</strong> an SQLite FTS5 table inside the encrypted database, updated in the same transaction as the receipt row. It is part of every backup and rebuilt on restore if missing.</li>
         <li><strong>Correcting text:</strong> the user can correct a misread line; the correction is what gets indexed and learned, and the original OCR output is kept for reference.</li>
@@ -1012,7 +1017,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Summing amounts across products</td><td>Grams, millilitres and pieces cannot be added up meaningfully.</td><td><span class="badge is-warning">Changed</span> a measure selector; never mix units in one chart.</td></tr>
           <tr><td>Language picker in the app</td><td><code>MaterialApp.locale</code> switches instantly. Android 13+ and iOS also have per-app language screens in system settings.</td><td><span class="badge is-ok">Fine</span> declare supported locales to the OS; a platform channel keeps Android 13+ in sync (D14).</td></tr>
           <tr><td>Removing a drawer that holds items</td><td>Batches and past movements reference the drawer.</td><td><span class="badge is-warning">Changed</span> move contents, then archive; never hard-delete (D13).</td></tr>
-          <tr><td>Five bottom-navigation tabs</td><td>Material guidelines allow 3 to 5 destinations.</td><td><span class="badge is-ok">Fine</span> at the ceiling; new modules add Config sections, not tabs. <span class="badge is-warning">Changed</span> for storage domains (planned): Home, up to three domain tabs and List; Config behind a gear icon, Insights from Home.</td></tr>
+          <tr><td>Five bottom-navigation tabs</td><td>Material guidelines allow 3 to 5 destinations.</td><td><span class="badge is-ok">Fine</span> at the ceiling today. <span class="badge is-warning">Changed</span> for storage domains (planned): Home, up to four domain tabs, Lists and More, so six by default and seven at most; accepted for one-word labels with icons, and fewer when domains are switched off.</td></tr>
           <tr><td>Recommended storage durations</td><td>Values like "beef 6 to 12 months" vary by source and are guidance, not safety guarantees.</td><td><span class="badge is-ok">Fine</span> seeded defaults, editable, labelled as recommendations.</td></tr>
         </tbody>
       </table></div>
@@ -1117,8 +1122,8 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>5 · Insights</td><td>Shared filter, saved views, KPI tiles, trend, category, calendar, weekday, duration, freezer map, top products and waste charts, chart kit painters</td><td>statistics, design_system chart kit</td></tr>
           <tr><td>6 · Pictures</td><td>Product and batch photos, thumbnails in lists, pictures in backups</td><td>core_media_storage, item_pictures</td></tr>
           <tr><td>7 · Barcode scanning</td><td>Optional scanner, code learning, scan to add, scan to remove, continuous mode</td><td>barcode_scanning</td></tr>
-          <tr><td>8 · Household foundation (planned)</td><td>Neutral wording and names, storage domains with one tab each (Freezer as a domain module), Config behind a gear icon and Insights from Home, storage kind and catalog contributions, shelf life in days, weeks or months, best-before and opened-on dates in reminders, domain filter in statistics (10.7)</td><td>app shell, core_module_contract, freezer, storage_layout, inventory, product_catalog, configuration, storage_reminders, statistics</td></tr>
-          <tr><td>9 · Pantry (planned)</td><td>Pantry tab, fridge, pantry and cupboard kinds, best-before entry, "mark as opened", pantry catalog, on by default (10.8)</td><td>pantry</td></tr>
+          <tr><td>8 · Household foundation (planned)</td><td>Neutral wording and names, storage domains with one tab each (Freezer as a domain module), Lists tab (shopping list, receipts) and More tab (Statistics, Options), storage kind and catalog contributions, shelf life in days, weeks or months, best-before and opened-on dates in reminders, domain filter in statistics (10.7)</td><td>app shell, core_module_contract, freezer, storage_layout, inventory, product_catalog, configuration, storage_reminders, statistics</td></tr>
+          <tr><td>9 · Fridge and pantry (planned)</td><td>Fridge and Pantry tabs, fridge, pantry and cupboard kinds, best-before entry, "mark as opened", fridge and pantry catalogs, both on by default (10.8)</td><td>fridge, pantry</td></tr>
           <tr><td>9b · Household basics (planned)</td><td>Household tab, supply storage kinds, small seeded catalog, plain restock rules; off by default (10.9)</td><td>household_supplies</td></tr>
           <tr><td>10 · Receipt scanning (planned)</td><td>Capture, on-device OCR, parser, matching with learned mappings, review with flagged unknowns, bulk add, receipt archive with full-text search, off by default (10.10)</td><td>receipt_scanning, core_media_storage, core_database</td></tr>
           <tr><td>11 · Household supplies, full (later)</td><td>Full supplies catalog, named pieces, restock-first add flow, expiry for medicine and similar, statistics views (10.9). Starts once the food features are in regular use.</td><td>household_supplies</td></tr>
@@ -1197,7 +1202,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       responsibility: "Composition root: main(), module registry, router, bottom navigation, home dashboard assembled from module contributions, provider scope.",
       publicApi: ["None (top of the graph)"],
       events: "None",
-      dependencies: ["feature_onboarding", "feature_inventory", "feature_product_catalog", "feature_storage_reminders", "feature_restock", "feature_statistics", "feature_data_portability", "feature_storage_layout", "feature_configuration", "feature_item_pictures", "feature_barcode_scanning", "feature_freezer", "feature_pantry", "feature_household_supplies", "feature_receipt_scanning"] },
+      dependencies: ["feature_onboarding", "feature_inventory", "feature_product_catalog", "feature_storage_reminders", "feature_restock", "feature_statistics", "feature_data_portability", "feature_storage_layout", "feature_configuration", "feature_item_pictures", "feature_barcode_scanning", "feature_freezer", "feature_fridge", "feature_pantry", "feature_household_supplies", "feature_receipt_scanning"] },
 
     { identifier: "feature_storage_layout", label: "Storage layout", kind: "feature", phase: "1",
       responsibility: "Storage places and compartments, built for freezers and their drawers: add from templates, rename, reorder, colour tags, archive. Removing a drawer moves its contents first. Default names stay translatable until renamed. Contributes the 'Freezer layout' Config section. Planned: storage kinds contributed by other modules, grouped into freezer, pantry and supplies domains (10.7).",
@@ -1249,8 +1254,13 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       publicApi: ["FreezerFeatureModule"],
       events: "None of its own",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_fridge", label: "Fridge (planned)", kind: "feature", phase: "9",
+      responsibility: "Planned, optional, on by default. The Fridge tab: fridge, drinks fridge and wine fridge storage kinds, fridge catalog (dairy, fresh produce, meat and fish, leftovers) with short shelf lives and shelf lives after opening.",
+      publicApi: ["FridgeFeatureModule"],
+      events: "None of its own; uses inventory use cases, which publish StockBatch* events",
+      dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "core_module_contract", "core_design_system", "core_localization"] },
     { identifier: "feature_pantry", label: "Pantry (planned)", kind: "feature", phase: "9",
-      responsibility: "Planned, optional, on by default. The Pantry tab. Food outside the freezer: fridge, pantry and cupboard storage kinds, best-before entry with quick chips, 'mark as opened' with shelf life after opening, shelf lives down to one day, pantry catalog.",
+      responsibility: "Planned, optional, on by default. The Pantry tab: pantry, cupboard and cellar storage kinds, best-before entry with quick chips, 'mark as opened' with shelf life after opening, shelf lives down to one day, pantry catalog.",
       publicApi: ["PantryFeatureModule"],
       events: "None of its own; uses inventory use cases, which publish StockBatch* events",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "core_module_contract", "core_design_system", "core_localization"] },
