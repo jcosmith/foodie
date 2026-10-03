@@ -224,6 +224,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <a href="#household-scope">10.7 From freezer to household</a>
       <a href="#pantry-management">10.8 Pantry management</a>
       <a href="#household-supplies">10.9 Household supplies</a>
+      <a href="#receipt-scanning">10.10 Receipt scanning</a>
       <a href="#privacy">11. Privacy by construction</a>
       <a href="#feasibility">12. Feasibility checks</a>
       <a href="#structure">13. Repository layout</a>
@@ -237,7 +238,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
   <main>
     <header class="document-header">
       <h1>Foodie: Architecture Design (v3)</h1>
-      <div class="document-meta">Architecture of a multilingual, offline, privacy-first Flutter app for household inventory · Version 3 · 3 October 2026 · widens the scope from the freezer to the whole household (section 10.7) and designs two optional modules: pantry management with best-before dates and shelf lives down to a single day (10.8), and household supplies for non-food articles (10.9). Version 2 added freezer layout editing, the Config tab and interactive statistics.</div>
+      <div class="document-meta">Architecture of a multilingual, offline, privacy-first Flutter app for household inventory · Version 3 · 3 October 2026 · widens the scope from the freezer to the whole household (section 10.7) and designs two optional modules: pantry management with best-before dates and shelf lives down to a single day (10.8), household supplies for non-food articles (10.9), and an optional receipt scanner with on-device text recognition and a searchable receipt archive (10.10). Version 2 added freezer layout editing, the Config tab and interactive statistics.</div>
     </header>
 
     <!-- 1 -->
@@ -245,7 +246,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <h2>1. Summary</h2>
       <p><strong>Mission.</strong> Foodie helps a private household know what it has at home, what to use first and what to buy. It started with the freezer; the goal is every place a household keeps things it regularly stocks up on: freezer, fridge, pantry, kitchen cupboards and household supplies such as cleaning products or toiletries. Three principles hold for all of it: no data ever leaves the app, the code is modular and readable Flutter for phones, and the UI is clean, simple and self-explanatory.</p>
       <div class="callout">
-        <strong>Built versus planned.</strong> The code (release 0.1.1) implements everything below for freezers. Products, quantities, the movement log, restock, the shopping list, statistics, pictures and scanning are not freezer specific. The storage layout, the dates on a batch, the reminders, the seeded catalog and the wording are, and section 10.7 describes how they generalise. Sections 10.8 and 10.9 design two optional modules on top: pantry management and household supplies. Names in code such as <code>Freezer</code> and <code>frozenOn</code> describe what exists today.
+        <strong>Built versus planned.</strong> The code (release 0.1.1) implements everything below for freezers. Products, quantities, the movement log, restock, the shopping list, statistics, pictures and scanning are not freezer specific. The storage layout, the dates on a batch, the reminders, the seeded catalog and the wording are, and section 10.7 describes how they generalise. Sections 10.8 to 10.10 design three optional modules on top: pantry management, household supplies and receipt scanning. Names in code such as <code>Freezer</code> and <code>frozenOn</code> describe what exists today.
       </div>
       <p>The app is built as a <strong>Dart pub workspace</strong> of small packages: one thin <strong>app shell</strong> that composes everything, eight <strong>core packages</strong> that provide shared infrastructure, and eight <strong>feature packages</strong> that each own one user-facing capability. Every feature follows the same four-layer clean architecture (presentation, application, domain, data) and plugs into the shell through a single <code>FeatureModule</code> contract, which is what makes new features cheap to add.</p>
       <p>All data lives in one encrypted SQLite database on the device (Drift + SQLCipher). An append-only <strong>inventory movement log</strong> records every addition, consumption, discard and move; statistics, restock suggestions and habit analysis are all derived from that log. Features coordinate through an in-process <strong>domain event bus</strong>, but events are only triggers: the database is always the source of truth, so a lost event never corrupts state.</p>
@@ -441,6 +442,16 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <h5>Risk</h5><p>Plugin defaults change between versions. At implementation time verify that the bundled model variant is configured, and keep the interface so the scanner can be swapped for flutter_zxing.</p>
         </div>
       </details>
+
+      <details class="decision">
+        <summary><span>D16 · Receipt text recognition: on-device OCR behind an interface (planned)</span><span class="badge is-warning">Feasible, verify configuration</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>A <code>ReceiptTextRecognizer</code> interface returning text lines with their position on the image. On Android it is implemented with ML Kit text recognition using the <em>bundled</em> Latin model (shipped inside the app, works offline), through <code>google_mlkit_text_recognition</code>; on iOS with the same plugin or Apple's on-device Vision text recognition. Everything after recognition (finding item lines, prices, quantities, the date and the total) is pure Dart in the domain layer.</p>
+          <h5>Alternatives</h5><ul><li><strong>Tesseract</strong> (open source, for example through <code>flutter_tesseract_ocr</code>): no Google code, but noticeably weaker on faded thermal paper and curved receipts, and its language data adds 10 to 20 MB.</li><li><strong>Cloud receipt APIs</strong> (Google Document AI, AWS Textract, Veryfi and similar): very accurate and already structured, but every receipt would leave the phone. Rejected.</li><li><strong>An on-device language model</strong> for parsing: flexible, but large, slow on older phones and hard to test. The rule-based parser plus learned mappings is predictable and testable.</li></ul>
+          <h5>Why</h5><p>Receipt text is short, printed and Latin script, which on-device OCR handles well. Keeping the parser in pure Dart means it is tested with recorded OCR output from real receipts, without a camera. The release build has no <code>INTERNET</code> permission, so the recognizer cannot send anything even if it wanted to.</p>
+          <h5>Risk</h5><p>Receipt layouts differ by store and country, and thermal paper fades. Mitigation: the user always reviews before anything is added, mappings are learned per store, and unrecognised lines are flagged instead of guessed. At implementation, verify that the bundled model is configured and that the plugin pulls in no network-capable dependency (the allowlist check in CI catches new packages).</p>
+        </div>
+      </details>
     </section>
 
     <!-- 4 -->
@@ -529,7 +540,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li>Core packages never depend on feature packages.</li>
         <li>A feature may depend on another feature's <em>public API</em> only, and the feature graph must stay acyclic (checked in CI with a small script over the pubspecs).</li>
         <li>The app shell is the only package that knows the complete list of modules.</li>
-        <li>No package except <code>core_notifications</code> may import a platform plugin for notifications; no package except <code>core_database</code> may import Drift; only <code>core_media_storage</code> may import image plugins; only <code>feature_barcode_scanning</code> may import the scanner. Plugins stay at the edges.</li>
+        <li>No package except <code>core_notifications</code> may import a platform plugin for notifications; no package except <code>core_database</code> may import Drift; only <code>core_media_storage</code> may import image plugins; only <code>feature_barcode_scanning</code> may import the scanner; only <code>feature_receipt_scanning</code> (planned) may import the text recognizer. Plugins stay at the edges.</li>
       </ol>
     </section>
 
@@ -595,7 +606,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Config sections</td><td>Default portion sizes for meal planning; the freezer layout editor is itself a contributed section.</td></tr>
           <tr><td>Insight charts</td><td>Restock contributes a "runs out in" forecast chart; a meal planner could add "planned vs eaten".</td></tr>
           <tr><td>Event subscriptions</td><td>Meal planner reserves stock batches when <code>StockBatchAdded</code> arrives.</td></tr>
-          <tr><td>Quick actions</td><td>Barcode scanning adds "Scan to add" and "Scan to remove" to the floating add menu. Later: a home-screen shortcut.</td></tr>
+          <tr><td>Quick actions</td><td>Barcode scanning adds "Scan to add" and "Scan to remove" to the floating add menu; receipt scanning (planned) adds "Scan receipt". Later: a home-screen shortcut.</td></tr>
           <tr><td>Item visual provider</td><td>Item pictures supplies photos to inventory lists; without the module, lists fall back to the category icon.</td></tr>
           <tr><td>Module availability</td><td>Optional modules (barcode scanning) can be switched off in the Config tab; their contributions disappear without a restart.</td></tr>
           <tr><td>Storage kinds (planned)</td><td>Pantry contributes fridge, pantry and cupboard kinds; household supplies contributes cleaning cupboard, bathroom cabinet and garden shed (10.7).</td></tr>
@@ -719,7 +730,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Appearance</td><td>System, light or dark theme; text size follows the system</td><td>configuration</td></tr>
           <tr><td>Reminders</td><td>Digest time, lock-screen privacy, storage limits per category</td><td>storage_reminders</td></tr>
           <tr><td>Restock</td><td>Minimum quantities per product</td><td>restock</td></tr>
-          <tr><td>Optional features</td><td>Barcode scanning on or off; item pictures on or off; planned: pantry (on by default) and household supplies (off by default)</td><td>configuration (reads <code>ModuleAvailability</code>)</td></tr>
+          <tr><td>Optional features</td><td>Barcode scanning on or off; item pictures on or off; planned: pantry (on by default), household supplies and receipt scanning (both off by default)</td><td>configuration (reads <code>ModuleAvailability</code>)</td></tr>
           <tr><td>Backup and export</td><td>Encrypted backup, restore, CSV export, last backup date</td><td>data_portability</td></tr>
           <tr><td>About and privacy</td><td>"Your data never leaves this phone", licences, version</td><td>configuration</td></tr>
         </tbody>
@@ -890,6 +901,33 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Statistics:</strong> supplies appear in usage and "runs out in" charts, never in waste or "eaten" figures. The domain filter separates them from food.</li>
         <li><strong>Out of scope:</strong> things a household keeps but does not use up (tools, furniture, electronics). That is an inventory of possessions, not of stock, and would need warranties, values and locations of single objects.</li>
       </ul>
+
+      <h3 id="receipt-scanning">10.10 Receipt scanning (planned, optional, off by default)</h3>
+      <p>New package: <code>feature_receipt_scanning</code>. After shopping, the user photographs the receipt. Text recognition on the phone reads it, the app suggests the purchases to add to the household, and the user confirms them in one step. Every receipt is archived, and its text is searchable. Off by default like barcode scanning, because it uses the camera; it is one switch in Config → Optional features.</p>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Step</th><th>What happens</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Capture</td><td>"Scan receipt" in the add menu opens the camera. Long receipts are taken as several photos, which become pages of one receipt. A photo from the gallery works too. Images are straightened, converted to greyscale and stripped of EXIF data.</td><td>core_media_storage</td></tr>
+          <tr><td>2 · Recognise</td><td>On-device OCR turns each page into text lines with positions (D16). Nothing leaves the phone.</td><td>receipt_scanning (data)</td></tr>
+          <tr><td>3 · Parse</td><td>A pure Dart <code>ReceiptParser</code> finds the store name, date and total, and the item lines: text on the left, price on the right. It understands quantity lines ("2 x 1,29"), weighed goods ("0,512 kg x 2,99 €/kg"), discounts and deposits, uses the language's decimal separator, and skips totals, tax, payment and loyalty lines.</td><td>receipt_scanning (domain)</td></tr>
+          <tr><td>4 · Match</td><td>A <code>ReceiptLineMatcher</code> tries, in order: a mapping learned earlier for this store ("BIO VOLLM. 1,5%" → whole milk), then a fuzzy match against product names in the current language. Each line ends up <em>matched</em>, <em>suggested</em> (a likely product that needs a tap to confirm) or <em>not recognised</em>.</td><td>receipt_scanning (domain)</td></tr>
+          <tr><td>5 · Review</td><td>A review list with not-recognised lines at the top, flagged and explained ("We don't know 'KNOBL. 3ST' yet"). For each the user can pick a product, create a new one, or ignore the line (a magazine, a bottle deposit). Ignoring can be remembered for this store. Matched lines are pre-ticked with quantity, storage place and, for pantry items, a best-before suggestion. Nothing is added without the user's confirmation.</td><td>receipt_scanning (presentation)</td></tr>
+          <tr><td>6 · Add</td><td>"Add 14 items" adds every ticked line in one transaction through the inventory's own <code>AddStockBatchUseCase</code>, so restock, reminders and the shopping list react exactly as for a manual add. Lines the user leaves unresolved stay flagged on the archived receipt and can be resolved later.</td><td>inventory (reused)</td></tr>
+          <tr><td>7 · Learn</td><td>Every confirmed or corrected line stores a mapping from the store and the receipt text to the product, so the next receipt from the same store needs fewer taps.</td><td>receipt_scanning</td></tr>
+          <tr><td>8 · Archive</td><td>The receipt is kept: page images as encrypted files (D11), and a row with store, date, total, the full recognised text and the parsed lines, each linked to the batches it created.</td><td>receipt_scanning, core_database</td></tr>
+        </tbody>
+      </table></div>
+      <h4>Receipt archive and search</h4>
+      <ul>
+        <li><strong>Where:</strong> a "Receipts" screen reached from the shopping list tab (bought things live next to things to buy) and from the receipt scanner. No new bottom-navigation tab.</li>
+        <li><strong>Search:</strong> full-text search over the recognised text and the parsed item names, with filters for store, period and amount. "olive oil" finds every receipt that mentions it; results highlight the matching line and open the receipt image at that line.</li>
+        <li><strong>Index:</strong> an SQLite FTS5 table inside the encrypted database, updated in the same transaction as the receipt row. It is part of every backup and rebuilt on restore if missing.</li>
+        <li><strong>Correcting text:</strong> the user can correct a misread line; the correction is what gets indexed and learned, and the original OCR output is kept for reference.</li>
+        <li><strong>Retention:</strong> receipts are kept until the user deletes them. An option keeps only the text after a chosen time (for example 12 months) and deletes the images, which take most of the space. Backups can leave receipt images out, like item pictures.</li>
+        <li><strong>Prices:</strong> parsed lines keep their prices as part of the receipt. Stock batches do not get a price field; spending statistics stay an open question (section 16), and the receipt archive is what would feed them.</li>
+      </ul>
+      <div class="callout"><strong>Data model:</strong> <code>receipts</code> (id, store name, purchased on, total, currency, page count, created at), <code>receipt_pages</code> (receipt id, page number, picture reference, raw OCR text), <code>receipt_lines</code> (receipt id, position, recognised text, corrected text, quantity, unit price, line total, status <code>matched</code>/<code>suggested</code>/<code>unrecognised</code>/<code>ignored</code>, product id, stock batch id), <code>receipt_text_mappings</code> (normalised store, normalised line text, product id or "ignore") and the FTS5 table <code>receipt_search_index</code>.</div>
+      <div class="callout is-warning"><strong>Privacy on receipts:</strong> receipts can carry the last digits of a payment card, a loyalty number and the store's address. The text parser masks card and loyalty numbers before the text is stored or indexed. Images keep everything, so they are encrypted like all pictures and never shown in the search results list, only when the user opens a receipt.</div>
     </section>
 
     <!-- 10 -->
@@ -909,6 +947,8 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Picture files outside the database</td><td>Not covered by SQLCipher</td><td>AES-GCM file encryption with a device-only key (D11); files excluded from OS backups like the database.</td></tr>
           <tr><td>Camera access</td><td>Permission prompt at install or first launch</td><td>Requested only when the user first takes a photo or scans; clear iOS usage descriptions in every supported language.</td></tr>
           <tr><td>Product lookup databases (Open Food Facts)</td><td>Would send barcodes to a server</td><td>Out of scope; contradicts the privacy goal. Seeded offline catalog instead.</td></tr>
+          <tr><td>Receipt recognition (planned)</td><td>Most receipt apps upload the photo to a cloud OCR service</td><td>On-device OCR with a bundled model only (D16); no <code>INTERNET</code> permission.</td></tr>
+          <tr><td>Receipt contents (planned)</td><td>Card digits, loyalty numbers and shop locations are printed on receipts</td><td>Card and loyalty numbers are masked in stored and indexed text; receipt images are encrypted files (D11), excluded from OS backups, and optional in exports.</td></tr>
           <tr><td>Notifications on the lock screen</td><td>Content visible</td><td>Digest text avoids item names by default; option to show names.</td></tr>
         </tbody>
       </table></div>
@@ -941,6 +981,10 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Scan to remove a specific bag</td><td>Retail barcodes identify a product, not a package.</td><td><span class="badge is-warning">Changed</span> suggest the oldest batch; QR labels for exact bags are a later idea.</td></tr>
           <tr><td>Pictures in backups</td><td>About 300 KB per photo; 200 photos is about 60 MB, fine for a file the user saves themselves.</td><td><span class="badge is-ok">Fine</span> with an "export without pictures" option.</td></tr>
           <tr><td>Encrypting picture files</td><td>AES-GCM on a 300 KB file takes milliseconds with native crypto (for example <code>cryptography_flutter</code>).</td><td><span class="badge is-ok">Fine</span> decrypt thumbnails lazily and cache them in memory.</td></tr>
+          <tr><td>Receipt OCR offline (planned)</td><td>ML Kit text recognition has a bundled Latin model for Android; iOS has on-device Vision text recognition. Both run without network.</td><td><span class="badge is-ok">Fine</span> verify the bundled variant at implementation (D16).</td></tr>
+          <tr><td>Parsing any store's receipt (planned)</td><td>Layouts, abbreviations and quantity formats differ by store and country; thermal paper fades.</td><td><span class="badge is-warning">Changed</span> rule-based parser plus per-store learned mappings, user review before adding, unrecognised lines flagged instead of guessed.</td></tr>
+          <tr><td>Full-text search in the encrypted database (planned)</td><td>Searching receipts needs an index; SQLite's FTS5 works inside SQLCipher because encryption is below the page level.</td><td><span class="badge is-ok">Fine</span> verify that the bundled SQLCipher build has FTS5 enabled.</td></tr>
+          <tr><td>Receipt image size (planned)</td><td>Greyscale JPEG at about 1600 px height per page is roughly 150 to 300 KB; a weekly shop for a year is 15 to 30 MB.</td><td><span class="badge is-ok">Fine</span> with "keep text only after N months" and "export without pictures".</td></tr>
           <tr><td>Heatmap and freezer map charts</td><td>fl_chart has line, bar, pie, scatter and radar charts, but no calendar heatmap or treemap-style map.</td><td><span class="badge is-warning">Changed</span> two custom painters in the chart kit (D7).</td></tr>
           <tr><td>About ten charts re-querying on every filter change</td><td>Each is one indexed aggregate over at most tens of thousands of movements, so milliseconds each on Drift's background isolate.</td><td><span class="badge is-ok">Fine</span> debounce 150 ms; lazy-load charts below the fold.</td></tr>
           <tr><td>Summing amounts across products</td><td>Grams, millilitres and pieces cannot be added up meaningfully.</td><td><span class="badge is-warning">Changed</span> a measure selector; never mix units in one chart.</td></tr>
@@ -1054,6 +1098,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>8 · Household foundation (planned)</td><td>Neutral wording and names, storage domains, storage kind and catalog contributions, shelf life in days, weeks or months, best-before and opened-on dates in reminders, domain filter in statistics (10.7)</td><td>core_module_contract, storage_layout, inventory, product_catalog, storage_reminders, statistics</td></tr>
           <tr><td>9 · Pantry (planned)</td><td>Fridge, pantry and cupboard kinds, best-before entry, "mark as opened", pantry catalog, on by default (10.8)</td><td>pantry</td></tr>
           <tr><td>10 · Household supplies (planned)</td><td>Supply storage kinds, supplies catalog, restock-first add flow, expiry for medicine and similar, off by default (10.9)</td><td>household_supplies</td></tr>
+          <tr><td>11 · Receipt scanning (planned)</td><td>Capture, on-device OCR, parser, matching with learned mappings, review with flagged unknowns, bulk add, receipt archive with full-text search, off by default (10.10)</td><td>receipt_scanning, core_media_storage, core_database</td></tr>
           <tr><td>Later</td><td>Consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning</td><td>new feature packages</td></tr>
         </tbody>
       </table></div>
@@ -1067,7 +1112,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Target platforms:</strong> this plan assumes Android and iOS. Desktop or web would change the encryption and notification choices.</li>
         <li><strong>Initial languages:</strong> the plan assumes English and German first; any right-to-left language planned early?</li>
         <li><strong>OS backups:</strong> the plan excludes the database from Google Drive and iCloud backups. Some users might prefer the convenience; should it become an opt-in setting?</li>
-        <li><strong>Prices:</strong> should batches optionally carry a purchase price, enabling "money saved" or "money wasted" statistics?</li>
+        <li><strong>Prices:</strong> the planned receipt archive keeps the price of every receipt line. Should that feed "money spent" or "money wasted" statistics, or should prices stay inside the archive?</li>
         <li><strong>Household sharing:</strong> is shared stock between the phones of one household a future goal? It shapes whether ids should be globally unique now (the plan uses UUIDs anyway, so this stays open cheaply).</li>
         <li><strong>App name:</strong> the repository and project are called Foodie, the installed app is still called Freezer. Is Foodie the name for the household app?</li>
         <li><strong>Household supplies default:</strong> this plan switches the pantry on and household supplies off for new installs, so a first start stays focused on food. Should supplies be on by default too?</li>
@@ -1130,7 +1175,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       responsibility: "Composition root: main(), module registry, router, bottom navigation, home dashboard assembled from module contributions, provider scope.",
       publicApi: ["None (top of the graph)"],
       events: "None",
-      dependencies: ["feature_onboarding", "feature_inventory", "feature_product_catalog", "feature_storage_reminders", "feature_restock", "feature_statistics", "feature_data_portability", "feature_storage_layout", "feature_configuration", "feature_item_pictures", "feature_barcode_scanning", "feature_pantry", "feature_household_supplies"] },
+      dependencies: ["feature_onboarding", "feature_inventory", "feature_product_catalog", "feature_storage_reminders", "feature_restock", "feature_statistics", "feature_data_portability", "feature_storage_layout", "feature_configuration", "feature_item_pictures", "feature_barcode_scanning", "feature_pantry", "feature_household_supplies", "feature_receipt_scanning"] },
 
     { identifier: "feature_storage_layout", label: "Storage layout", kind: "feature", phase: "1",
       responsibility: "Storage places and compartments, built for freezers and their drawers: add from templates, rename, reorder, colour tags, archive. Removing a drawer moves its contents first. Default names stay translatable until renamed. Contributes the 'Freezer layout' Config section. Planned: storage kinds contributed by other modules, grouped into freezer, pantry and supplies domains (10.7).",
@@ -1187,6 +1232,11 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       publicApi: ["HouseholdSuppliesFeatureModule"],
       events: "None of its own; uses inventory and restock use cases",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "feature_restock", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_receipt_scanning", label: "Receipts (planned)", kind: "feature", phase: "11",
+      responsibility: "Planned, optional, off by default. Photograph a receipt, recognise its text on the device, parse item lines, match them to products (learned per store), flag unknown lines for the user, add confirmed items in one step. Keeps an encrypted receipt archive with full-text search.",
+      publicApi: ["ReceiptScanningFeatureModule"],
+      events: "Publishes ReceiptArchived; adds stock through inventory use cases, which publish StockBatch* events",
+      dependencies: ["feature_inventory", "feature_product_catalog", "core_media_storage", "core_database", "core_events", "core_preferences", "core_module_contract", "core_design_system", "core_localization"] },
     { identifier: "feature_item_pictures", label: "Item pictures", kind: "feature", phase: "6",
       responsibility: "Photos for products and individual batches: capture or pick, crop, attach, view full screen, delete. Supplies thumbnails to other modules through ItemVisualProvider and cleans up pictures of deleted items.",
       publicApi: ["ItemPicturesFeatureModule", "ItemPictureReference"],

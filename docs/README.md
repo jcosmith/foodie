@@ -37,7 +37,7 @@ The household is split into three storage domains. Each one beyond the freezer c
 
 Possessions that are not used up (tools, furniture, electronics) are out of scope.
 
-What is built today works for every domain in principle (products, quantities, restock rules, shopping list), but the storage layout, the wording and the reminders are written for freezers. The architecture document describes how they generalise (section 10.7) and designs pantry management (10.8) and household supplies (10.9).
+What is built today works for every domain in principle (products, quantities, restock rules, shopping list), but the storage layout, the wording and the reminders are written for freezers. The architecture document describes how they generalise (section 10.7) and designs pantry management (10.8), household supplies (10.9) and receipt scanning (10.10).
 
 ## What exists today
 
@@ -61,12 +61,13 @@ In order:
 1. **Household foundation:** neutral wording ("Use soon", a "Stock" tab with a domain switch that only appears when more than one domain is on), storage domains, and two new module contributions (storage kinds and seeded catalog). Shelf lives can be entered in days, weeks or months, so a product can be good for just one or two days. Best-before and "opened on" dates become reminder triggers.
 2. **Pantry management** (optional, on by default): fridge, pantry and cupboard storage places, a best-before date on every item with quick chips (+1 day, +3 days, +1 week), "mark as opened" with a shelf life after opening (milk 3 days), and a pantry catalog. Items that go off tomorrow appear in today's "Use soon" card and tomorrow's digest.
 3. **Household supplies** (optional, off by default): storage places such as the cleaning cupboard or garden shed, and a catalog of cleaning, laundry, bathroom, kitchen paper, garden, pet, first aid, technical, baby and office supplies. Adding a supply offers to set a minimum right away, because the point is never running out. Expiry dates are only used where they exist (medicine, sun cream, batteries). Supplies never count as food waste.
+4. **Receipt scanning** (optional, off by default): photograph a shopping receipt, and on-device text recognition reads it and suggests the purchases to add. Lines that match no known product are flagged at the top of the review list so the user can pick a product, create one or ignore the line; nothing is added without confirmation. What the user confirms is learned per store, so the next receipt needs fewer taps. Every receipt is archived (images encrypted, card and loyalty numbers masked in the text) and its text is searchable, for example "olive oil" across a year of shopping. No receipt or text ever leaves the phone.
 
 Later ideas: consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning.
 
 ## Documents
 
-- [`design/architecture.html`](design/architecture.html): the architecture the code follows, the technology decisions, the privacy measures and the plan for generalising from freezer to household, including the pantry and household supplies modules. Open it in a browser.
+- [`design/architecture.html`](design/architecture.html): the architecture the code follows, the technology decisions, the privacy measures and the plan for generalising from freezer to household, including the pantry, household supplies and receipt scanning modules. Open it in a browser.
 - [`design/ui-examples.html`](design/ui-examples.html): interactive screen examples of the app as built today (freezer). Open it in a browser.
 - [`release-notes/`](release-notes): notes for each published release.
 
@@ -81,6 +82,7 @@ Later ideas: consumption forecasts, QR labels for homemade meals, home-screen wi
 | Product | Something the household keeps, such as peas or dish soap | `Product` |
 | Stock batch | One physical package or box with its own date and remaining amount | `StockBatch` |
 | Shelf life | How long a product keeps, in days, weeks or months; optionally a shorter one after opening | `recommendedMaximumStorageDays` |
+| Receipt | A scanned shopping receipt with its pages, recognised text and parsed lines, kept in the archive | (planned) |
 | Best before | The date printed on the package, called "expires" for supplies | `bestBeforeOn` |
 | Movement | One recorded change: added, used, thrown away, moved or corrected | `InventoryMovement` |
 | Restock rule | The minimum and target amount of a product to keep at home | `RestockRule` |
