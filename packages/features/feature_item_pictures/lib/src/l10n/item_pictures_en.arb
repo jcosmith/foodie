@@ -1,0 +1,21 @@
+{
+  "@@locale": "en",
+  "optionalFeatureTitle": "Item pictures",
+  "optionalFeatureDetail": "Photos of products and leftovers",
+  "takeOrChoosePhoto": "📷 Take or choose a photo",
+  "photoOptional": "Optional. Location data is removed from photos.",
+  "photoAdded": "Photo added · location data removed",
+  "takePhoto": "Take a photo",
+  "chooseFromPhotos": "Choose from your photos",
+  "viewPhoto": "View",
+  "replacePhoto": "Replace",
+  "removePhoto": "Remove",
+  "removePhotoQuestion": "Remove this photo?",
+  "removePhotoExplanation": "The photo is deleted from this phone.",
+  "photoNotReadable": "This photo cannot be read. Try another one.",
+  "photoSourceUnavailable": "The camera or your photos are not available.",
+  "photoProcessing": "Removing location data…",
+  "photoSemanticsLabel": "Photo",
+  "photoSectionTitle": "Photo",
+  "batchPhotoHint": "Without its own photo, this bag shows the product's photo."
+}

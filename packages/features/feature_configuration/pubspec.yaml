@@ -1,0 +1,31 @@
+name: feature_configuration
+description: The Config tab - language, appearance, optional features, about and privacy, and the sections other modules contribute.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  core_design_system: any
+  core_events: any
+  core_foundation: any
+  core_localization: any
+  core_module_contract: any
+  core_preferences: any
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.0
+  go_router: ^18.0.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  core_database: any
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true

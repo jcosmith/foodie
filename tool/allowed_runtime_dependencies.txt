@@ -1,0 +1,153 @@
+# Third-party packages the app ships with (runtime dependencies of
+# apps/freezer_app, transitively). Each entry was reviewed for network access.
+# The architecture check fails when a package appears that is not listed here,
+# so adding a dependency is always a deliberate, reviewed step.
+#
+# Notes on entries that look surprising:
+# - http: required by `timezone`, but only its web-only library
+#   (package:timezone/browser.dart) imports it; the app never does, the
+#   architecture check rejects network imports in our code, and the release
+#   Android build has no INTERNET permission.
+# - flutter_test and its leak_tracker packages: listed as a regular dependency
+#   by flutter_riverpod; never imported by app code.
+# - hooks, code_assets, native_toolchain_c: build hooks that bundle SQLCipher
+#   at build time; they do not run inside the app.
+# - file_picker and its platform packages: only the system save and open
+#   dialogs for backups and CSV files (feature_data_portability) and the open
+#   dialog for product icon pictures (feature_product_catalog); no network
+#   permission or code. Desktop and web variants are never used on phones.
+# - fl_chart: chart rendering for the chart kit in core_design_system
+#   (decision D7); pure Dart drawing, no network code. Only the design system
+#   may depend on it.
+# - image, archive, posix: pure Dart decoding and JPEG encoding of pictures in
+#   core_media_storage (archive is image's codec helper; posix only reads
+#   file permissions). No network code.
+# - cryptography: AES-GCM for picture files (decision D11), pure Dart.
+# - image_picker and its platform packages (file_selector_*, mime,
+#   flutter_plugin_android_lifecycle): the system camera and photo picker
+#   for feature_item_pictures. They hand back a local file; no network
+#   permission or code. Desktop and web variants are never used on phones.
+# - mobile_scanner: the barcode decoder (decision D12), only in
+#   feature_barcode_scanning. Android uses ML Kit with the bundled model
+#   (com.google.mlkit:barcode-scanning, the plugin's default; the unbundled
+#   Play services variant that downloads the model is never enabled), iOS
+#   uses Apple's Vision framework. Its web variant, which loads a decoder
+#   script from a CDN, is never used on phones. The release manifest
+#   removes INTERNET and ACCESS_NETWORK_STATE in case ML Kit declares them.
+android_file_picker
+archive
+args
+async
+boolean_selector
+characters
+clock
+code_assets
+collection
+convert
+cross_file
+crypto
+cryptography
+cupertino_ui
+dbus
+drift
+equatable
+fake_async
+ffi
+ffi_leak_tracker
+file
+file_picker
+file_picker_darwin
+file_picker_linux
+file_picker_platform_interface
+file_picker_web
+file_selector_linux
+file_selector_macos
+file_selector_platform_interface
+file_selector_windows
+fixnum
+fl_chart
+flutter
+flutter_local_notifications
+flutter_local_notifications_linux
+flutter_local_notifications_platform_interface
+flutter_local_notifications_web
+flutter_local_notifications_windows
+flutter_localizations
+flutter_plugin_android_lifecycle
+flutter_riverpod
+flutter_secure_storage
+flutter_secure_storage_darwin
+flutter_secure_storage_linux
+flutter_secure_storage_platform_interface
+flutter_secure_storage_web
+flutter_secure_storage_windows
+flutter_test
+flutter_timezone
+flutter_web_plugins
+glob
+go_router
+hooks
+http
+http_parser
+image
+image_picker
+image_picker_android
+image_picker_for_web
+image_picker_ios
+image_picker_linux
+image_picker_macos
+image_picker_platform_interface
+image_picker_windows
+intl
+jni
+jni_flutter
+jni_util
+leak_tracker
+leak_tracker_flutter_testing
+leak_tracker_testing
+listen
+logging
+matcher
+material_color_utilities
+material_ui
+meta
+mime
+mobile_scanner
+native_toolchain_c
+objective_c
+package_config
+path
+path_provider
+path_provider_android
+path_provider_foundation
+path_provider_linux
+path_provider_platform_interface
+path_provider_windows
+petitparser
+platform
+plugin_platform_interface
+posix
+process
+pub_semver
+record_use
+riverpod
+sky_engine
+source_span
+sqlite3
+stack_trace
+state_notifier
+stream_channel
+string_scanner
+term_glyph
+test_api
+timezone
+typed_data
+uuid
+vector_math
+vm_service
+web
+win32
+windows_file_picker
+xdg_directories
+xml
+yaml

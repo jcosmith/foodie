@@ -1,0 +1,135 @@
+{
+  "_meta": {
+    "description": "This file contains a serialized version of schema entities for drift.",
+    "version": "1.3.0"
+  },
+  "options": {
+    "store_date_time_values_as_text": true
+  },
+  "entities": [
+    {
+      "id": 0,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "preference_entries",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "preference_key",
+            "getter_name": "preferenceKey",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "encoded_value",
+            "getter_name": "encodedValue",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "preference_key"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "schema_metadata",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "singleton_identifier",
+            "getter_name": "singletonIdentifier",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "schema_version",
+            "getter_name": "schemaVersion",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "last_migrated_by_application_version",
+            "getter_name": "lastMigratedByApplicationVersion",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "migrated_at",
+            "getter_name": "migratedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "singleton_identifier"
+        ]
+      }
+    }
+  ],
+  "fixed_sql": [
+    {
+      "name": "preference_entries",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"preference_entries\" (\"preference_key\" TEXT NOT NULL, \"encoded_value\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, PRIMARY KEY (\"preference_key\"));"
+        }
+      ]
+    },
+    {
+      "name": "schema_metadata",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"schema_metadata\" (\"singleton_identifier\" INTEGER NOT NULL, \"schema_version\" INTEGER NOT NULL, \"last_migrated_by_application_version\" TEXT NOT NULL, \"migrated_at\" TEXT NOT NULL, PRIMARY KEY (\"singleton_identifier\"));"
+        }
+      ]
+    }
+  ]
+}

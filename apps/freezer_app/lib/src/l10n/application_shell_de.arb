@@ -1,0 +1,20 @@
+{
+  "@@locale": "de",
+  "applicationTitle": "Gefrierschrank",
+  "navigationHome": "Start",
+  "homeGreetingMorning": "Guten Morgen",
+  "homeGreetingAfternoon": "Guten Tag",
+  "homeGreetingEvening": "Guten Abend",
+  "homeDashboardEmptyTitle": "Dein Gefrierschrank auf einen Blick",
+  "homeDashboardEmptyMessage": "Was zuerst gegessen werden sollte und was knapp wird, erscheint hier.",
+  "quickActionsMenuTitle": "Hinzufügen",
+  "startupLoadingLabel": "Gefrierschrank wird geöffnet",
+  "startupFailureTitle": "Die App konnte nicht starten",
+  "startupFailureMessage": "Beim Öffnen deiner Daten ist etwas schiefgegangen. Deine Daten wurden nicht verändert.",
+  "startupKeyLostTitle": "Deine Daten können nicht entsperrt werden",
+  "startupKeyLostMessage": "Der Schlüssel, der deine Gefrierschrank-Daten auf diesem Telefon schützt, fehlt, zum Beispiel nachdem der sichere Speicher des Telefons zurückgesetzt wurde. Eine Sicherung wiederherzustellen wird hier möglich sein.",
+  "notificationChannelStorageRemindersName": "Lager-Erinnerungen",
+  "notificationChannelStorageRemindersDescription": "Eine tägliche Übersicht über Produkte, die schon lange eingefroren sind",
+  "notificationChannelBackupRemindersName": "Sicherungs-Erinnerungen",
+  "notificationChannelBackupRemindersDescription": "Eine gelegentliche Erinnerung, deine Daten zu sichern"
+}

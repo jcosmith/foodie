@@ -1,0 +1,4 @@
+/* Wird angezeigt, wenn die App zum ersten Mal die Kamera nutzen möchte. */
+"NSCameraUsageDescription" = "Um Lebensmittel zu fotografieren und Barcodes zu scannen. Fotos und Codes bleiben auf diesem Telefon, Standortdaten werden aus Fotos entfernt.";
+/* Wird angezeigt, wenn die App zum ersten Mal auf Fotos zugreifen möchte. */
+"NSPhotoLibraryUsageDescription" = "Um ein Foto von Lebensmitteln auszuwählen. Fotos bleiben auf diesem Telefon, Standortdaten werden entfernt.";

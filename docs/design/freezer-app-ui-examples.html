@@ -1,0 +1,2210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Freezer App UI Examples v2</title>
+<style>
+:root {
+  --page-background: #eef1f5;
+  --page-text: #1c2330;
+  --page-muted: #5a6475;
+  --page-border: #d5dbe4;
+  --page-surface: #ffffff;
+
+  --app-background: #f6f8fb;
+  --app-surface: #ffffff;
+  --app-surface-muted: #edf1f6;
+  --app-text: #17202e;
+  --app-muted: #5d6879;
+  --app-border: #dfe4eb;
+  --app-primary: #1769c2;
+  --app-primary-soft: #dcebfb;
+  --app-on-primary: #ffffff;
+  --status-fresh: #157f3b;
+  --status-fresh-soft: #e0f3e6;
+  --status-aging: #8a5a00;
+  --status-aging-soft: #fbefd5;
+  --status-urgent: #b42318;
+  --status-urgent-soft: #fde6e4;
+  --chart-bar: #1769c2;
+  --chart-grid: #e3e8ef;
+  --phone-frame: #1b2230;
+  --shadow: 0 10px 30px rgba(20, 30, 50, .14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-background: #0e1218;
+    --page-text: #e3e8f0;
+    --page-muted: #9aa5b6;
+    --page-border: #2c3646;
+    --page-surface: #161c26;
+    --app-background: #10151d;
+    --app-surface: #19202b;
+    --app-surface-muted: #222b38;
+    --app-text: #e6ebf2;
+    --app-muted: #9ba6b7;
+    --app-border: #2c3646;
+    --app-primary: #7db3f0;
+    --app-primary-soft: #1d3150;
+    --app-on-primary: #0b1422;
+    --status-fresh: #72d495;
+    --status-fresh-soft: #16321f;
+    --status-aging: #f0c060;
+    --status-aging-soft: #3a2c10;
+    --status-urgent: #ff8f84;
+    --status-urgent-soft: #401b18;
+    --chart-bar: #7db3f0;
+    --chart-grid: #263041;
+    --phone-frame: #000000;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  }
+}
+:root[data-theme="dark"] {
+  --page-background: #0e1218;
+  --page-text: #e3e8f0;
+  --page-muted: #9aa5b6;
+  --page-border: #2c3646;
+  --page-surface: #161c26;
+  --app-background: #10151d;
+  --app-surface: #19202b;
+  --app-surface-muted: #222b38;
+  --app-text: #e6ebf2;
+  --app-muted: #9ba6b7;
+  --app-border: #2c3646;
+  --app-primary: #7db3f0;
+  --app-primary-soft: #1d3150;
+  --app-on-primary: #0b1422;
+  --status-fresh: #72d495;
+  --status-fresh-soft: #16321f;
+  --status-aging: #f0c060;
+  --status-aging-soft: #3a2c10;
+  --status-urgent: #ff8f84;
+  --status-urgent-soft: #401b18;
+  --chart-bar: #7db3f0;
+  --chart-grid: #263041;
+  --phone-frame: #000000;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--page-background);
+  color: var(--page-text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+button, input, select { font: inherit; color: inherit; }
+.page-header { max-width: 1240px; margin: 0 auto; padding: 32px 24px 8px; }
+.page-header h1 { margin: 0 0 6px; font-size: 32px; line-height: 1.2; }
+.page-header p { margin: 0 0 6px; color: var(--page-muted); max-width: 80ch; }
+.page-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0 4px; }
+.segmented-control { display: inline-flex; border: 1px solid var(--page-border); border-radius: 999px; overflow: hidden; background: var(--page-surface); }
+.segmented-control button { border: none; background: none; padding: 6px 14px; cursor: pointer; }
+.segmented-control button[aria-pressed="true"] { background: var(--app-primary); color: var(--app-on-primary); }
+.screen-gallery {
+  max-width: 1240px; margin: 0 auto; padding: 16px 24px 64px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 40px 28px;
+}
+.screen-example { display: flex; flex-direction: column; align-items: center; }
+.screen-example h2 { font-size: 18px; margin: 14px 0 4px; align-self: stretch; }
+.screen-example ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--page-muted); align-self: stretch; }
+.screen-example.is-highlighted .phone-frame { outline: 3px solid var(--app-primary); outline-offset: 4px; }
+
+/* ---------- Phone frame ---------- */
+.phone-frame {
+  width: 340px; height: 700px; border-radius: 38px; padding: 10px;
+  background: var(--phone-frame); box-shadow: var(--shadow); flex: none; transition: outline-color .2s;
+}
+.phone-screen {
+  position: relative; width: 100%; height: 100%; border-radius: 29px; overflow: hidden;
+  background: var(--app-background); color: var(--app-text); display: flex; flex-direction: column; font-size: 14px;
+}
+.status-bar { display: flex; justify-content: space-between; padding: 10px 22px 4px; font-size: 12px; font-weight: 600; }
+.app-bar { padding: 6px 18px 10px; }
+.app-bar h3 { margin: 0; font-size: 22px; line-height: 1.25; }
+.app-bar .app-bar-subtitle { color: var(--app-muted); font-size: 13px; }
+.screen-content { flex: 1; overflow-y: auto; padding: 0 14px 14px; scrollbar-width: thin; }
+.bottom-navigation { display: flex; border-top: 1px solid var(--app-border); background: var(--app-surface); padding: 6px 4px 12px; }
+.bottom-navigation span { flex: 1; text-align: center; font-size: 11px; color: var(--app-muted); }
+.bottom-navigation span::before { content: ""; display: block; width: 44px; height: 24px; margin: 0 auto 2px; border-radius: 12px; }
+.bottom-navigation span.is-current { color: var(--app-text); font-weight: 600; }
+.bottom-navigation span.is-current::before { background: var(--app-primary-soft); }
+.bottom-navigation span[data-icon]::before { content: attr(data-icon); font-size: 15px; line-height: 24px; }
+
+.app-card { background: var(--app-surface); border: 1px solid var(--app-border); border-radius: 16px; padding: 12px 14px; margin-bottom: 12px; }
+.app-card h4 { margin: 0 0 8px; font-size: 15px; display: flex; justify-content: space-between; align-items: baseline; }
+.app-card h4 small { font-weight: 400; color: var(--app-primary); font-size: 13px; }
+.item-row { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--app-border); }
+.item-row:first-of-type { border-top: none; }
+.item-row.is-clickable { cursor: pointer; }
+.item-row.is-clickable:hover { background: var(--app-surface-muted); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 10px; }
+.item-visual {
+  width: 42px; height: 42px; border-radius: 12px; flex: none; display: grid; place-items: center; font-size: 22px;
+  background: var(--app-surface-muted);
+}
+.item-visual.is-photo { background: linear-gradient(135deg, #f7d9a8, #c97b50); border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); font-size: 26px; }
+.item-text { flex: 1; min-width: 0; }
+.item-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-detail { color: var(--app-muted); font-size: 12.5px; }
+.item-quantity { text-align: right; font-weight: 600; white-space: nowrap; }
+.quantity-bar { height: 4px; border-radius: 2px; background: var(--app-surface-muted); margin-top: 4px; width: 64px; margin-left: auto; overflow: hidden; }
+.quantity-bar span { display: block; height: 100%; background: var(--app-primary); border-radius: 2px; }
+.age-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; white-space: nowrap; }
+.age-badge::before { font-size: 10px; }
+.age-badge.is-fresh { background: var(--status-fresh-soft); color: var(--status-fresh); }
+.age-badge.is-fresh::before { content: "●"; }
+.age-badge.is-aging { background: var(--status-aging-soft); color: var(--status-aging); }
+.age-badge.is-aging::before { content: "◐"; }
+.age-badge.is-urgent { background: var(--status-urgent-soft); color: var(--status-urgent); }
+.age-badge.is-urgent::before { content: "▲"; }
+.chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--app-border); background: var(--app-surface); border-radius: 999px; padding: 4px 11px; font-size: 13px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--app-primary-soft); border-color: var(--app-primary); color: var(--app-primary); font-weight: 600; }
+.search-field { display: flex; align-items: center; gap: 8px; background: var(--app-surface-muted); border-radius: 999px; padding: 8px 14px; margin-bottom: 10px; color: var(--app-muted); }
+.search-field input { border: none; background: none; outline: none; flex: 1; min-width: 0; color: var(--app-text); }
+.section-label { font-size: 12px; font-weight: 700; color: var(--app-muted); text-transform: uppercase; letter-spacing: .05em; margin: 14px 2px 6px; }
+.floating-action-button {
+  position: absolute; right: 16px; bottom: 76px; border: none; border-radius: 18px; padding: 14px 18px;
+  background: var(--app-primary); color: var(--app-on-primary); font-weight: 600; box-shadow: var(--shadow); cursor: pointer;
+}
+.primary-button { width: 100%; border: none; border-radius: 999px; padding: 12px; background: var(--app-primary); color: var(--app-on-primary); font-weight: 600; cursor: pointer; }
+.primary-button:disabled { opacity: .45; cursor: default; }
+.secondary-button { width: 100%; border: 1px solid var(--app-border); border-radius: 999px; padding: 10px; background: var(--app-surface); color: var(--app-primary); font-weight: 600; cursor: pointer; }
+.stat-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.stat-tile { background: var(--app-surface); border: 1px solid var(--app-border); border-radius: 14px; padding: 10px; }
+.stat-tile strong { display: block; font-size: 20px; line-height: 1.2; }
+.stat-tile span { font-size: 11.5px; color: var(--app-muted); }
+
+/* ---------- Partial removal sheet ---------- */
+.sheet-backdrop { position: absolute; inset: 0; background: rgba(10, 15, 25, .35); }
+.bottom-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; background: var(--app-surface);
+  border-radius: 24px 24px 0 0; padding: 10px 18px 20px; box-shadow: 0 -8px 24px rgba(0,0,0,.15);
+}
+.sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--app-border); margin: 0 auto 12px; }
+.sheet-product { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+.sheet-product .item-visual { width: 54px; height: 54px; font-size: 30px; }
+.remaining-preview { display: flex; justify-content: space-between; align-items: end; margin: 6px 0 4px; }
+.remaining-preview .amount-taken { font-size: 30px; font-weight: 700; line-height: 1; color: var(--app-primary); }
+.remaining-preview .amount-left { color: var(--app-muted); font-size: 13px; text-align: right; }
+.package-visual { height: 34px; border-radius: 10px; border: 1px solid var(--app-border); overflow: hidden; display: flex; margin: 10px 0; background: var(--app-surface-muted); }
+.package-visual .package-taken { background: var(--app-primary); transition: width .15s; }
+.package-visual .package-left { background: var(--app-primary-soft); transition: width .15s; }
+.package-visual .package-used-before { flex: 1; background: repeating-linear-gradient(135deg, transparent 0 6px, var(--app-border) 6px 8px); }
+input[type="range"] { width: 100%; accent-color: var(--app-primary); margin: 6px 0 10px; }
+.fraction-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+.fraction-buttons button { border: 1px solid var(--app-border); background: var(--app-surface); border-radius: 12px; padding: 8px 0; font-weight: 600; cursor: pointer; }
+.fraction-buttons button:hover { border-color: var(--app-primary); }
+.exact-entry { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; color: var(--app-muted); font-size: 13px; }
+.exact-entry input { width: 90px; border: 1px solid var(--app-border); border-radius: 10px; padding: 6px 8px; background: var(--app-surface); }
+.snackbar {
+  position: absolute; left: 12px; right: 12px; bottom: 76px; background: #222a36; color: #f2f5f9;
+  border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  font-size: 13.5px; box-shadow: var(--shadow);
+}
+#partialSnackbar { top: 44px; bottom: auto; }
+.screen-content.has-floating-button { padding-bottom: 76px; }
+.snackbar button { background: none; border: none; color: #9cc8ff; font-weight: 700; cursor: pointer; }
+
+/* ---------- Scanner ---------- */
+.scanner-screen { background: #0b0f15; color: #f2f5f9; }
+.scanner-viewfinder { position: relative; margin: 8px 18px; height: 250px; border-radius: 18px; overflow: hidden;
+  background: radial-gradient(circle at 40% 40%, #3a4a5e, #141b25 70%); }
+.scanner-viewfinder .fake-package { position: absolute; left: 50%; top: 50%; width: 170px; height: 120px; transform: translate(-50%, -50%) rotate(-4deg);
+  background: linear-gradient(135deg, #3f8f4e, #2c6b39); border-radius: 10px; display: grid; place-items: center; }
+.fake-barcode { width: 110px; height: 52px; background: repeating-linear-gradient(90deg, #111 0 2px, #fff 2px 4px, #111 4px 5px, #fff 5px 8px, #111 8px 11px, #fff 11px 12px); border: 6px solid #fff; border-radius: 3px; }
+.scanner-corners { position: absolute; inset: 30px 40px; border: 3px solid rgba(255,255,255,.9); border-radius: 14px;
+  clip-path: polygon(0 0, 22% 0, 22% 4%, 4% 4%, 4% 22%, 0 22%, 0 78%, 4% 78%, 4% 96%, 22% 96%, 22% 100%, 78% 100%, 78% 96%, 96% 96%, 96% 78%, 100% 78%, 100% 22%, 96% 22%, 96% 4%, 78% 4%, 78% 0, 100% 0, 100% 100%, 0 100%); }
+.scan-line { position: absolute; left: 44px; right: 44px; height: 2px; background: #5fd0ff; box-shadow: 0 0 10px #5fd0ff; animation: scanMove 2.2s ease-in-out infinite alternate; }
+@keyframes scanMove { from { top: 40px; } to { top: 206px; } }
+@media (prefers-reduced-motion: reduce) { .scan-line { animation: none; top: 120px; } }
+.scanner-hint { text-align: center; color: #b9c4d4; font-size: 13px; margin: 4px 18px 10px; }
+.scanner-mode { display: flex; margin: 0 18px 12px; background: #1c2431; border-radius: 999px; padding: 3px; }
+.scanner-mode button { flex: 1; border: none; background: none; color: #c9d3e0; padding: 7px; border-radius: 999px; cursor: pointer; font-weight: 600; }
+.scanner-mode button[aria-pressed="true"] { background: #f2f5f9; color: #0b0f15; }
+.scanner-result { margin: 0 14px; background: var(--app-surface); color: var(--app-text); border-radius: 18px; padding: 14px; }
+.scanner-result p { margin: 0 0 10px; }
+.scanner-result .item-row { padding-top: 0; }
+.simulate-buttons { display: flex; gap: 6px; margin: 0 14px 10px; }
+.simulate-buttons button { flex: 1; border: 1px dashed #5d6b80; background: none; color: #c9d3e0; border-radius: 10px; padding: 6px; font-size: 12px; cursor: pointer; }
+.privacy-note { font-size: 11.5px; color: #8fa0b5; text-align: center; margin: 10px 18px; }
+.product-choice-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.product-choice-list button { display: flex; align-items: center; gap: 10px; border: 1px solid var(--app-border); background: var(--app-surface); border-radius: 12px; padding: 6px 10px; cursor: pointer; text-align: left; }
+.product-choice-list .item-visual { width: 30px; height: 30px; font-size: 17px; border-radius: 8px; }
+
+/* ---------- Add item ---------- */
+.photo-slot { width: 100%; height: 150px; border-radius: 18px; border: 2px dashed var(--app-border); background: var(--app-surface); display: grid; place-items: center; cursor: pointer; color: var(--app-muted); margin-bottom: 6px; position: relative; overflow: hidden; }
+.photo-slot.has-photo { border-style: solid; border-color: transparent; background: linear-gradient(135deg, #f7d9a8, #c97b50); color: #3b2312; font-size: 64px; }
+.photo-slot .photo-caption { position: absolute; bottom: 8px; left: 8px; right: 8px; font-size: 11.5px; background: rgba(255,255,255,.88); color: #24303f; border-radius: 8px; padding: 4px 8px; text-align: center; }
+.form-field { margin-bottom: 12px; }
+.form-field label { display: block; font-size: 12.5px; font-weight: 600; color: var(--app-muted); margin-bottom: 4px; }
+.form-field select, .form-field input { width: 100%; border: 1px solid var(--app-border); border-radius: 12px; padding: 9px 10px; background: var(--app-surface); }
+.inline-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field-hint { font-size: 11.5px; color: var(--app-muted); margin-top: 3px; }
+
+/* ---------- Shopping list ---------- */
+.shopping-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--app-border); }
+.shopping-row:first-of-type { border-top: none; }
+.shopping-row input { width: 20px; height: 20px; accent-color: var(--app-primary); flex: none; }
+.shopping-row.is-checked .item-name { text-decoration: line-through; color: var(--app-muted); }
+.origin-tag { font-size: 11px; color: var(--app-primary); background: var(--app-primary-soft); border-radius: 6px; padding: 0 6px; }
+
+/* ---------- Insights ---------- */
+.chart-wrapper { position: relative; }
+.chart-wrapper svg { width: 100%; height: auto; display: block; }
+.chart-wrapper text { fill: var(--app-muted); font-size: 10px; font-family: inherit; }
+.chart-tooltip { position: absolute; pointer-events: none; background: var(--app-text); color: var(--app-background); font-size: 12px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, -110%); }
+.category-bar { display: grid; grid-template-columns: 92px 1fr 46px; gap: 8px; align-items: center; font-size: 12.5px; margin: 6px 0; }
+.category-bar .track { height: 10px; background: var(--app-surface-muted); border-radius: 5px; overflow: hidden; }
+.category-bar .fill { height: 100%; background: var(--chart-bar); border-radius: 0 4px 4px 0; }
+.category-bar .value { text-align: right; color: var(--app-muted); }
+[hidden] { display: none !important; }
+
+@media (max-width: 760px) {
+  .page-header { padding: 20px 16px 4px; }
+  .page-header h1 { font-size: 25px; }
+  .screen-gallery { padding: 12px 16px 48px; grid-template-columns: minmax(0, 1fr); }
+  .phone-frame { width: 100%; max-width: 340px; }
+}
+
+/* ================= Version 2 additions ================= */
+.chip, .filter-row .chip, .segmented-small button { white-space: nowrap; }
+:root {
+  --category-vegetables: #2a78d6;
+  --category-meat: #eb6834;
+  --category-meals: #1baf7a;
+  --category-fruit: #eda100;
+  --category-bakery: #e87ba4;
+  --category-desserts: #008300;
+  --series-ghost: #9aa3b0;
+  --heat-0: #edf1f6;
+  --heat-1: #cde2fb;
+  --heat-2: #9ec5f4;
+  --heat-3: #6da7ec;
+  --heat-4: #3987e5;
+  --heat-5: #1c5cab;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --category-vegetables: #3987e5;
+    --category-meat: #d95926;
+    --category-meals: #199e70;
+    --category-fruit: #c98500;
+    --category-bakery: #d55181;
+    --category-desserts: #008300;
+    --series-ghost: #5d6879;
+    --heat-0: #222b38;
+    --heat-1: #193457;
+    --heat-2: #184f95;
+    --heat-3: #256abf;
+    --heat-4: #3987e5;
+    --heat-5: #86b6ef;
+  }
+}
+:root[data-theme="dark"] {
+  --category-vegetables: #3987e5;
+  --category-meat: #d95926;
+  --category-meals: #199e70;
+  --category-fruit: #c98500;
+  --category-bakery: #d55181;
+  --category-desserts: #008300;
+  --series-ghost: #5d6879;
+  --heat-0: #222b38;
+  --heat-1: #193457;
+  --heat-2: #184f95;
+  --heat-3: #256abf;
+  --heat-4: #3987e5;
+  --heat-5: #86b6ef;
+}
+.gallery-section-title { grid-column: 1 / -1; margin: 12px 0 -16px; font-size: 22px; border-bottom: 1px solid var(--page-border); padding-bottom: 6px; }
+.gallery-section-title small { display: block; font-size: 14px; font-weight: 400; color: var(--page-muted); }
+.phone-tooltip { position: absolute; z-index: 20; pointer-events: none; background: var(--app-text); color: var(--app-background); font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 8px; max-width: 220px; box-shadow: var(--shadow); }
+[data-tip] { cursor: default; }
+[data-category], [data-drawer-filter], [data-product-filter], [data-weekday] { cursor: pointer; }
+
+/* Config */
+.config-section { background: var(--app-surface); border: 1px solid var(--app-border); border-radius: 16px; margin-bottom: 12px; overflow: hidden; }
+.config-section h4 { margin: 0; padding: 10px 14px 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--app-muted); }
+.config-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--app-border); width: 100%; background: none; border-left: none; border-right: none; border-bottom: none; text-align: left; }
+.config-section h4 + .config-row { border-top: none; }
+button.config-row { cursor: pointer; }
+button.config-row:hover { background: var(--app-surface-muted); }
+.config-row .config-row-text { flex: 1; min-width: 0; }
+.config-row .config-row-detail { color: var(--app-muted); font-size: 12.5px; }
+.config-row .chevron { color: var(--app-muted); }
+.config-row input[type="radio"] { width: 18px; height: 18px; accent-color: var(--app-primary); margin: 0; }
+.toggle-switch { position: relative; width: 44px; height: 26px; border-radius: 13px; background: var(--app-border); border: none; cursor: pointer; flex: none; transition: background .15s; }
+.toggle-switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left .15s; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+.toggle-switch[aria-checked="true"] { background: var(--app-primary); }
+.toggle-switch[aria-checked="true"]::after { left: 21px; }
+.segmented-small { display: flex; background: var(--app-surface-muted); border-radius: 999px; padding: 3px; gap: 2px; }
+.segmented-small button { flex: 1; border: none; background: none; border-radius: 999px; padding: 5px 8px; font-size: 12.5px; cursor: pointer; color: var(--app-muted); white-space: nowrap; }
+.segmented-small button[aria-pressed="true"] { background: var(--app-surface); color: var(--app-text); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+/* Freezer layout editor */
+.drawer-editor-row { display: flex; align-items: center; gap: 4px; padding: 8px 10px; border-top: 1px solid var(--app-border); }
+.drawer-editor-row:first-child { border-top: none; }
+.color-tag-button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--app-surface); box-shadow: 0 0 0 1px var(--app-border); cursor: pointer; flex: none; }
+.drawer-name-field { flex: 1; min-width: 0; }
+.drawer-name-field input { width: 100%; border: 1px solid transparent; background: none; border-radius: 8px; padding: 5px 6px; font-weight: 600; font-size: 14px; text-overflow: ellipsis; }
+.drawer-name-field input:hover, .drawer-name-field input:focus { border-color: var(--app-border); background: var(--app-surface-muted); outline: none; }
+.drawer-name-field .item-detail { padding-left: 7px; }
+.drawer-name-field .field-error { color: var(--status-urgent); font-size: 11.5px; padding-left: 7px; }
+.icon-button { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--app-border); background: var(--app-surface); cursor: pointer; flex: none; display: grid; place-items: center; font-size: 13px; color: var(--app-muted); }
+.drawer-editor-row .icon-button { width: 26px; height: 26px; border-radius: 8px; }
+.icon-button:hover:not(:disabled) { color: var(--app-text); border-color: var(--app-muted); }
+.icon-button:disabled { opacity: .35; cursor: default; }
+.icon-button.is-danger:hover:not(:disabled) { color: var(--status-urgent); border-color: var(--status-urgent); }
+.dialog-backdrop { position: absolute; inset: 0; background: rgba(10, 15, 25, .45); display: grid; place-items: center; padding: 20px; z-index: 10; }
+.dialog-card { background: var(--app-surface); border-radius: 22px; padding: 18px; width: 100%; box-shadow: var(--shadow); }
+.dialog-card h4 { margin: 0 0 8px; font-size: 17px; }
+.dialog-card p { margin: 0 0 12px; color: var(--app-muted); font-size: 13.5px; }
+.dialog-card select { width: 100%; border: 1px solid var(--app-border); border-radius: 12px; padding: 9px 10px; background: var(--app-surface); margin-bottom: 14px; }
+.dialog-actions { display: flex; flex-direction: column-reverse; gap: 8px; }
+.dialog-actions button { width: 100%; }
+
+/* Statistics */
+.filter-row { position: sticky; top: 0; z-index: 2; background: var(--app-background); padding: 2px 0 8px; display: flex; flex-direction: column; gap: 6px; }
+.filter-row .chip-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.chip.is-filter-button { background: var(--app-primary); color: var(--app-on-primary); border-color: var(--app-primary); font-weight: 600; }
+.chip.is-removable::after { content: " ×"; font-weight: 700; }
+.chip .chip-swatch, .legend-swatch { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: 0; }
+.chip.is-off { opacity: .45; }
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.kpi-tile { background: var(--app-surface); border: 1px solid var(--app-border); border-radius: 14px; padding: 9px 10px 6px; }
+.kpi-tile .kpi-label { font-size: 11.5px; color: var(--app-muted); }
+.kpi-tile .kpi-value { font-size: 19px; font-weight: 700; line-height: 1.25; }
+.kpi-tile .kpi-delta { font-size: 11.5px; color: var(--app-muted); }
+.kpi-tile svg { display: block; width: 100%; height: 22px; margin-top: 2px; }
+.chart-card { background: var(--app-surface); border: 1px solid var(--app-border); border-radius: 16px; padding: 11px 12px 10px; margin-bottom: 12px; }
+.chart-card-header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.chart-card-header h4 { margin: 0; font-size: 14.5px; }
+.chart-card-subtitle { font-size: 11.5px; color: var(--app-muted); margin-bottom: 6px; }
+.table-toggle { border: none; background: none; color: var(--app-primary); font-size: 12px; cursor: pointer; padding: 0; white-space: nowrap; }
+.chart-card svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart-card svg text { fill: var(--app-muted); font-size: 9.5px; font-family: inherit; }
+.chart-card svg text.label-strong { fill: var(--app-text); font-weight: 600; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--app-text); margin-top: 6px; }
+.chart-legend button { border: none; background: none; padding: 0; font-size: 11.5px; cursor: pointer; color: var(--app-text); }
+.chart-legend .is-off { opacity: .4; text-decoration: line-through; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-top: 4px; }
+.data-table th, .data-table td { text-align: left; padding: 3px 4px; border-bottom: 1px solid var(--app-border); }
+.data-table td:not(:first-child), .data-table th:not(:first-child) { text-align: right; }
+.hover-column .hover-line { opacity: 0; }
+.hover-column:hover .hover-line { opacity: 1; }
+.brush-rectangle { fill: var(--app-primary); fill-opacity: .15; stroke: var(--app-primary); stroke-width: 1; }
+.donut-layout { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center; }
+.donut-legend-row { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 3px 4px; border-radius: 6px; cursor: pointer; }
+.donut-legend-row:hover { background: var(--app-surface-muted); }
+.donut-legend-row .value { margin-left: auto; color: var(--app-muted); }
+.freezer-map-drawer { border: 1px solid var(--app-border); border-radius: 12px; padding: 7px 9px; margin-bottom: 6px; cursor: pointer; }
+.freezer-map-drawer[aria-pressed="true"] { border-color: var(--app-primary); background: var(--app-primary-soft); }
+.freezer-map-drawer .drawer-title { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+.freezer-map-drawer .drawer-title span:last-child { font-weight: 400; color: var(--app-muted); }
+.freezer-map-items { display: flex; flex-wrap: wrap; gap: 3px; }
+.freezer-map-item { width: 22px; height: 22px; border-radius: 5px; display: grid; place-items: center; font-size: 10px; font-weight: 700; }
+.freezer-map-item.is-fresh { background: var(--status-fresh-soft); color: var(--status-fresh); }
+.freezer-map-item.is-aging { background: var(--status-aging-soft); color: var(--status-aging); }
+.freezer-map-item.is-urgent { background: var(--status-urgent-soft); color: var(--status-urgent); }
+.ranking-row { display: grid; grid-template-columns: 96px 1fr 54px; gap: 6px; align-items: center; font-size: 12px; padding: 3px 0; cursor: pointer; }
+.ranking-row .track { height: 12px; border-radius: 0 4px 4px 0; background: var(--app-surface-muted); overflow: hidden; }
+.ranking-row .fill { height: 100%; background: var(--chart-bar); border-radius: 0 4px 4px 0; }
+.ranking-row.is-selected .fill { background: var(--category-meat); }
+.ranking-row .value { text-align: right; color: var(--app-muted); }
+.ranking-row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.forecast-row { display: grid; grid-template-columns: 22px 1fr 70px; gap: 8px; align-items: center; font-size: 12px; padding: 4px 0; }
+.forecast-row .track { height: 6px; background: var(--app-surface-muted); border-radius: 3px; overflow: hidden; margin-top: 3px; }
+.forecast-row .fill { height: 100%; border-radius: 3px; background: var(--chart-bar); }
+.forecast-row .fill.is-soon { background: var(--status-urgent); }
+.forecast-row .value { text-align: right; font-weight: 600; }
+.filter-sheet-section { margin-bottom: 14px; }
+.filter-sheet-section > label, .filter-sheet-section > .filter-sheet-label { display: block; font-size: 12px; font-weight: 700; color: var(--app-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.date-range-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.date-range-fields input { width: 100%; border: 1px solid var(--app-border); border-radius: 10px; padding: 6px 7px; background: var(--app-surface); font-size: 12.5px; }
+.filter-hint { font-size: 11.5px; color: var(--app-muted); margin-top: 4px; }
+.empty-chart { font-size: 12.5px; color: var(--app-muted); padding: 16px 4px; text-align: center; }
+.module-off-notice { margin: 0 14px; background: #1c2431; color: #c9d3e0; border-radius: 14px; padding: 12px; font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+<header class="page-header">
+  <h1>Freezer App: UI Examples (v2)</h1>
+  <p>Eleven interactive screen suggestions sharing one in-memory freezer and two years of generated history. Version 2 adds the <strong>Config tab</strong> (language, appearance, optional features), the <strong>freezer layout editor</strong> (add, rename, reorder and remove drawers) and a much richer <strong>Insights</strong> area with a shared filter, cross-filtering and twelve chart types.</p>
+  <p>The app language is now chosen inside the app, in the Config screen (phone 10), just as users will do it. Dates, numbers and relative ages follow the chosen language through the browser's <code>Intl</code> formatters. The notes under each phone stay in English.</p>
+  <div class="page-controls">
+    <div class="segmented-control" role="group" aria-label="Theme">
+      <button type="button" data-theme-choice="light">Light</button>
+      <button type="button" data-theme-choice="dark">Dark</button>
+    </div>
+  </div>
+</header>
+
+<main class="screen-gallery">
+  <h2 class="gallery-section-title">Everyday use<small>Home, freezer contents, taking food out, scanning, adding, shopping</small></h2>
+
+  <!-- 1 Home -->
+  <article class="screen-example" id="exampleHome">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="homeGreeting"></h3><div class="app-bar-subtitle" id="homeSubtitle"></div></div>
+      <div class="screen-content has-floating-button">
+        <div class="app-card"><h4><span data-text="eatSoonTitle"></span><small data-text="seeAll"></small></h4><div id="homeEatSoonList"></div></div>
+        <div class="app-card"><h4><span data-text="runningLowTitle"></span><small data-text="shoppingListLink"></small></h4><div class="chip-row" id="homeRunningLowChips"></div></div>
+        <div class="stat-tiles" id="homeStatTiles"></div>
+      </div>
+      <button class="floating-action-button" type="button" id="homeFloatingButton"></button>
+      <nav class="bottom-navigation" data-current="home"></nav>
+    </div></div>
+    <h2>1 · Home dashboard</h2>
+    <ul>
+      <li>Answers "what should I eat first?" before anything else; cards are module contributions (reminders, restock, statistics).</li>
+      <li>Age uses colour <em>and</em> an icon and a word, so it never relies on colour alone.</li>
+      <li>The add button offers "Scan" only while barcode scanning is switched on in Config.</li>
+    </ul>
+  </article>
+
+  <!-- 2 Inventory -->
+  <article class="screen-example" id="exampleInventory">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="inventoryTitle"></h3><div class="app-bar-subtitle" id="inventorySubtitle"></div></div>
+      <div class="screen-content">
+        <div class="search-field"><span>⌕</span><input type="search" id="inventorySearchInput" data-placeholder="searchPlaceholder" aria-label="Search"></div>
+        <div class="chip-row" id="inventorySortChips"></div>
+        <div id="inventoryList"></div>
+      </div>
+      <nav class="bottom-navigation" data-current="freezer"></nav>
+    </div></div>
+    <h2>2 · Freezer contents</h2>
+    <ul>
+      <li>Grouped by the drawers defined in the freezer layout editor (phone 11), in the user's order and with the user's names.</li>
+      <li>Photos appear while item pictures are on; otherwise the category icon.</li>
+      <li>The thin bar shows how much of a package is left. Tap a row to take some.</li>
+    </ul>
+  </article>
+
+  <!-- 3 Partial removal -->
+  <article class="screen-example" id="examplePartialRemoval">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="inventoryTitle"></h3></div>
+      <div class="screen-content" id="partialBackgroundList"></div>
+      <div class="sheet-backdrop"></div>
+      <div class="bottom-sheet" id="partialRemovalSheet"></div>
+      <div class="snackbar" id="partialSnackbar" hidden><span id="partialSnackbarText"></span><button type="button" id="partialUndoButton" data-text="undo"></button></div>
+    </div></div>
+    <h2>3 · Partial removal</h2>
+    <ul>
+      <li>Quick fractions for estimates, a slider that snaps to 50 g, and exact entry for people who weigh.</li>
+      <li>The bar shows what you take, what stays, and what was used earlier (hatched).</li>
+      <li>Undo appends a compensating movement; the freezing date never changes.</li>
+    </ul>
+  </article>
+
+  <!-- 4 Scanner -->
+  <article class="screen-example" id="exampleScanner">
+    <div class="phone-frame"><div class="phone-screen scanner-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="scanner-mode" role="group" aria-label="Scan mode">
+        <button type="button" data-scan-mode="add" data-text="scanModeAdd"></button>
+        <button type="button" data-scan-mode="remove" data-text="scanModeRemove"></button>
+      </div>
+      <div class="scanner-viewfinder"><div class="fake-package"><div class="fake-barcode"></div></div><div class="scanner-corners"></div><div class="scan-line"></div></div>
+      <div class="scanner-hint" data-text="scannerHint"></div>
+      <div class="simulate-buttons">
+        <button type="button" id="simulateKnownScanButton" data-text="simulateKnown"></button>
+        <button type="button" id="simulateUnknownScanButton" data-text="simulateUnknown"></button>
+      </div>
+      <div class="module-off-notice" id="scannerOffNotice" hidden></div>
+      <div class="scanner-result" id="scannerResult" hidden></div>
+      <div class="privacy-note" data-text="scannerPrivacy"></div>
+    </div></div>
+    <h2>4 · Barcode scanning (optional)</h2>
+    <ul>
+      <li>One screen with an Add / Remove switch instead of two separate flows.</li>
+      <li>"Remove" suggests the oldest bag of that product and hands over to the partial-removal sheet.</li>
+      <li>Switch the feature off in Config (phone 10) to see how an optional module disappears.</li>
+    </ul>
+  </article>
+
+  <!-- 5 Add item -->
+  <article class="screen-example" id="exampleAddItem">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="addTitle"></h3></div>
+      <div class="screen-content">
+        <div id="photoSlotArea">
+          <button type="button" class="photo-slot" id="photoSlotButton"></button>
+          <div class="field-hint" style="margin-bottom:12px" data-text="photoOptional"></div>
+        </div>
+        <div class="form-field"><label for="addProductSelect" data-text="productLabel"></label><select id="addProductSelect"></select></div>
+        <div class="inline-fields">
+          <div class="form-field"><label for="addQuantityInput" data-text="quantityLabel"></label><input id="addQuantityInput" type="number" min="1"><div class="field-hint" id="addQuantityHint"></div></div>
+          <div class="form-field"><label for="addFrozenOnInput" data-text="frozenOnLabel"></label><input id="addFrozenOnInput" type="date" value="2026-10-02"></div>
+        </div>
+        <div class="form-field"><label data-text="compartmentLabel"></label><div class="chip-row" id="addCompartmentChips"></div></div>
+        <button type="button" class="primary-button" id="addSaveButton" data-text="saveButton"></button>
+      </div>
+    </div></div>
+    <h2>5 · Add an item, with a photo</h2>
+    <ul>
+      <li>Product, amount and drawer are pre-filled from the last time; most adds are one tap on Save.</li>
+      <li>Drawer chips come from the freezer layout, so a new or renamed drawer shows up here at once.</li>
+      <li>The photo slot disappears when item pictures are switched off.</li>
+    </ul>
+  </article>
+
+  <!-- 6 Shopping list -->
+  <article class="screen-example" id="exampleShopping">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="shoppingTitle"></h3><div class="app-bar-subtitle" data-text="shoppingSubtitle"></div></div>
+      <div class="screen-content">
+        <div class="app-card" id="shoppingListCard"></div>
+        <button type="button" class="primary-button" id="shoppingAddBoughtButton"></button>
+      </div>
+      <nav class="bottom-navigation" data-current="shopping"></nav>
+    </div></div>
+    <h2>6 · Shopping list from restock rules</h2>
+    <ul>
+      <li>Entries marked "Running low" come from restock rules and update live as stock changes.</li>
+      <li>Ticked items go into the freezer in one step, closing the loop without retyping.</li>
+    </ul>
+  </article>
+
+  <h2 class="gallery-section-title">Insights<small>One shared filter drives every chart. Tap a bar, slice, drawer or product to narrow it; drag across the trend chart to pick a time range.</small></h2>
+
+  <!-- 7 Insights overview -->
+  <article class="screen-example" id="exampleInsightsOverview">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="insightsTitle"></h3><div class="app-bar-subtitle" id="insightsPeriodSubtitle"></div></div>
+      <div class="screen-content">
+        <div class="filter-row" id="insightsFilterRow"></div>
+        <div class="kpi-grid" id="kpiGrid"></div>
+        <div class="chart-card" id="trendChartCard"></div>
+        <div class="chart-card" id="stackedChartCard"></div>
+        <div class="chart-card" id="donutChartCard"></div>
+      </div>
+      <nav class="bottom-navigation" data-current="insights"></nav>
+    </div></div>
+    <h2>7 · Insights overview</h2>
+    <ul>
+      <li>The filter row stays pinned: period presets, a "Filters" button with a count, and removable chips for everything active.</li>
+      <li>KPI tiles show the change against the comparison period and a sparkline.</li>
+      <li>Trend: eaten vs added, a dashed line for the comparison period, crosshair on hover, drag to zoom into a range.</li>
+      <li>Tap a stacked segment, a donut slice or a legend entry to filter by category. Each category keeps its colour everywhere.</li>
+    </ul>
+  </article>
+
+  <!-- 8 Filter sheet -->
+  <article class="screen-example" id="exampleFilterSheet">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="filtersTitle"></h3><div class="app-bar-subtitle" data-text="filtersSubtitle"></div></div>
+      <div class="screen-content" id="filterSheetContent"></div>
+    </div></div>
+    <h2>8 · All filters</h2>
+    <ul>
+      <li>Every dimension in one sheet: period with custom dates, comparison, granularity, measure, activity, categories, drawers and products.</li>
+      <li>Changes apply live to phones 7 and 9; saved views restore a whole combination with one tap.</li>
+      <li>The measure never mixes units, and says how many products it leaves out.</li>
+    </ul>
+  </article>
+
+  <!-- 9 Insights deep dive -->
+  <article class="screen-example" id="exampleInsightsDeepDive">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="deepDiveTitle"></h3><div class="app-bar-subtitle" id="deepDiveSubtitle"></div></div>
+      <div class="screen-content">
+        <div class="chart-card" id="calendarChartCard"></div>
+        <div class="chart-card" id="weekdayChartCard"></div>
+        <div class="chart-card" id="durationChartCard"></div>
+        <div class="chart-card" id="freezerMapCard"></div>
+        <div class="chart-card" id="topProductsCard"></div>
+        <div class="chart-card" id="wasteReasonCard"></div>
+        <div class="chart-card" id="forecastCard"></div>
+      </div>
+      <nav class="bottom-navigation" data-current="insights"></nav>
+    </div></div>
+    <h2>9 · Insights deep dive</h2>
+    <ul>
+      <li>Calendar heatmap and weekday pattern show <em>when</em> the freezer is used; tap a weekday to filter.</li>
+      <li>Storage duration histogram shows how long food waits; the freezer map shows where old items sit (tap a drawer to filter).</li>
+      <li>Top products (tap to filter), waste by reason, and a "runs out in" forecast contributed by the restock module.</li>
+      <li>Every chart has a "Table" switch for exact values and screen readers.</li>
+    </ul>
+  </article>
+
+  <h2 class="gallery-section-title">Config tab<small>Language selection, appearance, optional features and the freezer layout editor</small></h2>
+
+  <!-- 10 Config -->
+  <article class="screen-example" id="exampleConfig">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="configTitle"></h3></div>
+      <div class="screen-content" id="configContent"></div>
+      <nav class="bottom-navigation" data-current="config"></nav>
+    </div></div>
+    <h2>10 · Config tab</h2>
+    <ul>
+      <li>Language comes first. Each language is written in its own language, so it can be found even when the app is in a language you cannot read.</li>
+      <li>"System language" follows the phone; a choice applies instantly to every screen on this page.</li>
+      <li>Optional features switch modules on and off; try barcode scanning and item pictures.</li>
+    </ul>
+  </article>
+
+  <!-- 11 Freezer layout -->
+  <article class="screen-example" id="exampleFreezerLayout">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3 data-text="layoutTitle"></h3><div class="app-bar-subtitle" data-text="layoutSubtitle"></div></div>
+      <div class="screen-content" id="freezerLayoutContent"></div>
+      <div id="freezerLayoutDialog"></div>
+    </div></div>
+    <h2>11 · Freezer layout editor</h2>
+    <ul>
+      <li>Rename a drawer by typing over its name; names must be unique. Clear the name to go back to the translated default.</li>
+      <li>Reorder with the arrows, tap the dot to change the colour tag, add a drawer at the bottom.</li>
+      <li>Removing a drawer that holds food asks where the food should go, then archives the drawer so statistics keep its history.</li>
+    </ul>
+  </article>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================= Localization ================= */
+  const translations = {
+    en: {
+      homeGreeting: "Good morning", eatSoonTitle: "Eat soon", seeAll: "See all", runningLowTitle: "Running low",
+      shoppingListLink: "Shopping list", addButton: "＋ Add", addOrScanButton: "＋ Add · Scan", inventoryTitle: "My freezer", searchPlaceholder: "Search products",
+      sortByDrawer: "By drawer", sortByAge: "Oldest first", undo: "Undo",
+      scanModeAdd: "Add", scanModeRemove: "Remove", scannerHint: "Hold the barcode inside the frame",
+      simulateKnown: "Simulate: spinach", simulateUnknown: "Simulate: unknown code",
+      scannerPrivacy: "Scanned on this phone. Nothing is sent anywhere.", scannerOff: "Barcode scanning is switched off. Turn it on in Config → Optional features.",
+      addTitle: "Add to freezer", photoOptional: "Optional. Location data is removed from photos.",
+      productLabel: "Product", quantityLabel: "Amount", frozenOnLabel: "Frozen on", compartmentLabel: "Drawer", saveButton: "Save",
+      shoppingTitle: "Shopping list", shoppingSubtitle: "Running-low items are added automatically",
+      navHome: "Home", navFreezer: "Freezer", navShopping: "List", navInsights: "Insights", navConfig: "Config",
+      ageFresh: "Fresh", ageAging: "Use soon", ageUrgent: "Eat now",
+      frozenAgo: "frozen {age}", itemsInFreezer: "{count} items in {drawers} drawers",
+      eatSoonEmpty: "Nothing urgent. Well done!", runningLowEmpty: "Everything is stocked.",
+      statItems: "items", statOld: "need eating", statLow: "running low",
+      drawer: "Drawer {number}", removedSuffix: "{name} (removed)", ofInitial: "of {initial}",
+      takeTitle: "How much are you taking?", leftAfter: "{amount} stays in the freezer", exactAmount: "Exact amount", all: "All",
+      useAmount: "Take {amount}", usedSnackbar: "Took {amount} of {product}", allTaken: "Bag is used up",
+      scannedKnownAdd: "Recognised", addToDrawer: "Add {amount} to {drawer}",
+      scannedKnownRemove: "{count} bags in the freezer. Take from the oldest?", chooseAmount: "Choose amount",
+      unknownCode: "New code {code}. Which product is this?", createProduct: "＋ Create new product", linkedCode: "Learned. Next time this code is recognised instantly.",
+      notInFreezer: "None of this product is in the freezer.",
+      photoTap: "📷  Take or choose a photo", photoTaken: "Photo added · location data removed", quantityHint: "Package: {amount}",
+      origin: "Running low", manual: "Added by you", addBought: "Put {count} ticked items in the freezer", nothingTicked: "Tick what you bought",
+      categories: { vegetables: "Vegetables", meat: "Meat & fish", meals: "Meals", fruit: "Fruit", bakery: "Bakery", desserts: "Desserts" },
+      pieces: "{count} pcs", portions: "{count} portions", times: "{count}×",
+      /* Insights */
+      insightsTitle: "Insights", deepDiveTitle: "Insights · details", filtersTitle: "Filters", filtersSubtitle: "Applies to every chart",
+      period30: "30 days", period90: "3 months", period365: "12 months", periodYear: "This year", periodAll: "2 years", periodCustom: "Custom",
+      filtersButton: "Filters · {count}", resetFilters: "Reset",
+      kpiEaten: "Eaten", kpiAdded: "Added", kpiWasted: "Thrown away", kpiStored: "Avg. days stored",
+      sixMonthMarker: "6 mo", deltaUp: "▲ {value} vs before", deltaDown: "▼ {value} vs before", deltaSame: "= same as before", deltaNone: "no comparison",
+      trendTitle: "Eaten vs added", trendSubtitle: "Dashed: eaten in the comparison period · drag to zoom", seriesEaten: "Eaten", seriesAdded: "Added", seriesCompare: "Before",
+      stackedTitle: "{activity} by category", donutTitle: "Category share", total: "Total",
+      calendarTitle: "Freezer days", calendarSubtitle: "Number of {activity} per day", weekdayTitle: "By weekday",
+      durationTitle: "Time in freezer before eaten", durationSubtitle: "Number of items eaten, by storage time",
+      freezerMapTitle: "Freezer map", freezerMapSubtitle: "Current contents by drawer, coloured by age. Tap to filter.",
+      topProductsTitle: "Top products", wasteTitle: "Thrown away, by reason", wasteSubtitle: "Number of items",
+      forecastTitle: "Runs out in", forecastSubtitle: "From the last 60 days of eating", forecastDays: "≈ {count} days", forecastNever: "no recent use",
+      table: "Table", chart: "Chart", noData: "Nothing matches these filters.",
+      activity_consumed: "Eaten", activity_added: "Added", activity_discarded: "Thrown away",
+      activityLower_consumed: "items eaten", activityLower_added: "items added", activityLower_discarded: "items thrown away",
+      filterPeriod: "Period", filterFrom: "From", filterTo: "To", filterCompare: "Compare with", compareOff: "Off", comparePrevious: "Previous period", compareLastYear: "Last year",
+      filterGranularity: "Group by", granularityAuto: "Auto", granularityDay: "Day", granularityWeek: "Week", granularityMonth: "Month",
+      filterMeasure: "Measure", measureWeight: "Weight", measureVolume: "Volume", measurePieces: "Pieces", measureCount: "Count",
+      measureHiddenHint: "{count} products use other units and are left out.", measureAllHint: "Counts every item, whatever its unit.",
+      filterActivity: "Activity", filterCategories: "Categories", filterDrawers: "Drawers", filterProducts: "Products", filterWeekdays: "Weekdays",
+      filterSavedViews: "Saved views", viewWeekendCooking: "Weekend meals", viewWasteCheck: "Waste check", viewFruitSeason: "Fruit season",
+      productSearch: "Search products", periodLabel: "{from} – {to}",
+      reasonTooOld: "Stored too long", reasonFreezerBurn: "Freezer burn", reasonUnwanted: "Nobody wanted it", reasonOther: "Other",
+      durationBuckets: ["< 1 mo", "1–3 mo", "3–6 mo", "6–9 mo", "9–12 mo", "> 12 mo"],
+      /* Config */
+      configTitle: "Config", configLanguage: "Language", systemLanguage: "System language", systemLanguageDetail: "Phone is set to English",
+      configAppearance: "Appearance", themeSystem: "System", themeLight: "Light", themeDark: "Dark",
+      configFreezer: "Freezer", freezerLayoutRow: "Freezer layout", freezerLayoutDetail: "{count} drawers",
+      configOptional: "Optional features", barcodeFeature: "Barcode scanning", barcodeFeatureDetail: "Uses the camera, on this phone only",
+      picturesFeature: "Item pictures", picturesFeatureDetail: "Photos of products and leftovers",
+      configMore: "More", remindersRow: "Reminders", remindersDetail: "Daily at 18:00", backupRow: "Backup and export", backupDetail: "Last backup 12 Sep 2026",
+      aboutRow: "About and privacy", aboutDetail: "Your data never leaves this phone",
+      layoutTitle: "Freezer layout", layoutSubtitle: "Kitchen freezer · upright", addDrawer: "＋ Add drawer", drawerItems: "{count} items",
+      moveUp: "Move up", moveDown: "Move down", removeDrawer: "Remove drawer", changeColor: "Change colour",
+      nameTaken: "Another drawer already has this name.", nameTooLong: "At most 30 characters.",
+      removeDialogTitle: "Remove {name}?", removeDialogText: "It holds {count} items. Where should they go?", moveAndRemove: "Move and remove", cancel: "Cancel",
+      removedDrawers: "Removed drawers (kept for history): {names}", lastDrawerHint: "A freezer needs at least one drawer.",
+      layoutHint: "Untouched names follow the app language. Names you type stay as you wrote them."
+    },
+    de: {
+      homeGreeting: "Guten Morgen", eatSoonTitle: "Bald essen", seeAll: "Alle", runningLowTitle: "Wird knapp",
+      shoppingListLink: "Einkaufsliste", addButton: "＋ Hinzufügen", addOrScanButton: "＋ Hinzufügen · Scannen", inventoryTitle: "Mein Gefrierschrank", searchPlaceholder: "Produkte suchen",
+      sortByDrawer: "Nach Schublade", sortByAge: "Älteste zuerst", undo: "Rückgängig",
+      scanModeAdd: "Einlagern", scanModeRemove: "Entnehmen", scannerHint: "Barcode in den Rahmen halten",
+      simulateKnown: "Simulieren: Spinat", simulateUnknown: "Simulieren: unbekannter Code",
+      scannerPrivacy: "Wird auf diesem Telefon erkannt. Nichts wird gesendet.", scannerOff: "Barcode-Scan ist ausgeschaltet. Einschalten unter Konfiguration → Optionale Funktionen.",
+      addTitle: "Einfrieren", photoOptional: "Optional. Standortdaten werden aus Fotos entfernt.",
+      productLabel: "Produkt", quantityLabel: "Menge", frozenOnLabel: "Eingefroren am", compartmentLabel: "Schublade", saveButton: "Speichern",
+      shoppingTitle: "Einkaufsliste", shoppingSubtitle: "Knappe Produkte werden automatisch ergänzt",
+      navHome: "Start", navFreezer: "Gefrierfach", navShopping: "Liste", navInsights: "Auswertung", navConfig: "Konfig.",
+      ageFresh: "Frisch", ageAging: "Bald verbrauchen", ageUrgent: "Jetzt essen",
+      frozenAgo: "eingefroren {age}", itemsInFreezer: "{count} Produkte in {drawers} Schubladen",
+      eatSoonEmpty: "Nichts Dringendes. Gut gemacht!", runningLowEmpty: "Alles ist vorrätig.",
+      statItems: "Produkte", statOld: "bald essen", statLow: "knapp",
+      drawer: "Schublade {number}", removedSuffix: "{name} (entfernt)", ofInitial: "von {initial}",
+      takeTitle: "Wie viel nimmst du?", leftAfter: "{amount} bleiben im Gefrierfach", exactAmount: "Genaue Menge", all: "Alles",
+      useAmount: "{amount} entnehmen", usedSnackbar: "{amount} {product} entnommen", allTaken: "Packung ist aufgebraucht",
+      scannedKnownAdd: "Erkannt", addToDrawer: "{amount} in {drawer} legen",
+      scannedKnownRemove: "{count} Packungen eingefroren. Von der ältesten nehmen?", chooseAmount: "Menge wählen",
+      unknownCode: "Neuer Code {code}. Welches Produkt ist das?", createProduct: "＋ Neues Produkt anlegen", linkedCode: "Gelernt. Beim nächsten Mal wird der Code sofort erkannt.",
+      notInFreezer: "Dieses Produkt ist nicht eingefroren.",
+      photoTap: "📷  Foto aufnehmen oder auswählen", photoTaken: "Foto hinzugefügt · Standortdaten entfernt", quantityHint: "Packung: {amount}",
+      origin: "Wird knapp", manual: "Von dir", addBought: "{count} abgehakte Produkte einfrieren", nothingTicked: "Hake ab, was du gekauft hast",
+      categories: { vegetables: "Gemüse", meat: "Fleisch & Fisch", meals: "Gerichte", fruit: "Obst", bakery: "Backwaren", desserts: "Desserts" },
+      pieces: "{count} Stück", portions: "{count} Portionen", times: "{count}×",
+      insightsTitle: "Auswertung", deepDiveTitle: "Auswertung · Details", filtersTitle: "Filter", filtersSubtitle: "Gilt für alle Diagramme",
+      period30: "30 Tage", period90: "3 Monate", period365: "12 Monate", periodYear: "Dieses Jahr", periodAll: "2 Jahre", periodCustom: "Eigener",
+      filtersButton: "Filter · {count}", resetFilters: "Zurücksetzen",
+      kpiEaten: "Gegessen", kpiAdded: "Eingelagert", kpiWasted: "Weggeworfen", kpiStored: "Ø Tage gelagert",
+      sixMonthMarker: "6 Mon.", deltaUp: "▲ {value} ggü. vorher", deltaDown: "▼ {value} ggü. vorher", deltaSame: "= wie vorher", deltaNone: "kein Vergleich",
+      trendTitle: "Gegessen vs. eingelagert", trendSubtitle: "Gestrichelt: gegessen im Vergleichszeitraum · ziehen zum Zoomen", seriesEaten: "Gegessen", seriesAdded: "Eingelagert", seriesCompare: "Vorher",
+      stackedTitle: "{activity} nach Kategorie", donutTitle: "Anteil der Kategorien", total: "Gesamt",
+      calendarTitle: "Gefrierfach-Tage", calendarSubtitle: "Anzahl {activity} pro Tag", weekdayTitle: "Nach Wochentag",
+      durationTitle: "Zeit im Gefrierfach vor dem Essen", durationSubtitle: "Anzahl gegessener Produkte nach Lagerdauer",
+      freezerMapTitle: "Gefrierfach-Karte", freezerMapSubtitle: "Aktueller Inhalt je Schublade, nach Alter gefärbt. Tippen zum Filtern.",
+      topProductsTitle: "Top-Produkte", wasteTitle: "Weggeworfen, nach Grund", wasteSubtitle: "Anzahl Produkte",
+      forecastTitle: "Reicht noch", forecastSubtitle: "Aus den letzten 60 Tagen", forecastDays: "≈ {count} Tage", forecastNever: "zuletzt nicht genutzt",
+      table: "Tabelle", chart: "Diagramm", noData: "Nichts passt zu diesen Filtern.",
+      activity_consumed: "Gegessen", activity_added: "Eingelagert", activity_discarded: "Weggeworfen",
+      activityLower_consumed: "gegessener Produkte", activityLower_added: "eingelagerter Produkte", activityLower_discarded: "weggeworfener Produkte",
+      filterPeriod: "Zeitraum", filterFrom: "Von", filterTo: "Bis", filterCompare: "Vergleichen mit", compareOff: "Aus", comparePrevious: "Vorheriger Zeitraum", compareLastYear: "Vorjahr",
+      filterGranularity: "Gruppieren nach", granularityAuto: "Auto", granularityDay: "Tag", granularityWeek: "Woche", granularityMonth: "Monat",
+      filterMeasure: "Maß", measureWeight: "Gewicht", measureVolume: "Volumen", measurePieces: "Stück", measureCount: "Anzahl",
+      measureHiddenHint: "{count} Produkte haben andere Einheiten und fehlen.", measureAllHint: "Zählt jedes Produkt, egal welche Einheit.",
+      filterActivity: "Aktivität", filterCategories: "Kategorien", filterDrawers: "Schubladen", filterProducts: "Produkte", filterWeekdays: "Wochentage",
+      filterSavedViews: "Gespeicherte Ansichten", viewWeekendCooking: "Wochenend-Essen", viewWasteCheck: "Verschwendung", viewFruitSeason: "Obstsaison",
+      productSearch: "Produkte suchen", periodLabel: "{from} – {to}",
+      reasonTooOld: "Zu lange gelagert", reasonFreezerBurn: "Gefrierbrand", reasonUnwanted: "Wollte keiner", reasonOther: "Anderes",
+      durationBuckets: ["< 1 Mon.", "1–3 Mon.", "3–6 Mon.", "6–9 Mon.", "9–12 Mon.", "> 12 Mon."],
+      configTitle: "Konfiguration", configLanguage: "Sprache", systemLanguage: "Systemsprache", systemLanguageDetail: "Telefon ist auf Englisch eingestellt",
+      configAppearance: "Darstellung", themeSystem: "System", themeLight: "Hell", themeDark: "Dunkel",
+      configFreezer: "Gefrierschrank", freezerLayoutRow: "Aufteilung", freezerLayoutDetail: "{count} Schubladen",
+      configOptional: "Optionale Funktionen", barcodeFeature: "Barcode-Scan", barcodeFeatureDetail: "Nutzt die Kamera, nur auf diesem Telefon",
+      picturesFeature: "Fotos", picturesFeatureDetail: "Fotos von Produkten und Resten",
+      configMore: "Mehr", remindersRow: "Erinnerungen", remindersDetail: "Täglich um 18:00", backupRow: "Sicherung und Export", backupDetail: "Letzte Sicherung 12. Sept. 2026",
+      aboutRow: "Über und Datenschutz", aboutDetail: "Deine Daten verlassen nie dieses Telefon",
+      layoutTitle: "Aufteilung", layoutSubtitle: "Küchen-Gefrierschrank · stehend", addDrawer: "＋ Schublade hinzufügen", drawerItems: "{count} Produkte",
+      moveUp: "Nach oben", moveDown: "Nach unten", removeDrawer: "Schublade entfernen", changeColor: "Farbe ändern",
+      nameTaken: "Eine andere Schublade heißt schon so.", nameTooLong: "Höchstens 30 Zeichen.",
+      removeDialogTitle: "{name} entfernen?", removeDialogText: "Darin sind {count} Produkte. Wohin sollen sie?", moveAndRemove: "Verschieben und entfernen", cancel: "Abbrechen",
+      removedDrawers: "Entfernte Schubladen (für die Statistik behalten): {names}", lastDrawerHint: "Ein Gefrierschrank braucht mindestens eine Schublade.",
+      layoutHint: "Unveränderte Namen folgen der App-Sprache. Selbst getippte Namen bleiben, wie du sie geschrieben hast."
+    }
+  };
+  let selectedLanguage = "system";
+  let currentLocale = "en";
+  function translate(key, parameters) {
+    let text = translations[currentLocale][key] ?? translations.en[key] ?? key;
+    Object.entries(parameters || {}).forEach(([name, value]) => { text = text.replaceAll("{" + name + "}", value); });
+    return text;
+  }
+
+  /* ================= Module availability (Config → Optional features) ================= */
+  const moduleAvailability = { barcodeScanning: true, itemPictures: true };
+
+  /* ================= Domain data ================= */
+  const millisecondsPerDay = 86400000;
+  const todayDate = new Date("2026-10-02T12:00:00");
+  const baseUnitsPerDisplayUnit = { gram: 1, milliliter: 1, piece: 1000, portion: 1000 };
+  const recommendedMaximumStorageDaysByCategory = { vegetables: 365, meat: 270, meals: 120, fruit: 300, bakery: 90, desserts: 180 };
+  const categoryOrder = ["vegetables", "meat", "meals", "fruit", "bakery", "desserts"];
+
+  const products = {
+    spinach: { names: { en: "Leaf spinach", de: "Blattspinat" }, category: "vegetables", icon: "🥬", unit: "gram", defaultPackageQuantity: 1000, typicalTake: 250, homeDrawer: "d1" },
+    peas: { names: { en: "Garden peas", de: "Erbsen" }, category: "vegetables", icon: "🫛", unit: "gram", defaultPackageQuantity: 750, typicalTake: 200, homeDrawer: "d1" },
+    berries: { names: { en: "Mixed berries", de: "Beerenmischung" }, category: "fruit", icon: "🫐", unit: "gram", defaultPackageQuantity: 500, typicalTake: 150, homeDrawer: "d1" },
+    chicken: { names: { en: "Chicken breast", de: "Hähnchenbrust" }, category: "meat", icon: "🍗", unit: "gram", defaultPackageQuantity: 800, typicalTake: 400, homeDrawer: "d2" },
+    salmon: { names: { en: "Salmon fillet", de: "Lachsfilet" }, category: "meat", icon: "🐟", unit: "gram", defaultPackageQuantity: 250, typicalTake: 250, homeDrawer: "d2" },
+    bolognese: { names: { en: "Bolognese (homemade)", de: "Bolognese (selbstgemacht)" }, category: "meals", icon: "🍝", unit: "portion", defaultPackageQuantity: 4000, typicalTake: 2000, homeDrawer: "d2" },
+    pizza: { names: { en: "Pizza Margherita", de: "Pizza Margherita" }, category: "meals", icon: "🍕", unit: "piece", defaultPackageQuantity: 1000, typicalTake: 1000, homeDrawer: "d2" },
+    fishsticks: { names: { en: "Fish fingers", de: "Fischstäbchen" }, category: "meat", icon: "🐠", unit: "piece", defaultPackageQuantity: 15000, typicalTake: 5000, homeDrawer: "d2" },
+    bread: { names: { en: "Wholegrain bread", de: "Vollkornbrot" }, category: "bakery", icon: "🍞", unit: "piece", defaultPackageQuantity: 10000, typicalTake: 2000, homeDrawer: "d3" },
+    icecream: { names: { en: "Vanilla ice cream", de: "Vanilleeis" }, category: "desserts", icon: "🍨", unit: "milliliter", defaultPackageQuantity: 1000, typicalTake: 250, homeDrawer: "d3" }
+  };
+
+  const drawerColorTags = ["#2a78d6", "#1baf7a", "#eda100", "#e87ba4", "#7c6fe0", "#8a94a6"];
+  const storageDrawers = [
+    { identifier: "d1", defaultNumber: 1, customName: null, colorTagIndex: 0, isArchived: false },
+    { identifier: "d2", defaultNumber: 2, customName: null, colorTagIndex: 1, isArchived: false },
+    { identifier: "d3", defaultNumber: 3, customName: "Bread & sweets", colorTagIndex: 2, isArchived: false }
+  ];
+  let nextDrawerNumber = 4;
+  const drawerNameErrors = {};
+
+  let nextBatchNumber = 100;
+  const stockBatches = [
+    { identifier: "b1", productKey: "spinach", drawerIdentifier: "d1", initialQuantity: 1000, quantityRemaining: 1000, frozenOn: "2026-03-03", hasPhoto: false },
+    { identifier: "b2", productKey: "spinach", drawerIdentifier: "d1", initialQuantity: 1000, quantityRemaining: 1000, frozenOn: "2026-08-20", hasPhoto: false },
+    { identifier: "b3", productKey: "peas", drawerIdentifier: "d1", initialQuantity: 750, quantityRemaining: 450, frozenOn: "2026-07-02", hasPhoto: false },
+    { identifier: "b7", productKey: "berries", drawerIdentifier: "d1", initialQuantity: 500, quantityRemaining: 300, frozenOn: "2025-11-15", hasPhoto: false },
+    { identifier: "b4", productKey: "chicken", drawerIdentifier: "d2", initialQuantity: 800, quantityRemaining: 600, frozenOn: "2026-01-12", hasPhoto: false },
+    { identifier: "b5", productKey: "bolognese", drawerIdentifier: "d2", initialQuantity: 4000, quantityRemaining: 3000, frozenOn: "2026-04-28", hasPhoto: true },
+    { identifier: "b6", productKey: "salmon", drawerIdentifier: "d2", initialQuantity: 500, quantityRemaining: 500, frozenOn: "2026-09-14", hasPhoto: false },
+    { identifier: "b9", productKey: "pizza", drawerIdentifier: "d2", initialQuantity: 2000, quantityRemaining: 2000, frozenOn: "2026-06-01", hasPhoto: false },
+    { identifier: "b8", productKey: "bread", drawerIdentifier: "d3", initialQuantity: 10000, quantityRemaining: 6000, frozenOn: "2026-09-10", hasPhoto: false },
+    { identifier: "b10", productKey: "icecream", drawerIdentifier: "d3", initialQuantity: 1000, quantityRemaining: 900, frozenOn: "2026-08-01", hasPhoto: false }
+  ];
+  const restockRules = { spinach: 1500, peas: 500, pizza: 3000, icecream: 500 };
+  const manualShoppingEntries = [{ identifier: "m1", productKey: "fishsticks", requestedQuantity: 15000 }];
+  const checkedShoppingEntries = new Set();
+  const learnedBarcodes = { "4001234567890": "spinach" };
+
+  /* ================= Generated movement history (stand-in for the movement log) ================= */
+  function createSeededRandom(seed) {
+    return function nextRandom() {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let value = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      value = value + Math.imul(value ^ value >>> 7, 61 | value) ^ value;
+      return ((value ^ value >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  const seededRandom = createSeededRandom(20261002);
+  const discardReasons = ["reasonTooOld", "reasonFreezerBurn", "reasonUnwanted", "reasonOther"];
+  function seasonalWeight(productKey, monthIndex) {
+    const summer = monthIndex >= 5 && monthIndex <= 8;
+    const winter = monthIndex <= 2 || monthIndex >= 10;
+    if (productKey === "berries") return summer ? 3 : 0.5;
+    if (productKey === "icecream") return summer ? 3 : 0.4;
+    if (productKey === "bolognese" || productKey === "pizza") return winter ? 2.2 : 1;
+    if (productKey === "spinach") return winter ? 1.6 : 1;
+    return 1;
+  }
+  function pickWeighted(entries) {
+    const totalWeight = entries.reduce((sum, [, weight]) => sum + weight, 0);
+    let threshold = seededRandom() * totalWeight;
+    for (const [value, weight] of entries) { threshold -= weight; if (threshold <= 0) return value; }
+    return entries[entries.length - 1][0];
+  }
+  const movementHistory = [];
+  const historyLengthInDays = 730;
+  for (let daysAgo = historyLengthInDays - 1; daysAgo >= 0; daysAgo--) {
+    const date = new Date(todayDate.getTime() - daysAgo * millisecondsPerDay);
+    const weekday = date.getDay();
+    const monthIndex = date.getMonth();
+    const productWeights = Object.keys(products).map((productKey) => [productKey, seasonalWeight(productKey, monthIndex)]);
+    const removalRate = [1.4, 0.6, 0.7, 0.7, 0.8, 1.2, 1.5][weekday];
+    const removalCount = Math.floor(removalRate + seededRandom() * 1.2);
+    for (let index = 0; index < removalCount; index++) {
+      const productKey = pickWeighted(productWeights);
+      const product = products[productKey];
+      const storedDays = Math.round(4 + Math.pow(seededRandom(), 1.6) * recommendedMaximumStorageDaysByCategory[product.category] * 1.3);
+      movementHistory.push({ daysAgo, weekday, productKey, category: product.category, unit: product.unit, kind: "consumed",
+        quantity: product.typicalTake, drawerIdentifier: product.homeDrawer, storedDays });
+    }
+    if (weekday === 6 && seededRandom() < 0.85) {
+      const addedCount = 2 + Math.floor(seededRandom() * 3);
+      for (let index = 0; index < addedCount; index++) {
+        const productKey = pickWeighted(productWeights);
+        const product = products[productKey];
+        movementHistory.push({ daysAgo, weekday, productKey, category: product.category, unit: product.unit, kind: "added",
+          quantity: product.defaultPackageQuantity, drawerIdentifier: product.homeDrawer });
+      }
+    }
+    if (seededRandom() < 0.035) {
+      const productKey = pickWeighted(productWeights);
+      const product = products[productKey];
+      movementHistory.push({ daysAgo, weekday, productKey, category: product.category, unit: product.unit, kind: "discarded",
+        quantity: Math.round(product.defaultPackageQuantity / 2), drawerIdentifier: product.homeDrawer,
+        reason: pickWeighted([["reasonTooOld", 4.5], ["reasonFreezerBurn", 2.5], ["reasonUnwanted", 2], ["reasonOther", 1]]) });
+    }
+  }
+
+  /* ================= Formatting helpers ================= */
+  function productName(productKey) { return products[productKey].names[currentLocale]; }
+  function drawerByIdentifier(identifier) { return storageDrawers.find((drawer) => drawer.identifier === identifier); }
+  function drawerDisplayName(drawer) {
+    const name = drawer.customName || translate("drawer", { number: drawer.defaultNumber });
+    return drawer.isArchived ? translate("removedSuffix", { name }) : name;
+  }
+  function activeDrawers() { return storageDrawers.filter((drawer) => !drawer.isArchived); }
+  function formatQuantity(baseQuantity, unit) {
+    const displayValue = baseQuantity / baseUnitsPerDisplayUnit[unit];
+    if (unit === "piece" || unit === "portion") {
+      const countText = new Intl.NumberFormat(currentLocale, { maximumFractionDigits: 1 }).format(displayValue);
+      return translate(unit === "piece" ? "pieces" : "portions", { count: countText });
+    }
+    if (displayValue >= 1000) {
+      return new Intl.NumberFormat(currentLocale, { style: "unit", unit: unit === "gram" ? "kilogram" : "liter", maximumFractionDigits: 2 }).format(displayValue / 1000);
+    }
+    return new Intl.NumberFormat(currentLocale, { style: "unit", unit, maximumFractionDigits: 0 }).format(displayValue);
+  }
+  function daysSince(isoDate) { return Math.round((todayDate - new Date(isoDate + "T12:00:00")) / millisecondsPerDay); }
+  function dateFromDaysAgo(daysAgo) { return new Date(todayDate.getTime() - daysAgo * millisecondsPerDay); }
+  function isoFromDaysAgo(daysAgo) { const date = dateFromDaysAgo(daysAgo); return date.toISOString().slice(0, 10); }
+  function formatRelativeAge(isoDate) {
+    const ageInDays = daysSince(isoDate);
+    const relativeTimeFormat = new Intl.RelativeTimeFormat(currentLocale, { numeric: "auto" });
+    if (ageInDays < 14) return relativeTimeFormat.format(-ageInDays, "day");
+    if (ageInDays < 60) return relativeTimeFormat.format(-Math.round(ageInDays / 7), "week");
+    return relativeTimeFormat.format(-Math.round(ageInDays / 30.4), "month");
+  }
+  function formatShortDate(dateOrIso, options) {
+    const date = typeof dateOrIso === "string" ? new Date(dateOrIso + "T12:00:00") : dateOrIso;
+    return new Intl.DateTimeFormat(currentLocale, options || { day: "numeric", month: "short", year: "numeric" }).format(date);
+  }
+  function storageAgeStatus(batch) {
+    const ratio = daysSince(batch.frozenOn) / recommendedMaximumStorageDaysByCategory[products[batch.productKey].category];
+    if (ratio >= 0.85) return { cssClass: "is-urgent", label: translate("ageUrgent"), symbol: "▲", ratio };
+    if (ratio >= 0.6) return { cssClass: "is-aging", label: translate("ageAging"), symbol: "◐", ratio };
+    return { cssClass: "is-fresh", label: translate("ageFresh"), symbol: "●", ratio };
+  }
+  function activeBatches() { return stockBatches.filter((batch) => batch.quantityRemaining > 0); }
+  function totalQuantityOfProduct(productKey) {
+    return activeBatches().filter((batch) => batch.productKey === productKey).reduce((sum, batch) => sum + batch.quantityRemaining, 0);
+  }
+  function runningLowProductKeys() {
+    return Object.entries(restockRules).filter(([productKey, minimum]) => totalQuantityOfProduct(productKey) < minimum).map(([productKey]) => productKey);
+  }
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+  }
+  function itemVisualHtml(batchOrProductKey, hasPhoto) {
+    const productKey = typeof batchOrProductKey === "string" ? batchOrProductKey : batchOrProductKey.productKey;
+    const showPhoto = hasPhoto && moduleAvailability.itemPictures;
+    return `<div class="item-visual${showPhoto ? " is-photo" : ""}" aria-hidden="true">${products[productKey].icon}</div>`;
+  }
+  function batchRowHtml(batch, options) {
+    const product = products[batch.productKey];
+    const ageStatus = storageAgeStatus(batch);
+    const remainingShare = Math.round(batch.quantityRemaining / batch.initialQuantity * 100);
+    const clickable = options && options.clickable;
+    return `<div class="item-row${clickable ? " is-clickable" : ""}" data-batch="${batch.identifier}" ${clickable ? 'role="button" tabindex="0"' : ""}>
+      ${itemVisualHtml(batch, batch.hasPhoto)}
+      <div class="item-text">
+        <div class="item-name">${escapeHtml(productName(batch.productKey))}</div>
+        <div class="item-detail"><span class="age-badge ${ageStatus.cssClass}">${ageStatus.label}</span> ${escapeHtml(translate("frozenAgo", { age: formatRelativeAge(batch.frozenOn) }))}</div>
+      </div>
+      <div><div class="item-quantity">${escapeHtml(formatQuantity(batch.quantityRemaining, product.unit))}</div>
+      <div class="quantity-bar" title="${remainingShare}%"><span style="width:${remainingShare}%"></span></div></div>
+    </div>`;
+  }
+  function highlightExample(exampleIdentifier) {
+    const example = document.getElementById(exampleIdentifier);
+    example.scrollIntoView({ behavior: "smooth", block: "center" });
+    example.classList.add("is-highlighted");
+    setTimeout(() => example.classList.remove("is-highlighted"), 1600);
+  }
+
+  /* ================= Static strings and navigation ================= */
+  function renderStaticTexts() {
+    document.querySelectorAll("[data-text]").forEach((element) => { element.textContent = translate(element.dataset.text); });
+    document.querySelectorAll("[data-placeholder]").forEach((element) => { element.placeholder = translate(element.dataset.placeholder); });
+    document.querySelectorAll(".bottom-navigation").forEach((navigation) => {
+      const destinations = [["home", "⌂", "navHome"], ["freezer", "❄", "navFreezer"], ["shopping", "☑", "navShopping"], ["insights", "▥", "navInsights"], ["config", "⚙", "navConfig"]];
+      navigation.innerHTML = destinations.map(([key, icon, labelKey]) =>
+        `<span data-icon="${icon}" class="${navigation.dataset.current === key ? "is-current" : ""}">${translate(labelKey)}</span>`).join("");
+    });
+    document.getElementById("homeFloatingButton").textContent = translate(moduleAvailability.barcodeScanning ? "addOrScanButton" : "addButton");
+    document.documentElement.lang = currentLocale;
+  }
+
+  /* ================= 1 Home ================= */
+  function renderHome() {
+    const urgentBatches = activeBatches()
+      .map((batch) => ({ batch, status: storageAgeStatus(batch) }))
+      .filter((entry) => entry.status.ratio >= 0.6)
+      .sort((first, second) => second.status.ratio - first.status.ratio)
+      .slice(0, 3);
+    document.getElementById("homeEatSoonList").innerHTML = urgentBatches.length
+      ? urgentBatches.map((entry) => batchRowHtml(entry.batch)).join("")
+      : `<div class="item-detail">${translate("eatSoonEmpty")}</div>`;
+    const lowProducts = runningLowProductKeys();
+    document.getElementById("homeRunningLowChips").innerHTML = lowProducts.length
+      ? lowProducts.map((productKey) => `<span class="chip">${products[productKey].icon} ${escapeHtml(productName(productKey))}</span>`).join("")
+      : `<span class="item-detail">${translate("runningLowEmpty")}</span>`;
+    const batches = activeBatches();
+    document.getElementById("homeSubtitle").textContent =
+      translate("itemsInFreezer", { count: batches.length, drawers: activeDrawers().length });
+    const urgentCount = batches.filter((batch) => storageAgeStatus(batch).ratio >= 0.85).length;
+    document.getElementById("homeStatTiles").innerHTML =
+      `<div class="stat-tile"><strong>${batches.length}</strong><span>${translate("statItems")}</span></div>
+       <div class="stat-tile"><strong>${urgentCount}</strong><span>${translate("statOld")}</span></div>
+       <div class="stat-tile"><strong>${lowProducts.length}</strong><span>${translate("statLow")}</span></div>`;
+  }
+
+  /* ================= 2 Inventory ================= */
+  let inventorySortMode = "drawer";
+  function renderInventory() {
+    const searchText = document.getElementById("inventorySearchInput").value.trim().toLowerCase();
+    const visibleBatches = activeBatches().filter((batch) => !searchText || productName(batch.productKey).toLowerCase().includes(searchText));
+    document.getElementById("inventorySortChips").innerHTML =
+      `<button type="button" class="chip" data-sort="drawer" aria-pressed="${inventorySortMode === "drawer"}">${translate("sortByDrawer")}</button>
+       <button type="button" class="chip" data-sort="age" aria-pressed="${inventorySortMode === "age"}">${translate("sortByAge")}</button>`;
+    let listHtml = "";
+    if (inventorySortMode === "drawer") {
+      activeDrawers().forEach((drawer) => {
+        const drawerBatches = visibleBatches.filter((batch) => batch.drawerIdentifier === drawer.identifier);
+        if (!drawerBatches.length) return;
+        listHtml += `<div class="section-label"><span style="color:${drawerColorTags[drawer.colorTagIndex]}">●</span> ${escapeHtml(drawerDisplayName(drawer))}</div><div class="app-card">${drawerBatches.map((batch) => batchRowHtml(batch, { clickable: true })).join("")}</div>`;
+      });
+    } else {
+      const sortedBatches = visibleBatches.slice().sort((first, second) => first.frozenOn.localeCompare(second.frozenOn));
+      listHtml = `<div class="section-label">${translate("sortByAge")}</div><div class="app-card">${sortedBatches.map((batch) => batchRowHtml(batch, { clickable: true })).join("")}</div>`;
+    }
+    document.getElementById("inventoryList").innerHTML = listHtml;
+    document.getElementById("inventorySubtitle").textContent =
+      translate("itemsInFreezer", { count: activeBatches().length, drawers: activeDrawers().length });
+  }
+  document.getElementById("inventorySortChips").addEventListener("click", (clickEvent) => {
+    const sortButton = clickEvent.target.closest("[data-sort]");
+    if (!sortButton) return;
+    inventorySortMode = sortButton.dataset.sort;
+    renderInventory();
+  });
+  document.getElementById("inventorySearchInput").addEventListener("input", renderInventory);
+  function openPartialRemovalFromRow(eventTarget) {
+    const row = eventTarget.closest("[data-batch]");
+    if (!row) return;
+    selectBatchForPartialRemoval(row.dataset.batch);
+    highlightExample("examplePartialRemoval");
+  }
+  document.getElementById("inventoryList").addEventListener("click", (clickEvent) => openPartialRemovalFromRow(clickEvent.target));
+  document.getElementById("inventoryList").addEventListener("keydown", (keyboardEvent) => {
+    if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") { keyboardEvent.preventDefault(); openPartialRemovalFromRow(keyboardEvent.target); }
+  });
+
+  /* ================= 3 Partial removal ================= */
+  let partialBatchIdentifier = "b1";
+  let partialAmount = 200;
+  let lastRemoval = null;
+  function stepForUnit(unit) { return unit === "gram" || unit === "milliliter" ? 50 : 500; }
+  function selectBatchForPartialRemoval(batchIdentifier) {
+    const batch = stockBatches.find((candidate) => candidate.identifier === batchIdentifier);
+    if (!batch || batch.quantityRemaining <= 0) return;
+    partialBatchIdentifier = batchIdentifier;
+    const step = stepForUnit(products[batch.productKey].unit);
+    partialAmount = Math.min(batch.quantityRemaining, Math.max(step, Math.round(batch.quantityRemaining * 0.2 / step) * step));
+    renderPartialRemoval();
+  }
+  function renderPartialRemoval() {
+    let batch = stockBatches.find((candidate) => candidate.identifier === partialBatchIdentifier);
+    if (!batch || batch.quantityRemaining <= 0) {
+      batch = activeBatches()[0];
+      partialBatchIdentifier = batch.identifier;
+    }
+    const product = products[batch.productKey];
+    const step = stepForUnit(product.unit);
+    partialAmount = Math.max(Math.min(step, batch.quantityRemaining), Math.min(partialAmount, batch.quantityRemaining));
+    const displayStep = step / baseUnitsPerDisplayUnit[product.unit];
+    document.getElementById("partialBackgroundList").innerHTML =
+      `<div class="app-card">${activeBatches().slice(0, 4).map((candidate) => batchRowHtml(candidate)).join("")}</div>`;
+    document.getElementById("partialRemovalSheet").innerHTML = `
+      <div class="sheet-handle"></div>
+      <div class="sheet-product">${itemVisualHtml(batch, batch.hasPhoto)}
+        <div class="item-text"><div class="item-name">${escapeHtml(productName(batch.productKey))}</div>
+        <div class="item-detail">${escapeHtml(formatQuantity(batch.quantityRemaining, product.unit))} ${escapeHtml(translate("ofInitial", { initial: formatQuantity(batch.initialQuantity, product.unit) }))} · ${escapeHtml(formatShortDate(batch.frozenOn))}</div></div></div>
+      <div class="item-detail" style="font-weight:600;color:var(--app-text)">${translate("takeTitle")}</div>
+      <div class="remaining-preview"><span class="amount-taken" id="partialAmountTaken"></span><span class="amount-left" id="partialAmountLeft"></span></div>
+      <div class="package-visual" aria-hidden="true"><div class="package-taken" id="partialPackageTaken"></div><div class="package-left" id="partialPackageLeft"></div><div class="package-used-before"></div></div>
+      <input type="range" id="partialAmountSlider" min="${Math.min(step, batch.quantityRemaining)}" max="${batch.quantityRemaining}" step="${step}" aria-label="${translate("takeTitle")}">
+      <div class="fraction-buttons">
+        <button type="button" data-fraction="0.25">¼</button><button type="button" data-fraction="0.5">½</button>
+        <button type="button" data-fraction="0.75">¾</button><button type="button" data-fraction="1">${translate("all")}</button>
+      </div>
+      <div class="exact-entry"><label for="partialExactInput">${translate("exactAmount")}</label>
+        <input id="partialExactInput" type="number" min="0" step="${displayStep}"></div>
+      <button type="button" class="primary-button" id="partialConfirmButton"></button>`;
+    refreshPartialPreview();
+  }
+  function refreshPartialPreview() {
+    const batch = stockBatches.find((candidate) => candidate.identifier === partialBatchIdentifier);
+    const unit = products[batch.productKey].unit;
+    const remainingAfter = batch.quantityRemaining - partialAmount;
+    document.getElementById("partialAmountTaken").textContent = formatQuantity(partialAmount, unit);
+    document.getElementById("partialAmountLeft").textContent = remainingAfter > 0
+      ? translate("leftAfter", { amount: formatQuantity(remainingAfter, unit) }) : translate("allTaken");
+    document.getElementById("partialPackageTaken").style.width = partialAmount / batch.initialQuantity * 100 + "%";
+    document.getElementById("partialPackageLeft").style.width = remainingAfter / batch.initialQuantity * 100 + "%";
+    const slider = document.getElementById("partialAmountSlider");
+    if (document.activeElement !== slider) slider.value = partialAmount;
+    const exactInput = document.getElementById("partialExactInput");
+    if (document.activeElement !== exactInput) exactInput.value = partialAmount / baseUnitsPerDisplayUnit[unit];
+    document.getElementById("partialConfirmButton").textContent = translate("useAmount", { amount: formatQuantity(partialAmount, unit) });
+  }
+  const partialRemovalSheet = document.getElementById("partialRemovalSheet");
+  partialRemovalSheet.addEventListener("input", (inputEvent) => {
+    const batch = stockBatches.find((candidate) => candidate.identifier === partialBatchIdentifier);
+    const unit = products[batch.productKey].unit;
+    if (inputEvent.target.id === "partialAmountSlider") partialAmount = Number(inputEvent.target.value);
+    if (inputEvent.target.id === "partialExactInput") {
+      const enteredBaseAmount = Math.round(Number(inputEvent.target.value) * baseUnitsPerDisplayUnit[unit]);
+      if (!(enteredBaseAmount > 0)) return;
+      partialAmount = Math.min(batch.quantityRemaining, enteredBaseAmount);
+    }
+    refreshPartialPreview();
+  });
+  partialRemovalSheet.addEventListener("click", (clickEvent) => {
+    const batch = stockBatches.find((candidate) => candidate.identifier === partialBatchIdentifier);
+    const step = stepForUnit(products[batch.productKey].unit);
+    const fractionButton = clickEvent.target.closest("[data-fraction]");
+    if (fractionButton) {
+      const fraction = Number(fractionButton.dataset.fraction);
+      partialAmount = fraction === 1 ? batch.quantityRemaining
+        : Math.min(batch.quantityRemaining, Math.max(step, Math.round(batch.quantityRemaining * fraction / step) * step));
+      refreshPartialPreview();
+    }
+    if (clickEvent.target.id === "partialConfirmButton") {
+      const takenAmount = partialAmount;
+      batch.quantityRemaining -= takenAmount;
+      // The real app appends a "consumed" movement; here it also feeds the statistics.
+      const product = products[batch.productKey];
+      movementHistory.push({ daysAgo: 0, weekday: todayDate.getDay(), productKey: batch.productKey, category: product.category, unit: product.unit,
+        kind: "consumed", quantity: takenAmount, drawerIdentifier: batch.drawerIdentifier, storedDays: daysSince(batch.frozenOn), fromBatch: batch.identifier });
+      lastRemoval = { batchIdentifier: batch.identifier, amount: takenAmount, movement: movementHistory[movementHistory.length - 1] };
+      const snackbar = document.getElementById("partialSnackbar");
+      document.getElementById("partialSnackbarText").textContent =
+        translate("usedSnackbar", { amount: formatQuantity(takenAmount, product.unit), product: productName(batch.productKey) });
+      snackbar.hidden = false;
+      clearTimeout(snackbar.hideTimer);
+      snackbar.hideTimer = setTimeout(() => { snackbar.hidden = true; }, 5000);
+      renderEverything();
+    }
+  });
+  document.getElementById("partialUndoButton").addEventListener("click", () => {
+    if (!lastRemoval) return;
+    // In the app this appends a compensating "corrected" movement; history is never edited.
+    const batch = stockBatches.find((candidate) => candidate.identifier === lastRemoval.batchIdentifier);
+    batch.quantityRemaining += lastRemoval.amount;
+    movementHistory.splice(movementHistory.indexOf(lastRemoval.movement), 1);
+    partialBatchIdentifier = batch.identifier;
+    lastRemoval = null;
+    document.getElementById("partialSnackbar").hidden = true;
+    renderEverything();
+  });
+
+  /* ================= 4 Scanner ================= */
+  let scannerMode = "remove";
+  let scannerState = null;
+  function renderScanner() {
+    document.querySelectorAll("[data-scan-mode]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.scanMode === scannerMode)));
+    const offNotice = document.getElementById("scannerOffNotice");
+    offNotice.hidden = moduleAvailability.barcodeScanning;
+    offNotice.textContent = translate("scannerOff");
+    document.querySelectorAll(".simulate-buttons button").forEach((button) => { button.disabled = !moduleAvailability.barcodeScanning; });
+    const resultElement = document.getElementById("scannerResult");
+    if (!scannerState || !moduleAvailability.barcodeScanning) { resultElement.hidden = true; return; }
+    resultElement.hidden = false;
+    if (scannerState.kind === "unknown") {
+      resultElement.innerHTML = `<p>${escapeHtml(translate("unknownCode", { code: scannerState.code }))}</p>
+        <div class="product-choice-list">${["peas", "salmon", "icecream"].map((productKey) =>
+          `<button type="button" data-link-product="${productKey}">${itemVisualHtml(productKey, false)}${escapeHtml(productName(productKey))}</button>`).join("")}
+          <button type="button" class="secondary-button" style="justify-content:center">${translate("createProduct")}</button></div>`;
+      return;
+    }
+    const productKey = scannerState.productKey;
+    const product = products[productKey];
+    const productBatches = activeBatches().filter((batch) => batch.productKey === productKey).sort((first, second) => first.frozenOn.localeCompare(second.frozenOn));
+    const learnedNote = scannerState.justLearned ? `<p class="item-detail">${translate("linkedCode")}</p>` : "";
+    if (scannerMode === "add") {
+      const lastBatch = productBatches[productBatches.length - 1];
+      const targetDrawer = (lastBatch && drawerByIdentifier(lastBatch.drawerIdentifier)) || activeDrawers()[0];
+      resultElement.innerHTML = `${learnedNote}<p class="item-detail">${translate("scannedKnownAdd")}</p>
+        <div class="item-row">${itemVisualHtml(productKey, false)}<div class="item-text"><div class="item-name">${escapeHtml(productName(productKey))}</div>
+        <div class="item-detail">${escapeHtml(formatQuantity(totalQuantityOfProduct(productKey), product.unit))}</div></div></div>
+        <button type="button" class="primary-button" data-scanner-add="${targetDrawer.identifier}">${escapeHtml(translate("addToDrawer", { amount: formatQuantity(product.defaultPackageQuantity, product.unit), drawer: drawerDisplayName(targetDrawer) }))}</button>`;
+    } else if (!productBatches.length) {
+      resultElement.innerHTML = `${learnedNote}<p>${escapeHtml(productName(productKey))}</p><p class="item-detail">${translate("notInFreezer")}</p>`;
+    } else {
+      resultElement.innerHTML = `${learnedNote}<p>${escapeHtml(translate("scannedKnownRemove", { count: productBatches.length }))}</p>
+        ${batchRowHtml(productBatches[0])}
+        <button type="button" class="primary-button" data-scanner-take="${productBatches[0].identifier}">${translate("chooseAmount")}</button>`;
+    }
+  }
+  document.querySelectorAll("[data-scan-mode]").forEach((button) => button.addEventListener("click", () => { scannerMode = button.dataset.scanMode; renderScanner(); }));
+  document.getElementById("simulateKnownScanButton").addEventListener("click", () => {
+    scannerState = { kind: "known", productKey: learnedBarcodes["4001234567890"] };
+    renderScanner();
+  });
+  document.getElementById("simulateUnknownScanButton").addEventListener("click", () => {
+    const unknownCode = "4006040012345";
+    scannerState = learnedBarcodes[unknownCode]
+      ? { kind: "known", productKey: learnedBarcodes[unknownCode] }
+      : { kind: "unknown", code: unknownCode };
+    renderScanner();
+  });
+  function addBatch(productKey, drawerIdentifier, quantity, frozenOn, hasPhoto) {
+    const product = products[productKey];
+    stockBatches.push({ identifier: "b" + (nextBatchNumber++), productKey, drawerIdentifier, initialQuantity: quantity, quantityRemaining: quantity, frozenOn, hasPhoto });
+    movementHistory.push({ daysAgo: 0, weekday: todayDate.getDay(), productKey, category: product.category, unit: product.unit, kind: "added", quantity, drawerIdentifier });
+  }
+  document.getElementById("scannerResult").addEventListener("click", (clickEvent) => {
+    const linkButton = clickEvent.target.closest("[data-link-product]");
+    if (linkButton) {
+      learnedBarcodes[scannerState.code] = linkButton.dataset.linkProduct;
+      scannerState = { kind: "known", productKey: linkButton.dataset.linkProduct, justLearned: true };
+      renderScanner();
+      return;
+    }
+    const takeButton = clickEvent.target.closest("[data-scanner-take]");
+    if (takeButton) { selectBatchForPartialRemoval(takeButton.dataset.scannerTake); highlightExample("examplePartialRemoval"); return; }
+    const addButton = clickEvent.target.closest("[data-scanner-add]");
+    if (addButton) {
+      addBatch(scannerState.productKey, addButton.dataset.scannerAdd, products[scannerState.productKey].defaultPackageQuantity, "2026-10-02", false);
+      scannerState = null;
+      renderEverything();
+      highlightExample("exampleInventory");
+    }
+  });
+
+  /* ================= 5 Add item ================= */
+  let addFormHasPhoto = false;
+  let addFormDrawerIdentifier = "d2";
+  let addFormProductKey = "bolognese";
+  function renderAddItem() {
+    document.getElementById("photoSlotArea").hidden = !moduleAvailability.itemPictures;
+    const photoSlot = document.getElementById("photoSlotButton");
+    photoSlot.classList.toggle("has-photo", addFormHasPhoto);
+    photoSlot.innerHTML = addFormHasPhoto
+      ? `<span aria-hidden="true">${products[addFormProductKey].icon}</span><span class="photo-caption">${translate("photoTaken")}</span>`
+      : `<span>${translate("photoTap")}</span>`;
+    const productSelect = document.getElementById("addProductSelect");
+    productSelect.innerHTML = Object.keys(products).map((productKey) =>
+      `<option value="${productKey}" ${productKey === addFormProductKey ? "selected" : ""}>${escapeHtml(productName(productKey))}</option>`).join("");
+    const product = products[addFormProductKey];
+    const quantityInput = document.getElementById("addQuantityInput");
+    if (!quantityInput.dataset.touched) quantityInput.value = product.defaultPackageQuantity / baseUnitsPerDisplayUnit[product.unit];
+    document.getElementById("addQuantityHint").textContent = translate("quantityHint", { amount: formatQuantity(product.defaultPackageQuantity, product.unit) });
+    if (!activeDrawers().some((drawer) => drawer.identifier === addFormDrawerIdentifier)) addFormDrawerIdentifier = activeDrawers()[0].identifier;
+    document.getElementById("addCompartmentChips").innerHTML = activeDrawers().map((drawer) =>
+      `<button type="button" class="chip" data-drawer="${drawer.identifier}" aria-pressed="${drawer.identifier === addFormDrawerIdentifier}">${escapeHtml(drawerDisplayName(drawer))}</button>`).join("");
+  }
+  document.getElementById("photoSlotButton").addEventListener("click", () => { addFormHasPhoto = !addFormHasPhoto; renderAddItem(); });
+  document.getElementById("addProductSelect").addEventListener("change", (changeEvent) => {
+    addFormProductKey = changeEvent.target.value;
+    delete document.getElementById("addQuantityInput").dataset.touched;
+    renderAddItem();
+  });
+  document.getElementById("addQuantityInput").addEventListener("input", (inputEvent) => { inputEvent.target.dataset.touched = "true"; });
+  document.getElementById("addCompartmentChips").addEventListener("click", (clickEvent) => {
+    const drawerButton = clickEvent.target.closest("[data-drawer]");
+    if (!drawerButton) return;
+    addFormDrawerIdentifier = drawerButton.dataset.drawer;
+    renderAddItem();
+  });
+  document.getElementById("addSaveButton").addEventListener("click", () => {
+    const product = products[addFormProductKey];
+    const enteredQuantity = Math.round(Number(document.getElementById("addQuantityInput").value) * baseUnitsPerDisplayUnit[product.unit]);
+    if (!(enteredQuantity > 0)) return;
+    const frozenOn = document.getElementById("addFrozenOnInput").value || "2026-10-02";
+    addBatch(addFormProductKey, addFormDrawerIdentifier, enteredQuantity, frozenOn, addFormHasPhoto && moduleAvailability.itemPictures);
+    addFormHasPhoto = false;
+    delete document.getElementById("addQuantityInput").dataset.touched;
+    renderEverything();
+    highlightExample("exampleInventory");
+  });
+
+  /* ================= 6 Shopping list ================= */
+  function currentShoppingEntries() {
+    const automaticEntries = runningLowProductKeys().map((productKey) => ({
+      identifier: "auto-" + productKey, productKey, isAutomatic: true,
+      requestedQuantity: Math.max(products[productKey].defaultPackageQuantity, restockRules[productKey] - totalQuantityOfProduct(productKey))
+    }));
+    return automaticEntries.concat(manualShoppingEntries.map((entry) => ({ ...entry, isAutomatic: false })));
+  }
+  function renderShoppingList() {
+    const allEntries = currentShoppingEntries();
+    document.getElementById("shoppingListCard").innerHTML = allEntries.map((entry) => {
+      const product = products[entry.productKey];
+      const isChecked = checkedShoppingEntries.has(entry.identifier);
+      return `<label class="shopping-row${isChecked ? " is-checked" : ""}">
+        <input type="checkbox" data-shopping-entry="${entry.identifier}" ${isChecked ? "checked" : ""}>
+        ${itemVisualHtml(entry.productKey, false)}
+        <div class="item-text"><div class="item-name">${escapeHtml(productName(entry.productKey))}</div>
+          <div class="item-detail">${escapeHtml(formatQuantity(entry.requestedQuantity, product.unit))} · <span class="origin-tag">${translate(entry.isAutomatic ? "origin" : "manual")}</span></div></div>
+      </label>`;
+    }).join("");
+    const checkedCount = allEntries.filter((entry) => checkedShoppingEntries.has(entry.identifier)).length;
+    const addBoughtButton = document.getElementById("shoppingAddBoughtButton");
+    addBoughtButton.textContent = checkedCount ? translate("addBought", { count: checkedCount }) : translate("nothingTicked");
+    addBoughtButton.disabled = !checkedCount;
+  }
+  document.getElementById("shoppingListCard").addEventListener("change", (changeEvent) => {
+    const entryIdentifier = changeEvent.target.dataset.shoppingEntry;
+    if (!entryIdentifier) return;
+    if (changeEvent.target.checked) checkedShoppingEntries.add(entryIdentifier); else checkedShoppingEntries.delete(entryIdentifier);
+    renderShoppingList();
+  });
+  document.getElementById("shoppingAddBoughtButton").addEventListener("click", () => {
+    currentShoppingEntries().filter((entry) => checkedShoppingEntries.has(entry.identifier)).forEach((entry) => {
+      const lastBatchOfProduct = stockBatches.filter((batch) => batch.productKey === entry.productKey && drawerByIdentifier(batch.drawerIdentifier) && !drawerByIdentifier(batch.drawerIdentifier).isArchived).pop();
+      const homeDrawer = drawerByIdentifier(products[entry.productKey].homeDrawer);
+      const drawerIdentifier = lastBatchOfProduct ? lastBatchOfProduct.drawerIdentifier
+        : (homeDrawer && !homeDrawer.isArchived ? homeDrawer.identifier : activeDrawers()[0].identifier);
+      addBatch(entry.productKey, drawerIdentifier, entry.requestedQuantity, "2026-10-02", false);
+      if (!entry.isAutomatic) manualShoppingEntries.splice(manualShoppingEntries.findIndex((manualEntry) => manualEntry.identifier === entry.identifier), 1);
+    });
+    checkedShoppingEntries.clear();
+    renderEverything();
+  });
+
+  /* ================= Insights: shared filter ================= */
+  function createDefaultFilter() {
+    return { period: "90", customFromDaysAgo: 89, customToDaysAgo: 0, compare: "previous", granularity: "auto", measure: "weight",
+      activity: "consumed", categories: new Set(), drawerIdentifiers: new Set(), productKeys: new Set(), weekdays: new Set() };
+  }
+  let statisticsFilter = createDefaultFilter();
+  let topProductsActivity = "consumed";
+  const chartsShowingTable = new Set();
+  let productSearchText = "";
+
+  function periodRange(filter) {
+    if (filter.period === "custom") return { startDaysAgo: Math.max(filter.customFromDaysAgo, filter.customToDaysAgo), endDaysAgo: Math.min(filter.customFromDaysAgo, filter.customToDaysAgo) };
+    if (filter.period === "year") return { startDaysAgo: Math.round((todayDate - new Date(todayDate.getFullYear(), 0, 1, 12)) / millisecondsPerDay), endDaysAgo: 0 };
+    if (filter.period === "all") return { startDaysAgo: historyLengthInDays - 1, endDaysAgo: 0 };
+    return { startDaysAgo: Number(filter.period) - 1, endDaysAgo: 0 };
+  }
+  function comparisonRange(filter, range) {
+    if (filter.compare === "off") return null;
+    const shift = filter.compare === "lastYear" ? 365 : range.startDaysAgo - range.endDaysAgo + 1;
+    if (range.startDaysAgo + shift > historyLengthInDays - 1) return null;
+    return { startDaysAgo: range.startDaysAgo + shift, endDaysAgo: range.endDaysAgo + shift };
+  }
+  function measureValue(movement, measure) {
+    if (measure === "count") return 1;
+    if (measure === "weight") return movement.unit === "gram" ? movement.quantity / 1000 : null;
+    if (measure === "volume") return movement.unit === "milliliter" ? movement.quantity / 1000 : null;
+    return movement.unit === "piece" || movement.unit === "portion" ? movement.quantity / 1000 : null;
+  }
+  function formatMeasure(value, measure) {
+    const decimals = value >= 10 ? 0 : 1;
+    if (measure === "weight") return new Intl.NumberFormat(currentLocale, { style: "unit", unit: "kilogram", maximumFractionDigits: decimals }).format(value);
+    if (measure === "volume") return new Intl.NumberFormat(currentLocale, { style: "unit", unit: "liter", maximumFractionDigits: decimals }).format(value);
+    const countText = new Intl.NumberFormat(currentLocale, { maximumFractionDigits: decimals }).format(value);
+    return measure === "pieces" ? translate("pieces", { count: countText }) : translate("times", { count: countText });
+  }
+  function movementMatches(movement, filter, range, kind, options) {
+    if (movement.kind !== kind) return false;
+    if (movement.daysAgo > range.startDaysAgo || movement.daysAgo < range.endDaysAgo) return false;
+    if (filter.categories.size && !filter.categories.has(movement.category)) return false;
+    if (filter.drawerIdentifiers.size && !filter.drawerIdentifiers.has(movement.drawerIdentifier)) return false;
+    if (filter.productKeys.size && !filter.productKeys.has(movement.productKey)) return false;
+    if (filter.weekdays.size && !(options && options.ignoreWeekdays) && !filter.weekdays.has(movement.weekday)) return false;
+    return true;
+  }
+  function sumMeasure(movements, measure) {
+    return movements.reduce((sum, movement) => { const value = measureValue(movement, measure); return value === null ? sum : sum + value; }, 0);
+  }
+  function selectMovements(kind, range, options) {
+    if (!range) return [];
+    return movementHistory.filter((movement) => movementMatches(movement, statisticsFilter, range, kind, options));
+  }
+  function effectiveGranularity(range) {
+    if (statisticsFilter.granularity !== "auto") return statisticsFilter.granularity;
+    const lengthInDays = range.startDaysAgo - range.endDaysAgo + 1;
+    if (lengthInDays <= 31) return "day";
+    if (lengthInDays <= 200) return "week";
+    return "month";
+  }
+  function buildBuckets(range, granularity) {
+    const buckets = [];
+    if (granularity === "day") {
+      for (let daysAgo = range.startDaysAgo; daysAgo >= range.endDaysAgo; daysAgo--) {
+        buckets.push({ fromDaysAgo: daysAgo, toDaysAgo: daysAgo, label: formatShortDate(dateFromDaysAgo(daysAgo), { day: "numeric", month: "short" }) });
+      }
+    } else if (granularity === "week") {
+      for (let fromDaysAgo = range.startDaysAgo; fromDaysAgo >= range.endDaysAgo; fromDaysAgo -= 7) {
+        buckets.push({ fromDaysAgo, toDaysAgo: Math.max(range.endDaysAgo, fromDaysAgo - 6), label: formatShortDate(dateFromDaysAgo(fromDaysAgo), { day: "numeric", month: "short" }) });
+      }
+    } else {
+      let fromDaysAgo = range.startDaysAgo;
+      while (fromDaysAgo >= range.endDaysAgo) {
+        const fromDate = dateFromDaysAgo(fromDaysAgo);
+        const nextMonthStart = new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 1, 12);
+        const daysUntilNextMonth = Math.round((nextMonthStart - fromDate) / millisecondsPerDay);
+        const toDaysAgo = Math.max(range.endDaysAgo, fromDaysAgo - daysUntilNextMonth + 1);
+        buckets.push({ fromDaysAgo, toDaysAgo, label: formatShortDate(fromDate, { month: "short", year: "2-digit" }) });
+        fromDaysAgo = toDaysAgo - 1;
+      }
+    }
+    return buckets;
+  }
+  function bucketValues(movements, buckets, measure) {
+    const values = buckets.map(() => 0);
+    movements.forEach((movement) => {
+      const value = measureValue(movement, measure);
+      if (value === null) return;
+      const bucketIndex = buckets.findIndex((bucket) => movement.daysAgo <= bucket.fromDaysAgo && movement.daysAgo >= bucket.toDaysAgo);
+      if (bucketIndex >= 0) values[bucketIndex] += value;
+    });
+    return values;
+  }
+  function activeFilterCount() {
+    let count = statisticsFilter.categories.size + statisticsFilter.drawerIdentifiers.size + statisticsFilter.productKeys.size + statisticsFilter.weekdays.size;
+    if (statisticsFilter.measure !== "weight") count++;
+    if (statisticsFilter.activity !== "consumed") count++;
+    if (statisticsFilter.compare !== "previous") count++;
+    if (statisticsFilter.granularity !== "auto") count++;
+    return count;
+  }
+  function toggleSetValue(set, value) { if (set.has(value)) set.delete(value); else set.add(value); }
+  function niceMaximum(value) {
+    if (value <= 0) return 1;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+    const normalized = value / magnitude;
+    const niceNormalized = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 2.5 ? 2.5 : normalized <= 5 ? 5 : 10;
+    return niceNormalized * magnitude;
+  }
+  function chartCardHtml(chartIdentifier, title, subtitle, chartHtml, tableRows, tableHeaders) {
+    const showsTable = chartsShowingTable.has(chartIdentifier);
+    const tableHtml = `<table class="data-table"><thead><tr>${tableHeaders.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead>
+      <tbody>${tableRows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    return `<div class="chart-card-header"><h4>${escapeHtml(title)}</h4>
+        <button type="button" class="table-toggle" data-table-toggle="${chartIdentifier}">${translate(showsTable ? "chart" : "table")}</button></div>
+      ${subtitle ? `<div class="chart-card-subtitle">${escapeHtml(subtitle)}</div>` : ""}
+      ${showsTable ? tableHtml : chartHtml}`;
+  }
+  function roundedTopBarPath(x, y, width, height, radius) {
+    if (height <= 0) return "";
+    const effectiveRadius = Math.min(radius, width / 2, height);
+    return `M${x},${y + height} V${y + effectiveRadius} Q${x},${y} ${x + effectiveRadius},${y} H${x + width - effectiveRadius} Q${x + width},${y} ${x + width},${y + effectiveRadius} V${y + height} Z`;
+  }
+
+  /* ================= 7 Insights overview ================= */
+  function renderInsightsOverview() {
+    const range = periodRange(statisticsFilter);
+    const compareRange = comparisonRange(statisticsFilter, range);
+    const measure = statisticsFilter.measure;
+    document.getElementById("insightsPeriodSubtitle").textContent =
+      translate("periodLabel", { from: formatShortDate(dateFromDaysAgo(range.startDaysAgo)), to: formatShortDate(dateFromDaysAgo(range.endDaysAgo)) });
+
+    // Filter row
+    const periodPresets = [["30", "period30"], ["90", "period90"], ["365", "period365"], ["year", "periodYear"]];
+    let chipsHtml = periodPresets.map(([value, key]) =>
+      `<button type="button" class="chip" data-period="${value}" aria-pressed="${statisticsFilter.period === value}">${translate(key)}</button>`).join("");
+    if (statisticsFilter.period === "custom") chipsHtml += `<button type="button" class="chip is-removable" aria-pressed="true" data-remove="period">${translate("periodCustom")}</button>`;
+    let activeChips = "";
+    statisticsFilter.categories.forEach((category) => { activeChips += `<button type="button" class="chip is-removable" data-remove="category" data-value="${category}"><span class="chip-swatch" style="background:var(--category-${category})"></span>${escapeHtml(translations[currentLocale].categories[category])}</button>`; });
+    statisticsFilter.drawerIdentifiers.forEach((identifier) => { activeChips += `<button type="button" class="chip is-removable" data-remove="drawer" data-value="${identifier}">${escapeHtml(drawerDisplayName(drawerByIdentifier(identifier)))}</button>`; });
+    statisticsFilter.productKeys.forEach((productKey) => { activeChips += `<button type="button" class="chip is-removable" data-remove="product" data-value="${productKey}">${products[productKey].icon} ${escapeHtml(productName(productKey))}</button>`; });
+    statisticsFilter.weekdays.forEach((weekday) => { activeChips += `<button type="button" class="chip is-removable" data-remove="weekday" data-value="${weekday}">${escapeHtml(weekdayName(weekday, "short"))}</button>`; });
+    if (statisticsFilter.activity !== "consumed") activeChips += `<button type="button" class="chip is-removable" data-remove="activity">${translate("activity_" + statisticsFilter.activity)}</button>`;
+    if (measure !== "weight") activeChips += `<button type="button" class="chip is-removable" data-remove="measure">${translate("measure" + measure.charAt(0).toUpperCase() + measure.slice(1))}</button>`;
+    document.getElementById("insightsFilterRow").innerHTML =
+      `<div class="chip-row">${chipsHtml}<button type="button" class="chip is-filter-button" data-open-filters>${translate("filtersButton", { count: activeFilterCount() })}</button></div>
+       ${activeChips ? `<div class="chip-row">${activeChips}<button type="button" class="chip" data-reset-filters>${translate("resetFilters")}</button></div>` : ""}`;
+
+    // KPI tiles
+    const granularity = effectiveGranularity(range);
+    const buckets = buildBuckets(range, granularity);
+    const kpiDefinitions = [
+      { key: "kpiEaten", compute: (r) => sumMeasure(selectMovements("consumed", r), measure), format: (value) => formatMeasure(value, measure), sparkKind: "consumed" },
+      { key: "kpiAdded", compute: (r) => sumMeasure(selectMovements("added", r), measure), format: (value) => formatMeasure(value, measure), sparkKind: "added" },
+      { key: "kpiWasted", compute: (r) => {
+          const wasted = sumMeasure(selectMovements("discarded", r), measure);
+          const removed = wasted + sumMeasure(selectMovements("consumed", r), measure);
+          return removed ? wasted / removed : 0;
+        }, format: (value) => new Intl.NumberFormat(currentLocale, { style: "percent", maximumFractionDigits: 1 }).format(value), sparkKind: "discarded" },
+      { key: "kpiStored", compute: (r) => {
+          const eaten = selectMovements("consumed", r);
+          return eaten.length ? eaten.reduce((sum, movement) => sum + movement.storedDays, 0) / eaten.length : 0;
+        }, format: (value) => new Intl.NumberFormat(currentLocale, { maximumFractionDigits: 0 }).format(value), sparkKind: null }
+    ];
+    document.getElementById("kpiGrid").innerHTML = kpiDefinitions.map((definition) => {
+      const currentValue = definition.compute(range);
+      const previousValue = compareRange ? definition.compute(compareRange) : null;
+      let deltaText = translate("deltaNone");
+      if (previousValue !== null && previousValue > 0) {
+        const change = (currentValue - previousValue) / previousValue;
+        const changeText = new Intl.NumberFormat(currentLocale, { style: "percent", maximumFractionDigits: 0 }).format(Math.abs(change));
+        deltaText = Math.abs(change) < 0.005 ? translate("deltaSame") : translate(change > 0 ? "deltaUp" : "deltaDown", { value: changeText });
+      }
+      let sparklineHtml = "";
+      if (definition.sparkKind) {
+        const sparkValues = bucketValues(selectMovements(definition.sparkKind, range), buckets, measure);
+        const sparkMaximum = Math.max(...sparkValues, 0.0001);
+        const points = sparkValues.map((value, index) => `${(index / Math.max(1, sparkValues.length - 1) * 140).toFixed(1)},${(20 - value / sparkMaximum * 17).toFixed(1)}`).join(" ");
+        sparklineHtml = `<svg viewBox="0 0 140 22" preserveAspectRatio="none" aria-hidden="true"><polyline points="${points}" fill="none" stroke="var(--chart-bar)" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+      } else {
+        const durations = selectMovements("consumed", range).map((movement) => movement.storedDays);
+        const histogram = [0, 0, 0, 0, 0, 0, 0, 0];
+        durations.forEach((days) => { histogram[Math.min(7, Math.floor(days / 45))]++; });
+        const histogramMaximum = Math.max(...histogram, 1);
+        sparklineHtml = `<svg viewBox="0 0 140 22" preserveAspectRatio="none" aria-hidden="true">${histogram.map((count, index) =>
+          `<rect x="${index * 17.5 + 1}" y="${21 - count / histogramMaximum * 19}" width="15" height="${count / histogramMaximum * 19}" rx="1.5" fill="var(--chart-bar)" opacity=".75"/>`).join("")}</svg>`;
+      }
+      return `<div class="kpi-tile" data-tip="${escapeHtml(translate(definition.key) + ": " + definition.format(currentValue) + (previousValue !== null ? " · " + translate("seriesCompare") + ": " + definition.format(previousValue) : ""))}">
+        <div class="kpi-label">${translate(definition.key)}</div><div class="kpi-value">${escapeHtml(definition.format(currentValue))}</div>
+        <div class="kpi-delta">${escapeHtml(deltaText)}</div>${sparklineHtml}</div>`;
+    }).join("");
+
+    renderTrendChart(range, compareRange, buckets);
+    renderStackedCategoryChart(range, buckets);
+    renderDonutChart(range);
+  }
+
+  const trendGeometry = { width: 266, height: 150, left: 30, right: 14, top: 10, bottom: 20 };
+  let trendBuckets = [];
+  function renderTrendChart(range, compareRange, buckets) {
+    const measure = statisticsFilter.measure;
+    trendBuckets = buckets;
+    const eatenValues = bucketValues(selectMovements("consumed", range), buckets, measure);
+    const addedValues = bucketValues(selectMovements("added", range), buckets, measure);
+    const compareBuckets = compareRange ? buildBuckets(compareRange, effectiveGranularity(range)).slice(0, buckets.length) : [];
+    const compareValues = compareRange ? bucketValues(selectMovements("consumed", compareRange), compareBuckets, measure) : [];
+    const { width, height, left, right, top, bottom } = trendGeometry;
+    const plotWidth = width - left - right;
+    const plotHeight = height - top - bottom;
+    const maximum = niceMaximum(Math.max(...eatenValues, ...addedValues, ...compareValues, 0));
+    const xForIndex = (index) => left + (buckets.length === 1 ? plotWidth / 2 : index / (buckets.length - 1) * plotWidth);
+    const yForValue = (value) => top + plotHeight - value / maximum * plotHeight;
+    const linePoints = (values) => values.map((value, index) => `${xForIndex(index).toFixed(1)},${yForValue(value).toFixed(1)}`).join(" ");
+    let svg = `<svg viewBox="0 0 ${width} ${height}" id="trendSvg" role="img" aria-label="${escapeHtml(translate("trendTitle"))}" style="touch-action:none">`;
+    for (let gridIndex = 0; gridIndex <= 4; gridIndex++) {
+      const gridValue = maximum / 4 * gridIndex;
+      const gridY = yForValue(gridValue);
+      svg += `<line x1="${left}" x2="${width - right}" y1="${gridY}" y2="${gridY}" stroke="var(--chart-grid)"/>`;
+      svg += `<text x="${left - 4}" y="${gridY + 3}" text-anchor="end">${new Intl.NumberFormat(currentLocale, { maximumFractionDigits: 1 }).format(gridValue)}</text>`;
+    }
+    const labelEvery = Math.ceil(buckets.length / 5);
+    buckets.forEach((bucket, index) => {
+      if (index % labelEvery === 0) svg += `<text x="${xForIndex(index)}" y="${height - 5}" text-anchor="middle">${escapeHtml(bucket.label)}</text>`;
+    });
+    if (compareValues.length) svg += `<polyline points="${linePoints(compareValues)}" fill="none" stroke="var(--series-ghost)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+    svg += `<polyline points="${linePoints(addedValues)}" fill="none" stroke="var(--category-meat)" stroke-width="2" stroke-linejoin="round"/>`;
+    svg += `<polyline points="${linePoints(eatenValues)}" fill="none" stroke="var(--category-vegetables)" stroke-width="2" stroke-linejoin="round"/>`;
+    const lastIndex = buckets.length - 1;
+    // Direct labels sit just above each line's last point, inside the plot, with a halo so they stay readable over the lines.
+    const labelX = xForIndex(lastIndex) - 2;
+    const clampLabelY = (labelY) => Math.min(top + plotHeight - 4, Math.max(top + 9, labelY));
+    let eatenLabelY = clampLabelY(yForValue(eatenValues[lastIndex]) - 6);
+    let addedLabelY = clampLabelY(yForValue(addedValues[lastIndex]) - 6);
+    if (Math.abs(addedLabelY - eatenLabelY) < 11) {
+      if (addedLabelY >= eatenLabelY) addedLabelY = eatenLabelY + 11; else eatenLabelY = addedLabelY + 11;
+      if (Math.max(eatenLabelY, addedLabelY) > top + plotHeight - 4) { eatenLabelY -= 11; addedLabelY -= 11; }
+    }
+    const haloStyle = 'paint-order="stroke" stroke="var(--app-surface)" stroke-width="3" stroke-linejoin="round"';
+    svg += `<text class="label-strong" text-anchor="end" ${haloStyle} x="${labelX}" y="${eatenLabelY}">${escapeHtml(translate("seriesEaten"))}</text>`;
+    svg += `<text class="label-strong" text-anchor="end" ${haloStyle} x="${labelX}" y="${addedLabelY}">${escapeHtml(translate("seriesAdded"))}</text>`;
+    const columnWidth = plotWidth / Math.max(1, buckets.length - 1);
+    buckets.forEach((bucket, index) => {
+      const tip = `${bucket.label}: ${translate("seriesEaten")} ${formatMeasure(eatenValues[index], measure)} · ${translate("seriesAdded")} ${formatMeasure(addedValues[index], measure)}`
+        + (compareValues.length && compareValues[index] !== undefined ? ` · ${translate("seriesCompare")} ${formatMeasure(compareValues[index], measure)}` : "");
+      svg += `<g class="hover-column" data-tip="${escapeHtml(tip)}"><rect x="${xForIndex(index) - columnWidth / 2}" y="${top}" width="${columnWidth}" height="${plotHeight}" fill="transparent"/>
+        <line class="hover-line" x1="${xForIndex(index)}" x2="${xForIndex(index)}" y1="${top}" y2="${top + plotHeight}" stroke="var(--app-muted)" stroke-width="1"/>
+        <circle class="hover-line" cx="${xForIndex(index)}" cy="${yForValue(eatenValues[index])}" r="3.5" fill="var(--category-vegetables)" stroke="var(--app-surface)" stroke-width="1.5"/>
+        <circle class="hover-line" cx="${xForIndex(index)}" cy="${yForValue(addedValues[index])}" r="3.5" fill="var(--category-meat)" stroke="var(--app-surface)" stroke-width="1.5"/></g>`;
+    });
+    svg += `<rect class="brush-rectangle" id="trendBrush" x="0" y="${top}" width="0" height="${plotHeight}" visibility="hidden"/></svg>
+      <div class="chart-legend"><span><span class="legend-swatch" style="background:var(--category-vegetables)"></span>${translate("seriesEaten")}</span>
+      <span><span class="legend-swatch" style="background:var(--category-meat)"></span>${translate("seriesAdded")}</span>
+      ${compareValues.length ? `<span><span class="legend-swatch" style="background:var(--series-ghost)"></span>${translate("seriesCompare")}</span>` : ""}</div>`;
+    const tableRows = buckets.map((bucket, index) => [bucket.label, formatMeasure(eatenValues[index], measure), formatMeasure(addedValues[index], measure)]);
+    document.getElementById("trendChartCard").innerHTML = chartCardHtml("trend", translate("trendTitle"), translate("trendSubtitle"), svg, tableRows, ["", translate("seriesEaten"), translate("seriesAdded")]);
+    attachTrendBrushing();
+  }
+  function attachTrendBrushing() {
+    const trendSvg = document.getElementById("trendSvg");
+    if (!trendSvg) return;
+    const brush = document.getElementById("trendBrush");
+    let brushStartX = null;
+    const svgX = (pointerEvent) => {
+      const bounds = trendSvg.getBoundingClientRect();
+      return (pointerEvent.clientX - bounds.left) / bounds.width * trendGeometry.width;
+    };
+    trendSvg.addEventListener("pointerdown", (pointerEvent) => {
+      brushStartX = svgX(pointerEvent);
+      trendSvg.setPointerCapture(pointerEvent.pointerId);
+    });
+    trendSvg.addEventListener("pointermove", (pointerEvent) => {
+      if (brushStartX === null) return;
+      const currentX = svgX(pointerEvent);
+      brush.setAttribute("x", Math.min(brushStartX, currentX));
+      brush.setAttribute("width", Math.abs(currentX - brushStartX));
+      brush.setAttribute("visibility", "visible");
+    });
+    trendSvg.addEventListener("pointerup", (pointerEvent) => {
+      if (brushStartX === null) return;
+      const endX = svgX(pointerEvent);
+      const fromX = Math.min(brushStartX, endX);
+      const toX = Math.max(brushStartX, endX);
+      brushStartX = null;
+      if (toX - fromX < 12 || trendBuckets.length < 2) { brush.setAttribute("visibility", "hidden"); return; }
+      const plotWidth = trendGeometry.width - trendGeometry.left - trendGeometry.right;
+      const indexForX = (x) => Math.max(0, Math.min(trendBuckets.length - 1, Math.round((x - trendGeometry.left) / plotWidth * (trendBuckets.length - 1))));
+      const firstBucket = trendBuckets[indexForX(fromX)];
+      const lastBucket = trendBuckets[indexForX(toX)];
+      statisticsFilter.period = "custom";
+      statisticsFilter.customFromDaysAgo = firstBucket.fromDaysAgo;
+      statisticsFilter.customToDaysAgo = lastBucket.toDaysAgo;
+      renderStatistics();
+    });
+  }
+
+  function renderStackedCategoryChart(range, buckets) {
+    const measure = statisticsFilter.measure;
+    const activity = statisticsFilter.activity;
+    const movements = selectMovements(activity, range);
+    const visibleCategories = categoryOrder.filter((category) => !statisticsFilter.categories.size || statisticsFilter.categories.has(category));
+    const valuesByCategory = {};
+    visibleCategories.forEach((category) => {
+      valuesByCategory[category] = bucketValues(movements.filter((movement) => movement.category === category), buckets, measure);
+    });
+    const totals = buckets.map((_, index) => visibleCategories.reduce((sum, category) => sum + valuesByCategory[category][index], 0));
+    const width = 266, height = 150, left = 30, right = 4, top = 8, bottom = 20;
+    const plotWidth = width - left - right, plotHeight = height - top - bottom;
+    const maximum = niceMaximum(Math.max(...totals, 0));
+    const slotWidth = plotWidth / buckets.length;
+    const barWidth = Math.max(2, Math.min(18, slotWidth - 2));
+    let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(translate("stackedTitle", { activity: translate("activity_" + activity) }))}">`;
+    for (let gridIndex = 0; gridIndex <= 4; gridIndex++) {
+      const gridValue = maximum / 4 * gridIndex;
+      const gridY = top + plotHeight - gridValue / maximum * plotHeight;
+      svg += `<line x1="${left}" x2="${width - right}" y1="${gridY}" y2="${gridY}" stroke="var(--chart-grid)"/><text x="${left - 4}" y="${gridY + 3}" text-anchor="end">${new Intl.NumberFormat(currentLocale, { maximumFractionDigits: 1 }).format(gridValue)}</text>`;
+    }
+    const labelEvery = Math.ceil(buckets.length / 5);
+    buckets.forEach((bucket, index) => {
+      const barX = left + index * slotWidth + (slotWidth - barWidth) / 2;
+      let stackedTop = top + plotHeight;
+      const stackCategories = visibleCategories.filter((category) => valuesByCategory[category][index] > 0);
+      stackCategories.forEach((category, stackIndex) => {
+        const segmentHeight = valuesByCategory[category][index] / maximum * plotHeight;
+        stackedTop -= segmentHeight;
+        const isTopSegment = stackIndex === stackCategories.length - 1;
+        const tip = `${bucket.label} · ${translations[currentLocale].categories[category]}: ${formatMeasure(valuesByCategory[category][index], measure)}`;
+        const shape = isTopSegment
+          ? `<path d="${roundedTopBarPath(barX, stackedTop, barWidth, segmentHeight, 3)}"`
+          : `<rect x="${barX}" y="${stackedTop}" width="${barWidth}" height="${segmentHeight}"`;
+        svg += `${shape} fill="var(--category-${category})" stroke="var(--app-surface)" stroke-width="1" data-category="${category}" data-tip="${escapeHtml(tip)}"/>`;
+      });
+      if (index % labelEvery === 0) svg += `<text x="${barX + barWidth / 2}" y="${height - 5}" text-anchor="middle">${escapeHtml(bucket.label)}</text>`;
+    });
+    svg += `</svg><div class="chart-legend">${categoryOrder.map((category) => {
+      const isOff = statisticsFilter.categories.size && !statisticsFilter.categories.has(category);
+      return `<button type="button" data-category="${category}" class="${isOff ? "is-off" : ""}"><span class="legend-swatch" style="background:var(--category-${category})"></span>${escapeHtml(translations[currentLocale].categories[category])}</button>`;
+    }).join("")}</div>`;
+    const tableRows = buckets.map((bucket, index) => [bucket.label, ...visibleCategories.map((category) => formatMeasure(valuesByCategory[category][index], measure))]);
+    const content = totals.some((total) => total > 0) ? svg : `<div class="empty-chart">${translate("noData")}</div>`;
+    document.getElementById("stackedChartCard").innerHTML = chartCardHtml("stacked", translate("stackedTitle", { activity: translate("activity_" + activity) }), null, content, tableRows,
+      ["", ...visibleCategories.map((category) => translations[currentLocale].categories[category])]);
+  }
+
+  function renderDonutChart(range) {
+    const measure = statisticsFilter.measure;
+    const movements = selectMovements(statisticsFilter.activity, range);
+    const totalsByCategory = categoryOrder.map((category) => [category, sumMeasure(movements.filter((movement) => movement.category === category), measure)]).filter(([, value]) => value > 0);
+    const grandTotal = totalsByCategory.reduce((sum, [, value]) => sum + value, 0);
+    const percentFormat = new Intl.NumberFormat(currentLocale, { style: "percent", maximumFractionDigits: 0 });
+    let content = `<div class="empty-chart">${translate("noData")}</div>`;
+    if (grandTotal > 0) {
+      const radius = 50, innerRadius = 31, center = 56;
+      let angle = -Math.PI / 2;
+      let slices = "";
+      totalsByCategory.forEach(([category, value]) => {
+        const sweep = value / grandTotal * Math.PI * 2;
+        const endAngle = angle + Math.min(sweep, Math.PI * 2 - 0.0001);
+        const largeArc = sweep > Math.PI ? 1 : 0;
+        const point = (r, a) => `${(center + r * Math.cos(a)).toFixed(2)},${(center + r * Math.sin(a)).toFixed(2)}`;
+        const path = `M${point(radius, angle)} A${radius},${radius} 0 ${largeArc} 1 ${point(radius, endAngle)} L${point(innerRadius, endAngle)} A${innerRadius},${innerRadius} 0 ${largeArc} 0 ${point(innerRadius, angle)} Z`;
+        slices += `<path d="${path}" fill="var(--category-${category})" stroke="var(--app-surface)" stroke-width="2" data-category="${category}" data-tip="${escapeHtml(translations[currentLocale].categories[category] + ": " + formatMeasure(value, measure) + " (" + percentFormat.format(value / grandTotal) + ")")}"/>`;
+        angle = endAngle;
+      });
+      const donutSvg = `<svg viewBox="0 0 112 112" role="img" aria-label="${escapeHtml(translate("donutTitle"))}">${slices}
+        <text x="56" y="53" text-anchor="middle" style="font-size:9px">${translate("total")}</text>
+        <text x="56" y="66" text-anchor="middle" class="label-strong" style="font-size:11px">${escapeHtml(formatMeasure(grandTotal, measure))}</text></svg>`;
+      const legend = totalsByCategory.map(([category, value]) =>
+        `<div class="donut-legend-row" data-category="${category}"><span class="legend-swatch" style="background:var(--category-${category})"></span>${escapeHtml(translations[currentLocale].categories[category])}<span class="value">${percentFormat.format(value / grandTotal)}</span></div>`).join("");
+      content = `<div class="donut-layout">${donutSvg}<div>${legend}</div></div>`;
+    }
+    const tableRows = totalsByCategory.map(([category, value]) => [translations[currentLocale].categories[category], formatMeasure(value, measure), percentFormat.format(value / grandTotal)]);
+    document.getElementById("donutChartCard").innerHTML = chartCardHtml("donut", translate("donutTitle"), translate("activity_" + statisticsFilter.activity), content, tableRows, ["", translate("total"), "%"]);
+  }
+
+  /* ================= 8 Filter sheet ================= */
+  const savedViews = {
+    viewWeekendCooking: () => ({ ...createDefaultFilter(), period: "365", categories: new Set(["meals"]), weekdays: new Set([0, 6]), measure: "count" }),
+    viewWasteCheck: () => ({ ...createDefaultFilter(), period: "365", activity: "discarded", measure: "count", compare: "lastYear" }),
+    viewFruitSeason: () => ({ ...createDefaultFilter(), period: "all", categories: new Set(["fruit", "desserts"]), granularity: "month", compare: "off" })
+  };
+  function segmentedHtml(name, options, selectedValue) {
+    return `<div class="segmented-small" role="group">${options.map(([value, labelKey]) =>
+      `<button type="button" data-filter-field="${name}" data-filter-value="${value}" aria-pressed="${String(selectedValue) === String(value)}">${translate(labelKey)}</button>`).join("")}</div>`;
+  }
+  function weekdayName(weekday, style) {
+    return new Intl.DateTimeFormat(currentLocale, { weekday: style }).format(new Date(2026, 8, 27 + weekday, 12));
+  }
+  function renderFilterSheet() {
+    const range = periodRange(statisticsFilter);
+    const productsInOtherUnits = new Set(movementHistory.filter((movement) => movementMatches(movement, statisticsFilter, range, statisticsFilter.activity) && measureValue(movement, statisticsFilter.measure) === null).map((movement) => movement.productKey));
+    const measureHint = statisticsFilter.measure === "count" ? translate("measureAllHint")
+      : productsInOtherUnits.size ? translate("measureHiddenHint", { count: productsInOtherUnits.size }) : "";
+    const periodOptions = [["30", "period30"], ["90", "period90"], ["365", "period365"], ["year", "periodYear"], ["all", "periodAll"], ["custom", "periodCustom"]];
+    const visibleProductKeys = Object.keys(products).filter((productKey) => !productSearchText || productName(productKey).toLowerCase().includes(productSearchText.toLowerCase()));
+    document.getElementById("filterSheetContent").innerHTML = `
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterSavedViews")}</span>
+        <div class="chip-row">${Object.keys(savedViews).map((viewKey) => `<button type="button" class="chip" data-saved-view="${viewKey}">★ ${translate(viewKey)}</button>`).join("")}</div></div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterPeriod")}</span>
+        <div class="chip-row">${periodOptions.map(([value, labelKey]) => `<button type="button" class="chip" data-filter-field="period" data-filter-value="${value}" aria-pressed="${statisticsFilter.period === value}">${translate(labelKey)}</button>`).join("")}</div>
+        <div class="date-range-fields">
+          <label class="filter-hint">${translate("filterFrom")}<input type="date" id="filterFromDate" min="${isoFromDaysAgo(historyLengthInDays - 1)}" max="${isoFromDaysAgo(0)}" value="${isoFromDaysAgo(range.startDaysAgo)}"></label>
+          <label class="filter-hint">${translate("filterTo")}<input type="date" id="filterToDate" min="${isoFromDaysAgo(historyLengthInDays - 1)}" max="${isoFromDaysAgo(0)}" value="${isoFromDaysAgo(range.endDaysAgo)}"></label>
+        </div></div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterCompare")}</span>
+        ${segmentedHtml("compare", [["off", "compareOff"], ["previous", "comparePrevious"], ["lastYear", "compareLastYear"]], statisticsFilter.compare)}</div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterGranularity")}</span>
+        ${segmentedHtml("granularity", [["auto", "granularityAuto"], ["day", "granularityDay"], ["week", "granularityWeek"], ["month", "granularityMonth"]], statisticsFilter.granularity)}</div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterMeasure")}</span>
+        ${segmentedHtml("measure", [["weight", "measureWeight"], ["volume", "measureVolume"], ["pieces", "measurePieces"], ["count", "measureCount"]], statisticsFilter.measure)}
+        ${measureHint ? `<div class="filter-hint">${escapeHtml(measureHint)}</div>` : ""}</div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterActivity")}</span>
+        ${segmentedHtml("activity", [["consumed", "activity_consumed"], ["added", "activity_added"], ["discarded", "activity_discarded"]], statisticsFilter.activity)}</div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterCategories")}</span>
+        <div class="chip-row">${categoryOrder.map((category) => `<button type="button" class="chip" data-toggle-category="${category}" aria-pressed="${statisticsFilter.categories.has(category)}"><span class="chip-swatch" style="background:var(--category-${category})"></span>${escapeHtml(translations[currentLocale].categories[category])}</button>`).join("")}</div></div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterDrawers")}</span>
+        <div class="chip-row">${storageDrawers.map((drawer) => `<button type="button" class="chip" data-toggle-drawer="${drawer.identifier}" aria-pressed="${statisticsFilter.drawerIdentifiers.has(drawer.identifier)}"><span class="chip-swatch" style="background:${drawerColorTags[drawer.colorTagIndex]}"></span>${escapeHtml(drawerDisplayName(drawer))}</button>`).join("")}</div></div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterWeekdays")}</span>
+        <div class="chip-row">${[1, 2, 3, 4, 5, 6, 0].map((weekday) => `<button type="button" class="chip" data-toggle-weekday="${weekday}" aria-pressed="${statisticsFilter.weekdays.has(weekday)}">${escapeHtml(weekdayName(weekday, "short"))}</button>`).join("")}</div></div>
+      <div class="filter-sheet-section"><span class="filter-sheet-label">${translate("filterProducts")}</span>
+        <div class="search-field" style="margin-bottom:6px"><span>⌕</span><input type="search" id="filterProductSearch" value="${escapeHtml(productSearchText)}" placeholder="${escapeHtml(translate("productSearch"))}" aria-label="${escapeHtml(translate("productSearch"))}"></div>
+        <div class="chip-row" id="filterProductChips">${visibleProductKeys.map((productKey) => `<button type="button" class="chip" data-toggle-product="${productKey}" aria-pressed="${statisticsFilter.productKeys.has(productKey)}">${products[productKey].icon} ${escapeHtml(productName(productKey))}</button>`).join("")}</div></div>
+      <button type="button" class="secondary-button" data-reset-filters>${translate("resetFilters")}</button>`;
+  }
+  const filterSheetContent = document.getElementById("filterSheetContent");
+  filterSheetContent.addEventListener("click", (clickEvent) => {
+    const fieldButton = clickEvent.target.closest("[data-filter-field]");
+    if (fieldButton) {
+      const field = fieldButton.dataset.filterField;
+      const value = fieldButton.dataset.filterValue;
+      if (field === "period" && value === "custom") {
+        const range = periodRange(statisticsFilter);
+        statisticsFilter.customFromDaysAgo = range.startDaysAgo;
+        statisticsFilter.customToDaysAgo = range.endDaysAgo;
+      }
+      statisticsFilter[field] = value;
+      renderStatistics();
+      return;
+    }
+    const savedViewButton = clickEvent.target.closest("[data-saved-view]");
+    if (savedViewButton) { statisticsFilter = savedViews[savedViewButton.dataset.savedView](); renderStatistics(); return; }
+    const toggles = [["toggleCategory", "categories", (value) => value], ["toggleDrawer", "drawerIdentifiers", (value) => value],
+      ["toggleProduct", "productKeys", (value) => value], ["toggleWeekday", "weekdays", (value) => Number(value)]];
+    for (const [dataKey, setName, convert] of toggles) {
+      const toggleButton = clickEvent.target.closest(`[data-${dataKey.replace(/[A-Z]/g, (letter) => "-" + letter.toLowerCase())}]`);
+      if (toggleButton) { toggleSetValue(statisticsFilter[setName], convert(toggleButton.dataset[dataKey])); renderStatistics(); return; }
+    }
+  });
+  filterSheetContent.addEventListener("change", (changeEvent) => {
+    if (changeEvent.target.id !== "filterFromDate" && changeEvent.target.id !== "filterToDate") return;
+    const toDaysAgo = (isoDate) => Math.max(0, Math.min(historyLengthInDays - 1, daysSince(isoDate)));
+    const fromValue = document.getElementById("filterFromDate").value;
+    const toValue = document.getElementById("filterToDate").value;
+    if (!fromValue || !toValue) return;
+    statisticsFilter.period = "custom";
+    statisticsFilter.customFromDaysAgo = toDaysAgo(fromValue);
+    statisticsFilter.customToDaysAgo = toDaysAgo(toValue);
+    renderStatistics();
+  });
+  filterSheetContent.addEventListener("input", (inputEvent) => {
+    if (inputEvent.target.id !== "filterProductSearch") return;
+    productSearchText = inputEvent.target.value;
+    const visibleProductKeys = Object.keys(products).filter((productKey) => !productSearchText || productName(productKey).toLowerCase().includes(productSearchText.toLowerCase()));
+    document.getElementById("filterProductChips").innerHTML = visibleProductKeys.map((productKey) =>
+      `<button type="button" class="chip" data-toggle-product="${productKey}" aria-pressed="${statisticsFilter.productKeys.has(productKey)}">${products[productKey].icon} ${escapeHtml(productName(productKey))}</button>`).join("");
+  });
+
+  /* ================= 9 Insights deep dive ================= */
+  function renderInsightsDeepDive() {
+    const range = periodRange(statisticsFilter);
+    const measure = statisticsFilter.measure;
+    const activity = statisticsFilter.activity;
+    document.getElementById("deepDiveSubtitle").textContent =
+      translate("periodLabel", { from: formatShortDate(dateFromDaysAgo(range.startDaysAgo)), to: formatShortDate(dateFromDaysAgo(range.endDaysAgo)) }) + " · " + translate("activity_" + activity);
+
+    // Calendar heatmap (at most 26 weeks, ending at the range end)
+    const calendarEnd = range.endDaysAgo;
+    const calendarStart = Math.min(range.startDaysAgo, calendarEnd + 26 * 7 - 1);
+    const dailyCounts = {};
+    selectMovements(activity, { startDaysAgo: calendarStart, endDaysAgo: calendarEnd }).forEach((movement) => { dailyCounts[movement.daysAgo] = (dailyCounts[movement.daysAgo] || 0) + 1; });
+    const maximumDaily = Math.max(1, ...Object.values(dailyCounts));
+    const endDate = dateFromDaysAgo(calendarEnd);
+    const mondayBasedWeekday = (date) => (date.getDay() + 6) % 7;
+    const weekCount = Math.ceil((calendarStart - calendarEnd + 1 + mondayBasedWeekday(endDate)) / 7) + 1;
+    const cellSize = 9.5, cellGap = 2, calendarLeft = 22, calendarTop = 12;
+    let calendarSvg = `<svg viewBox="0 0 ${calendarLeft + weekCount * (cellSize + cellGap)} ${calendarTop + 7 * (cellSize + cellGap) + 2}" role="img" aria-label="${escapeHtml(translate("calendarTitle"))}">`;
+    [0, 2, 4].forEach((rowIndex) => { calendarSvg += `<text x="0" y="${calendarTop + rowIndex * (cellSize + cellGap) + 8}">${escapeHtml(weekdayName((rowIndex + 1) % 7, "narrow"))}</text>`; });
+    let lastMonthLabel = -1;
+    const calendarTableRows = [];
+    for (let daysAgo = calendarStart; daysAgo >= calendarEnd; daysAgo--) {
+      const date = dateFromDaysAgo(daysAgo);
+      const daysFromEnd = daysAgo - calendarEnd;
+      const columnFromEnd = Math.floor((daysFromEnd + (6 - mondayBasedWeekday(endDate))) / 7);
+      const column = weekCount - 1 - columnFromEnd;
+      const row = mondayBasedWeekday(date);
+      const count = dailyCounts[daysAgo] || 0;
+      const level = count === 0 ? 0 : Math.min(5, Math.ceil(count / maximumDaily * 5));
+      const x = calendarLeft + column * (cellSize + cellGap);
+      const y = calendarTop + row * (cellSize + cellGap);
+      if (date.getDate() <= 7 && row === 0 && date.getMonth() !== lastMonthLabel) {
+        lastMonthLabel = date.getMonth();
+        calendarSvg += `<text x="${x}" y="8">${escapeHtml(formatShortDate(date, { month: "short" }))}</text>`;
+      }
+      const tip = `${formatShortDate(date, { weekday: "short", day: "numeric", month: "short" })}: ${count}`;
+      calendarSvg += `<rect x="${x}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="var(--heat-${level})" data-tip="${escapeHtml(tip)}"/>`;
+      if (count) calendarTableRows.push([formatShortDate(date), String(count)]);
+    }
+    calendarSvg += `</svg><div class="chart-legend" style="align-items:center">0 ${[1, 2, 3, 4, 5].map((level) => `<span class="legend-swatch" style="background:var(--heat-${level});margin:0"></span>`).join("")} ${maximumDaily}</div>`;
+    document.getElementById("calendarChartCard").innerHTML = chartCardHtml("calendar", translate("calendarTitle"),
+      translate("calendarSubtitle", { activity: translate("activityLower_" + activity) }), calendarSvg, calendarTableRows, ["", "#"]);
+
+    // Weekday pattern
+    const weekdayOrder = [1, 2, 3, 4, 5, 6, 0];
+    const weekdayMovements = selectMovements(activity, range, { ignoreWeekdays: true });
+    const weekdayTotals = weekdayOrder.map((weekday) => sumMeasure(weekdayMovements.filter((movement) => movement.weekday === weekday), measure));
+    const weekdayMaximum = niceMaximum(Math.max(...weekdayTotals, 0));
+    let weekdaySvg = `<svg viewBox="0 0 266 110" role="img" aria-label="${escapeHtml(translate("weekdayTitle"))}">`;
+    weekdayTotals.forEach((total, index) => {
+      const barHeight = total / weekdayMaximum * 80;
+      const barX = 10 + index * 36;
+      const weekday = weekdayOrder[index];
+      const isSelected = statisticsFilter.weekdays.has(weekday);
+      const dimmed = statisticsFilter.weekdays.size && !isSelected;
+      weekdaySvg += `<g data-weekday="${weekday}" data-tip="${escapeHtml(weekdayName(weekday, "long") + ": " + formatMeasure(total, measure))}">
+        <rect x="${barX - 4}" y="0" width="36" height="102" fill="transparent"/>
+        <path d="${roundedTopBarPath(barX, 88 - barHeight, 26, barHeight, 4)}" fill="var(--chart-bar)" opacity="${dimmed ? 0.3 : 1}"/>
+        <text x="${barX + 13}" y="${84 - barHeight}" text-anchor="middle" class="label-strong">${escapeHtml(new Intl.NumberFormat(currentLocale, { maximumFractionDigits: 0 }).format(total))}</text>
+        <text x="${barX + 13}" y="101" text-anchor="middle">${escapeHtml(weekdayName(weekday, "short"))}</text></g>`;
+    });
+    weekdaySvg += `</svg>`;
+    document.getElementById("weekdayChartCard").innerHTML = chartCardHtml("weekday", translate("weekdayTitle"), translate("activity_" + activity) + " · " + translate("measure" + measure.charAt(0).toUpperCase() + measure.slice(1)),
+      weekdaySvg, weekdayOrder.map((weekday, index) => [weekdayName(weekday, "long"), formatMeasure(weekdayTotals[index], measure)]), ["", translate("total")]);
+
+    // Storage duration histogram
+    const durationLimits = [30, 91, 182, 273, 365, Infinity];
+    const durationCounts = durationLimits.map(() => 0);
+    selectMovements("consumed", range).forEach((movement) => { durationCounts[durationLimits.findIndex((limit) => movement.storedDays < limit)]++; });
+    const durationMaximum = niceMaximum(Math.max(...durationCounts, 0));
+    const bucketLabels = translations[currentLocale].durationBuckets;
+    let durationSvg = `<svg viewBox="0 0 266 120" role="img" aria-label="${escapeHtml(translate("durationTitle"))}">`;
+    durationCounts.forEach((count, index) => {
+      const barHeight = count / durationMaximum * 84;
+      const barX = 6 + index * 43;
+      durationSvg += `<path d="${roundedTopBarPath(barX, 92 - barHeight, 36, barHeight, 4)}" fill="var(--chart-bar)" opacity="${index >= 3 ? 0.55 : 1}" data-tip="${escapeHtml(bucketLabels[index] + ": " + count)}"/>
+        <text x="${barX + 18}" y="${88 - barHeight}" text-anchor="middle" class="label-strong">${count}</text>
+        <text x="${barX + 18}" y="106" text-anchor="middle">${escapeHtml(bucketLabels[index])}</text>`;
+    });
+    durationSvg += `<line x1="135" x2="135" y1="4" y2="95" stroke="var(--status-aging)" stroke-dasharray="3 3"/><text x="138" y="12" style="fill:var(--status-aging)">▲ ${escapeHtml(translate("sixMonthMarker"))}</text></svg>`;
+    document.getElementById("durationChartCard").innerHTML = chartCardHtml("duration", translate("durationTitle"), translate("durationSubtitle"), durationSvg,
+      bucketLabels.map((label, index) => [label, String(durationCounts[index])]), ["", "#"]);
+
+    // Freezer map (current contents)
+    const freezerMapHtml = activeDrawers().map((drawer) => {
+      const drawerBatches = activeBatches().filter((batch) => batch.drawerIdentifier === drawer.identifier)
+        .filter((batch) => (!statisticsFilter.categories.size || statisticsFilter.categories.has(products[batch.productKey].category)) && (!statisticsFilter.productKeys.size || statisticsFilter.productKeys.has(batch.productKey)));
+      const items = drawerBatches.map((batch) => {
+        const status = storageAgeStatus(batch);
+        return `<span class="freezer-map-item ${status.cssClass}" data-tip="${escapeHtml(productName(batch.productKey) + " · " + status.label + " · " + translate("frozenAgo", { age: formatRelativeAge(batch.frozenOn) }))}">${status.symbol}</span>`;
+      }).join("");
+      return `<div class="freezer-map-drawer" role="button" tabindex="0" data-drawer-filter="${drawer.identifier}" aria-pressed="${statisticsFilter.drawerIdentifiers.has(drawer.identifier)}">
+        <div class="drawer-title"><span><span style="color:${drawerColorTags[drawer.colorTagIndex]}">●</span> ${escapeHtml(drawerDisplayName(drawer))}</span><span>${escapeHtml(translate("drawerItems", { count: drawerBatches.length }))}</span></div>
+        <div class="freezer-map-items">${items || "&nbsp;"}</div></div>`;
+    }).join("") + `<div class="chart-legend"><span class="age-badge is-fresh">${translate("ageFresh")}</span><span class="age-badge is-aging">${translate("ageAging")}</span><span class="age-badge is-urgent">${translate("ageUrgent")}</span></div>`;
+    document.getElementById("freezerMapCard").innerHTML = chartCardHtml("freezerMap", translate("freezerMapTitle"), translate("freezerMapSubtitle"), freezerMapHtml,
+      activeDrawers().map((drawer) => [drawerDisplayName(drawer), String(activeBatches().filter((batch) => batch.drawerIdentifier === drawer.identifier).length)]), ["", "#"]);
+
+    // Top products
+    const topMovements = selectMovements(topProductsActivity, range);
+    const totalsByProduct = {};
+    topMovements.forEach((movement) => {
+      const value = measureValue(movement, measure);
+      if (value !== null) totalsByProduct[movement.productKey] = (totalsByProduct[movement.productKey] || 0) + value;
+    });
+    const ranking = Object.entries(totalsByProduct).sort((first, second) => second[1] - first[1]).slice(0, 6);
+    const rankingMaximum = ranking.length ? ranking[0][1] : 1;
+    const rankingHtml = `<div class="segmented-small" style="margin-bottom:8px">
+        <button type="button" data-top-activity="consumed" aria-pressed="${topProductsActivity === "consumed"}">${translate("activity_consumed")}</button>
+        <button type="button" data-top-activity="discarded" aria-pressed="${topProductsActivity === "discarded"}">${translate("activity_discarded")}</button></div>` +
+      (ranking.length ? ranking.map(([productKey, value]) =>
+        `<div class="ranking-row${statisticsFilter.productKeys.has(productKey) ? " is-selected" : ""}" data-product-filter="${productKey}" data-tip="${escapeHtml(productName(productKey) + ": " + formatMeasure(value, measure))}">
+          <span class="name">${products[productKey].icon} ${escapeHtml(productName(productKey))}</span>
+          <div class="track"><div class="fill" style="width:${value / rankingMaximum * 100}%"></div></div>
+          <span class="value">${escapeHtml(formatMeasure(value, measure))}</span></div>`).join("") : `<div class="empty-chart">${translate("noData")}</div>`);
+    document.getElementById("topProductsCard").innerHTML = chartCardHtml("topProducts", translate("topProductsTitle"), null, rankingHtml,
+      ranking.map(([productKey, value]) => [productName(productKey), formatMeasure(value, measure)]), ["", translate("total")]);
+
+    // Waste by reason
+    const reasonCounts = discardReasons.map((reason) => [reason, selectMovements("discarded", range).filter((movement) => movement.reason === reason).length]);
+    const reasonMaximum = Math.max(1, ...reasonCounts.map(([, count]) => count));
+    const reasonHtml = reasonCounts.some(([, count]) => count) ? reasonCounts.map(([reason, count]) =>
+      `<div class="ranking-row" style="cursor:default" data-tip="${escapeHtml(translate(reason) + ": " + count)}"><span class="name">${escapeHtml(translate(reason))}</span>
+        <div class="track"><div class="fill" style="width:${count / reasonMaximum * 100}%"></div></div><span class="value">${count}</span></div>`).join("")
+      : `<div class="empty-chart">${translate("noData")}</div>`;
+    document.getElementById("wasteReasonCard").innerHTML = chartCardHtml("waste", translate("wasteTitle"), translate("wasteSubtitle"), reasonHtml,
+      reasonCounts.map(([reason, count]) => [translate(reason), String(count)]), ["", "#"]);
+
+    // Runs out in (contributed by the restock module)
+    const forecastRows = Object.keys(restockRules).map((productKey) => {
+      const eatenRecently = movementHistory.filter((movement) => movement.kind === "consumed" && movement.productKey === productKey && movement.daysAgo < 60)
+        .reduce((sum, movement) => sum + movement.quantity, 0);
+      const dailyRate = eatenRecently / 60;
+      const daysLeft = dailyRate > 0 ? Math.round(totalQuantityOfProduct(productKey) / dailyRate) : null;
+      return { productKey, daysLeft };
+    }).sort((first, second) => (first.daysLeft ?? 9999) - (second.daysLeft ?? 9999));
+    const forecastHtml = forecastRows.map(({ productKey, daysLeft }) =>
+      `<div class="forecast-row" data-tip="${escapeHtml(productName(productKey) + ": " + formatQuantity(totalQuantityOfProduct(productKey), products[productKey].unit))}"><span>${products[productKey].icon}</span>
+        <div><div>${escapeHtml(productName(productKey))}</div><div class="track"><div class="fill${daysLeft !== null && daysLeft < 10 ? " is-soon" : ""}" style="width:${daysLeft === null ? 100 : Math.min(100, daysLeft / 30 * 100)}%"></div></div></div>
+        <span class="value">${escapeHtml(daysLeft === null ? translate("forecastNever") : translate("forecastDays", { count: daysLeft }))}</span></div>`).join("");
+    document.getElementById("forecastCard").innerHTML = chartCardHtml("forecast", translate("forecastTitle"), translate("forecastSubtitle"), forecastHtml,
+      forecastRows.map(({ productKey, daysLeft }) => [productName(productKey), daysLeft === null ? "–" : String(daysLeft)]), ["", "days"]);
+  }
+
+  /* Shared statistics click handling: cross-filtering, chip removal, table toggles */
+  function handleStatisticsClick(clickEvent) {
+    const tableToggle = clickEvent.target.closest("[data-table-toggle]");
+    if (tableToggle) { toggleSetValue(chartsShowingTable, tableToggle.dataset.tableToggle); renderStatistics(); return; }
+    const periodChip = clickEvent.target.closest("[data-period]");
+    if (periodChip) { statisticsFilter.period = periodChip.dataset.period; renderStatistics(); return; }
+    if (clickEvent.target.closest("[data-open-filters]")) { highlightExample("exampleFilterSheet"); return; }
+    if (clickEvent.target.closest("[data-reset-filters]")) { statisticsFilter = createDefaultFilter(); renderStatistics(); return; }
+    const removeChip = clickEvent.target.closest("[data-remove]");
+    if (removeChip) {
+      const removeKind = removeChip.dataset.remove;
+      if (removeKind === "period") statisticsFilter.period = "90";
+      if (removeKind === "category") statisticsFilter.categories.delete(removeChip.dataset.value);
+      if (removeKind === "drawer") statisticsFilter.drawerIdentifiers.delete(removeChip.dataset.value);
+      if (removeKind === "product") statisticsFilter.productKeys.delete(removeChip.dataset.value);
+      if (removeKind === "weekday") statisticsFilter.weekdays.delete(Number(removeChip.dataset.value));
+      if (removeKind === "activity") statisticsFilter.activity = "consumed";
+      if (removeKind === "measure") statisticsFilter.measure = "weight";
+      renderStatistics();
+      return;
+    }
+    const topActivityButton = clickEvent.target.closest("[data-top-activity]");
+    if (topActivityButton) { topProductsActivity = topActivityButton.dataset.topActivity; renderStatistics(); return; }
+    const categoryElement = clickEvent.target.closest("[data-category]");
+    if (categoryElement) { toggleSetValue(statisticsFilter.categories, categoryElement.dataset.category); renderStatistics(); return; }
+    const drawerElement = clickEvent.target.closest("[data-drawer-filter]");
+    if (drawerElement) { toggleSetValue(statisticsFilter.drawerIdentifiers, drawerElement.dataset.drawerFilter); renderStatistics(); return; }
+    const productElement = clickEvent.target.closest("[data-product-filter]");
+    if (productElement) { toggleSetValue(statisticsFilter.productKeys, productElement.dataset.productFilter); renderStatistics(); return; }
+    const weekdayElement = clickEvent.target.closest("[data-weekday]");
+    if (weekdayElement) { toggleSetValue(statisticsFilter.weekdays, Number(weekdayElement.dataset.weekday)); renderStatistics(); }
+  }
+  ["exampleInsightsOverview", "exampleInsightsDeepDive", "exampleFilterSheet"].forEach((exampleIdentifier) => {
+    document.getElementById(exampleIdentifier).querySelector(".phone-screen").addEventListener("click", handleStatisticsClick);
+  });
+  document.getElementById("freezerMapCard").addEventListener("keydown", (keyboardEvent) => {
+    if ((keyboardEvent.key === "Enter" || keyboardEvent.key === " ") && keyboardEvent.target.dataset.drawerFilter) {
+      keyboardEvent.preventDefault();
+      toggleSetValue(statisticsFilter.drawerIdentifiers, keyboardEvent.target.dataset.drawerFilter);
+      renderStatistics();
+    }
+  });
+
+  function renderStatistics() {
+    const scrollPositions = ["exampleInsightsOverview", "exampleInsightsDeepDive", "exampleFilterSheet"].map((identifier) => {
+      const content = document.getElementById(identifier).querySelector(".screen-content");
+      return [content, content.scrollTop];
+    });
+    renderInsightsOverview();
+    renderFilterSheet();
+    renderInsightsDeepDive();
+    scrollPositions.forEach(([content, scrollTop]) => { content.scrollTop = scrollTop; });
+  }
+
+  /* ================= 10 Config ================= */
+  let selectedThemeChoice = "system";
+  function renderConfig() {
+    const languageOptions = [["system", translate("systemLanguage"), translate("systemLanguageDetail")], ["en", "English", "English"], ["de", "Deutsch", "German"]];
+    const themeOptions = [["system", "themeSystem"], ["light", "themeLight"], ["dark", "themeDark"]];
+    document.getElementById("configContent").innerHTML = `
+      <div class="config-section"><h4>${translate("configLanguage")}</h4>
+        ${languageOptions.map(([value, label, detail]) => `<label class="config-row"><input type="radio" name="appLanguage" value="${value}" ${selectedLanguage === value ? "checked" : ""}>
+          <span class="config-row-text"><span lang="${value === "system" ? currentLocale : value}">${escapeHtml(label)}</span><div class="config-row-detail">${escapeHtml(detail)}</div></span></label>`).join("")}
+      </div>
+      <div class="config-section"><h4>${translate("configAppearance")}</h4>
+        <div class="config-row"><div class="segmented-small" style="flex:1">${themeOptions.map(([value, labelKey]) =>
+          `<button type="button" data-config-theme="${value}" aria-pressed="${selectedThemeChoice === value}">${translate(labelKey)}</button>`).join("")}</div></div>
+      </div>
+      <div class="config-section"><h4>${translate("configFreezer")}</h4>
+        <button type="button" class="config-row" data-open-layout><span class="config-row-text">❄ ${translate("freezerLayoutRow")}<div class="config-row-detail">${escapeHtml(translate("freezerLayoutDetail", { count: activeDrawers().length }))} · ${escapeHtml(activeDrawers().map(drawerDisplayName).join(", "))}</div></span><span class="chevron">›</span></button>
+      </div>
+      <div class="config-section"><h4>${translate("configOptional")}</h4>
+        <div class="config-row"><span class="config-row-text">${translate("barcodeFeature")}<div class="config-row-detail">${translate("barcodeFeatureDetail")}</div></span>
+          <button type="button" class="toggle-switch" role="switch" aria-checked="${moduleAvailability.barcodeScanning}" data-module-toggle="barcodeScanning" aria-label="${escapeHtml(translate("barcodeFeature"))}"></button></div>
+        <div class="config-row"><span class="config-row-text">${translate("picturesFeature")}<div class="config-row-detail">${translate("picturesFeatureDetail")}</div></span>
+          <button type="button" class="toggle-switch" role="switch" aria-checked="${moduleAvailability.itemPictures}" data-module-toggle="itemPictures" aria-label="${escapeHtml(translate("picturesFeature"))}"></button></div>
+      </div>
+      <div class="config-section"><h4>${translate("configMore")}</h4>
+        <button type="button" class="config-row"><span class="config-row-text">🔔 ${translate("remindersRow")}<div class="config-row-detail">${translate("remindersDetail")}</div></span><span class="chevron">›</span></button>
+        <button type="button" class="config-row"><span class="config-row-text">💾 ${translate("backupRow")}<div class="config-row-detail">${translate("backupDetail")}</div></span><span class="chevron">›</span></button>
+        <button type="button" class="config-row"><span class="config-row-text">🔒 ${translate("aboutRow")}<div class="config-row-detail">${translate("aboutDetail")}</div></span><span class="chevron">›</span></button>
+      </div>`;
+  }
+  const configContent = document.getElementById("configContent");
+  configContent.addEventListener("change", (changeEvent) => {
+    if (changeEvent.target.name !== "appLanguage") return;
+    selectedLanguage = changeEvent.target.value;
+    currentLocale = selectedLanguage === "system" ? "en" : selectedLanguage;
+    document.getElementById("partialSnackbar").hidden = true;
+    renderEverything();
+  });
+  configContent.addEventListener("click", (clickEvent) => {
+    const themeButton = clickEvent.target.closest("[data-config-theme]");
+    if (themeButton) { applyTheme(themeButton.dataset.configTheme); return; }
+    const moduleToggle = clickEvent.target.closest("[data-module-toggle]");
+    if (moduleToggle) { moduleAvailability[moduleToggle.dataset.moduleToggle] = !moduleAvailability[moduleToggle.dataset.moduleToggle]; renderEverything(); return; }
+    if (clickEvent.target.closest("[data-open-layout]")) highlightExample("exampleFreezerLayout");
+  });
+
+  /* ================= 11 Freezer layout editor ================= */
+  let pendingRemovalDrawerIdentifier = null;
+  function renderFreezerLayout() {
+    const drawers = activeDrawers();
+    const archivedDrawers = storageDrawers.filter((drawer) => drawer.isArchived);
+    document.getElementById("freezerLayoutContent").innerHTML = `
+      <div class="app-card" style="padding:4px 0">${drawers.map((drawer, index) => {
+        const itemCount = activeBatches().filter((batch) => batch.drawerIdentifier === drawer.identifier).length;
+        const error = drawerNameErrors[drawer.identifier];
+        return `<div class="drawer-editor-row">
+          <button type="button" class="color-tag-button" style="background:${drawerColorTags[drawer.colorTagIndex]}" data-layout-color="${drawer.identifier}" aria-label="${escapeHtml(translate("changeColor"))}"></button>
+          <div class="drawer-name-field"><input type="text" maxlength="40" value="${escapeHtml(drawer.customName || "")}" placeholder="${escapeHtml(translate("drawer", { number: drawer.defaultNumber }))}" data-layout-name="${drawer.identifier}" aria-label="${escapeHtml(drawerDisplayName(drawer))}">
+            ${error ? `<div class="field-error">${escapeHtml(translate(error))}</div>` : `<div class="item-detail">${escapeHtml(translate("drawerItems", { count: itemCount }))}</div>`}</div>
+          <button type="button" class="icon-button" data-layout-move="${drawer.identifier}" data-direction="-1" ${index === 0 ? "disabled" : ""} aria-label="${escapeHtml(translate("moveUp"))}">↑</button>
+          <button type="button" class="icon-button" data-layout-move="${drawer.identifier}" data-direction="1" ${index === drawers.length - 1 ? "disabled" : ""} aria-label="${escapeHtml(translate("moveDown"))}">↓</button>
+          <button type="button" class="icon-button is-danger" data-layout-remove="${drawer.identifier}" ${drawers.length === 1 ? "disabled" : ""} aria-label="${escapeHtml(translate("removeDrawer"))}">✕</button>
+        </div>`;
+      }).join("")}</div>
+      <button type="button" class="secondary-button" data-layout-add>${translate("addDrawer")}</button>
+      ${drawers.length === 1 ? `<div class="filter-hint">${translate("lastDrawerHint")}</div>` : ""}
+      <p class="filter-hint" style="margin-top:12px">${translate("layoutHint")}</p>
+      ${archivedDrawers.length ? `<p class="filter-hint">${escapeHtml(translate("removedDrawers", { names: archivedDrawers.map((drawer) => drawer.customName || translate("drawer", { number: drawer.defaultNumber })).join(", ") }))}</p>` : ""}`;
+    const dialogContainer = document.getElementById("freezerLayoutDialog");
+    if (!pendingRemovalDrawerIdentifier) { dialogContainer.innerHTML = ""; return; }
+    const drawerToRemove = drawerByIdentifier(pendingRemovalDrawerIdentifier);
+    const itemCount = activeBatches().filter((batch) => batch.drawerIdentifier === drawerToRemove.identifier).length;
+    dialogContainer.innerHTML = `<div class="dialog-backdrop"><div class="dialog-card" role="dialog" aria-modal="true">
+      <h4>${escapeHtml(translate("removeDialogTitle", { name: drawerDisplayName(drawerToRemove) }))}</h4>
+      <p>${escapeHtml(translate("removeDialogText", { count: itemCount }))}</p>
+      <select id="removeTargetSelect">${drawers.filter((drawer) => drawer !== drawerToRemove).map((drawer) => `<option value="${drawer.identifier}">${escapeHtml(drawerDisplayName(drawer))}</option>`).join("")}</select>
+      <div class="dialog-actions"><button type="button" class="secondary-button" data-dialog-cancel>${translate("cancel")}</button>
+        <button type="button" class="primary-button" data-dialog-confirm>${translate("moveAndRemove")}</button></div></div></div>`;
+  }
+  function archiveDrawer(drawer, targetDrawerIdentifier) {
+    // One transaction in the app: move every batch, write "moved" movements, archive the drawer.
+    activeBatches().filter((batch) => batch.drawerIdentifier === drawer.identifier).forEach((batch) => { batch.drawerIdentifier = targetDrawerIdentifier; });
+    drawer.isArchived = true;
+    delete drawerNameErrors[drawer.identifier];
+  }
+  const freezerLayoutPhone = document.getElementById("exampleFreezerLayout").querySelector(".phone-screen");
+  freezerLayoutPhone.addEventListener("click", (clickEvent) => {
+    const colorButton = clickEvent.target.closest("[data-layout-color]");
+    if (colorButton) { const drawer = drawerByIdentifier(colorButton.dataset.layoutColor); drawer.colorTagIndex = (drawer.colorTagIndex + 1) % drawerColorTags.length; renderEverything(); return; }
+    const moveButton = clickEvent.target.closest("[data-layout-move]");
+    if (moveButton) {
+      const drawers = activeDrawers();
+      const index = drawers.findIndex((drawer) => drawer.identifier === moveButton.dataset.layoutMove);
+      const otherDrawer = drawers[index + Number(moveButton.dataset.direction)];
+      if (!otherDrawer) return;
+      const firstPosition = storageDrawers.indexOf(drawers[index]);
+      const secondPosition = storageDrawers.indexOf(otherDrawer);
+      [storageDrawers[firstPosition], storageDrawers[secondPosition]] = [storageDrawers[secondPosition], storageDrawers[firstPosition]];
+      renderEverything();
+      return;
+    }
+    const removeButton = clickEvent.target.closest("[data-layout-remove]");
+    if (removeButton) {
+      const drawer = drawerByIdentifier(removeButton.dataset.layoutRemove);
+      const holdsItems = activeBatches().some((batch) => batch.drawerIdentifier === drawer.identifier);
+      if (holdsItems) { pendingRemovalDrawerIdentifier = drawer.identifier; renderFreezerLayout(); }
+      else { archiveDrawer(drawer, null); renderEverything(); }
+      return;
+    }
+    if (clickEvent.target.closest("[data-layout-add]")) {
+      storageDrawers.push({ identifier: "d" + nextDrawerNumber, defaultNumber: nextDrawerNumber, customName: null, colorTagIndex: (nextDrawerNumber - 1) % drawerColorTags.length, isArchived: false });
+      nextDrawerNumber++;
+      renderEverything();
+      return;
+    }
+    if (clickEvent.target.closest("[data-dialog-cancel]")) { pendingRemovalDrawerIdentifier = null; renderFreezerLayout(); return; }
+    if (clickEvent.target.closest("[data-dialog-confirm]")) {
+      archiveDrawer(drawerByIdentifier(pendingRemovalDrawerIdentifier), document.getElementById("removeTargetSelect").value);
+      pendingRemovalDrawerIdentifier = null;
+      renderEverything();
+    }
+  });
+  freezerLayoutPhone.addEventListener("change", (changeEvent) => {
+    const drawerIdentifier = changeEvent.target.dataset.layoutName;
+    if (!drawerIdentifier) return;
+    const drawer = drawerByIdentifier(drawerIdentifier);
+    const enteredName = changeEvent.target.value.trim();
+    const isDuplicate = enteredName && activeDrawers().some((other) => other !== drawer && drawerDisplayName(other).toLocaleLowerCase(currentLocale) === enteredName.toLocaleLowerCase(currentLocale));
+    if (enteredName.length > 30) drawerNameErrors[drawerIdentifier] = "nameTooLong";
+    else if (isDuplicate) drawerNameErrors[drawerIdentifier] = "nameTaken";
+    else { delete drawerNameErrors[drawerIdentifier]; drawer.customName = enteredName || null; }
+    renderEverything();
+  });
+
+  /* ================= Tooltips (one per phone) ================= */
+  document.querySelectorAll(".phone-screen").forEach((phoneScreen) => {
+    const tooltip = document.createElement("div");
+    tooltip.className = "phone-tooltip";
+    tooltip.hidden = true;
+    phoneScreen.appendChild(tooltip);
+    const showTooltip = (pointerEvent) => {
+      const tipElement = pointerEvent.target.closest && pointerEvent.target.closest("[data-tip]");
+      if (!tipElement || !phoneScreen.contains(tipElement)) { tooltip.hidden = true; return; }
+      tooltip.textContent = tipElement.dataset.tip;
+      tooltip.hidden = false;
+      const screenBounds = phoneScreen.getBoundingClientRect();
+      const tooltipWidth = tooltip.offsetWidth;
+      let left = pointerEvent.clientX - screenBounds.left - tooltipWidth / 2;
+      left = Math.max(6, Math.min(screenBounds.width - tooltipWidth - 6, left));
+      let top = pointerEvent.clientY - screenBounds.top - tooltip.offsetHeight - 12;
+      if (top < 4) top = pointerEvent.clientY - screenBounds.top + 18;
+      tooltip.style.left = left + "px";
+      tooltip.style.top = top + "px";
+    };
+    phoneScreen.addEventListener("pointermove", showTooltip);
+    phoneScreen.addEventListener("pointerdown", showTooltip);
+    phoneScreen.addEventListener("pointerleave", () => { tooltip.hidden = true; });
+  });
+
+  /* ================= Page controls ================= */
+  function applyTheme(themeChoice) {
+    selectedThemeChoice = themeChoice;
+    if (themeChoice === "system") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", themeChoice);
+    const effectiveTheme = themeChoice === "system" ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : themeChoice;
+    document.querySelectorAll("[data-theme-choice]").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.themeChoice === effectiveTheme)));
+    try { localStorage.setItem("freezerUiExamplesThemeV2", themeChoice); } catch (storageError) { /* storage unavailable */ }
+    renderConfig();
+  }
+  document.querySelectorAll("[data-theme-choice]").forEach((button) => button.addEventListener("click", () => applyTheme(button.dataset.themeChoice)));
+
+  function renderEverything() {
+    renderStaticTexts();
+    renderHome();
+    renderInventory();
+    renderPartialRemoval();
+    renderScanner();
+    renderAddItem();
+    renderShoppingList();
+    renderStatistics();
+    renderConfig();
+    renderFreezerLayout();
+  }
+  renderEverything();
+  let storedThemeChoice = null;
+  try { storedThemeChoice = localStorage.getItem("freezerUiExamplesThemeV2"); } catch (storageError) { /* storage unavailable */ }
+  applyTheme(storedThemeChoice || "system");
+})();
+</script>
+</body>
+</html>

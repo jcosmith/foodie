@@ -1,0 +1,58 @@
+{
+  "@@locale": "en",
+  "configSectionTitle": "Reminders",
+  "eatSoonTitle": "Eat soon",
+  "eatSoonEmpty": "Nothing urgent. Well done!",
+  "eatSoonScreenEmptyTitle": "Nothing to eat soon",
+  "eatSoonScreenEmptyMessage": "Everything in your freezer keeps for a while yet.",
+  "eatSoonScreenExplanation": "Food shows up here once 60 % of its storage time has passed. Tap an item to take some out.",
+  "digestTitle": "Eat soon",
+  "digestBodyWithCount": "{count, plural, =1{1 item in your freezer should be eaten soon.} other{{count} items in your freezer should be eaten soon.}}",
+  "@digestBodyWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "productNameSeparator": ", ",
+  "productNamesWithMore": "{names} and {count} more",
+  "@productNamesWithMore": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dailyDigestSwitch": "Daily reminder",
+  "dailyDigestDetail": "One notification on the days something should be eaten soon",
+  "digestTimeLabel": "Time",
+  "showNamesSwitch": "Show food names in notifications",
+  "showNamesDetail": "Names may then be readable on the lock screen.",
+  "notificationsOffMessage": "Notifications are switched off for this app, so reminders cannot appear.",
+  "allowNotificationsButton": "Allow",
+  "storageLimitsRow": "Storage limits",
+  "storageLimitsDetail": "How long each category keeps in the freezer",
+  "storageLimitsTitle": "Storage limits",
+  "storageLimitsExplanation": "Food is marked “eat soon” once 85 % of its storage time has passed. A product can have its own time in the product editor.",
+  "storageMonths": "{count, plural, =1{1 month} other{{count} months}}",
+  "@storageMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageMonthsLabel": "Keep for at most, in months",
+  "storageMonthsInvalid": "Enter a number from 1 to {maximum}.",
+  "@storageMonthsInvalid": {
+    "placeholders": {
+      "maximum": {
+        "type": "int"
+      }
+    }
+  }
+}

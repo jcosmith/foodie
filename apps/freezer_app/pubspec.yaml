@@ -1,0 +1,46 @@
+name: freezer_app
+description: The freezer app shell - composition root that wires every module together.
+publish_to: none
+version: 0.1.1+2
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  core_database: any
+  core_design_system: any
+  core_events: any
+  core_foundation: any
+  core_localization: any
+  core_media_storage: any
+  core_module_contract: any
+  core_notifications: any
+  core_preferences: any
+  feature_barcode_scanning: any
+  feature_configuration: any
+  feature_data_portability: any
+  feature_inventory: any
+  feature_item_pictures: any
+  feature_onboarding: any
+  feature_product_catalog: any
+  feature_restock: any
+  feature_statistics: any
+  feature_storage_layout: any
+  feature_storage_reminders: any
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.4.0
+  go_router: ^18.0.0
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true

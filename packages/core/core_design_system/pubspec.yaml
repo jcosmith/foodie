@@ -1,0 +1,25 @@
+name: core_design_system
+description: Theme and colour tokens (light and dark), typography, spacing and accessible shared widgets - age badge, quantity stepper, empty states, cards.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  core_foundation: any
+  core_localization: any
+  fl_chart: ^1.2.0
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

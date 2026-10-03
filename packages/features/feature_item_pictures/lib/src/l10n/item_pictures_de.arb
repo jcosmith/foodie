@@ -1,0 +1,21 @@
+{
+  "@@locale": "de",
+  "optionalFeatureTitle": "Fotos",
+  "optionalFeatureDetail": "Fotos von Produkten und Resten",
+  "takeOrChoosePhoto": "📷 Foto aufnehmen oder auswählen",
+  "photoOptional": "Optional. Standortdaten werden aus Fotos entfernt.",
+  "photoAdded": "Foto hinzugefügt · Standortdaten entfernt",
+  "takePhoto": "Foto aufnehmen",
+  "chooseFromPhotos": "Aus deinen Fotos wählen",
+  "viewPhoto": "Ansehen",
+  "replacePhoto": "Ersetzen",
+  "removePhoto": "Entfernen",
+  "removePhotoQuestion": "Dieses Foto entfernen?",
+  "removePhotoExplanation": "Das Foto wird von diesem Telefon gelöscht.",
+  "photoNotReadable": "Dieses Foto kann nicht gelesen werden. Versuche ein anderes.",
+  "photoSourceUnavailable": "Die Kamera oder deine Fotos sind nicht verfügbar.",
+  "photoProcessing": "Standortdaten werden entfernt …",
+  "photoSemanticsLabel": "Foto",
+  "photoSectionTitle": "Foto",
+  "batchPhotoHint": "Ohne eigenes Foto zeigt diese Packung das Foto des Produkts."
+}

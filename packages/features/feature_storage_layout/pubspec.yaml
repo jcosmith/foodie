@@ -1,0 +1,31 @@
+name: feature_storage_layout
+description: Freezers and their drawers - templates, names, order, colour tags and archiving. Contributes the Freezer layout section of the Config tab.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  core_database: any
+  core_design_system: any
+  core_events: any
+  core_foundation: any
+  core_localization: any
+  core_module_contract: any
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.0
+  go_router: ^18.0.0
+  intl: ^0.20.2
+  meta: ^1.16.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true

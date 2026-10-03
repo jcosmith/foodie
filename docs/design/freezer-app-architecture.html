@@ -1,0 +1,1558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Freezer App Architecture v2</title>
+<style>
+:root {
+  --background: #f7f8fa;
+  --surface: #ffffff;
+  --surface-muted: #eef1f5;
+  --text: #1c2330;
+  --text-muted: #5a6475;
+  --border: #d5dbe4;
+  --accent: #1f6feb;
+  --accent-soft: #dce9fd;
+  --shell: #7a4fd6;
+  --shell-soft: #ece4fb;
+  --feature: #0f8a6d;
+  --feature-soft: #d9f2ea;
+  --core: #b5651d;
+  --core-soft: #f8e9d9;
+  --warning: #b42318;
+  --warning-soft: #fde8e6;
+  --ok: #157f3b;
+  --ok-soft: #dff3e5;
+  --media: #c2185b;
+  --media-soft: #fbe3ee;
+  --scan: #1f6feb;
+  --scan-soft: #dce9fd;
+  --layout: #0e7490;
+  --layout-soft: #d7f0f5;
+  --edge: #8892a3;
+  --code-background: #f0f2f6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #11151c;
+    --surface: #181e27;
+    --surface-muted: #202836;
+    --text: #e3e8f0;
+    --text-muted: #9aa5b6;
+    --border: #2f3a4b;
+    --accent: #6ea8ff;
+    --accent-soft: #1d2d49;
+    --shell: #b59af0;
+    --shell-soft: #2b2342;
+    --feature: #4fd1ad;
+    --feature-soft: #15342c;
+    --core: #e9a764;
+    --core-soft: #3a2a1a;
+    --warning: #ff8b80;
+    --warning-soft: #3d1d1b;
+    --ok: #6fd391;
+    --ok-soft: #173322;
+    --media: #f48fb1;
+    --media-soft: #3d1a2a;
+    --scan: #6ea8ff;
+    --scan-soft: #1d2d49;
+    --layout: #5ec8de;
+    --layout-soft: #12313a;
+    --edge: #6b7689;
+    --code-background: #0d1117;
+  }
+}
+:root[data-theme="dark"] {
+  --background: #11151c;
+  --surface: #181e27;
+  --surface-muted: #202836;
+  --text: #e3e8f0;
+  --text-muted: #9aa5b6;
+  --border: #2f3a4b;
+  --accent: #6ea8ff;
+  --accent-soft: #1d2d49;
+  --shell: #b59af0;
+  --shell-soft: #2b2342;
+  --feature: #4fd1ad;
+  --feature-soft: #15342c;
+  --core: #e9a764;
+  --core-soft: #3a2a1a;
+  --warning: #ff8b80;
+  --warning-soft: #3d1d1b;
+  --ok: #6fd391;
+  --ok-soft: #173322;
+  --media: #f48fb1;
+  --media-soft: #3d1a2a;
+  --scan: #6ea8ff;
+  --scan-soft: #1d2d49;
+  --layout: #5ec8de;
+  --layout-soft: #12313a;
+  --edge: #6b7689;
+  --code-background: #0d1117;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.page-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); max-width: 1280px; margin: 0 auto; }
+nav.table-of-contents {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  padding: 28px 16px; border-right: 1px solid var(--border);
+}
+nav.table-of-contents h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin: 0 0 12px; }
+nav.table-of-contents a {
+  display: block; padding: 5px 10px; border-radius: 6px; color: var(--text-muted);
+  text-decoration: none; font-size: 14px;
+}
+nav.table-of-contents a:hover { background: var(--surface-muted); color: var(--text); }
+nav.table-of-contents a.is-active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.theme-toggle {
+  margin-top: 20px; width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); cursor: pointer; font: inherit; font-size: 14px;
+}
+main { padding: 32px 40px 80px; min-width: 0; }
+header.document-header { margin-bottom: 32px; }
+header.document-header h1 { font-size: 34px; line-height: 1.2; margin: 0 0 8px; }
+.document-meta { color: var(--text-muted); font-size: 14px; }
+section { margin: 0 0 56px; scroll-margin-top: 16px; }
+h2 { font-size: 26px; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 19px; margin: 28px 0 10px; }
+p, li { max-width: 78ch; }
+a { color: var(--accent); }
+code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .88em; background: var(--code-background); padding: 1px 5px; border-radius: 4px; overflow-wrap: break-word; }
+pre { background: var(--code-background); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.5; }
+pre code { background: none; padding: 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin: 16px 0; }
+.callout { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.callout.is-warning { border-color: var(--warning); background: var(--warning-soft); }
+.callout.is-ok { border-color: var(--ok); background: var(--ok-soft); }
+.principles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.principles-grid .card { margin: 0; }
+.principles-grid h4 { margin: 0 0 6px; font-size: 16px; }
+.principles-grid p { margin: 0; color: var(--text-muted); font-size: 14.5px; }
+.table-wrapper { overflow-x: auto; margin: 16px 0; border: 1px solid var(--border); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; background: var(--surface); }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+th { background: var(--surface-muted); font-weight: 600; }
+tr:last-child td { border-bottom: none; }
+.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.badge.is-ok { background: var(--ok-soft); color: var(--ok); }
+.badge.is-warning { background: var(--warning-soft); color: var(--warning); }
+.badge.is-shell { background: var(--shell-soft); color: var(--shell); }
+.badge.is-feature { background: var(--feature-soft); color: var(--feature); }
+.badge.is-core { background: var(--core-soft); color: var(--core); }
+.diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin: 16px 0; }
+.diagram svg { width: 100%; height: auto; display: block; }
+.diagram-caption { font-size: 13.5px; color: var(--text-muted); margin-top: 6px; }
+.module-explorer { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.module-detail { margin: 0; }
+.module-detail h4 { margin: 0 0 4px; font-size: 18px; }
+.module-detail dl { margin: 10px 0 0; font-size: 14px; }
+.module-detail dt { font-weight: 600; margin-top: 10px; }
+.module-detail dd { margin: 2px 0 0; color: var(--text-muted); }
+.module-detail ul { margin: 4px 0 0; padding-left: 18px; }
+svg text { fill: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+svg .muted-text { fill: var(--text-muted); }
+svg .edge-line { stroke: var(--edge); stroke-width: 1.4; fill: none; transition: opacity .15s, stroke .15s; }
+svg .module-node { cursor: pointer; }
+svg .module-node rect { stroke-width: 1.5; transition: opacity .15s; }
+svg .module-node.kind-shell rect { fill: var(--shell-soft); stroke: var(--shell); }
+svg .module-node.kind-feature rect { fill: var(--feature-soft); stroke: var(--feature); }
+svg .module-node.kind-core rect { fill: var(--core-soft); stroke: var(--core); }
+svg .module-node:focus { outline: none; }
+svg .module-node:focus rect, svg .module-node.is-selected rect { stroke-width: 3; }
+svg.has-selection .module-node.is-dimmed { opacity: .25; }
+svg.has-selection .edge-line { opacity: .12; }
+svg.has-selection .edge-line.is-outgoing { opacity: 1; stroke: var(--accent); stroke-width: 2.4; }
+svg.has-selection .edge-line.is-incoming { opacity: 1; stroke: var(--shell); stroke-width: 2.4; stroke-dasharray: 5 4; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.legend .legend-shell::before { background: var(--shell-soft); border: 1.5px solid var(--shell); }
+.legend .legend-feature::before { background: var(--feature-soft); border: 1.5px solid var(--feature); }
+.legend .legend-core::before { background: var(--core-soft); border: 1.5px solid var(--core); }
+.legend .legend-out::before { background: var(--accent); height: 3px; vertical-align: 3px; }
+.legend .legend-in::before { background: var(--shell); height: 3px; vertical-align: 3px; }
+details.decision { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin: 10px 0; }
+details.decision summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; justify-content: space-between; }
+details.decision summary::-webkit-details-marker { display: none; }
+details.decision summary::after { content: "+"; color: var(--text-muted); font-weight: 400; }
+details.decision[open] summary::after { content: "−"; }
+details.decision .decision-body { padding: 0 16px 14px; border-top: 1px solid var(--border); }
+details.decision .decision-body h5 { margin: 12px 0 4px; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+details.decision .decision-body p, details.decision .decision-body ul { margin: 4px 0; font-size: 15px; }
+.toolbar { display: flex; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+.toolbar button { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font: inherit; font-size: 14px; }
+.toolbar button:hover { background: var(--surface-muted); }
+.folder-tree { font-size: 13.5px; }
+@media (max-width: 960px) {
+  .module-explorer { grid-template-columns: minmax(0, 1fr); }
+  .module-detail { position: static; }
+}
+@media (max-width: 760px) {
+  .page-layout { grid-template-columns: minmax(0, 1fr); }
+  nav.table-of-contents { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
+  nav.table-of-contents .toc-links { display: flex; flex-wrap: wrap; gap: 4px; }
+  main { padding: 20px 16px 60px; }
+  .diagram { overflow-x: auto; }
+  .diagram svg { min-width: 760px; }
+  .diagram-caption, .legend { position: sticky; left: 0; }
+  header.document-header h1 { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+<div class="page-layout">
+  <nav class="table-of-contents" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <div class="toc-links">
+      <a href="#summary">1. Summary</a>
+      <a href="#goals">2. Goals and constraints</a>
+      <a href="#stack">3. Technology choices</a>
+      <a href="#layers">4. Layered architecture</a>
+      <a href="#modules">5. Module map</a>
+      <a href="#module-catalog">6. Module catalog</a>
+      <a href="#extensibility">7. Extension points</a>
+      <a href="#interactions">8. Module interactions</a>
+      <a href="#data-model">9. Data model</a>
+      <a href="#planned-features">10. Planned features</a>
+      <a href="#statistics-design">10.6 Statistics in depth</a>
+      <a href="#privacy">11. Privacy by construction</a>
+      <a href="#feasibility">12. Feasibility checks</a>
+      <a href="#structure">13. Repository layout</a>
+      <a href="#testing">14. Testing strategy</a>
+      <a href="#roadmap">15. Build order</a>
+      <a href="#open-questions">16. Open questions</a>
+    </div>
+    <button class="theme-toggle" type="button" id="themeToggleButton">Toggle light / dark</button>
+  </nav>
+
+  <main>
+    <header class="document-header">
+      <h1>Freezer App: Architecture Design (v2)</h1>
+      <div class="document-meta">Foundation plan for a multilingual, offline, privacy-first Flutter app · Version 2 · 2 October 2026 · adds freezer layout editing, a Config tab with language selection and interactive statistics (on top of partial removal, item pictures and barcode scanning)</div>
+    </header>
+
+    <!-- 1 -->
+    <section id="summary">
+      <h2>1. Summary</h2>
+      <p>The app is built as a <strong>Dart pub workspace</strong> of small packages: one thin <strong>app shell</strong> that composes everything, eight <strong>core packages</strong> that provide shared infrastructure, and eight <strong>feature packages</strong> that each own one user-facing capability. Every feature follows the same four-layer clean architecture (presentation, application, domain, data) and plugs into the shell through a single <code>FeatureModule</code> contract, which is what makes new features cheap to add.</p>
+      <p>All data lives in one encrypted SQLite database on the device (Drift + SQLCipher). An append-only <strong>inventory movement log</strong> records every addition, consumption, discard and move; statistics, restock suggestions and habit analysis are all derived from that log. Features coordinate through an in-process <strong>domain event bus</strong>, but events are only triggers: the database is always the source of truth, so a lost event never corrupts state.</p>
+      <p>Three user-facing capabilities are planned in from the start (section 10): <strong>partial removal</strong> (use 200 g of a 1 kg bag) is part of the core inventory model; <strong>item pictures</strong> and <strong>optional barcode scanning</strong> are separate feature packages that plug into the inventory without the inventory depending on them.</p>
+      <p>Version 2 adds three more: a <strong>freezer layout editor</strong> (add, rename, reorder and remove drawers) in its own package, a <strong>Config tab</strong> that holds language selection and every other setting, and a much richer <strong>statistics module</strong> built around one shared filter that every chart reads and every chart can change (cross-filtering).</p>
+      <div class="callout">
+        <strong>Recommended stack:</strong> Flutter (stable) · Riverpod for state and dependency injection · go_router for navigation · Drift on SQLCipher for storage · flutter_local_notifications for reminders · fl_chart for charts · Flutter's gen-l10n (ARB files) with intl for localization.
+      </div>
+      <div class="callout is-warning">
+        <strong>Three findings changed the plan while checking feasibility:</strong>
+        <ol style="margin:6px 0 0; padding-left: 20px;">
+          <li>Android Auto Backup and iCloud device backup would copy the database off the device by default. The app must opt out explicitly (section 11).</li>
+          <li>iOS keeps at most 64 pending local notifications, and Android 14 denies exact alarms by default. Reminders are therefore a rolling daily digest, not one notification per item (section 12).</li>
+          <li>Drift's DAOs are bound to the concrete database class, which makes splitting the schema across feature packages fragile. The schema lives centrally in <code>core_database</code>, organised by feature folder (decision D4).</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section id="goals">
+      <h2>2. Goals and constraints</h2>
+      <h3>What the app must do</h3>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Goal</th><th>Architectural consequence</th></tr></thead>
+        <tbody>
+          <tr><td>Track what is in the freezer, where, and since when</td><td>Inventory is modelled as <em>stock batches</em> (one physical bag or box with its freezing date) placed in <em>drawers</em> (compartments) of <em>freezers</em>, not as a single counter per product.</td></tr>
+          <tr><td>Remind the user of goods stored for a long time</td><td>Every batch carries <code>frozenOn</code>; every product or category carries a recommended maximum storage duration; a reminder planner turns these into scheduled digests.</td></tr>
+          <tr><td>Track needs and advise restocking when running low</td><td>Per-product restock rules (minimum and target quantity), a shopping list, and later consumption-rate forecasts from the movement log.</td></tr>
+          <tr><td>Support the user intuitively</td><td>Fast paths (one-tap consume, quick add from shopping list, recently used products), sensible seeded catalog, onboarding, accessible design system.</td></tr>
+          <tr><td>Statistics on preferences and habits with graphical tools</td><td>Append-only movement log as the analytic fact table; a read-only statistics module with SQL aggregations and chart widgets.</td></tr>
+          <tr><td>Customize the freezer (drawers, names)</td><td>Freezers and drawers are their own package (<code>feature_storage_layout</code>); removing a drawer moves its contents and archives it, so history stays intact.</td></tr>
+          <tr><td>Statistics with many filters and graphics</td><td>One <code>StatisticsFilter</code> value object drives a dozen chart types; charts write back into the filter when tapped. Custom painters complement fl_chart where it has no chart type.</td></tr>
+          <tr><td>Multilingual</td><td>All UI strings in ARB files per package; locale-aware formatting of dates, numbers and units; seeded product names stored as translation keys.</td></tr>
+          <tr><td>Extensible with further features</td><td>Package per feature, one <code>FeatureModule</code> contract, events for cross-feature side effects, central versioned schema.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Non-negotiable constraints</h3>
+      <div class="principles-grid">
+        <div class="card"><h4>Data never leaves the app</h4><p>No network code, no analytics, no crash reporting, no cloud sync, no OS backup of the database. Data only leaves when the user explicitly exports a file.</p></div>
+        <div class="card"><h4>Modular and clean</h4><p>Dependencies point inward. Domain code is pure Dart with no Flutter or database imports. Package boundaries are enforced by pubspec dependencies, not by convention.</p></div>
+        <div class="card"><h4>English, descriptive names</h4><p><code>recommendedMaximumStorageDuration</code> rather than <code>maxDur</code>. Enforced through code review and a lint baseline.</p></div>
+        <div class="card"><h4>Offline and fast</h4><p>Everything works without connectivity. Inventory sizes are small (hundreds to a few thousand batches), so plain SQL aggregates are fast enough.</p></div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section id="stack">
+      <h2>3. Technology choices, questioned</h2>
+      <p>Each decision lists the alternatives considered and the reason it could turn out wrong. Click a decision to expand it.</p>
+      <div class="toolbar"><button type="button" data-decisions="open">Expand all</button><button type="button" data-decisions="close">Collapse all</button></div>
+
+      <details class="decision">
+        <summary><span>D1 · State management and dependency injection: Riverpod</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>Riverpod providers for both dependency injection (repositories, use cases, services) and UI state (async notifiers per screen).</p>
+          <h5>Alternatives</h5><ul><li><strong>Bloc:</strong> very explicit event/state flow, more boilerplate per screen.</li><li><strong>get_it + ChangeNotifier:</strong> simple, but service locator lookups hide dependencies and are harder to override in tests.</li></ul>
+          <h5>Why</h5><p>One mechanism for DI and state; compile-time-safe overrides make every layer testable (swap the clock, the database, the notification scheduler). Providers are scoped per feature package and wired by the module, so features stay decoupled.</p>
+          <h5>Risk</h5><p>Riverpod has had API churn between majors. Mitigation: providers only appear in the application and presentation layers; the domain layer never imports Riverpod, so a future switch touches the outer layers only.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D2 · Local storage: Drift on SQLite (with SQLCipher)</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>Drift as a typed SQL layer over SQLite, encrypted with SQLCipher through <code>sqlcipher_flutter_libs</code>.</p>
+          <h5>Alternatives</h5><ul><li><strong>Isar / Hive:</strong> fast NoSQL stores, but the original author stopped maintaining them in 2024; community forks exist but carry long-term risk. Aggregations for statistics would be hand-written in Dart.</li><li><strong>sqflite:</strong> raw SQL, no type safety, no generated migrations tooling.</li><li><strong>ObjectBox:</strong> fast, but proprietary core and weaker ad-hoc aggregation.</li></ul>
+          <h5>Why</h5><p>The data is relational (freezers, compartments, products, batches, movements) and statistics need <code>GROUP BY</code>, date bucketing and joins. Drift offers reactive queries (streams that update the UI), transactions, schema snapshots and migration tests.</p>
+          <h5>Risk</h5><p>Code generation (build_runner) adds build time. SQLCipher adds roughly 1 to 2 MB to the binary. Both acceptable.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D3 · Modularity: Dart pub workspace with one package per module</span><span class="badge is-warning">Feasible, with cost</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>A pub workspace (supported since Dart 3.6) containing the app plus core and feature packages. A package may only import what its <code>pubspec.yaml</code> declares, so illegal dependencies fail at compile time.</p>
+          <h5>Alternatives</h5><ul><li><strong>Single package with feature folders:</strong> least ceremony, but boundaries are only conventions; they erode quietly. Would need a custom lint to enforce.</li><li><strong>Separate repositories:</strong> far too heavy for one app.</li></ul>
+          <h5>Why</h5><p>Extensibility is an explicit goal. Hard boundaries keep features independently testable, give each package its own localization files, and make a feature removable by deleting one package and one registry line.</p>
+          <h5>Risk and honest cost</h5><p>Twenty packages is real overhead for a small team: more pubspecs, more barrel files, slower first setup. Mitigation: a package template script, and melos (or plain workspace scripts) to run analyze, test and codegen across all packages. If the overhead hurts, the fallback is to merge small core packages (for example localization and design system) without touching features.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D4 · One central database schema, organised by feature</span><span class="badge is-warning">Deliberate compromise</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>All tables, DAOs and migrations live in <code>core_database</code>, in folders named after the owning feature (<code>tables/inventory/</code>, <code>tables/restock/</code>, ...). Feature data layers implement their repositories on top of these DAOs.</p>
+          <h5>Alternatives</h5><ul><li><strong>Each feature owns its tables in its own package:</strong> purest modularity, but Drift generates DAO mixins bound to the concrete database class, which would live in the app, creating a dependency cycle. Workarounds exist (raw <code>customSelect</code>, generic accessors) but lose type safety.</li><li><strong>One database file per feature:</strong> breaks cross-feature transactions, joins for statistics, and makes backup a multi-file problem.</li></ul>
+          <h5>Why</h5><p>Migrations must be numbered in one sequence anyway; one schema gives atomic transactions across inventory and restock, simple joins for statistics, and a single-file backup.</p>
+          <h5>Risk</h5><p>Adding a feature with storage touches <code>core_database</code>. That is acceptable because schema changes need a reviewed migration regardless. Rule: a feature package may only use the DAOs in its own folder; the statistics module is the one exception and is read-only.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D5 · Cross-feature communication: in-process domain event bus</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>Publishing features define immutable event classes in their public API (for example <code>StockBatchConsumed</code>). Use cases publish events <em>after</em> the database transaction commits. Other features subscribe during module initialisation.</p>
+          <h5>Alternatives</h5><ul><li><strong>Direct calls between features:</strong> explicit, but the inventory would have to know about restock, reminders and every future feature.</li><li><strong>Transactional outbox table:</strong> guaranteed delivery, but too heavy for a single-process app.</li></ul>
+          <h5>Why</h5><p>New features (meal planning, recipes) can react to stock changes without the inventory changing at all.</p>
+          <h5>Risk</h5><p>Events can be lost if the app is killed between commit and handling, and event-driven flows are harder to follow. Mitigation: <strong>events are hints, the database is the truth.</strong> Every subscriber is idempotent and recomputes from the database (restock evaluates current stock, the reminder planner replans from scratch), and the same recomputation runs at app start.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D6 · Localization: gen-l10n with ARB files per package</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>Each package with UI has its own <code>l10n.yaml</code> and ARB files and exposes a <code>LocalizationsDelegate</code> through its module. <code>core_localization</code> holds shared strings (units, common actions, relative ages like "frozen 3 months ago") and formatters.</p>
+          <h5>Why</h5><p>Official tooling, ICU plurals and genders, compile-time checked keys, works offline. Per-package ARB files mean a feature brings its own translations.</p>
+          <h5>Subtle point: seeded product names</h5><p>Seeded catalog entries store a <code>catalogKey</code> (for example <code>product.peas</code>) and are displayed translated, unless the user renames them, which stores a <code>customName</code>. Otherwise switching language would leave half the catalog in the old language. Names the user types are user data and are never translated.</p>
+          <h5>Risk</h5><p>Translators must edit many ARB files. Mitigation: a script that merges and splits ARB files for translation rounds. Right-to-left layout is supported by using directional padding (<code>EdgeInsetsDirectional</code>) from day one.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D7 · Charts: fl_chart behind a thin wrapper</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>A <strong>chart kit</strong> in <code>core_design_system</code>: fl_chart for line, bar, stacked bar, pie/donut and sparklines; custom painters for the chart types fl_chart does not have (calendar heatmap, freezer map). Every chart widget takes domain-neutral series data, a colour per series and a "show as table" switch.</p>
+          <h5>Alternatives</h5><ul><li><strong>Syncfusion charts:</strong> has heatmaps and treemaps, but a commercial licence.</li><li><strong>Only custom painters:</strong> full control, but tooltips, touch handling and animation would all be rebuilt.</li><li><strong>A web view with a JavaScript chart library:</strong> rich, but adds a browser engine to an app that must never touch the network. Rejected.</li></ul>
+          <h5>Why</h5><p>MIT licence, actively maintained, touch callbacks for every chart type (needed for cross-filtering). The wrapper means statistics code never imports fl_chart directly, so the library can be replaced.</p>
+          <h5>Risk</h5><p>Two custom painters with hit testing and accessibility labels are roughly 200 to 300 lines each. Acceptable; both are isolated in the chart kit.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D8 · Navigation: go_router with module-contributed routes</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>The shell builds one <code>GoRouter</code> from routes contributed by modules, with a <code>StatefulShellRoute</code> for the bottom navigation (Home, Freezer, Shopping list, Insights, Config). Notification taps deep-link into routes.</p>
+          <h5>Risk</h5><p>Route path collisions between modules. Mitigation: each module prefixes its paths with its identifier, and the registry asserts uniqueness at start-up in debug builds.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D9 · Reminders: rolling daily digest via local notifications</span><span class="badge is-warning">Feasible, constrained by platforms</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>A reminder planner computes which batches cross their storage threshold and schedules one digest notification per day (at a user-chosen time) for the next 14 days, using inexact scheduling. It replans whenever the inventory changes and at every app start.</p>
+          <h5>Alternatives</h5><ul><li><strong>One notification per item:</strong> runs into the iOS limit of 64 pending notifications and spams the user.</li><li><strong>Background task computing reminders daily (workmanager):</strong> iOS background execution is not guaranteed and may not run for days.</li></ul>
+          <h5>Risk</h5><p>A digest scheduled in advance may mention an item that was eaten meanwhile, unless the app was opened. Mitigation: replanning on every inventory change, and wording such as "3 items have been in the freezer for over 6 months" whose tap opens a live list.</p>
+        </div>
+      </details>
+      <details class="decision">
+        <summary><span>D13 · Freezer layout as its own package</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p><code>feature_storage_layout</code> owns freezers and drawers (moved out of the inventory). Inventory, onboarding and statistics depend on its public API.</p>
+          <h5>Alternatives</h5><ul><li><strong>Keep them in the inventory:</strong> fewer packages, but the inventory grows a whole configuration UI and every layout change touches stock code.</li><li><strong>Free-form tags instead of drawers:</strong> flexible, but real freezers have fixed drawers, and fixed drawers make the "drawer" filter and freezer map in statistics meaningful. Tags can come later as an extra.</li></ul>
+          <h5>Why</h5><p>Layout changes rarely and has its own rules (unique names, archiving instead of deleting). It also makes "fridge" or "pantry" storage kinds a change in one package.</p>
+          <h5>Risk</h5><p>A drawer removed today still appears in last year's statistics. Mitigation: drawers are archived, never deleted, and shown as "Drawer 3 (removed)" in historical views.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D14 · Language: in-app choice, synced with the system</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>The Config tab offers "System language" plus every supported language, each written in its own language ("Deutsch", "English"). The choice is stored in preferences and applied instantly through a Riverpod locale provider feeding <code>MaterialApp.locale</code>; no restart.</p>
+          <h5>Alternatives</h5><ul><li><strong>Only follow the phone language:</strong> simplest, but many people run their phone in English and want household apps in their own language.</li><li><strong>Only the OS per-app language setting</strong> (Android 13+, iOS 13+): hidden deep in system settings, and missing on older Android versions.</li></ul>
+          <h5>Why</h5><p>Language must be easy to find (the user explicitly wants it in the Config tab). Declaring the supported locales to the OS keeps the system's per-app language screen working too; on Android 13+ a small platform channel calls <code>LocaleManager</code> so both places always show the same choice.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D15 · Statistics: one filter object drives every chart</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>An immutable <code>StatisticsFilter</code> (period, comparison, granularity, measure, categories, products, freezers and drawers, movement kinds) lives in one Riverpod notifier. Every chart's query provider watches it; tapping a chart element returns a modified filter (cross-filtering). Filters can be saved as named views.</p>
+          <h5>Alternatives</h5><ul><li><strong>Filters per chart:</strong> simpler code, but users lose track of which chart shows what.</li><li><strong>Load everything into memory and filter in Dart:</strong> fine for a year of data, wasteful after five.</li></ul>
+          <h5>Why</h5><p>One mental model ("everything on this screen shows the same slice"), one place to reset, and the filter is a pure Dart value that is trivial to test and persist.</p>
+          <h5>Risk</h5><p>A filter change re-runs around ten aggregate queries. Mitigation: queries run on Drift's background isolate, are debounced by 150 ms, and charts below the fold load lazily.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D10 · Quantities: integers in base units</span><span class="badge is-ok">Feasible</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>A <code>Quantity</code> value object holds an integer amount plus a <code>QuantityUnit</code>. Grams and millilitres are stored as whole numbers; pieces and portions are stored in thousandths, so "half a pizza" is exactly 500.</p>
+          <h5>Alternatives</h5><ul><li><strong>Floating point:</strong> 1000 − 200 − 200 − 600 may not be exactly 0, so a batch never reaches "empty".</li><li><strong>Decimal package:</strong> correct, but slower and awkward to store in SQLite.</li></ul>
+          <h5>Why</h5><p>Partial removal makes subtraction the most common operation. Integers make it exact and make sums in SQL exact too.</p>
+          <h5>Risk</h5><p>Unit mix-ups when a product's canonical unit changes. Rule: the canonical unit is fixed once a product has stock; changing it requires converting every batch through a dedicated use case.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D11 · Pictures: encrypted files plus a metadata row</span><span class="badge is-warning">Feasible, extra encryption step</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p>Pictures are stored as files in the app's private Application Support folder, encrypted with AES-GCM. The database holds only a row with the file name, owner, size and dimensions.</p>
+          <h5>Alternatives</h5><ul><li><strong>BLOBs in the database:</strong> automatically encrypted by SQLCipher, but the database grows by tens of megabytes, every query page competes with images in the cache, and backups cannot leave pictures out.</li><li><strong>Plain files:</strong> simplest, but they would be the only user data not encrypted at rest.</li></ul>
+          <h5>Why</h5><p>Keeps the database small and fast, lets backups include or skip pictures, and loads thumbnails lazily.</p>
+          <h5>Risk</h5><p>Files and rows can get out of sync (file written, app killed before the row is inserted). Mitigation: write the file first, then the row; an orphan sweep at start-up deletes files without a row and rows without a file.</p>
+        </div>
+      </details>
+
+      <details class="decision">
+        <summary><span>D12 · Barcode scanner: mobile_scanner behind an interface</span><span class="badge is-warning">Feasible, verify configuration</span></summary>
+        <div class="decision-body">
+          <h5>Choice</h5><p><code>mobile_scanner</code> wrapped by a <code>BarcodeDecoder</code> interface. On Android it uses ML Kit with the <em>bundled</em> model (shipped inside the app, works offline); on iOS it uses Apple's on-device Vision framework.</p>
+          <h5>Alternatives</h5><ul><li><strong>flutter_zxing</strong> (open-source ZXing-C++): no Google code at all, but weaker on damaged or curved codes on frozen bags.</li><li><strong>Unbundled ML Kit</strong> through Google Play services: smaller app, but downloads the model over the network. Rejected.</li></ul>
+          <h5>Why</h5><p>Most robust recognition, which matters for crumpled frozen packaging. The release build has no <code>INTERNET</code> permission, so even closed-source code inside the app cannot send anything.</p>
+          <h5>Risk</h5><p>Plugin defaults change between versions. At implementation time verify that the bundled model variant is configured, and keep the interface so the scanner can be swapped for flutter_zxing.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4 -->
+    <section id="layers">
+      <h2>4. Layered architecture inside each feature</h2>
+      <p>Every feature package has the same four layers. Arrows show the allowed direction of source-code dependencies. The domain layer depends on nothing; the data layer implements interfaces the domain defines (dependency inversion).</p>
+      <div class="diagram">
+        <svg viewBox="0 0 1000 430" role="img" aria-labelledby="layerDiagramTitle">
+          <title id="layerDiagramTitle">Four layers of a feature package and their dependency directions</title>
+          <defs>
+            <marker id="arrowHead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--edge)"/></marker>
+          </defs>
+          <g>
+            <rect x="40" y="20" width="560" height="78" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="60" y="48" font-weight="700" font-size="17">Presentation</text>
+            <text x="60" y="72" font-size="14" class="muted-text">Screens, widgets, Riverpod notifiers holding view state</text>
+            <text x="60" y="90" font-size="13" class="muted-text">InventoryOverviewScreen, ConsumeStockSheet, InventoryOverviewController</text>
+
+            <rect x="40" y="128" width="560" height="78" rx="10" fill="var(--shell-soft)" stroke="var(--shell)"/>
+            <text x="60" y="156" font-weight="700" font-size="17">Application</text>
+            <text x="60" y="180" font-size="14" class="muted-text">Use cases: one class per user intention; publish events after commit</text>
+            <text x="60" y="198" font-size="13" class="muted-text">AddStockBatchUseCase, ConsumeStockUseCase, MoveStockBatchUseCase</text>
+
+            <rect x="40" y="236" width="560" height="78" rx="10" fill="var(--feature-soft)" stroke="var(--feature)"/>
+            <text x="60" y="264" font-weight="700" font-size="17">Domain (pure Dart)</text>
+            <text x="60" y="288" font-size="14" class="muted-text">Entities, value objects, policies, repository interfaces, events</text>
+            <text x="60" y="306" font-size="13" class="muted-text">StockBatch, Quantity, StorageAgePolicy, InventoryRepository (interface)</text>
+
+            <rect x="40" y="344" width="560" height="78" rx="10" fill="var(--core-soft)" stroke="var(--core)"/>
+            <text x="60" y="372" font-weight="700" font-size="17">Data</text>
+            <text x="60" y="396" font-size="14" class="muted-text">Repository implementations, mapping rows to entities</text>
+            <text x="60" y="414" font-size="13" class="muted-text">DriftInventoryRepository uses InventoryDao from core_database</text>
+
+            <line x1="320" y1="98" x2="320" y2="126" class="edge-line" marker-end="url(#arrowHead)"/>
+            <line x1="320" y1="206" x2="320" y2="234" class="edge-line" marker-end="url(#arrowHead)"/>
+            <path d="M600,383 C680,383 680,275 602,275" class="edge-line" marker-end="url(#arrowHead)"/>
+            <text x="672" y="334" font-size="13" class="muted-text">implements</text>
+
+            <rect x="720" y="20" width="250" height="186" rx="10" fill="var(--surface-muted)" stroke="var(--border)"/>
+            <text x="738" y="46" font-weight="700" font-size="15">Module wiring</text>
+            <text x="738" y="70" font-size="13" class="muted-text">feature_module.dart binds</text>
+            <text x="738" y="88" font-size="13" class="muted-text">repository interface to its</text>
+            <text x="738" y="106" font-size="13" class="muted-text">implementation via providers,</text>
+            <text x="738" y="124" font-size="13" class="muted-text">registers routes, subscribes</text>
+            <text x="738" y="142" font-size="13" class="muted-text">to events. The only file that</text>
+            <text x="738" y="160" font-size="13" class="muted-text">sees all four layers.</text>
+
+            <rect x="720" y="236" width="250" height="186" rx="10" fill="var(--surface-muted)" stroke="var(--border)"/>
+            <text x="738" y="262" font-weight="700" font-size="15">Public API (barrel file)</text>
+            <text x="738" y="286" font-size="13" class="muted-text">lib/feature_inventory.dart exports</text>
+            <text x="738" y="304" font-size="13" class="muted-text">the module, domain entities,</text>
+            <text x="738" y="322" font-size="13" class="muted-text">events and read-only query</text>
+            <text x="738" y="340" font-size="13" class="muted-text">services. Everything under</text>
+            <text x="738" y="358" font-size="13" class="muted-text">lib/src stays private to the</text>
+            <text x="738" y="376" font-size="13" class="muted-text">package.</text>
+          </g>
+        </svg>
+        <div class="diagram-caption">Rule of thumb: if a domain file needs <code>import 'package:flutter/…'</code> or <code>package:drift</code>, it belongs in another layer.</div>
+      </div>
+      <h3>Is four layers too many?</h3>
+      <p>For simple screens (a settings toggle), a use case that only forwards a call is ceremony. The rule is therefore relaxed: a use case is required whenever an action writes data, touches more than one repository, or publishes an event. Pure reads may go from a notifier straight to a repository or query service.</p>
+    </section>
+
+    <!-- 5 -->
+    <section id="modules">
+      <h2>5. Module map</h2>
+      <p>Select a module to see what it depends on (solid blue) and what depends on it (dashed purple). The app shell depends on every module; only its edges to features are drawn to keep the picture readable.</p>
+      <div class="module-explorer">
+        <div class="diagram">
+          <svg id="moduleGraph" viewBox="0 0 1000 470" role="img" aria-label="Module dependency graph"></svg>
+          <div class="legend">
+            <span class="legend-shell">App shell</span>
+            <span class="legend-feature">Feature package</span>
+            <span class="legend-core">Core package</span>
+            <span class="legend-out">Depends on</span>
+            <span class="legend-in">Depended on by</span>
+          </div>
+        </div>
+        <div class="card module-detail" id="moduleDetailPanel" aria-live="polite">
+          <h4>Select a module</h4>
+          <p style="color:var(--text-muted); font-size:14px; margin:0">Click or tab to any box in the graph. Press Escape to clear.</p>
+        </div>
+      </div>
+      <h3>Dependency rules</h3>
+      <ol>
+        <li>Core packages never depend on feature packages.</li>
+        <li>A feature may depend on another feature's <em>public API</em> only, and the feature graph must stay acyclic (checked in CI with a small script over the pubspecs).</li>
+        <li>The app shell is the only package that knows the complete list of modules.</li>
+        <li>No package except <code>core_notifications</code> may import a platform plugin for notifications; no package except <code>core_database</code> may import Drift; only <code>core_media_storage</code> may import image plugins; only <code>feature_barcode_scanning</code> may import the scanner. Plugins stay at the edges.</li>
+      </ol>
+    </section>
+
+    <!-- 6 -->
+    <section id="module-catalog">
+      <h2>6. Module catalog</h2>
+      <p>The complete list of modules to build for the foundation. "Phase" refers to the build order in section 15.</p>
+      <div class="table-wrapper"><table id="moduleCatalogTable">
+        <thead><tr><th>Module</th><th>Kind</th><th>Responsibility</th><th>Depends on</th><th>Phase</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+
+    <!-- 7 -->
+    <section id="extensibility">
+      <h2>7. Extension points</h2>
+      <p>A new feature is added by creating a package, implementing <code>FeatureModule</code>, and adding one line to the module registry in the app shell. Everything a feature can contribute is declared through this contract, which lives in <code>core_module_contract</code>.</p>
+<pre><code>abstract interface class FeatureModule {
+  /// Stable identifier, also used as route prefix and preference namespace.
+  String get moduleIdentifier;
+
+  /// Localized strings this module brings.
+  List&lt;LocalizationsDelegate&lt;Object&gt;&gt; get localizationDelegates;
+
+  /// Riverpod overrides binding domain interfaces to implementations.
+  List&lt;Override&gt; buildProviderOverrides(ModuleDependencies dependencies);
+
+  /// Screens reachable by path, including notification deep links.
+  List&lt;RouteBase&gt; buildRoutes();
+
+  /// Optional tab in the bottom navigation bar.
+  NavigationDestinationContribution? get navigationDestination;
+
+  /// Whether users may switch this module off (barcode scanning is optional).
+  ModuleAvailability get availability;
+
+  /// Entries in the floating "add" menu, e.g. "Scan to add".
+  List&lt;QuickActionContribution&gt; get quickActions;
+
+  /// Optional picture for an item in lists and detail screens.
+  ItemVisualProvider? get itemVisualProvider;
+
+  /// Cards for the home dashboard ("Eat soon", "Running low").
+  List&lt;DashboardCardContribution&gt; get dashboardCards;
+
+  /// Sections shown in the Config tab.
+  List&lt;ConfigSectionContribution&gt; get configSections;
+
+  /// Extra charts for the Insights tab, filtered by the shared StatisticsFilter.
+  List&lt;InsightChartContribution&gt; get insightCharts;
+
+  /// Subscribe to events and run start-up reconciliation.
+  Future&lt;void&gt; initializeModule(ModuleInitializationContext context);
+
+  /// Release subscriptions.
+  Future&lt;void&gt; disposeModule();
+}</code></pre>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Extension point</th><th>Example use by a future feature</th></tr></thead>
+        <tbody>
+          <tr><td>Routes and navigation destination</td><td>A "Meal planner" tab with its own screens.</td></tr>
+          <tr><td>Dashboard cards</td><td>"Recipes you can cook from your freezer today".</td></tr>
+          <tr><td>Config sections</td><td>Default portion sizes for meal planning; the freezer layout editor is itself a contributed section.</td></tr>
+          <tr><td>Insight charts</td><td>Restock contributes a "runs out in" forecast chart; a meal planner could add "planned vs eaten".</td></tr>
+          <tr><td>Event subscriptions</td><td>Meal planner reserves stock batches when <code>StockBatchAdded</code> arrives.</td></tr>
+          <tr><td>Quick actions</td><td>Barcode scanning adds "Scan to add" and "Scan to remove" to the floating add menu. Later: a home-screen shortcut.</td></tr>
+          <tr><td>Item visual provider</td><td>Item pictures supplies photos to inventory lists; without the module, lists fall back to the category icon.</td></tr>
+          <tr><td>Module availability</td><td>Optional modules (barcode scanning) can be switched off in the Config tab; their contributions disappear without a restart.</td></tr>
+          <tr><td>Schema (via core_database)</td><td>New tables in a new feature folder plus one numbered migration.</td></tr>
+          <tr><td>Backup participation</td><td>Automatic: the backup copies the whole database, so new tables are included without extra code.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Ideas this design should not block</h3>
+      <ul>
+        <li><strong>QR labels for homemade meals</strong>: print a label whose QR code holds the batch id, so leftovers can be scanned out like bought goods.</li>
+        <li><strong>A fridge or pantry next to the freezer</strong>: the storage layout package already supports several freezers; a <code>storageKind</code> column is enough.</li>
+        <li><strong>Consumption forecasts</strong>: the movement log already contains the time series needed.</li>
+        <li><strong>Household sharing</strong> without a server, for example by exchanging encrypted export files. This is the one idea that pulls against "data never leaves the app" and needs a product decision first.</li>
+      </ul>
+    </section>
+
+    <!-- 8 -->
+    <section id="interactions">
+      <h2>8. Module interactions</h2>
+      <h3>8.1 Consuming an item</h3>
+      <p>The most frequent flow. The inventory writes in one transaction, then publishes an event; restock and reminders react independently. Neither is known to the inventory.</p>
+      <div class="diagram"><svg id="consumeSequenceDiagram" viewBox="0 0 1000 560" role="img" aria-label="Sequence diagram for consuming a stock batch"></svg>
+        <div class="diagram-caption">Solid arrows are calls, dashed arrows are returns, thick arrows are event deliveries. Steps 7 to 12 run after the user already sees the updated list.</div></div>
+
+      <h3>8.2 Application start-up</h3>
+      <div class="diagram"><svg id="startupSequenceDiagram" viewBox="0 0 1000 400" role="img" aria-label="Sequence diagram for application start-up"></svg>
+        <div class="diagram-caption">Start-up reconciliation is what makes lost events harmless.</div></div>
+
+      <h3>8.3 Viewing statistics</h3>
+      <p>The full statistics design (filters, chart catalog, interactions) is in section 10.6. In short: statistics never writes and never listens to events. It runs read-only aggregate queries over the movement log and batches whenever its screen is opened, using Drift watch queries so charts refresh live. With a few thousand rows these queries take milliseconds; a cache table is only worth adding if profiling shows otherwise.</p>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Insight</th><th>Derived from</th></tr></thead>
+        <tbody>
+          <tr><td>Consumption per category over time</td><td>Movements of kind <code>consumed</code>, grouped by week or month and category.</td></tr>
+          <tr><td>Average storage duration per product</td><td>Time between a batch's <code>added</code> movement and its final <code>consumed</code> movement.</td></tr>
+          <tr><td>Waste rate</td><td>Discarded quantity divided by consumed plus discarded quantity.</td></tr>
+          <tr><td>Favourite products and seasonal patterns</td><td>Top consumed products per season or month of year.</td></tr>
+          <tr><td>Freezer fill level over time</td><td>Running sum of quantity deltas.</td></tr>
+          <tr><td>Restock reliability</td><td>How often a product reached zero before a restock movement.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 9 -->
+    <section id="data-model">
+      <h2>9. Data model</h2>
+      <p>Core entities and their relationships. Quantities are stored in the product's canonical unit (pieces, grams, millilitres or portions), so no unit conversion is needed for thresholds.</p>
+      <div class="diagram"><svg id="entityDiagram" viewBox="0 0 1000 964" role="img" aria-label="Entity relationship diagram"></svg></div>
+      <h3>Why an append-only movement log</h3>
+      <p><code>StockBatch.quantityRemaining</code> is the fast current state; <code>InventoryMovement</code> is the history. Both are written in the same transaction by the inventory use cases. Movements are never updated or deleted (a correction is a new movement of kind <code>corrected</code>), so statistics can always be recomputed, and a batch can be archived without losing its history because movements also carry <code>productId</code>.</p>
+      <p><strong>Questioning it:</strong> keeping two representations risks them drifting apart. A debug-only consistency check verifies that the sum of a batch's movement deltas equals its remaining quantity, and the same check runs in repository tests.</p>
+      <h3>Supporting tables</h3>
+      <ul>
+        <li><code>preference_entries</code>: typed key-value settings (inside the encrypted database, so they are part of every backup).</li>
+        <li><code>scheduled_notification_records</code>: which notification ids are currently scheduled, so replanning can cancel precisely.</li>
+        <li><code>schema_metadata</code>: app version that last migrated the schema, used to validate backups on restore.</li>
+      </ul>
+    </section>
+
+    <!-- planned features -->
+    <section id="planned-features">
+      <h2>10. Planned features</h2>
+      <p>Partial removal, pictures, barcode scanning (added in draft 2), and freezer layout editing, the Config tab and in-depth statistics (added in version 2) are designed now so that the foundation does not have to change later. Partial removal is part of the inventory itself. Pictures and barcode scanning are separate packages that the inventory never imports; they plug in through the extension points in section 7.</p>
+
+      <h3>10.1 Partial removal</h3>
+      <p><strong>Example:</strong> a 1 kg bag of spinach, frozen on 3 March. The user takes 200 g. The batch now holds 800 g and is still "frozen on 3 March", so its storage age keeps counting from the original date.</p>
+      <ul>
+        <li><strong>Model:</strong> <code>StockBatch</code> keeps <code>initialQuantity</code> and <code>quantityRemaining</code>. Each removal appends an <code>InventoryMovement</code> with a negative delta. A batch at zero is marked depleted and hidden, but kept for statistics.</li>
+        <li><strong>Use case:</strong> <code>ConsumeStockUseCase(batchId, Quantity)</code> returns a failure if the amount is zero, larger than what is left, or in a different unit. Integer quantities (D10) keep the arithmetic exact.</li>
+        <li><strong>Package sizes:</strong> products carry an optional <code>defaultPackageQuantity</code> (1000 g for spinach) that pre-fills the add form.</li>
+        <li><strong>Moving part of a batch</strong> to another compartment splits it: a new batch with the same <code>frozenOn</code> and a <code>parentBatchId</code>.</li>
+        <li><strong>Interaction:</strong> quick buttons for ¼, ½, ¾ and "all", a slider that snaps to sensible steps (50 g, 50 ml, ½ piece), exact entry, and an undo snackbar. Undo appends a compensating movement, so the log stays append-only.</li>
+        <li><strong>Questioning it:</strong> people rarely weigh what they take. The quick fractions accept estimates, and a later "correct remaining amount" action records the difference as a <code>corrected</code> movement instead of forcing precision up front.</li>
+      </ul>
+
+      <h3>10.2 Item pictures</h3>
+      <p>New packages: <code>feature_item_pictures</code> (picture table, capture and gallery screens, clean-up) and <code>core_media_storage</code> (encrypted file store, resizing, thumbnails).</p>
+      <ul>
+        <li><strong>What gets a picture:</strong> a product (the catalog photo, used everywhere) and optionally a batch (useful for homemade meals and leftovers, where a photo of the box is the best label).</li>
+        <li><strong>Capture:</strong> <code>image_picker</code> for the camera or the system photo picker. On Android 13 and later the photo picker needs no storage permission.</li>
+        <li><strong>Processing:</strong> longest edge 1600 px, JPEG quality about 80, giving roughly 200 to 400 KB per photo, plus a 256 px thumbnail. Re-encoding removes all EXIF metadata, including the GPS location many phones embed.</li>
+        <li><strong>Storage:</strong> encrypted files plus a metadata row (D11). The file key lives in Keychain or Keystore next to the database key.</li>
+        <li><strong>Integration:</strong> the module implements <code>ItemVisualProvider</code>; inventory list tiles ask the registry for a visual and fall back to the category icon. The inventory never imports the pictures package.</li>
+        <li><strong>Clean-up:</strong> the module listens to batch and product deletion events and removes pictures; the start-up orphan sweep catches anything missed.</li>
+        <li><strong>Backup:</strong> the backup archive contains the database snapshot plus the picture files. 200 photos at 300 KB is about 60 MB, so the export screen offers "without pictures".</li>
+      </ul>
+      <div class="diagram"><svg id="pictureSequenceDiagram" viewBox="0 0 1000 380" role="img" aria-label="Sequence diagram for attaching a picture"></svg>
+        <div class="diagram-caption">The file is written before the row. A crash between the two leaves an orphan file, which the start-up sweep removes.</div></div>
+
+      <h3>10.3 Barcode scanning (optional)</h3>
+      <p>New package: <code>feature_barcode_scanning</code>. It is off until the user turns it on in the Config tab, and the camera permission is only requested on the first scan.</p>
+      <ul>
+        <li><strong>Learning codes:</strong> a code is mapped to a product once. An unknown code asks "Which product is this?" with search over existing products or "create new". A product can have several codes (two brands of peas), stored in <code>ProductBarcode</code>. No online product database is ever queried (section 11).</li>
+        <li><strong>Scan to add:</strong> opens the add sheet pre-filled with the product, its default package quantity and the compartment used last time.</li>
+        <li><strong>Scan to remove:</strong> barcodes identify products, not individual bags, so the app suggests the oldest batch of that product (first in, first out) and opens the partial-removal sheet. With several batches the user can pick another.</li>
+        <li><strong>Unpacking groceries:</strong> a continuous mode scans many items in a row into a review list, then adds them all in one transaction.</li>
+        <li><strong>Weighed goods:</strong> in-store barcodes for loose meat or cheese embed weight or price (GS1 prefixes 02 and 20 to 29), so every package has a different code. These are recognised and matched on the item part only, and the embedded weight pre-fills the quantity when present.</li>
+      </ul>
+      <div class="diagram"><svg id="scanSequenceDiagram" viewBox="0 0 1000 470" role="img" aria-label="Sequence diagram for scanning a barcode to remove stock"></svg>
+        <div class="diagram-caption">Scanning reuses the inventory's own use cases, so restock and reminders react exactly as they do to a manual removal.</div></div>
+
+      <h3>10.4 Customizing the freezer: drawers and names</h3>
+      <p>New package: <code>feature_storage_layout</code> (D13). Its editor is shown as the "Freezer layout" section of the Config tab.</p>
+      <ul>
+        <li><strong>Freezers:</strong> add one from a template (upright with 3, 5 or 7 drawers, chest freezer with baskets, fridge freezer compartment) or empty; rename; reorder; archive.</li>
+        <li><strong>Drawers:</strong> add, rename inline, reorder by dragging, pick a colour tag and an icon, remove.</li>
+        <li><strong>Default names</strong> are translation keys ("Drawer {number}") until the user renames a drawer, which stores a <code>customName</code>. Switching language therefore renames untouched drawers, never the user's own names (the same rule as seeded products).</li>
+        <li><strong>Removing a drawer that holds items</strong> asks where its items go ("Move 4 items to Drawer 2"). <code>MoveContentsAndArchiveCompartmentUseCase</code> moves every batch, writes <code>moved</code> movements and archives the drawer in one transaction. An empty drawer is archived directly. Nothing is ever hard-deleted, so past statistics keep their drawer names.</li>
+        <li><strong>Validation:</strong> names are 1 to 30 characters and unique within a freezer, ignoring case; a freezer keeps at least one drawer.</li>
+        <li><strong>Events:</strong> <code>CompartmentCreated</code>, <code>CompartmentRenamed</code>, <code>CompartmentReordered</code>, <code>CompartmentArchived</code>. The inventory list regroups and the freezer map in statistics redraws.</li>
+      </ul>
+
+      <h3>10.5 The Config tab and language selection</h3>
+      <p>The former settings module becomes <code>feature_configuration</code>, reached through a fifth bottom-navigation tab, "Config". Material guidelines allow three to five destinations, so five is the ceiling: future modules add <em>sections</em> to Config, never new tabs.</p>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Section (top to bottom)</th><th>Contents</th><th>Contributed by</th></tr></thead>
+        <tbody>
+          <tr><td>Language</td><td>System language or a specific language, each listed in its own language; applies instantly (D14)</td><td>configuration</td></tr>
+          <tr><td>Freezer layout</td><td>Freezers, drawers, names, order, colours</td><td>storage_layout</td></tr>
+          <tr><td>Appearance</td><td>System, light or dark theme; text size follows the system</td><td>configuration</td></tr>
+          <tr><td>Reminders</td><td>Digest time, lock-screen privacy, storage limits per category</td><td>storage_reminders</td></tr>
+          <tr><td>Restock</td><td>Minimum quantities per product</td><td>restock</td></tr>
+          <tr><td>Optional features</td><td>Barcode scanning on or off; item pictures on or off</td><td>configuration (reads <code>ModuleAvailability</code>)</td></tr>
+          <tr><td>Backup and export</td><td>Encrypted backup, restore, CSV export, last backup date</td><td>data_portability</td></tr>
+          <tr><td>About and privacy</td><td>"Your data never leaves this phone", licences, version</td><td>configuration</td></tr>
+        </tbody>
+      </table></div>
+      <p>Onboarding asks for the language on its first screen too, and writes the same preference, so there is one source of truth.</p>
+
+      <h3 id="statistics-design">10.6 Statistics in depth</h3>
+      <p>The Insights tab is built around one shared filter (D15). Every chart reads it; tapping a bar, slice, day or drawer narrows it. The filter row stays visible above the charts, with removable chips and one "Reset".</p>
+      <div class="diagram">
+        <svg viewBox="0 0 1000 320" role="img" aria-labelledby="statisticsPipelineTitle">
+          <title id="statisticsPipelineTitle">Statistics data flow: filter, queries, view models, charts, and cross-filtering back into the filter</title>
+          <defs><marker id="pipelineArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--edge)"/></marker></defs>
+          <rect x="605" y="8" width="170" height="58" rx="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+          <text x="690" y="31" text-anchor="middle" font-size="13" font-weight="700">Contributed charts</text>
+          <text x="690" y="51" text-anchor="middle" font-size="12" class="muted-text">restock forecast, …</text>
+          <line x1="690" y1="66" x2="690" y2="98" class="edge-line" marker-end="url(#pipelineArrow)"/>
+          <g font-size="12">
+            <rect x="20" y="100" width="170" height="90" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="105" y="128" text-anchor="middle" font-size="13" font-weight="700">Filter row and sheet</text>
+            <text x="105" y="150" text-anchor="middle" class="muted-text">presentation:</text>
+            <text x="105" y="168" text-anchor="middle" class="muted-text">chips, presets, sheet</text>
+
+            <rect x="215" y="100" width="170" height="90" rx="10" fill="var(--feature-soft)" stroke="var(--feature)"/>
+            <text x="300" y="128" text-anchor="middle" font-size="13" font-weight="700">StatisticsFilter</text>
+            <text x="300" y="150" text-anchor="middle" class="muted-text">domain value object,</text>
+            <text x="300" y="168" text-anchor="middle" class="muted-text">saved as named views</text>
+
+            <rect x="410" y="100" width="170" height="90" rx="10" fill="var(--core-soft)" stroke="var(--core)"/>
+            <text x="495" y="128" text-anchor="middle" font-size="13" font-weight="700">Query service</text>
+            <text x="495" y="150" text-anchor="middle" class="muted-text">SQL aggregates on the</text>
+            <text x="495" y="168" text-anchor="middle" class="muted-text">background isolate</text>
+
+            <rect x="605" y="100" width="170" height="90" rx="10" fill="var(--shell-soft)" stroke="var(--shell)"/>
+            <text x="690" y="128" text-anchor="middle" font-size="13" font-weight="700">Chart view models</text>
+            <text x="690" y="150" text-anchor="middle" class="muted-text">buckets, deltas, fixed</text>
+            <text x="690" y="168" text-anchor="middle" class="muted-text">colour per category</text>
+
+            <rect x="800" y="100" width="170" height="90" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="885" y="128" text-anchor="middle" font-size="13" font-weight="700">Chart kit widgets</text>
+            <text x="885" y="150" text-anchor="middle" class="muted-text">fl_chart + painters,</text>
+            <text x="885" y="168" text-anchor="middle" class="muted-text">"show as table"</text>
+          </g>
+          <line x1="190" y1="145" x2="213" y2="145" class="edge-line" marker-end="url(#pipelineArrow)"/>
+          <line x1="385" y1="145" x2="408" y2="145" class="edge-line" marker-end="url(#pipelineArrow)"/>
+          <line x1="580" y1="145" x2="603" y2="145" class="edge-line" marker-end="url(#pipelineArrow)"/>
+          <line x1="775" y1="145" x2="798" y2="145" class="edge-line" marker-end="url(#pipelineArrow)"/>
+          <path d="M885,190 C885,300 300,300 300,192" class="edge-line" stroke-dasharray="6 5" marker-end="url(#pipelineArrow)"/>
+          <text x="592" y="290" text-anchor="middle" font-size="13" class="muted-text">tap a bar, slice, day or drawer: cross-filter</text>
+        </svg>
+        <div class="diagram-caption">The filter is the only state. Queries and view models are derived, so "Reset" or opening a saved view always produces a consistent screen.</div>
+      </div>
+
+      <h4>Filter dimensions</h4>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Dimension</th><th>Options</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Period</td><td>30 days, 3 months, 12 months, this year, all time, custom range</td><td>Dragging across the trend chart (brushing) also sets a custom range.</td></tr>
+          <tr><td>Compare</td><td>Off, previous period, same period last year</td><td>Drives the deltas on KPI tiles and a ghost line on trend charts.</td></tr>
+          <tr><td>Granularity</td><td>Automatic, day, week, month</td><td>Automatic keeps 8 to 30 buckets on screen.</td></tr>
+          <tr><td>Measure</td><td>Weight (kg), volume (l), pieces and portions, number of removals</td><td>Units are never added across dimensions; the screen says how many products a measure leaves out.</td></tr>
+          <tr><td>Categories</td><td>Multi-select</td><td>Each category keeps the same colour on every chart.</td></tr>
+          <tr><td>Products</td><td>Search and multi-select</td><td>A single product opens its detail view.</td></tr>
+          <tr><td>Freezers and drawers</td><td>Multi-select, using the user's own names</td><td>Archived drawers appear with "(removed)".</td></tr>
+          <tr><td>Movement kinds</td><td>Added, eaten, thrown away, moved</td><td>Waste charts use "thrown away" with its optional reason.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>Chart catalog</h4>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Chart</th><th>Question it answers</th><th>Interaction</th><th>Built with</th></tr></thead>
+        <tbody>
+          <tr><td>KPI tiles with sparkline and delta</td><td>Am I eating, adding and wasting more or less than before?</td><td>Tap opens the matching trend</td><td>fl_chart line</td></tr>
+          <tr><td>Eaten vs added over time</td><td>Is the freezer filling up or emptying?</td><td>Crosshair tooltip, drag to set a range</td><td>fl_chart line</td></tr>
+          <tr><td>Eaten per category over time</td><td>What do I eat in which season?</td><td>Tap a segment to filter that category; legend toggles</td><td>fl_chart stacked bar</td></tr>
+          <tr><td>Category share</td><td>What dominates my freezer use?</td><td>Tap a slice to filter</td><td>fl_chart pie (donut)</td></tr>
+          <tr><td>Activity calendar</td><td>On which days do I cook from the freezer?</td><td>Tap a day to list its movements</td><td>custom painter</td></tr>
+          <tr><td>Weekday pattern</td><td>Which weekdays are freezer days?</td><td>Tap a weekday to filter</td><td>fl_chart bar</td></tr>
+          <tr><td>Storage duration histogram</td><td>How long do things wait before being eaten?</td><td>Recommended-limit marker; tap a bucket to list items</td><td>fl_chart bar</td></tr>
+          <tr><td>Freezer map</td><td>Where is the old stuff?</td><td>Tap a drawer to filter; items coloured by age status</td><td>custom painter</td></tr>
+          <tr><td>Top products</td><td>What do I eat most, or throw away most?</td><td>Eaten / thrown away switch; tap opens product detail</td><td>fl_chart bar</td></tr>
+          <tr><td>Waste by reason</td><td>Why does food get thrown away?</td><td>Tap a reason to filter</td><td>fl_chart bar</td></tr>
+          <tr><td>Runs out in (contributed)</td><td>What will I need to buy soon?</td><td>Tap adds to the shopping list</td><td>list with bars</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>Interaction rules</h4>
+      <ul>
+        <li>Every mark has a tooltip; every chart has a "show as table" switch for screen readers and exact values.</li>
+        <li>Drill down instead of new screens: year → month → week, category → product.</li>
+        <li>Colour follows the entity: vegetables stay blue whether two or six categories are shown. At most six categories get their own colour; more fold into "Other".</li>
+        <li>Empty and thin data are explained ("Only 3 removals in this period; trends need more data") rather than drawn as misleading charts.</li>
+        <li>On phones charts stack in one scrolling column; tablets show two columns. The filter row stays pinned at the top.</li>
+      </ul>
+    </section>
+
+    <!-- 10 -->
+    <section id="privacy">
+      <h2>11. Privacy by construction</h2>
+      <p>"The data never leaves the app" is enforced technically, not just promised.</p>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Leak path</th><th>Default behaviour</th><th>Countermeasure</th></tr></thead>
+        <tbody>
+          <tr><td>Network code in our packages or dependencies</td><td>Any package could make requests</td><td>Android release manifest without <code>INTERNET</code> permission, so the OS blocks all sockets. A CI check fails if a dependency outside an allowlist appears in <code>pubspec.lock</code>. No analytics or crash reporting SDKs.</td></tr>
+          <tr><td>Android Auto Backup</td><td><span class="badge is-warning">On by default</span> app data is uploaded to the user's Google Drive</td><td><code>android:allowBackup="false"</code> plus <code>dataExtractionRules</code> excluding everything.</td></tr>
+          <tr><td>iCloud device backup</td><td><span class="badge is-warning">On by default</span> app documents are included</td><td>Store the database in Application Support and set <code>isExcludedFromBackup</code> on it.</td></tr>
+          <tr><td>Encryption key synced via iCloud Keychain</td><td>Depends on accessibility flag</td><td>Store the SQLCipher key with a "this device only" accessibility (<code>first_unlock_this_device</code>).</td></tr>
+          <tr><td>Device theft or file extraction</td><td>Plain SQLite is readable</td><td>SQLCipher encryption at rest with a random 256-bit key in Keychain / Keystore.</td></tr>
+          <tr><td>Barcode scanning</td><td>Unbundled ML Kit downloads its model through Google Play services</td><td>Bundled model only (D12); no <code>INTERNET</code> permission, so nothing can be sent. Codes are only matched against the user's own products.</td></tr>
+          <tr><td>Location in photos</td><td><span class="badge is-warning">Often on</span> phone cameras embed GPS coordinates in EXIF</td><td>Every picture is re-encoded on import, which drops all EXIF metadata.</td></tr>
+          <tr><td>Picture files outside the database</td><td>Not covered by SQLCipher</td><td>AES-GCM file encryption with a device-only key (D11); files excluded from OS backups like the database.</td></tr>
+          <tr><td>Camera access</td><td>Permission prompt at install or first launch</td><td>Requested only when the user first takes a photo or scans; clear iOS usage descriptions in every supported language.</td></tr>
+          <tr><td>Product lookup databases (Open Food Facts)</td><td>Would send barcodes to a server</td><td>Out of scope; contradicts the privacy goal. Seeded offline catalog instead.</td></tr>
+          <tr><td>Notifications on the lock screen</td><td>Content visible</td><td>Digest text avoids item names by default; option to show names.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout is-warning">
+        <strong>Consequence: losing the phone means losing the data</strong>, unless the user exports a backup. The data portability module is therefore part of the first release, not a later nice-to-have, and the app reminds the user every few months to export a backup.
+      </div>
+      <p>The backup is a password-encrypted archive containing a consistent database snapshot (taken with SQLite's <code>VACUUM INTO</code>) and a manifest with schema version and app version. The user chooses where it goes through the system save or share dialog; the app itself never sends it anywhere. Restoring an older schema runs the normal migrations; restoring a newer schema is refused with a clear message.</p>
+    </section>
+
+    <!-- 11 -->
+    <section id="feasibility">
+      <h2>12. Feasibility checks</h2>
+      <p>Each risky assumption, what was checked, and the verdict. Library details (versions, exact API names) must be verified again when the first package is created, because this document was written before any code exists.</p>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Assumption</th><th>Finding</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td>Per-item reminder notifications</td><td>iOS keeps at most 64 pending local notifications per app; a full freezer exceeds that.</td><td><span class="badge is-warning">Changed</span> rolling daily digest, 14 days ahead.</td></tr>
+          <tr><td>Exact notification time</td><td>Android 14 denies <code>SCHEDULE_EXACT_ALARM</code> by default for new installs; Android 13 needs the runtime <code>POST_NOTIFICATIONS</code> permission.</td><td><span class="badge is-ok">Fine</span> with inexact scheduling; a digest a few minutes late is acceptable. Permission requested in onboarding with explanation.</td></tr>
+          <tr><td>Daily background recomputation</td><td>iOS background fetch timing is decided by the OS and may not run for days.</td><td><span class="badge is-warning">Changed</span> plan ahead and replan on app start and inventory changes instead.</td></tr>
+          <tr><td>Time zones and daylight saving</td><td><code>zonedSchedule</code> needs the <code>timezone</code> database and the device zone (for example via <code>flutter_timezone</code>).</td><td><span class="badge is-ok">Fine</span> replan when the zone changes; all dates stored in UTC, freezing dates as calendar dates.</td></tr>
+          <tr><td>Feature-owned Drift tables in separate packages</td><td>Generated DAO mixins reference the concrete database class, which would sit in the app package and create a cycle.</td><td><span class="badge is-warning">Changed</span> central schema in core_database (D4).</td></tr>
+          <tr><td>Encrypted SQLite with Drift</td><td>Drift documents SQLCipher via <code>sqlcipher_flutter_libs</code> with <code>PRAGMA key</code> on open.</td><td><span class="badge is-ok">Fine</span> must not also bundle <code>sqlite3_flutter_libs</code>; CI check for that.</td></tr>
+          <tr><td>Statistics computed live</td><td>Expected volume: a household adds perhaps 1,000 to 3,000 movements per year. SQLite aggregates over tens of thousands of rows are millisecond-scale.</td><td><span class="badge is-ok">Fine</span> no precomputation needed; indexes on <code>(occurredAt)</code> and <code>(productId, occurredAt)</code>.</td></tr>
+          <tr><td>Per-package localization</td><td>gen-l10n runs per package with its own <code>l10n.yaml</code>; the app combines delegates.</td><td><span class="badge is-ok">Fine</span></td></tr>
+          <tr><td>Pub workspaces</td><td>Available since Dart 3.6, single shared lockfile and resolution.</td><td><span class="badge is-ok">Fine</span> codegen (build_runner) runs per package that needs it.</td></tr>
+          <tr><td>No network at all</td><td>Flutter debug builds need <code>INTERNET</code> for the debugger; release builds do not.</td><td><span class="badge is-ok">Fine</span> permission only in the debug and profile manifests.</td></tr>
+          <tr><td>Exact partial removal</td><td>Floating-point subtraction leaves remainders like 0.0000001 g.</td><td><span class="badge is-warning">Changed</span> integer base units (D10).</td></tr>
+          <tr><td>Barcode scanning offline</td><td>mobile_scanner supports the bundled ML Kit model on Android and Apple Vision on iOS; both decode on the device.</td><td><span class="badge is-ok">Fine</span> verify the bundled variant at implementation.</td></tr>
+          <tr><td>One code per product</td><td>In-store weighed goods carry weight or price in the code (GS1 prefixes 02, 20 to 29), so each package differs.</td><td><span class="badge is-warning">Changed</span> recognise these prefixes and match on the item part.</td></tr>
+          <tr><td>Scan to remove a specific bag</td><td>Retail barcodes identify a product, not a package.</td><td><span class="badge is-warning">Changed</span> suggest the oldest batch; QR labels for exact bags are a later idea.</td></tr>
+          <tr><td>Pictures in backups</td><td>About 300 KB per photo; 200 photos is about 60 MB, fine for a file the user saves themselves.</td><td><span class="badge is-ok">Fine</span> with an "export without pictures" option.</td></tr>
+          <tr><td>Encrypting picture files</td><td>AES-GCM on a 300 KB file takes milliseconds with native crypto (for example <code>cryptography_flutter</code>).</td><td><span class="badge is-ok">Fine</span> decrypt thumbnails lazily and cache them in memory.</td></tr>
+          <tr><td>Heatmap and freezer map charts</td><td>fl_chart has line, bar, pie, scatter and radar charts, but no calendar heatmap or treemap-style map.</td><td><span class="badge is-warning">Changed</span> two custom painters in the chart kit (D7).</td></tr>
+          <tr><td>About ten charts re-querying on every filter change</td><td>Each is one indexed aggregate over at most tens of thousands of movements, so milliseconds each on Drift's background isolate.</td><td><span class="badge is-ok">Fine</span> debounce 150 ms; lazy-load charts below the fold.</td></tr>
+          <tr><td>Summing amounts across products</td><td>Grams, millilitres and pieces cannot be added up meaningfully.</td><td><span class="badge is-warning">Changed</span> a measure selector; never mix units in one chart.</td></tr>
+          <tr><td>Language picker in the app</td><td><code>MaterialApp.locale</code> switches instantly. Android 13+ and iOS also have per-app language screens in system settings.</td><td><span class="badge is-ok">Fine</span> declare supported locales to the OS; a platform channel keeps Android 13+ in sync (D14).</td></tr>
+          <tr><td>Removing a drawer that holds items</td><td>Batches and past movements reference the drawer.</td><td><span class="badge is-warning">Changed</span> move contents, then archive; never hard-delete (D13).</td></tr>
+          <tr><td>Five bottom-navigation tabs</td><td>Material guidelines allow 3 to 5 destinations.</td><td><span class="badge is-ok">Fine</span> at the ceiling; new modules add Config sections, not tabs.</td></tr>
+          <tr><td>Recommended storage durations</td><td>Values like "beef 6 to 12 months" vary by source and are guidance, not safety guarantees.</td><td><span class="badge is-ok">Fine</span> seeded defaults, editable, labelled as recommendations.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 12 -->
+    <section id="structure">
+      <h2>13. Repository layout</h2>
+<pre class="folder-tree"><code>freezer_app/
+├── pubspec.yaml                      # workspace root: lists all packages below
+├── analysis_options.yaml             # shared strict lints
+├── tool/                             # dependency-rule check, package template, ARB merge
+├── apps/
+│   └── freezer_app/                  # app shell (composition root)
+│       ├── lib/main.dart
+│       ├── lib/src/module_registry.dart
+│       ├── lib/src/application_router.dart
+│       ├── lib/src/home_dashboard_screen.dart
+│       ├── android/  ios/
+│       └── integration_test/
+└── packages/
+    ├── core/
+    │   ├── core_foundation/          # clock, typed ids, result types, local logging
+    │   ├── core_database/
+    │   │   └── lib/src/
+    │   │       ├── application_database.dart
+    │   │       ├── encryption/       # SQLCipher key management
+    │   │       ├── migrations/       # numbered steps + schema snapshots
+    │   │       └── tables/
+    │   │           ├── storage_layout/  # freezers, drawers
+    │   │           ├── inventory/    # batches, movements + DAO
+    │   │           ├── product_catalog/
+    │   │           ├── restock/
+    │   │           ├── storage_reminders/
+    │   │           ├── item_pictures/
+    │   │           ├── barcode_scanning/
+    │   │           ├── statistics/   # read-only query DAO
+    │   │           └── preferences/
+    │   ├── core_events/
+    │   ├── core_notifications/
+    │   ├── core_localization/
+    │   ├── core_design_system/
+    │   ├── core_preferences/
+    │   ├── core_media_storage/       # encrypted file store, resizing, thumbnails
+    │   └── core_module_contract/
+    └── features/
+        ├── feature_inventory/
+        │   ├── lib/feature_inventory.dart        # public API barrel
+        │   ├── lib/src/domain/
+        │   ├── lib/src/application/
+        │   ├── lib/src/data/
+        │   ├── lib/src/presentation/
+        │   ├── lib/src/inventory_feature_module.dart
+        │   ├── lib/l10n/                         # ARB files
+        │   └── test/
+        ├── feature_product_catalog/
+        ├── feature_storage_reminders/
+        ├── feature_restock/
+        ├── feature_statistics/
+        ├── feature_data_portability/
+        ├── feature_storage_layout/
+        ├── feature_configuration/            # the Config tab
+        ├── feature_onboarding/
+        ├── feature_item_pictures/
+        └── feature_barcode_scanning/         # optional</code></pre>
+      <h3>Naming conventions</h3>
+      <ul>
+        <li>Packages: <code>core_*</code> and <code>feature_*</code>. Files: <code>snake_case</code> matching the main class.</li>
+        <li>Classes say what they are: <code>ConsumeStockUseCase</code>, <code>DriftInventoryRepository</code>, <code>InventoryOverviewController</code>, <code>StockBatchConsumed</code> (events in past tense).</li>
+        <li>No abbreviations except universally known ones (<code>id</code>, <code>url</code>). Durations carry their unit: <code>recommendedMaximumStorageDays</code>.</li>
+      </ul>
+    </section>
+
+    <!-- 13 -->
+    <section id="testing">
+      <h2>14. Testing strategy</h2>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Level</th><th>What</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Domain unit tests</td><td>Policies (storage age, restock thresholds), quantity arithmetic, reminder planning</td><td>Pure Dart, fake <code>Clock</code> from core_foundation. Time-based logic is untestable without it, so <code>DateTime.now()</code> is banned by lint outside core_foundation.</td></tr>
+          <tr><td>Repository tests</td><td>DAOs and repository implementations, movement log consistency</td><td>Drift in-memory database.</td></tr>
+          <tr><td>Migration tests</td><td>Every schema version upgrades to the latest without data loss</td><td>Drift schema snapshots and generated migration test helpers.</td></tr>
+          <tr><td>Widget tests</td><td>Screens in every supported locale, including long German strings and RTL</td><td>Riverpod overrides with fake repositories.</td></tr>
+          <tr><td>Golden tests</td><td>Charts and design-system components in light and dark</td><td>Flutter golden files.</td></tr>
+          <tr><td>Integration tests</td><td>Onboarding, add and consume, backup and restore round trip</td><td><code>integration_test</code> on emulator in CI.</td></tr>
+          <tr><td>Architecture tests</td><td>Dependency rules, no forbidden plugins, no network packages</td><td>Script in <code>tool/</code> run in CI over pubspecs and lockfile.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- 14 -->
+    <section id="roadmap">
+      <h2>15. Build order</h2>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Phase</th><th>Deliverable</th><th>Modules</th></tr></thead>
+        <tbody>
+          <tr><td>0 · Skeleton</td><td>Workspace, CI, lints, architecture checks, empty shell with bottom navigation in two languages, encrypted empty database</td><td>app shell, all core packages</td></tr>
+          <tr><td>1 · Inventory</td><td>Create, name and reorder freezers and drawers, seeded catalog, add, consume (fully or partially), discard, move and split batches, search</td><td>storage_layout, product_catalog, inventory</td></tr>
+          <tr><td>2 · Safety net</td><td>Encrypted backup export and restore, CSV export, onboarding, Config tab with language selection</td><td>data_portability, onboarding, configuration</td></tr>
+          <tr><td>3 · Reminders</td><td>Storage age badges, "eat soon" dashboard card, daily digest notifications</td><td>storage_reminders</td></tr>
+          <tr><td>4 · Restock</td><td>Restock rules, low-stock detection, shopping list, quick add from list</td><td>restock</td></tr>
+          <tr><td>5 · Insights</td><td>Shared filter, saved views, KPI tiles, trend, category, calendar, weekday, duration, freezer map, top products and waste charts, chart kit painters</td><td>statistics, design_system chart kit</td></tr>
+          <tr><td>6 · Pictures</td><td>Product and batch photos, thumbnails in lists, pictures in backups</td><td>core_media_storage, item_pictures</td></tr>
+          <tr><td>7 · Barcode scanning</td><td>Optional scanner, code learning, scan to add, scan to remove, continuous mode</td><td>barcode_scanning</td></tr>
+          <tr><td>Later</td><td>Consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning</td><td>new feature packages</td></tr>
+        </tbody>
+      </table></div>
+      <p>Backup comes before reminders on purpose: once real users store real data, losing it on a phone change is the worst possible failure for a local-only app.</p>
+    </section>
+
+    <!-- 15 -->
+    <section id="open-questions">
+      <h2>16. Open questions for the product owner</h2>
+      <ol>
+        <li><strong>Target platforms:</strong> this plan assumes Android and iOS. Desktop or web would change the encryption and notification choices.</li>
+        <li><strong>Initial languages:</strong> the plan assumes English and German first; any right-to-left language planned early?</li>
+        <li><strong>OS backups:</strong> the plan excludes the database from Google Drive and iCloud backups. Some users might prefer the convenience; should it become an opt-in setting?</li>
+        <li><strong>Prices:</strong> should batches optionally carry a purchase price, enabling "money saved" or "money wasted" statistics?</li>
+        <li><strong>Household sharing:</strong> is a shared freezer between several phones a future goal? It shapes whether ids should be globally unique now (the plan uses UUIDs anyway, so this stays open cheaply).</li>
+      </ol>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const svgNamespace = "http://www.w3.org/2000/svg";
+
+  function createSvgElement(tagName, attributes, textContent) {
+    const element = document.createElementNS(svgNamespace, tagName);
+    Object.entries(attributes || {}).forEach(([name, value]) => element.setAttribute(name, value));
+    if (textContent !== undefined) element.textContent = textContent;
+    return element;
+  }
+
+  /* ---------- Theme toggle ---------- */
+  const themeToggleButton = document.getElementById("themeToggleButton");
+  themeToggleButton.addEventListener("click", () => {
+    const rootElement = document.documentElement;
+    const currentTheme = rootElement.getAttribute("data-theme")
+      || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+    rootElement.setAttribute("data-theme", nextTheme);
+    try { localStorage.setItem("freezerArchitectureTheme", nextTheme); } catch (storageError) { /* storage unavailable */ }
+  });
+  try {
+    const storedTheme = localStorage.getItem("freezerArchitectureTheme");
+    if (storedTheme) document.documentElement.setAttribute("data-theme", storedTheme);
+  } catch (storageError) { /* storage unavailable */ }
+
+  /* ---------- Decisions expand / collapse ---------- */
+  document.querySelectorAll("[data-decisions]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const shouldOpen = button.dataset.decisions === "open";
+      document.querySelectorAll("details.decision").forEach((details) => { details.open = shouldOpen; });
+    });
+  });
+
+  /* ---------- Table of contents scroll spy ---------- */
+  const tableOfContentsLinks = Array.from(document.querySelectorAll("nav.table-of-contents a"));
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      tableOfContentsLinks.forEach((link) => {
+        link.classList.toggle("is-active", link.getAttribute("href") === "#" + entry.target.id);
+      });
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  document.querySelectorAll("main section").forEach((section) => sectionObserver.observe(section));
+
+  /* ---------- Module definitions ---------- */
+  const moduleDefinitions = [
+    { identifier: "app_shell", label: "App shell", kind: "shell", phase: "0",
+      responsibility: "Composition root: main(), module registry, router, bottom navigation, home dashboard assembled from module contributions, provider scope.",
+      publicApi: ["None (top of the graph)"],
+      events: "None",
+      dependencies: ["feature_onboarding", "feature_inventory", "feature_product_catalog", "feature_storage_reminders", "feature_restock", "feature_statistics", "feature_data_portability", "feature_storage_layout", "feature_configuration", "feature_item_pictures", "feature_barcode_scanning"] },
+
+    { identifier: "feature_storage_layout", label: "Storage layout", kind: "feature", phase: "1",
+      responsibility: "Freezers and drawers: add from templates, rename, reorder, colour tags, archive. Removing a drawer moves its contents first. Default names stay translatable until renamed. Contributes the 'Freezer layout' Config section.",
+      publicApi: ["StorageLayoutFeatureModule", "Freezer, Compartment entities", "StorageLayoutQueryService", "CompartmentDisplayNameResolver"],
+      events: "Publishes CompartmentCreated, CompartmentRenamed, CompartmentReordered, CompartmentArchived",
+      dependencies: ["core_database", "core_events", "core_module_contract", "core_design_system", "core_localization", "core_foundation"] },
+    { identifier: "feature_onboarding", label: "Onboarding", kind: "feature", phase: "2",
+      responsibility: "First run: choose language, create the first freezer and compartments, pick common products from the seeded catalog, explain and request notification permission.",
+      publicApi: ["OnboardingFeatureModule", "OnboardingCompletionStatus"],
+      events: "Publishes OnboardingCompleted",
+      dependencies: ["feature_storage_layout", "feature_product_catalog", "core_preferences", "core_notifications", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_inventory", label: "Inventory", kind: "feature", phase: "1",
+      responsibility: "Stock batches placed in drawers of the storage layout. Add, consume fully or partially (200 g of a 1 kg bag), discard, move, split and correct batches with exact integer quantities; every change writes a movement. Search and filter by product, category, compartment and age.",
+      publicApi: ["InventoryFeatureModule", "StockBatch entity", "InventoryQueryService (read-only)", "AddStockBatchUseCase, ConsumeStockUseCase (reused by barcode scanning)", "Quantity, QuantityUnit"],
+      events: "Publishes StockBatchAdded, StockBatchConsumed, StockBatchDiscarded, StockBatchMoved, StockBatchCorrected",
+      dependencies: ["feature_storage_layout", "feature_product_catalog", "core_database", "core_events", "core_module_contract", "core_design_system", "core_localization", "core_foundation"] },
+    { identifier: "feature_product_catalog", label: "Product catalog", kind: "feature", phase: "1",
+      responsibility: "Products and categories, canonical units, recommended maximum storage durations, localized seeded catalog with catalog keys, user-defined products, default package quantities.",
+      publicApi: ["ProductCatalogFeatureModule", "Product, Category, QuantityUnit", "ProductCatalogQueryService", "ProductDisplayNameResolver"],
+      events: "Publishes ProductCreated, ProductUpdated, ProductArchived",
+      dependencies: ["core_database", "core_events", "core_module_contract", "core_design_system", "core_localization", "core_foundation"] },
+    { identifier: "feature_storage_reminders", label: "Storage reminders", kind: "feature", phase: "3",
+      responsibility: "Evaluates storage age against the product or category policy, provides 'eat soon' lists and age badges, plans the rolling daily digest notifications, snoozing.",
+      publicApi: ["StorageRemindersFeatureModule", "StorageAgeEvaluation", "EatSoonDashboardCard"],
+      events: "Subscribes to all StockBatch* events and ProductUpdated",
+      dependencies: ["feature_inventory", "feature_product_catalog", "core_notifications", "core_preferences", "core_events", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_restock", label: "Restock", kind: "feature", phase: "4",
+      responsibility: "Restock rules (minimum and target quantity per product), low-stock detection, shopping list with manual and automatic entries, quick add of bought items into the inventory.",
+      publicApi: ["RestockFeatureModule", "RestockRule", "ShoppingListQueryService"],
+      events: "Subscribes to StockBatchConsumed, StockBatchDiscarded, StockBatchAdded; publishes ShoppingListEntryAdded. Contributes the 'runs out in' insight chart.",
+      dependencies: ["feature_inventory", "feature_product_catalog", "core_database", "core_events", "core_notifications", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_statistics", label: "Statistics", kind: "feature", phase: "5",
+      responsibility: "Read-only analysis of the movement log around one shared StatisticsFilter: period, comparison, granularity, measure, categories, products, drawers, movement kinds; saved views. KPI tiles, trends, category, calendar, weekday, duration, freezer map, top products and waste charts with cross-filtering and drill-down.",
+      publicApi: ["StatisticsFeatureModule", "StatisticsFilter", "Insight dashboard cards"],
+      events: "Subscribes to CompartmentRenamed and CompartmentArchived to refresh labels; otherwise queries live data",
+      dependencies: ["feature_product_catalog", "feature_storage_layout", "core_database", "core_preferences", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_data_portability", label: "Data portability", kind: "feature", phase: "2",
+      responsibility: "Password-encrypted backup export and restore of the whole database, CSV export for the user's own analysis, schema version check on restore, periodic backup reminder.",
+      publicApi: ["DataPortabilityFeatureModule"],
+      events: "Publishes DataRestored (all modules replan)",
+      dependencies: ["core_database", "core_preferences", "core_events", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_configuration", label: "Config", kind: "feature", phase: "2",
+      responsibility: "The Config tab: renders sections contributed by all modules, plus language selection (system or a specific language, applied instantly), theme, switching optional modules on or off, about and privacy.",
+      publicApi: ["ConfigurationFeatureModule", "SelectedLocaleProvider"],
+      events: "None",
+      dependencies: ["core_preferences", "core_localization", "core_module_contract", "core_design_system"] },
+    { identifier: "feature_item_pictures", label: "Item pictures", kind: "feature", phase: "6",
+      responsibility: "Photos for products and individual batches: capture or pick, crop, attach, view full screen, delete. Supplies thumbnails to other modules through ItemVisualProvider and cleans up pictures of deleted items.",
+      publicApi: ["ItemPicturesFeatureModule", "ItemPictureReference"],
+      events: "Subscribes to StockBatch* removals and ProductArchived; publishes ItemPictureAttached",
+      dependencies: ["feature_inventory", "feature_product_catalog", "core_media_storage", "core_database", "core_events", "core_module_contract", "core_design_system", "core_localization"] },
+    { identifier: "feature_barcode_scanning", label: "Barcode scanning", kind: "feature", phase: "7",
+      responsibility: "Optional. On-device scanning, learning which code belongs to which product, scan to add, scan to remove (oldest batch first), continuous mode for unpacking groceries, weighed-goods code handling.",
+      publicApi: ["BarcodeScanningFeatureModule"],
+      events: "None of its own; uses inventory use cases, which publish StockBatch* events",
+      dependencies: ["feature_inventory", "feature_product_catalog", "core_database", "core_preferences", "core_module_contract", "core_design_system", "core_localization"] },
+
+    { identifier: "core_foundation", label: "Foundation", kind: "core", phase: "0",
+      responsibility: "Pure Dart basics: Clock abstraction, typed identifiers (UUID based), Result and failure types, calendar date type, local-only logging.",
+      publicApi: ["Clock, SystemClock, FixedClock", "TypedIdentifier", "Result, Failure", "CalendarDate"],
+      events: "None", dependencies: [] },
+    { identifier: "core_database", label: "Database", kind: "core", phase: "0",
+      responsibility: "The single Drift database: all tables and DAOs in per-feature folders, numbered migrations with schema snapshots, SQLCipher encryption and key management, transaction runner, snapshot export for backups.",
+      publicApi: ["ApplicationDatabase", "Per-feature DAOs", "TransactionRunner", "DatabaseSnapshotService"],
+      events: "None", dependencies: ["core_foundation"] },
+    { identifier: "core_events", label: "Events", kind: "core", phase: "0",
+      responsibility: "DomainEvent base class and DomainEventBus: typed subscriptions, dispatch after commit, error isolation so one failing subscriber cannot break others.",
+      publicApi: ["DomainEvent", "DomainEventBus", "DomainEventSubscription"],
+      events: "Infrastructure", dependencies: ["core_foundation"] },
+    { identifier: "core_notifications", label: "Notifications", kind: "core", phase: "0",
+      responsibility: "Wraps flutter_local_notifications and time zones: permission flow, channels, scheduling and cancelling by id, tap payloads turned into route paths.",
+      publicApi: ["NotificationScheduler (interface)", "NotificationPermissionService", "NotificationTapRouter"],
+      events: "None", dependencies: ["core_foundation"] },
+    { identifier: "core_localization", label: "Localization", kind: "core", phase: "0",
+      responsibility: "Supported locales and resolution, shared ARB strings (units, common actions, relative ages), formatters for quantities, dates and durations.",
+      publicApi: ["SupportedLocales", "CommonLocalizations", "QuantityFormatter", "StorageAgeFormatter"],
+      events: "None", dependencies: ["core_foundation"] },
+    { identifier: "core_design_system", label: "Design system", kind: "core", phase: "0",
+      responsibility: "Theme and colour tokens (light and dark), typography, spacing, accessible shared widgets: quantity stepper, age badge, empty states, chart wrappers around fl_chart.",
+      publicApi: ["FreezerTheme", "QuantityStepper", "StorageAgeBadge", "LineChartCard, BarChartCard, ShareChartCard"],
+      events: "None", dependencies: ["core_localization"] },
+    { identifier: "core_preferences", label: "Preferences", kind: "core", phase: "0",
+      responsibility: "Typed key-value settings stored in the encrypted database, namespaced per module, observable as streams.",
+      publicApi: ["PreferenceKey<T>", "PreferencesStore"],
+      events: "None", dependencies: ["core_database", "core_foundation"] },
+    { identifier: "core_media_storage", label: "Media storage", kind: "core", phase: "6",
+      responsibility: "Encrypted file store for images: resize, re-encode (drops EXIF and GPS), thumbnails, AES-GCM encryption with a device-only key, orphan sweep.",
+      publicApi: ["MediaFileStore", "ImageProcessingService", "StoredMediaReference"],
+      events: "None", dependencies: ["core_foundation"] },
+    { identifier: "core_module_contract", label: "Module contract", kind: "core", phase: "0",
+      responsibility: "The FeatureModule interface and contribution types (routes, navigation destination, quick actions, item visuals, dashboard cards, Config sections, insight charts, module availability, initialization context).",
+      publicApi: ["FeatureModule", "QuickActionContribution", "ItemVisualProvider", "DashboardCardContribution", "ConfigSectionContribution", "InsightChartContribution", "ModuleAvailability", "ModuleInitializationContext"],
+      events: "None", dependencies: ["core_events", "core_foundation"] }
+  ];
+
+  const moduleByIdentifier = new Map(moduleDefinitions.map((moduleDefinition) => [moduleDefinition.identifier, moduleDefinition]));
+
+  /* ---------- Module catalog table ---------- */
+  const kindBadgeClass = { shell: "is-shell", feature: "is-feature", core: "is-core" };
+  const catalogTableBody = document.querySelector("#moduleCatalogTable tbody");
+  moduleDefinitions.forEach((moduleDefinition) => {
+    const tableRow = document.createElement("tr");
+    const dependencyLabels = moduleDefinition.dependencies.length
+      ? moduleDefinition.dependencies.map((identifier) => moduleByIdentifier.get(identifier).label).join(", ")
+      : "nothing";
+    tableRow.innerHTML =
+      "<td><code></code></td><td><span class='badge'></span></td><td></td><td></td><td></td>";
+    tableRow.children[0].firstChild.textContent = moduleDefinition.identifier;
+    tableRow.children[1].firstChild.textContent = moduleDefinition.kind;
+    tableRow.children[1].firstChild.classList.add(kindBadgeClass[moduleDefinition.kind]);
+    tableRow.children[2].textContent = moduleDefinition.responsibility;
+    tableRow.children[3].textContent = dependencyLabels;
+    tableRow.children[4].textContent = moduleDefinition.phase;
+    catalogTableBody.appendChild(tableRow);
+  });
+
+  /* ---------- Module graph ---------- */
+  const moduleGraphSvg = document.getElementById("moduleGraph");
+  const nodeWidth = 112;
+  const nodeHeight = 44;
+  const nodePositions = new Map();
+  const featureIdentifiers = moduleDefinitions.filter((m) => m.kind === "feature").map((m) => m.identifier);
+  const coreIdentifiers = moduleDefinitions.filter((m) => m.kind === "core").map((m) => m.identifier);
+  const graphWidth = 24 + Math.max(featureIdentifiers.length, coreIdentifiers.length) * 122 - 10;
+  moduleGraphSvg.setAttribute("viewBox", `0 0 ${graphWidth} 470`);
+  nodePositions.set("app_shell", { x: (graphWidth - nodeWidth) / 2, y: 20 });
+  featureIdentifiers.forEach((identifier, index) => nodePositions.set(identifier, { x: 12 + index * 122, y: 200 }));
+  coreIdentifiers.forEach((identifier, index) => nodePositions.set(identifier, { x: 12 + index * 122, y: 400 }));
+
+  moduleGraphSvg.appendChild(createSvgElement("text", { x: 12, y: 190, "font-size": 12, class: "muted-text", "font-weight": 600 }, "FEATURES"));
+  moduleGraphSvg.appendChild(createSvgElement("text", { x: 12, y: 390, "font-size": 12, class: "muted-text", "font-weight": 600 }, "CORE"));
+
+  const edgeLayer = createSvgElement("g", {});
+  const nodeLayer = createSvgElement("g", {});
+  moduleGraphSvg.appendChild(edgeLayer);
+  moduleGraphSvg.appendChild(nodeLayer);
+
+  const edgeElements = [];
+  moduleDefinitions.forEach((sourceModule) => {
+    sourceModule.dependencies.forEach((targetIdentifier) => {
+      const sourcePosition = nodePositions.get(sourceModule.identifier);
+      const targetPosition = nodePositions.get(targetIdentifier);
+      const sourceCenterX = sourcePosition.x + nodeWidth / 2;
+      const targetCenterX = targetPosition.x + nodeWidth / 2;
+      let pathDescription;
+      if (sourcePosition.y === targetPosition.y) {
+        // Same row: arc above the row.
+        const arcHeight = 40 + Math.abs(sourceCenterX - targetCenterX) * 0.12;
+        pathDescription = `M${sourceCenterX},${sourcePosition.y} C${sourceCenterX},${sourcePosition.y - arcHeight} ${targetCenterX},${targetPosition.y - arcHeight} ${targetCenterX},${targetPosition.y}`;
+      } else {
+        const startY = sourcePosition.y + nodeHeight;
+        const endY = targetPosition.y;
+        const middleY = (startY + endY) / 2;
+        pathDescription = `M${sourceCenterX},${startY} C${sourceCenterX},${middleY} ${targetCenterX},${middleY} ${targetCenterX},${endY}`;
+      }
+      const edgeElement = createSvgElement("path", { d: pathDescription, class: "edge-line" });
+      edgeLayer.appendChild(edgeElement);
+      edgeElements.push({ element: edgeElement, sourceIdentifier: sourceModule.identifier, targetIdentifier });
+    });
+  });
+
+  const nodeElements = new Map();
+  moduleDefinitions.forEach((moduleDefinition) => {
+    const position = nodePositions.get(moduleDefinition.identifier);
+    const nodeGroup = createSvgElement("g", {
+      class: "module-node kind-" + moduleDefinition.kind,
+      tabindex: 0,
+      role: "button",
+      "aria-label": moduleDefinition.label + " module"
+    });
+    nodeGroup.appendChild(createSvgElement("rect", { x: position.x, y: position.y, width: nodeWidth, height: nodeHeight, rx: 8 }));
+    const labelLines = moduleDefinition.label.includes(" ") && moduleDefinition.label.length > 10
+      ? moduleDefinition.label.split(" ") : [moduleDefinition.label];
+    labelLines.forEach((line, lineIndex) => {
+      nodeGroup.appendChild(createSvgElement("text", {
+        x: position.x + nodeWidth / 2,
+        y: position.y + nodeHeight / 2 + 5 + (lineIndex - (labelLines.length - 1) / 2) * 15,
+        "text-anchor": "middle", "font-size": 14, "font-weight": 600
+      }, line));
+    });
+    nodeGroup.addEventListener("click", () => selectModule(moduleDefinition.identifier));
+    nodeGroup.addEventListener("keydown", (keyboardEvent) => {
+      if (keyboardEvent.key === "Enter" || keyboardEvent.key === " ") {
+        keyboardEvent.preventDefault();
+        selectModule(moduleDefinition.identifier);
+      }
+    });
+    nodeLayer.appendChild(nodeGroup);
+    nodeElements.set(moduleDefinition.identifier, nodeGroup);
+  });
+
+  const moduleDetailPanel = document.getElementById("moduleDetailPanel");
+  let selectedModuleIdentifier = null;
+
+  function renderList(items) {
+    const listElement = document.createElement("ul");
+    items.forEach((itemText) => {
+      const listItem = document.createElement("li");
+      listItem.textContent = itemText;
+      listElement.appendChild(listItem);
+    });
+    return listElement;
+  }
+
+  function selectModule(identifier) {
+    if (selectedModuleIdentifier === identifier) { clearSelection(); return; }
+    selectedModuleIdentifier = identifier;
+    const selectedModule = moduleByIdentifier.get(identifier);
+    const dependentIdentifiers = moduleDefinitions
+      .filter((candidate) => candidate.dependencies.includes(identifier))
+      .map((candidate) => candidate.identifier);
+    const relatedIdentifiers = new Set([identifier, ...selectedModule.dependencies, ...dependentIdentifiers]);
+
+    moduleGraphSvg.classList.add("has-selection");
+    nodeElements.forEach((nodeGroup, nodeIdentifier) => {
+      nodeGroup.classList.toggle("is-dimmed", !relatedIdentifiers.has(nodeIdentifier));
+      nodeGroup.classList.toggle("is-selected", nodeIdentifier === identifier);
+    });
+    edgeElements.forEach((edge) => {
+      edge.element.classList.toggle("is-outgoing", edge.sourceIdentifier === identifier);
+      edge.element.classList.toggle("is-incoming", edge.targetIdentifier === identifier);
+    });
+
+    moduleDetailPanel.innerHTML = "";
+    const heading = document.createElement("h4");
+    heading.textContent = selectedModule.label;
+    const identifierLine = document.createElement("div");
+    identifierLine.innerHTML = "<code></code> <span class='badge'></span>";
+    identifierLine.firstChild.textContent = selectedModule.identifier;
+    identifierLine.lastChild.textContent = selectedModule.kind;
+    identifierLine.lastChild.classList.add(kindBadgeClass[selectedModule.kind]);
+
+    const descriptionList = document.createElement("dl");
+    const addEntry = (term, content) => {
+      const termElement = document.createElement("dt");
+      termElement.textContent = term;
+      const definitionElement = document.createElement("dd");
+      if (typeof content === "string") definitionElement.textContent = content;
+      else definitionElement.appendChild(content);
+      descriptionList.append(termElement, definitionElement);
+    };
+    addEntry("Responsibility", selectedModule.responsibility);
+    addEntry("Public API", renderList(selectedModule.publicApi));
+    addEntry("Events", selectedModule.events);
+    addEntry("Depends on", selectedModule.dependencies.length
+      ? selectedModule.dependencies.map((d) => moduleByIdentifier.get(d).label).join(", ") : "nothing");
+    addEntry("Used by", dependentIdentifiers.length
+      ? dependentIdentifiers.map((d) => moduleByIdentifier.get(d).label).join(", ") + (selectedModule.kind === "core" ? ", App shell" : "")
+      : (selectedModule.kind === "shell" ? "nobody (top level)" : "App shell"));
+    addEntry("Build phase", selectedModule.phase);
+    moduleDetailPanel.append(heading, identifierLine, descriptionList);
+  }
+
+  function clearSelection() {
+    selectedModuleIdentifier = null;
+    moduleGraphSvg.classList.remove("has-selection");
+    nodeElements.forEach((nodeGroup) => nodeGroup.classList.remove("is-dimmed", "is-selected"));
+    edgeElements.forEach((edge) => edge.element.classList.remove("is-outgoing", "is-incoming"));
+    moduleDetailPanel.innerHTML = "<h4>Select a module</h4><p style='color:var(--text-muted); font-size:14px; margin:0'>Click or tab to any box in the graph. Press Escape to clear.</p>";
+  }
+
+  document.addEventListener("keydown", (keyboardEvent) => { if (keyboardEvent.key === "Escape") clearSelection(); });
+  selectModule("feature_inventory");
+
+  /* ---------- Sequence diagrams ---------- */
+  function renderSequenceDiagram(svgElement, participants, messages, options) {
+    const viewBoxHeight = options.height;
+    const spacing = (1000 - 2 * options.marginX) / (participants.length - 1);
+    const participantX = participants.map((_, index) => options.marginX + index * spacing);
+
+    svgElement.appendChild(createSvgElement("defs", {})).innerHTML =
+      `<marker id="${svgElement.id}Arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-muted)"/></marker>` +
+      `<marker id="${svgElement.id}EventArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--feature)"/></marker>`;
+
+    participants.forEach((participant, index) => {
+      const centerX = participantX[index];
+      svgElement.appendChild(createSvgElement("line", {
+        x1: centerX, y1: 58, x2: centerX, y2: viewBoxHeight - 10,
+        stroke: "var(--border)", "stroke-dasharray": "4 4"
+      }));
+      const boxWidth = Math.min(spacing - 8, 118);
+      svgElement.appendChild(createSvgElement("rect", {
+        x: centerX - boxWidth / 2, y: 10, width: boxWidth, height: 46, rx: 7,
+        fill: `var(--${participant.kind}-soft)`, stroke: `var(--${participant.kind})`
+      }));
+      const labelLines = participant.label.split("\n");
+      labelLines.forEach((line, lineIndex) => {
+        svgElement.appendChild(createSvgElement("text", {
+          x: centerX, y: 33 + (lineIndex - (labelLines.length - 1) / 2) * 15 + 4,
+          "text-anchor": "middle", "font-size": 12, "font-weight": 600
+        }, line));
+      });
+    });
+
+    messages.forEach((message, index) => {
+      const messageY = 90 + index * options.stepHeight;
+      const fromX = participantX[message.from];
+      const toX = participantX[message.to];
+      const isEvent = message.style === "event";
+      const isReturn = message.style === "return";
+      if (message.from === message.to) {
+        svgElement.appendChild(createSvgElement("path", {
+          d: `M${fromX},${messageY - 8} h34 v16 h-32`,
+          fill: "none", stroke: "var(--text-muted)", "stroke-width": 1.4,
+          "marker-end": `url(#${svgElement.id}Arrow)`
+        }));
+      } else {
+        svgElement.appendChild(createSvgElement("line", {
+          x1: fromX, y1: messageY, x2: toX + (toX > fromX ? -2 : 2), y2: messageY,
+          stroke: isEvent ? "var(--feature)" : "var(--text-muted)",
+          "stroke-width": isEvent ? 2.6 : 1.4,
+          "stroke-dasharray": isReturn ? "5 4" : "none",
+          "marker-end": `url(#${svgElement.id}${isEvent ? "EventArrow" : "Arrow"})`
+        }));
+      }
+      const labelX = message.from === message.to ? fromX - 8 : (fromX + toX) / 2;
+      const labelBackground = createSvgElement("rect", { fill: "var(--surface)", rx: 3 });
+      const labelText = createSvgElement("text", {
+        x: labelX, y: messageY - 6,
+        "text-anchor": message.from === message.to ? "end" : "middle",
+        "font-size": 12, class: isReturn ? "muted-text" : ""
+      }, (index + 1) + ". " + message.text);
+      svgElement.appendChild(labelBackground);
+      svgElement.appendChild(labelText);
+      const textBounds = labelText.getBBox();
+      labelBackground.setAttribute("x", textBounds.x - 3);
+      labelBackground.setAttribute("y", textBounds.y - 1);
+      labelBackground.setAttribute("width", textBounds.width + 6);
+      labelBackground.setAttribute("height", textBounds.height + 2);
+    });
+  }
+
+  renderSequenceDiagram(
+    document.getElementById("consumeSequenceDiagram"),
+    [
+      { label: "User", kind: "accent" },
+      { label: "Inventory\nscreen", kind: "feature" },
+      { label: "ConsumeStock\nUseCase", kind: "feature" },
+      { label: "Inventory\nrepository", kind: "feature" },
+      { label: "Database", kind: "core" },
+      { label: "Event bus", kind: "core" },
+      { label: "Restock\nevaluator", kind: "feature" },
+      { label: "Reminder\nplanner", kind: "feature" },
+      { label: "Notification\nscheduler", kind: "core" }
+    ],
+    [
+      { from: 0, to: 1, text: "use 200 g of 1 kg spinach" },
+      { from: 1, to: 2, text: "execute(batchId, 200 g)" },
+      { from: 2, to: 3, text: "recordConsumption" },
+      { from: 3, to: 4, text: "remaining 800 g + movement −200 g" },
+      { from: 4, to: 1, text: "watch query emits new list", style: "return" },
+      { from: 2, to: 5, text: "publish StockBatchConsumed" },
+      { from: 5, to: 6, text: "StockBatchConsumed", style: "event" },
+      { from: 6, to: 4, text: "read stock level and rule", style: "call" },
+      { from: 6, to: 4, text: "add shopping list entry if below minimum" },
+      { from: 5, to: 7, text: "StockBatchConsumed", style: "event" },
+      { from: 7, to: 7, text: "replan digests (pure domain logic)" },
+      { from: 7, to: 8, text: "cancel + schedule next 14 digests" }
+    ],
+    { height: 560, marginX: 60, stepHeight: 38 }
+  );
+
+  renderSequenceDiagram(
+    document.getElementById("startupSequenceDiagram"),
+    [
+      { label: "main()", kind: "shell" },
+      { label: "Database", kind: "core" },
+      { label: "Module\nregistry", kind: "shell" },
+      { label: "Each\nFeatureModule", kind: "feature" },
+      { label: "Event bus", kind: "core" },
+      { label: "Router", kind: "shell" }
+    ],
+    [
+      { from: 0, to: 1, text: "open with SQLCipher key, run migrations" },
+      { from: 0, to: 2, text: "collect modules + provider overrides" },
+      { from: 2, to: 3, text: "initializeModule(context)" },
+      { from: 3, to: 4, text: "subscribe to events" },
+      { from: 3, to: 3, text: "reconcile: replan reminders, re-evaluate restock" },
+      { from: 2, to: 5, text: "build routes, navigation, dashboard" },
+      { from: 0, to: 5, text: "runApp; onboarding if first run" }
+    ],
+    { height: 400, marginX: 80, stepHeight: 42 }
+  );
+
+  renderSequenceDiagram(
+    document.getElementById("pictureSequenceDiagram"),
+    [
+      { label: "User", kind: "accent" },
+      { label: "Picture\nsheet", kind: "media" },
+      { label: "AttachPicture\nUseCase", kind: "media" },
+      { label: "Media\nstorage", kind: "core" },
+      { label: "Database", kind: "core" }
+    ],
+    [
+      { from: 0, to: 1, text: "take photo or pick from gallery" },
+      { from: 1, to: 2, text: "execute(owner, imageBytes)" },
+      { from: 2, to: 3, text: "resize 1600 px, re-encode (drops EXIF)" },
+      { from: 3, to: 3, text: "encrypt, write file + thumbnail" },
+      { from: 3, to: 2, text: "StoredMediaReference", style: "return" },
+      { from: 2, to: 4, text: "insert ItemPicture row" },
+      { from: 4, to: 1, text: "watch query shows thumbnail", style: "return" }
+    ],
+    { height: 380, marginX: 90, stepHeight: 40 }
+  );
+
+  renderSequenceDiagram(
+    document.getElementById("scanSequenceDiagram"),
+    [
+      { label: "User", kind: "accent" },
+      { label: "Scanner\nscreen", kind: "scan" },
+      { label: "ResolveBarcode\nUseCase", kind: "scan" },
+      { label: "Database", kind: "core" },
+      { label: "Consume sheet\n(inventory)", kind: "feature" },
+      { label: "ConsumeStock\nUseCase", kind: "feature" },
+      { label: "Event bus", kind: "core" }
+    ],
+    [
+      { from: 0, to: 1, text: "point camera at code" },
+      { from: 1, to: 1, text: "decode on device" },
+      { from: 1, to: 2, text: "resolve(code)" },
+      { from: 2, to: 3, text: "product by code, its batches oldest first" },
+      { from: 3, to: 1, text: "product + suggested batch, or unknown", style: "return" },
+      { from: 1, to: 4, text: "open with oldest batch" },
+      { from: 0, to: 4, text: "choose ½ or exact amount" },
+      { from: 4, to: 5, text: "execute(batchId, quantity)" },
+      { from: 5, to: 6, text: "publish StockBatchConsumed" }
+    ],
+    { height: 470, marginX: 70, stepHeight: 40 }
+  );
+
+  /* ---------- Entity diagram ---------- */
+  const entityDiagramSvg = document.getElementById("entityDiagram");
+  const entityWidth = 280;
+  const entityDefinitions = {
+    Freezer: { x: 20, y: 20, kind: "layout", fields: ["id", "defaultNameKey", "customName?", "storageKind", "sortOrder", "isArchived"] },
+    Compartment: { x: 20, y: 240, kind: "layout", fields: ["id", "freezerId", "defaultNumber", "customName?", "colorTag", "sortOrder", "isArchived"] },
+    Category: { x: 360, y: 20, kind: "core", fields: ["id", "catalogKey?", "customName?", "recommendedMaximumStorageDays", "iconName"] },
+    Product: { x: 360, y: 240, kind: "core", fields: ["id", "categoryId", "catalogKey?", "customName?", "canonicalUnit", "defaultPackageQuantity?", "recommendedMaximumStorageDays?", "isArchived"] },
+    RestockRule: { x: 700, y: 20, kind: "shell", fields: ["productId", "minimumQuantity", "targetQuantity", "isActive"] },
+    ShoppingListEntry: { x: 700, y: 240, kind: "shell", fields: ["id", "productId?", "freeTextName?", "requestedQuantity", "origin (manual | restock)", "checkedAt?"] },
+    StockBatch: { x: 120, y: 470, kind: "feature", fields: ["id", "productId", "compartmentId", "initialQuantity", "quantityRemaining", "parentBatchId?", "frozenOn (date)", "bestBeforeOn?", "note?"] },
+    InventoryMovement: { x: 600, y: 470, kind: "feature", fields: ["id", "batchId", "productId", "compartmentId", "movementKind", "quantityDelta", "discardReason?", "occurredAt (UTC)"] },
+    ItemPicture: { x: 20, y: 720, kind: "media", fields: ["id", "ownerKind (product | batch)", "ownerId", "encryptedFileName", "thumbnailFileName", "widthPixels, heightPixels", "byteSize", "createdAt"] },
+    ProductBarcode: { x: 420, y: 720, kind: "scan", fields: ["barcodeValue", "productId", "symbology", "isVariableMeasure", "learnedAt"] }
+  };
+
+  function entityHeight(entity) { return 40 + entity.fields.length * 18; }
+  function anchorPoint(entityName, side, offset) {
+    const entity = entityDefinitions[entityName];
+    const height = entityHeight(entity);
+    const shift = offset || 0;
+    if (side === "top") return { x: entity.x + entityWidth / 2 + shift, y: entity.y };
+    if (side === "bottom") return { x: entity.x + entityWidth / 2 + shift, y: entity.y + height };
+    if (side === "left") return { x: entity.x, y: entity.y + height / 2 + shift };
+    return { x: entity.x + entityWidth, y: entity.y + height / 2 + shift };
+  }
+
+  const relationships = [
+    { from: ["Freezer", "bottom"], to: ["Compartment", "top"], label: "1 : n" },
+    { from: ["Category", "bottom"], to: ["Product", "top"], label: "1 : n" },
+    { from: ["Product", "right", 20], to: ["ShoppingListEntry", "left", 20], label: "1 : n" },
+    { from: ["Product", "right", -50], to: ["RestockRule", "left"], label: "1 : 0..1" },
+    { from: ["Compartment", "bottom"], to: ["StockBatch", "top", -60], label: "1 : n" },
+    { from: ["Product", "bottom"], to: ["StockBatch", "top", 60], label: "1 : n" },
+    { from: ["StockBatch", "right"], to: ["InventoryMovement", "left"], label: "1 : n" },
+    { from: ["StockBatch", "bottom", -100], to: ["ItemPicture", "top"], label: "1 : n (or product)" },
+    { from: ["Product", "bottom", 60], to: ["ProductBarcode", "top"], label: "1 : n" }
+  ];
+
+  relationships.forEach((relationship) => {
+    const start = anchorPoint(relationship.from[0], relationship.from[1], relationship.from[2]);
+    const end = anchorPoint(relationship.to[0], relationship.to[1], relationship.to[2]);
+    let pathDescription;
+    let labelPosition;
+    if (relationship.from[1] === "bottom") {
+      const middleY = (start.y + end.y) / 2;
+      pathDescription = `M${start.x},${start.y} V${middleY} H${end.x} V${end.y}`;
+      labelPosition = { x: end.x + 6, y: end.y - 8 };
+    } else {
+      const middleX = (start.x + end.x) / 2;
+      pathDescription = `M${start.x},${start.y} H${middleX} V${end.y} H${end.x}`;
+      labelPosition = { x: start.x + 5, y: start.y + 15 };
+    }
+    entityDiagramSvg.appendChild(createSvgElement("path", { d: pathDescription, class: "edge-line" }));
+    entityDiagramSvg.appendChild(createSvgElement("text", { x: labelPosition.x, y: labelPosition.y, "text-anchor": labelPosition.anchor || "start", "font-size": 12, class: "muted-text" }, relationship.label));
+  });
+
+  Object.entries(entityDefinitions).forEach(([entityName, entity]) => {
+    const height = entityHeight(entity);
+    entityDiagramSvg.appendChild(createSvgElement("rect", {
+      x: entity.x, y: entity.y, width: entityWidth, height, rx: 8,
+      fill: "var(--surface)", stroke: `var(--${entity.kind})`, "stroke-width": 1.5
+    }));
+    entityDiagramSvg.appendChild(createSvgElement("rect", {
+      x: entity.x, y: entity.y, width: entityWidth, height: 28, rx: 8,
+      fill: `var(--${entity.kind}-soft)`, stroke: `var(--${entity.kind})`, "stroke-width": 1.5
+    }));
+    entityDiagramSvg.appendChild(createSvgElement("text", {
+      x: entity.x + 12, y: entity.y + 19, "font-size": 14, "font-weight": 700
+    }, entityName));
+    entity.fields.forEach((fieldName, fieldIndex) => {
+      entityDiagramSvg.appendChild(createSvgElement("text", {
+        x: entity.x + 12, y: entity.y + 48 + fieldIndex * 18, "font-size": 12.5,
+        "font-family": "ui-monospace, Menlo, Consolas, monospace"
+      }, fieldName));
+    });
+  });
+  const entityLegend = [["layout", "Storage layout"], ["feature", "Inventory"], ["core", "Product catalog"], ["shell", "Restock"], ["media", "Item pictures"], ["scan", "Barcode scanning"]];
+  entityLegend.forEach(([kind, label], index) => {
+    entityDiagramSvg.appendChild(createSvgElement("rect", { x: 20 + (index % 3) * 320, y: 920 + Math.floor(index / 3) * 24, width: 12, height: 12, rx: 3, fill: `var(--${kind}-soft)`, stroke: `var(--${kind})` }));
+    entityDiagramSvg.appendChild(createSvgElement("text", { x: 38 + (index % 3) * 320, y: 931 + Math.floor(index / 3) * 24, "font-size": 12, class: "muted-text" }, "owned by " + label));
+  });
+})();
+</script>
+</body>
+</html>

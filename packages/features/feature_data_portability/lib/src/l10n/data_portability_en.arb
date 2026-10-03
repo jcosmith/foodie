@@ -1,0 +1,104 @@
+{
+  "@@locale": "en",
+  "configSectionTitle": "Backup and export",
+  "lastBackup": "Last backup {date}",
+  "@lastBackup": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noBackupYet": "No backup yet",
+  "backupExplanation": "Your data exists only on this phone. A backup is a password-protected file that you keep somewhere safe, for example on a computer or in your own cloud storage.",
+  "saveBackupButton": "Save backup",
+  "restoreBackupButton": "Restore backup",
+  "exportContentsButton": "Export contents as CSV",
+  "exportHistoryButton": "Export history as CSV",
+  "passwordDialogTitle": "Protect your backup",
+  "passwordDialogMessage": "Choose a password of at least {count} characters. Nobody can open the backup without it, and it cannot be recovered.",
+  "@passwordDialogMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordLabel": "Password",
+  "repeatPasswordLabel": "Repeat password",
+  "passwordTooShort": "At least {count} characters.",
+  "@passwordTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordsDoNotMatch": "The passwords are different.",
+  "backupSaved": "Backup saved",
+  "workingOnBackup": "Working on your backup…",
+  "restorePasswordTitle": "Open backup",
+  "restorePasswordMessage": "Enter the password you chose when you saved this backup.",
+  "openButton": "Open",
+  "backupNotReadable": "This file cannot be opened with that password. Check the password, and that the file is a backup of this app.",
+  "notABackupOfThisApp": "This file is not a backup of this app.",
+  "backupNeedsNewerApp": "This backup was made with a newer version of the app ({version}). Please update the app first.",
+  "@backupNeedsNewerApp": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmRestoreTitle": "Replace everything?",
+  "confirmRestoreMessage": "The backup from {date} replaces everything that is in the app now. This cannot be undone.",
+  "@confirmRestoreMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "restoreButton": "Restore",
+  "fileSaved": "File saved",
+  "reminderCardTitle": "Time for a backup",
+  "reminderCardMessage": "Your freezer data is only on this phone. Save a backup so that a lost or broken phone does not take it with it.",
+  "csvColumnProduct": "Product",
+  "csvColumnCategory": "Category",
+  "csvColumnAmount": "Amount",
+  "csvColumnUnit": "Unit",
+  "csvColumnFrozenOn": "Frozen on",
+  "csvColumnDrawer": "Drawer",
+  "csvColumnNote": "Note",
+  "csvColumnTime": "Time",
+  "csvColumnChange": "Change",
+  "csvColumnReason": "Reason",
+  "movementAdded": "Added",
+  "movementConsumed": "Taken",
+  "movementDiscarded": "Thrown away",
+  "movementMoved": "Moved",
+  "movementCorrected": "Corrected",
+  "reasonTooOld": "Stored too long",
+  "reasonFreezerBurn": "Freezer burn",
+  "reasonUnwanted": "Nobody wanted it",
+  "reasonOther": "Other",
+  "backupNotificationTitle": "Time for a backup",
+  "backupNotificationBody": "Everything in this app exists only on this phone. Save a backup so that a lost phone does not take your freezer list with it.",
+  "includePicturesLabel": "Include photos",
+  "includePicturesHint": "{count, plural, =1{1 photo, about 300 KB. Leave it out for a smaller file.} other{{count} photos, about 300 KB each. Leave them out for a smaller file.}}",
+  "@includePicturesHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "restoreIncludesPictures": "{count, plural, =0{It contains no photos.} =1{It contains 1 photo.} other{It contains {count} photos.}}",
+  "@restoreIncludesPictures": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

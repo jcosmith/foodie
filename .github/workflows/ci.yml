@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.47.6"
+
+jobs:
+  checks:
+    name: Architecture, analysis and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Architecture rules (dependencies, plugins, privacy, clock)
+        run: dart run tool/check_architecture.dart
+
+      - name: Formatting
+        run: |
+          git ls-files '*.dart' | grep -v '\.g\.dart$' | grep -v '/generated/' \
+            | xargs dart format --output=none --set-exit-if-changed
+
+      - name: Static analysis
+        run: dart analyze --fatal-infos
+
+      - name: Generated code is up to date
+        run: |
+          dart run tool/workspace_tasks.dart generate
+          git diff --exit-code -- '*.dart' '*.json'
+
+      - name: Tests
+        run: dart run tool/workspace_tasks.dart test
+
+  android-release-build:
+    name: Android release build has no network permission
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build release APK
+        working-directory: apps/freezer_app
+        run: flutter build apk --release
+
+      - name: Check the packaged manifest
+        working-directory: apps/freezer_app
+        run: |
+          apk=build/app/outputs/flutter-apk/app-release.apk
+          aapt2=$(find "$ANDROID_HOME/build-tools" -name aapt2 | sort | tail -n 1)
+          permissions=$("$aapt2" dump permissions "$apk")
+          echo "$permissions"
+          if echo "$permissions" | grep -q "android.permission.INTERNET"; then
+            echo "::error::The release APK requests INTERNET; data must never leave the device."
+            exit 1
+          fi
+          manifest=$("$aapt2" dump xmltree --file AndroidManifest.xml "$apk")
+          if ! echo "$manifest" | grep -q 'allowBackup.*=false'; then
+            echo "::error::The release APK allows Android backups."
+            exit 1
+          fi

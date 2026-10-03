@@ -1,0 +1,33 @@
+{
+  "@@locale": "en",
+  "navigationLabel": "Config",
+  "screenTitle": "Config",
+  "languageSectionTitle": "Language",
+  "systemLanguage": "System language",
+  "systemLanguageDetail": "Follows your phone: {languageName}",
+  "@systemLanguageDetail": {
+    "placeholders": {
+      "languageName": {
+        "type": "String"
+      }
+    }
+  },
+  "appearanceSectionTitle": "Appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "textSizeHint": "Text size follows your phone's settings.",
+  "optionalFeaturesSectionTitle": "Optional features",
+  "aboutSectionTitle": "About and privacy",
+  "privacyStatementTitle": "Your data never leaves this phone",
+  "privacyStatementMessage": "No account, no cloud, no tracking. The app has no internet access at all. Backups go only where you save them yourself.",
+  "versionLabel": "Version {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "licencesButton": "Open-source licences"
+}

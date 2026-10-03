@@ -1,0 +1,215 @@
+{
+  "@@locale": "en",
+  "navigationLabel": "Freezer",
+  "overviewTitle": "My freezer",
+  "itemCount": "{count, plural, =1{1 item} other{{count} items}}",
+  "@itemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "drawerCount": "{count, plural, =1{1 drawer} other{{count} drawers}}",
+  "@drawerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "itemsInDrawers": "{items} in {drawers}",
+  "@itemsInDrawers": {
+    "placeholders": {
+      "items": {
+        "type": "String"
+      },
+      "drawers": {
+        "type": "String"
+      }
+    }
+  },
+  "searchHint": "Search products",
+  "sortByDrawer": "By drawer",
+  "sortByEatBefore": "Eat first",
+  "expandAllDrawers": "Expand all",
+  "collapseAllDrawers": "Collapse all",
+  "frozenAgo": "frozen {age}",
+  "@frozenAgo": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "ofInitial": "{remaining} of {initial}",
+  "@ofInitial": {
+    "placeholders": {
+      "remaining": {
+        "type": "String"
+      },
+      "initial": {
+        "type": "String"
+      }
+    }
+  },
+  "remainingShare": "{percent}% left",
+  "@remainingShare": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "noFreezerTitle": "Set up your freezer first",
+  "noFreezerMessage": "Tell the app which drawers your freezer has, then add what is inside.",
+  "setUpFreezerButton": "Set up freezer",
+  "emptyTitle": "Your freezer is empty",
+  "emptyMessage": "Add what you freeze, and the app keeps track of how long it has been in there.",
+  "noSearchResults": "Nothing matches “{query}”.",
+  "@noSearchResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addButton": "Add",
+  "quickActionAdd": "Add to freezer",
+  "takeTitle": "How much are you taking?",
+  "discardTitle": "How much are you throwing away?",
+  "leftAfter": "{amount} stays in the freezer",
+  "@leftAfter": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "allTaken": "Bag is used up",
+  "amountSliderLabel": "Amount",
+  "exactAmount": "Exact amount",
+  "all": "All",
+  "takeAmountButton": "Take {amount}",
+  "@takeAmountButton": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tookSnackbar": "Took {amount} of {product}",
+  "@tookSnackbar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "discardAction": "Throw away",
+  "moveAction": "Move",
+  "correctAction": "Correct amount",
+  "discardReasonLabel": "Why?",
+  "reasonTooOld": "Stored too long",
+  "reasonFreezerBurn": "Freezer burn",
+  "reasonUnwanted": "Nobody wanted it",
+  "reasonOther": "Other",
+  "discardAmountButton": "Throw away {amount}",
+  "@discardAmountButton": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "discardedSnackbar": "Threw away {amount} of {product}",
+  "@discardedSnackbar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "moveTitle": "Move to another drawer",
+  "moveDestinationLabel": "Move to",
+  "moveAmountLabel": "How much?",
+  "moveAmountButton": "Move {amount}",
+  "@moveAmountButton": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "movedSnackbar": "Moved {amount} of {product} to {compartment}",
+  "@movedSnackbar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "compartment": {
+        "type": "String"
+      }
+    }
+  },
+  "noOtherCompartment": "Add another drawer in the freezer layout to move things.",
+  "correctTitle": "How much is really left?",
+  "correctHint": "For when you took more or less than you recorded.",
+  "correctedSnackbar": "{product}: {amount} left",
+  "@correctedSnackbar": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "addTitle": "Add to freezer",
+  "productLabel": "Product",
+  "chooseProduct": "Choose a product",
+  "quantityLabel": "Amount",
+  "packageHint": "Package: {amount}",
+  "@packageHint": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "frozenOnLabel": "Frozen on",
+  "compartmentLabel": "Drawer",
+  "noteLabel": "Note (optional)",
+  "addedSnackbar": "Added {amount} of {product} to {compartment}",
+  "@addedSnackbar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "compartment": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityNotPositive": "Enter an amount above zero.",
+  "quantityExceedsRemaining": "That is more than is left.",
+  "invalidAmount": "Please enter a number.",
+  "productMissing": "Choose a product first.",
+  "compartmentMissing": "Choose a drawer.",
+  "frozenOnInFuture": "The freezing date cannot be in the future.",
+  "genericFailure": "That did not work. Please try again.",
+  "batchPhotoButton": "Photo of this bag"
+}

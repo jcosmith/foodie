@@ -1,0 +1,43 @@
+name: freezer_workspace
+description: Workspace root of the freezer app. Lists every package and holds the workspace tooling in tool/.
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+workspace:
+  - apps/freezer_app
+  - packages/core/core_foundation
+  - packages/core/core_events
+  - packages/core/core_database
+  - packages/core/core_preferences
+  - packages/core/core_localization
+  - packages/core/core_design_system
+  - packages/core/core_notifications
+  - packages/core/core_module_contract
+  - packages/core/core_media_storage
+  - packages/features/feature_storage_layout
+  - packages/features/feature_product_catalog
+  - packages/features/feature_inventory
+  - packages/features/feature_configuration
+  - packages/features/feature_onboarding
+  - packages/features/feature_data_portability
+  - packages/features/feature_storage_reminders
+  - packages/features/feature_restock
+  - packages/features/feature_statistics
+  - packages/features/feature_item_pictures
+  - packages/features/feature_barcode_scanning
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  image: ^4.10.0
+  path: ^1.9.0
+  yaml: ^3.1.0
+
+# The sqlite3 package bundles SQLite through a build hook. Selecting the
+# SQLCipher build here encrypts the database at rest (decision D2). The
+# architecture check in tool/ verifies this setting stays in place.
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlcipher

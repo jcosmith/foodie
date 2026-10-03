@@ -1,0 +1,121 @@
+{
+  "@@locale": "en",
+  "optionalFeatureTitle": "Barcode scanning",
+  "optionalFeatureDetail": "Uses the camera, on this phone only",
+  "quickActionScanToAdd": "Scan to add",
+  "quickActionScanToRemove": "Scan to remove",
+  "scannerTitle": "Scan",
+  "scanModeAdd": "Add",
+  "scanModeRemove": "Remove",
+  "scannerHint": "Hold the barcode inside the frame",
+  "scannerPrivacy": "Scanned on this phone. Nothing is sent anywhere.",
+  "recognized": "Recognised",
+  "amountInFreezer": "{amount} in the freezer",
+  "@amountInFreezer": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "weightInCode": "Weight in the code: {weight}",
+  "@weightInCode": {
+    "placeholders": {
+      "weight": {
+        "type": "String"
+      }
+    }
+  },
+  "addToDrawer": "Add {amount} to {drawer}",
+  "@addToDrawer": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "drawer": {
+        "type": "String"
+      }
+    }
+  },
+  "changeDetails": "Change details",
+  "addedSnackbar": "Added {amount} of {product} to {drawer}",
+  "@addedSnackbar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "product": {
+        "type": "String"
+      },
+      "drawer": {
+        "type": "String"
+      }
+    }
+  },
+  "bagsInFreezer": "{count, plural, =1{1 bag in the freezer. Take from it?} other{{count} bags in the freezer. Take from the oldest?}}",
+  "@bagsInFreezer": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseAmount": "Choose amount",
+  "otherBags": "Or another bag",
+  "notInFreezer": "None of this product is in the freezer.",
+  "unknownCode": "New code {code}. Which product is this?",
+  "@unknownCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "chooseProduct": "Choose product",
+  "learnedCode": "Learned. Next time this code is recognised instantly.",
+  "wrongProduct": "Not this product?",
+  "scanNext": "Scan next",
+  "cameraPermissionDenied": "Camera access is off. Allow it in the phone's settings to scan.",
+  "cameraUnavailable": "The camera cannot be started.",
+  "productUnavailable": "This product is no longer available.",
+  "scanSeveral": "Several in a row",
+  "unpackingListTitle": "{count, plural, =0{Scan your groceries one after another} =1{1 item to put away} other{{count} items to put away}}",
+  "@unpackingListTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "amountNeeded": "Amount needed",
+  "noFreezerYet": "Set up a freezer first",
+  "putAwayButton": "{count, plural, =1{Put 1 item in the freezer} other{Put {count} items in the freezer}}",
+  "@putAwayButton": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "putAwaySnackbar": "{count, plural, =1{1 item put in the freezer} other{{count} items put in the freezer}}",
+  "@putAwaySnackbar": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "removeFromList": "Remove from the list",
+  "amountDialogTitle": "How much is it?",
+  "invalidAmount": "Enter an amount above zero.",
+  "discardListTitle": "Discard the scanned items?",
+  "discardListMessage": "{count, plural, =1{1 item is not in the freezer yet.} other{{count} items are not in the freezer yet.}}",
+  "@discardListMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "discardButton": "Discard"
+}

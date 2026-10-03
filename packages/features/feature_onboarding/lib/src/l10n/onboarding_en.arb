@@ -1,0 +1,29 @@
+{
+  "@@locale": "en",
+  "stepOfSteps": "Step {step} of {stepCount}",
+  "@stepOfSteps": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "stepCount": {
+        "type": "int"
+      }
+    }
+  },
+  "welcomeTitle": "Welcome",
+  "welcomeMessage": "Keep track of what is in your freezer, eat things before they have been in there too long, and know what to buy.",
+  "chooseLanguagePrompt": "Which language should the app use?",
+  "continueButton": "Continue",
+  "backButton": "Back",
+  "freezerTitle": "Your freezer",
+  "freezerPrompt": "Which one is closest to yours? You can rename, add and remove drawers later in Config.",
+  "privacyTitle": "Your data stays here",
+  "privacyMessage": "The app has no internet access and no account. Everything you enter stays on this phone, encrypted.",
+  "backupHint": "Because nothing is stored online, save a backup now and then. The app will remind you.",
+  "remindersTitle": "Reminders",
+  "remindersMessage": "Allow notifications so the app can tell you once a day what has been frozen for a long time. Item names stay hidden on the lock screen.",
+  "allowNotificationsButton": "Allow notifications",
+  "notNowButton": "Not now",
+  "startButton": "Start"
+}

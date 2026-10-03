@@ -1,0 +1,19 @@
+{
+  "@@locale": "de",
+  "navigationLabel": "Konfig.",
+  "screenTitle": "Konfiguration",
+  "languageSectionTitle": "Sprache",
+  "systemLanguage": "Systemsprache",
+  "systemLanguageDetail": "Wie das Telefon: {languageName}",
+  "appearanceSectionTitle": "Darstellung",
+  "themeSystem": "System",
+  "themeLight": "Hell",
+  "themeDark": "Dunkel",
+  "textSizeHint": "Die Schriftgröße folgt den Einstellungen deines Telefons.",
+  "optionalFeaturesSectionTitle": "Optionale Funktionen",
+  "aboutSectionTitle": "Über und Datenschutz",
+  "privacyStatementTitle": "Deine Daten verlassen nie dieses Telefon",
+  "privacyStatementMessage": "Kein Konto, keine Cloud, kein Tracking. Die App hat überhaupt keinen Internetzugang. Sicherungen landen nur dort, wo du sie selbst speicherst.",
+  "versionLabel": "Version {version}",
+  "licencesButton": "Open-Source-Lizenzen"
+}

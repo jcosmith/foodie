@@ -1,0 +1,25 @@
+name: core_media_storage
+description: Encrypted file store for pictures - resizing and re-encoding (drops EXIF and GPS), thumbnails, AES-GCM encryption with a device-only key, and the orphan sweep.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  core_foundation: any
+  cryptography: ^2.9.0
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^11.2.0
+  image: ^4.10.0
+  meta: ^1.16.0
+  path: ^1.9.0
+  path_provider: ^2.1.5
+  riverpod: ^3.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

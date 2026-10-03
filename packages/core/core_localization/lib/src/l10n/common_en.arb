@@ -1,0 +1,114 @@
+{
+  "@@locale": "en",
+  "actionSave": "Save",
+  "actionCancel": "Cancel",
+  "actionUndo": "Undo",
+  "actionDone": "Done",
+  "actionAdd": "Add",
+  "actionEdit": "Edit",
+  "actionRemove": "Remove",
+  "actionRetry": "Try again",
+  "actionClose": "Close",
+  "actionSeeAll": "See all",
+  "quantityGrams": "{amount} g",
+  "@quantityGrams": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityKilograms": "{amount} kg",
+  "@quantityKilograms": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityMilliliters": "{amount} ml",
+  "@quantityMilliliters": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityLiters": "{amount} l",
+  "@quantityLiters": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityPieces": "{amount} pcs",
+  "@quantityPieces": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "quantityPortions": "{amount} {count, plural, =1{portion} other{portions}}",
+  "@quantityPortions": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "unitGram": "Grams",
+  "unitMilliliter": "Millilitres",
+  "unitPiece": "Pieces",
+  "unitPortion": "Portions",
+  "unitSymbolGram": "g",
+  "unitSymbolMilliliter": "ml",
+  "unitSymbolPiece": "pcs",
+  "unitSymbolPortion": "portions",
+  "relativeAgeToday": "today",
+  "relativeAgeYesterday": "yesterday",
+  "relativeAgeDays": "{count, plural, =1{1 day ago} other{{count} days ago}}",
+  "@relativeAgeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeAgeWeeks": "{count, plural, =1{1 week ago} other{{count} weeks ago}}",
+  "@relativeAgeWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeAgeMonths": "{count, plural, =1{1 month ago} other{{count} months ago}}",
+  "@relativeAgeMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeAgeYears": "{count, plural, =1{1 year ago} other{{count} years ago}}",
+  "@relativeAgeYears": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "storageAgeFresh": "Fresh",
+  "storageAgeAging": "Use soon",
+  "storageAgeUrgent": "Eat now",
+  "storageAgeOverdue": "Overdue",
+  "emptyStateNothingHereYet": "Nothing here yet",
+  "privacyPromise": "Your data never leaves this phone",
+  "chartShowTable": "Table",
+  "chartShowChart": "Chart"
+}

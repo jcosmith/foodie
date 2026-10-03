@@ -1,0 +1,19 @@
+name: core_preferences
+description: Typed key-value settings stored in the encrypted database, namespaced per module and observable as streams.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  core_database: any
+  core_foundation: any
+  meta: ^1.16.0
+  riverpod: ^3.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

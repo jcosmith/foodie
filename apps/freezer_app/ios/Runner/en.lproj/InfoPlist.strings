@@ -1,0 +1,4 @@
+/* Shown when the app first asks for the camera, to photograph food or scan a barcode. */
+"NSCameraUsageDescription" = "To photograph food and to scan barcodes. Photos and codes stay on this phone, and location data is removed from photos.";
+/* Shown when the app first asks for the photo library. */
+"NSPhotoLibraryUsageDescription" = "To choose a photo of food. Photos stay on this phone, and location data is removed.";
