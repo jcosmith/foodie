@@ -448,6 +448,9 @@ button.config-row:hover { background: var(--app-surface-muted); }
 .more-row { display: flex; align-items: center; gap: 12px; padding: 14px; border-top: 1px solid var(--app-border); }
 .more-row:first-of-type { border-top: none; }
 .more-row .item-visual { width: 38px; height: 38px; font-size: 20px; }
+:root { --domain-fridge: #0f7b7b; }
+:root[data-theme="dark"] { --domain-fridge: #5fd0cf; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --domain-fridge: #5fd0cf; } }
 .app-bar-action { float: right; font-size: 20px; color: var(--app-muted); line-height: 28px; }
 mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px; padding: 0 2px; }
 </style>
@@ -708,23 +711,24 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
       <div class="app-bar"><h3>Fridge</h3><div class="app-bar-subtitle">14 items in the kitchen fridge</div></div>
       <div class="screen-content">
         <div class="search-field"><span>⌕</span><span>Search products</span></div>
-        <div class="section-label">Shelf 1</div>
+        <div class="section-label" style="color:var(--domain-fridge)">Shelf 1</div>
         <div class="app-card">
           <div class="item-row"><div class="item-visual">🥛</div><div class="item-text"><div class="item-name">Whole milk</div><div class="item-detail"><span class="age-badge is-urgent">Use today</span> opened 3 days ago</div></div><div class="item-quantity">0.4 l</div></div>
           <div class="item-row"><div class="item-visual">🌿</div><div class="item-text"><div class="item-name">Fresh basil</div><div class="item-detail"><span class="age-badge is-aging">Use by tomorrow</span> bought today</div></div><div class="item-quantity">1 pot</div></div>
           <div class="item-row"><div class="item-visual">🧀</div><div class="item-text"><div class="item-name">Gouda</div><div class="item-detail"><span class="age-badge is-fresh">Best before 18 Oct</span></div></div><div class="item-quantity">350 g</div></div>
         </div>
-        <div class="section-label">Door</div>
+        <div class="section-label" style="color:var(--domain-fridge)">Door</div>
         <div class="app-card">
           <div class="item-row"><div class="item-visual">🧈</div><div class="item-text"><div class="item-name">Butter</div><div class="item-detail"><span class="age-badge is-fresh">Best before 2 Nov</span></div></div><div class="item-quantity">250 g</div></div>
           <div class="item-row"><div class="item-visual">🍅</div><div class="item-text"><div class="item-name">Tomato ketchup</div><div class="item-detail">opened 3 weeks ago</div></div><div class="item-quantity">½ bottle</div></div>
         </div>
       </div>
-      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="❄">Freezer</span><span data-icon="🧊" class="is-current">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="☑">Lists</span><span data-icon="☰">More</span></nav>
+      <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊" class="is-current">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="📝">Lists</span><span data-icon="📂">More</span></nav>
     </div></div>
     <h2>12 · Fridge tab <span class="planned-tag">Planned</span></h2>
     <ul>
       <li>Each storage area is its own tab. A new install shows Home, Freezer, Fridge, Pantry, Lists and More; switching Household on in Options adds its tab after Pantry.</li>
+      <li>Every tab has a colour icon in the same style, and each storage area has its own accent colour (Freezer blue, Fridge teal, Pantry amber, Household green) for its icon and section headers, so the tabs are easy to tell apart.</li>
       <li>Freezer, Fridge, Pantry and Household share one stock screen (search, grouping by storage place, use-first order); only the storage places, products and wording differ.</li>
       <li>Badges use the earliest of shelf life, best-before and "opened" dates, with colour, icon and word. "Use today" and "Use by tomorrow" cover food that lasts a day or two.</li>
     </ul>
@@ -803,7 +807,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
           <div class="item-row"><div class="item-visual">🧾</div><div class="item-text"><div class="item-name">Corner Market · 14 May</div><div class="receipt-line-text"><mark>OLIVENÖL</mark> NATIVE 0,75L · 5,99</div></div><div class="item-quantity">57,08 €</div></div>
         </div>
       </div>
-      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="❄">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="☑" class="is-current">Lists</span><span data-icon="☰">More</span></nav>
+      <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="☑" class="is-current">Lists</span><span data-icon="📂">More</span></nav>
     </div></div>
     <h2>15 · Lists tab: receipt archive and search <span class="planned-tag">Planned</span></h2>
     <ul>
@@ -827,7 +831,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
         <div class="stat-tiles"><div class="stat-tile"><strong>42</strong><span>used this month</span></div><div class="stat-tile"><strong>3</strong><span>thrown away</span></div><div class="stat-tile"><strong>12 Sep</strong><span>last backup</span></div></div>
         <div class="item-detail" style="text-align:center;margin-top:8px">Your data never leaves this phone.</div>
       </div>
-      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="❄">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="☑">Lists</span><span data-icon="☰" class="is-current">More</span></nav>
+      <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="📝">Lists</span><span data-icon="☰" class="is-current">More</span></nav>
     </div></div>
     <h2>16 · More tab <span class="planned-tag">Planned</span></h2>
     <ul>
@@ -844,7 +848,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
       <div class="app-bar"><h3>‹ Options</h3><div class="app-bar-subtitle">More › Options</div></div>
       <div class="screen-content">
         <div class="config-section"><h4>Tabs</h4>
-          <div class="config-row"><div class="config-row-text"><div>❄ Freezer</div><div class="config-row-detail">Frozen food, drawers and baskets</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Freezer tab"></span></div>
+          <div class="config-row"><div class="config-row-text"><div>❄️ Freezer</div><div class="config-row-detail">Frozen food, drawers and baskets</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Freezer tab"></span></div>
           <div class="config-row"><div class="config-row-text"><div>🧊 Fridge</div><div class="config-row-detail">Fresh food, best-before and opened dates</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Fridge tab"></span></div>
           <div class="config-row"><div class="config-row-text"><div>🥫 Pantry</div><div class="config-row-detail">Shelves, cupboards and cellar</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Pantry tab"></span></div>
           <div class="config-row"><div class="config-row-text"><div>🧴 Household</div><div class="config-row-detail">Cleaning, bathroom, garden and more</div></div><span class="toggle-switch" role="switch" aria-checked="false" aria-label="Household tab"></span></div>
@@ -855,7 +859,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
           <div class="config-row"><div class="config-row-text"><div>Item pictures</div><div class="config-row-detail">Photos of products and leftovers</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Item pictures"></span></div>
         </div>
       </div>
-      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="❄">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="☑">Lists</span><span data-icon="☰" class="is-current">More</span></nav>
+      <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="📝">Lists</span><span data-icon="☰" class="is-current">More</span></nav>
     </div></div>
     <h2>17 · Options: tabs and optional features <span class="planned-tag">Planned</span></h2>
     <ul>
