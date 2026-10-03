@@ -238,7 +238,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
   <main>
     <header class="document-header">
       <h1>Foodie: Architecture Design (v3)</h1>
-      <div class="document-meta">Architecture of a multilingual, offline, privacy-first Flutter app for household inventory · Version 3 · 3 October 2026 · widens the scope from the freezer to the whole household (section 10.7) and designs two optional modules: pantry management with best-before dates and shelf lives down to a single day (10.8), household supplies for non-food articles (10.9), and an optional receipt scanner with on-device text recognition and a searchable receipt archive (10.10). Version 2 added freezer layout editing, the Config tab and interactive statistics.</div>
+      <div class="document-meta">Architecture of a multilingual, offline, privacy-first Flutter app for household inventory · Version 3 · 3 October 2026 · food first, household supplies later · widens the scope from the freezer to the whole household (section 10.7) and designs two optional modules: pantry management with best-before dates and shelf lives down to a single day (10.8), household supplies for non-food articles (10.9), and an optional receipt scanner with on-device text recognition and a searchable receipt archive (10.10). Version 2 added freezer layout editing, the Config tab and interactive statistics.</div>
     </header>
 
     <!-- 1 -->
@@ -247,6 +247,9 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <p><strong>Mission.</strong> Foodie helps a private household know what it has at home, what to use first and what to buy. It started with the freezer; the goal is every place a household keeps things it regularly stocks up on: freezer, fridge, pantry, kitchen cupboards and household supplies such as cleaning products or toiletries. Three principles hold for all of it: no data ever leaves the app, the code is modular and readable Flutter for phones, and the UI is clean, simple and self-explanatory.</p>
       <div class="callout">
         <strong>Built versus planned.</strong> The code (release 0.1.1) implements everything below for freezers. Products, quantities, the movement log, restock, the shopping list, statistics, pictures and scanning are not freezer specific. The storage layout, the dates on a batch, the reminders, the seeded catalog and the wording are, and section 10.7 describes how they generalise. Sections 10.8 to 10.10 design three optional modules on top: pantry management, household supplies and receipt scanning. Names in code such as <code>Freezer</code> and <code>frozenOn</code> describe what exists today.
+      </div>
+      <div class="callout">
+        <strong>Priorities.</strong> Food comes first: the freezer, then the pantry and fridge, then receipt scanning, until all of it is set up for regular use. Household supplies (cleaning, bathroom, garden and more) are firmly in scope but built afterwards. Every design decision for the food features must keep that expansion open; section 10.7 lists the rules that make sure it does.
       </div>
       <p>The app is built as a <strong>Dart pub workspace</strong> of small packages: one thin <strong>app shell</strong> that composes everything, eight <strong>core packages</strong> that provide shared infrastructure, and eight <strong>feature packages</strong> that each own one user-facing capability. Every feature follows the same four-layer clean architecture (presentation, application, domain, data) and plugs into the shell through a single <code>FeatureModule</code> contract, which is what makes new features cheap to add.</p>
       <p>All data lives in one encrypted SQLite database on the device (Drift + SQLCipher). An append-only <strong>inventory movement log</strong> records every addition, consumption, discard and move; statistics, restock suggestions and habit analysis are all derived from that log. Features coordinate through an in-process <strong>domain event bus</strong>, but events are only triggers: the database is always the source of truth, so a lost event never corrupts state.</p>
@@ -835,7 +838,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <tbody>
           <tr><td>Freezer</td><td>Upright, chest, fridge freezer compartment (exist today)</td><td>storage_layout</td><td>Always on</td></tr>
           <tr><td>Pantry</td><td>Fridge, pantry, kitchen cupboard, cellar, drinks crate</td><td>pantry (10.8)</td><td>Optional, on by default</td></tr>
-          <tr><td>Household supplies</td><td>Cleaning cupboard, bathroom cabinet, laundry room, garden shed, garage, storage room</td><td>household_supplies (10.9)</td><td>Optional, off by default</td></tr>
+          <tr><td>Household supplies</td><td>Cleaning cupboard, bathroom cabinet, laundry room, garden shed, garage, storage room</td><td>household_supplies (10.9)</td><td>Optional, off by default; built later</td></tr>
         </tbody>
       </table></div>
       <p>Switching a domain off hides its storage places, products, stock, reminders and shopping-list entries; it deletes nothing. Switching it back on shows everything as it was. Backups always contain every domain. This is the existing <code>ModuleAvailability.optional(isEnabledByDefault: …)</code> mechanism, so the switches appear in the "Optional features" section of the Config tab without new UI code.</p>
@@ -856,6 +859,16 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>App shell</td><td><code>apps/freezer_app</code>, app name "Freezer"</td><td>Renamed together with the app's display name and icon. The Android application id stays, so updates keep working without reinstalling.</td><td>app shell, release workflow</td></tr>
         </tbody>
       </table></div>
+      <h4>Keeping household supplies open</h4>
+      <p>Supplies are built after the food features, but nothing built before them may close the door. These rules apply to every food feature from 10.7 onwards, and reviews check them:</p>
+      <ul>
+        <li><strong>No food-only core types.</strong> Inventory, catalog, restock, reminders and statistics speak of products, stock and use, never of food. Food-specific words live only in ARB strings and in the pantry module.</li>
+        <li><strong>Domains are data.</strong> The storage domain is a value carried by storage kinds and categories, not a hard-coded list of two. Adding a third domain is a new module plus its contributions, with no change to the inventory or the Stock tab.</li>
+        <li><strong>Dates are optional.</strong> Every date except storedOn may be empty, and an item with no dates is valid and never "overdue". Supplies without expiry must fit without special cases.</li>
+        <li><strong>Waste is a domain property.</strong> Statistics decide whether discarding counts as waste from a flag on the domain, not from a list of food categories.</li>
+        <li><strong>Receipts are not food-only.</strong> The receipt matcher matches against every product in every enabled domain, and lines it cannot place are flagged, never dropped as "not food". Once supplies exist, the same receipt adds dish soap and milk in one step.</li>
+        <li><strong>Units stay generic.</strong> Pieces with a display name ("roll", "tab", "bottle") are planned for supplies and must not be blocked by food-specific unit handling.</li>
+      </ul>
       <h4>What does not change</h4>
       <ul>
         <li><strong>Privacy:</strong> both catalogs are seeded offline. Product lookup services (Open Food Facts and similar) stay out of scope, for groceries and household goods alike.</li>
@@ -878,8 +891,8 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       </ul>
       <div class="callout"><strong>Data model:</strong> <code>stock_batches.opened_on</code> (nullable date), <code>products.shelf_life_after_opening_days</code> and <code>categories.shelf_life_after_opening_days</code> (nullable), <code>categories.storage_domain</code>. <code>best_before_on</code> already exists. One migration, shared with the renames in 10.7.</div>
 
-      <h3 id="household-supplies">10.9 Household supplies (planned, optional, off by default)</h3>
-      <p>New package: <code>feature_household_supplies</code>. It covers non-food articles a household uses up and buys again. For these the question is rarely "what should I use first?" and almost always "do we still have some, and where?", so restock and the shopping list do most of the work.</p>
+      <h3 id="household-supplies">10.9 Household supplies (later, optional, off by default)</h3>
+      <p>New package: <code>feature_household_supplies</code>. It covers non-food articles a household uses up and buys again. It is built after the food features (pantry and receipt scanning) are in regular use; the rules in 10.7 keep the way open until then. For these the question is rarely "what should I use first?" and almost always "do we still have some, and where?", so restock and the shopping list do most of the work.</p>
       <ul>
         <li><strong>Storage kinds and templates:</strong> cleaning cupboard, bathroom cabinet, laundry room, garden shed, garage, storage room, first-aid box. Compartments are shelves or boxes, named by the user as everywhere else.</li>
         <li><strong>Seeded catalog:</strong>
@@ -1097,8 +1110,8 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>7 · Barcode scanning</td><td>Optional scanner, code learning, scan to add, scan to remove, continuous mode</td><td>barcode_scanning</td></tr>
           <tr><td>8 · Household foundation (planned)</td><td>Neutral wording and names, storage domains, storage kind and catalog contributions, shelf life in days, weeks or months, best-before and opened-on dates in reminders, domain filter in statistics (10.7)</td><td>core_module_contract, storage_layout, inventory, product_catalog, storage_reminders, statistics</td></tr>
           <tr><td>9 · Pantry (planned)</td><td>Fridge, pantry and cupboard kinds, best-before entry, "mark as opened", pantry catalog, on by default (10.8)</td><td>pantry</td></tr>
-          <tr><td>10 · Household supplies (planned)</td><td>Supply storage kinds, supplies catalog, restock-first add flow, expiry for medicine and similar, off by default (10.9)</td><td>household_supplies</td></tr>
-          <tr><td>11 · Receipt scanning (planned)</td><td>Capture, on-device OCR, parser, matching with learned mappings, review with flagged unknowns, bulk add, receipt archive with full-text search, off by default (10.10)</td><td>receipt_scanning, core_media_storage, core_database</td></tr>
+          <tr><td>10 · Receipt scanning (planned)</td><td>Capture, on-device OCR, parser, matching with learned mappings, review with flagged unknowns, bulk add, receipt archive with full-text search, off by default (10.10)</td><td>receipt_scanning, core_media_storage, core_database</td></tr>
+          <tr><td>11 · Household supplies (later)</td><td>Supply storage kinds, supplies catalog, restock-first add flow, expiry for medicine and similar, off by default (10.9). Starts once the food features are in regular use.</td><td>household_supplies</td></tr>
           <tr><td>Later</td><td>Consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning</td><td>new feature packages</td></tr>
         </tbody>
       </table></div>
@@ -1115,7 +1128,6 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Prices:</strong> the planned receipt archive keeps the price of every receipt line. Should that feed "money spent" or "money wasted" statistics, or should prices stay inside the archive?</li>
         <li><strong>Household sharing:</strong> is shared stock between the phones of one household a future goal? It shapes whether ids should be globally unique now (the plan uses UUIDs anyway, so this stays open cheaply).</li>
         <li><strong>App name:</strong> the repository and project are called Foodie, the installed app is still called Freezer. Is Foodie the name for the household app?</li>
-        <li><strong>Household supplies default:</strong> this plan switches the pantry on and household supplies off for new installs, so a first start stays focused on food. Should supplies be on by default too?</li>
       </ol>
     </section>
   </main>
@@ -1227,12 +1239,12 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       publicApi: ["PantryFeatureModule"],
       events: "None of its own; uses inventory use cases, which publish StockBatch* events",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "core_module_contract", "core_design_system", "core_localization"] },
-    { identifier: "feature_household_supplies", label: "Supplies (planned)", kind: "feature", phase: "10",
-      responsibility: "Planned, optional, off by default. Non-food articles: cleaning, laundry, bathroom, garden, pets, first aid, technical supplies. Supply storage kinds, supplies catalog, restock-first add flow, expiry dates where they exist.",
+    { identifier: "feature_household_supplies", label: "Supplies (later)", kind: "feature", phase: "11",
+      responsibility: "Later, after the food features; optional, off by default. Non-food articles: cleaning, laundry, bathroom, garden, pets, first aid, technical supplies. Supply storage kinds, supplies catalog, restock-first add flow, expiry dates where they exist.",
       publicApi: ["HouseholdSuppliesFeatureModule"],
       events: "None of its own; uses inventory and restock use cases",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "feature_restock", "core_module_contract", "core_design_system", "core_localization"] },
-    { identifier: "feature_receipt_scanning", label: "Receipts (planned)", kind: "feature", phase: "11",
+    { identifier: "feature_receipt_scanning", label: "Receipts (planned)", kind: "feature", phase: "10",
       responsibility: "Planned, optional, off by default. Photograph a receipt, recognise its text on the device, parse item lines, match them to products (learned per store), flag unknown lines for the user, add confirmed items in one step. Keeps an encrypted receipt archive with full-text search.",
       publicApi: ["ReceiptScanningFeatureModule"],
       events: "Publishes ReceiptArchived; adds stock through inventory use cases, which publish StockBatch* events",

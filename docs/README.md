@@ -33,7 +33,9 @@ The household is split into three storage domains. Each one beyond the freezer c
 | --- | --- | --- | --- | --- |
 | Freezer | Upright and chest freezers, the freezer compartment of a fridge | Frozen vegetables, meat, homemade meals | Always on | Built |
 | Pantry | Fridge, pantry, kitchen cupboards, cellar | Milk, eggs, bread, pasta, tins, spices, drinks | On | Planned |
-| Household supplies | Cleaning cupboard, bathroom cabinet, laundry room, garden shed, garage | Dish soap, toilet paper, detergent, potting soil, batteries, plasters | Off | Planned |
+| Household supplies | Cleaning cupboard, bathroom cabinet, laundry room, garden shed, garage | Dish soap, toilet paper, detergent, potting soil, batteries, plasters | Off | Later |
+
+**Food first.** The freezer, pantry and receipt scanning come first, until all of it is set up for regular use. Household supplies are firmly in scope and come afterwards. Nothing built for food may prevent that expansion: core code speaks of products and stock rather than food, domains are data rather than a fixed list, dates are optional, and the receipt scanner matches against every domain (architecture section 10.7, "Keeping household supplies open").
 
 Possessions that are not used up (tools, furniture, electronics) are out of scope.
 
@@ -60,15 +62,15 @@ In order:
 
 1. **Household foundation:** neutral wording ("Use soon", a "Stock" tab with a domain switch that only appears when more than one domain is on), storage domains, and two new module contributions (storage kinds and seeded catalog). Shelf lives can be entered in days, weeks or months, so a product can be good for just one or two days. Best-before and "opened on" dates become reminder triggers.
 2. **Pantry management** (optional, on by default): fridge, pantry and cupboard storage places, a best-before date on every item with quick chips (+1 day, +3 days, +1 week), "mark as opened" with a shelf life after opening (milk 3 days), and a pantry catalog. Items that go off tomorrow appear in today's "Use soon" card and tomorrow's digest.
-3. **Household supplies** (optional, off by default): storage places such as the cleaning cupboard or garden shed, and a catalog of cleaning, laundry, bathroom, kitchen paper, garden, pet, first aid, technical, baby and office supplies. Adding a supply offers to set a minimum right away, because the point is never running out. Expiry dates are only used where they exist (medicine, sun cream, batteries). Supplies never count as food waste.
-4. **Receipt scanning** (optional, off by default): photograph a shopping receipt, and on-device text recognition reads it and suggests the purchases to add. Lines that match no known product are flagged at the top of the review list so the user can pick a product, create one or ignore the line; nothing is added without confirmation. What the user confirms is learned per store, so the next receipt needs fewer taps. Every receipt is archived (images encrypted, card and loyalty numbers masked in the text) and its text is searchable, for example "olive oil" across a year of shopping. No receipt or text ever leaves the phone.
+3. **Receipt scanning** (optional, off by default): photograph a shopping receipt, and on-device text recognition reads it and suggests the purchases to add. Lines that match no known product are flagged at the top of the review list so the user can pick a product, create one or ignore the line; nothing is added without confirmation. What the user confirms is learned per store, so the next receipt needs fewer taps. Every receipt is archived (images encrypted, card and loyalty numbers masked in the text) and its text is searchable, for example "olive oil" across a year of shopping. No receipt or text ever leaves the phone.
+4. **Household supplies** (later; optional, off by default): storage places such as the cleaning cupboard or garden shed, and a catalog of cleaning, laundry, bathroom, kitchen paper, garden, pet, first aid, technical, baby and office supplies. Adding a supply offers to set a minimum right away, because the point is never running out. Expiry dates are only used where they exist (medicine, sun cream, batteries). Supplies never count as food waste.
 
 Later ideas: consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning.
 
 ## Documents
 
 - [`design/architecture.html`](design/architecture.html): the architecture the code follows, the technology decisions, the privacy measures and the plan for generalising from freezer to household, including the pantry, household supplies and receipt scanning modules. Open it in a browser.
-- [`design/ui-examples.html`](design/ui-examples.html): interactive screen examples of the app as built today (freezer). Open it in a browser.
+- [`design/ui-examples.html`](design/ui-examples.html): interactive screen examples of the app as built today (freezer), followed by sketches of the planned food features: the Stock tab with pantry, adding with a best-before date, receipt review and the receipt archive. Open it in a browser.
 - [`release-notes/`](release-notes): notes for each published release.
 
 ## Glossary

@@ -424,12 +424,32 @@ button.config-row:hover { background: var(--app-surface-muted); }
 .filter-hint { font-size: 11.5px; color: var(--app-muted); margin-top: 4px; }
 .empty-chart { font-size: 12.5px; color: var(--app-muted); padding: 16px 4px; text-align: center; }
 .module-off-notice { margin: 0 14px; background: #1c2431; color: #c9d3e0; border-radius: 14px; padding: 12px; font-size: 13px; text-align: center; }
+
+/* ---------- Planned screens (static sketches) ---------- */
+.planned-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--status-aging); background: var(--status-aging-soft); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; }
+.static-navigation { display: flex; border-top: 1px solid var(--app-border); background: var(--app-surface); padding: 6px 4px 12px; }
+.static-navigation span { flex: 1; text-align: center; font-size: 11px; color: var(--app-muted); }
+.static-navigation span::before { content: attr(data-icon); display: block; width: 44px; height: 24px; margin: 0 auto 2px; border-radius: 12px; font-size: 15px; line-height: 24px; }
+.static-navigation span.is-current { color: var(--app-text); font-weight: 600; }
+.static-navigation span.is-current::before { background: var(--app-primary-soft); }
+.chip.is-selected { background: var(--app-primary-soft); border-color: var(--app-primary); color: var(--app-primary); font-weight: 600; }
+.static-field { border: 1px solid var(--app-border); border-radius: 12px; padding: 8px 10px; background: var(--app-surface); margin-bottom: 10px; }
+.static-field label { display: block; font-size: 12px; color: var(--app-muted); }
+.static-field strong { font-weight: 600; }
+.receipt-flag { background: var(--status-aging-soft); border: 1px solid var(--status-aging); border-radius: 14px; padding: 10px 12px; margin-bottom: 10px; }
+.receipt-flag .receipt-text { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; font-weight: 600; }
+.receipt-flag .flag-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.receipt-line-text { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: var(--app-muted); }
+.tick { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--app-primary); display: grid; place-items: center; font-size: 13px; color: var(--app-on-primary); background: var(--app-primary); flex: none; }
+.tick.is-suggested { background: var(--app-surface); color: var(--app-primary); }
+mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px; padding: 0 2px; }
 </style>
 </head>
 <body>
 <header class="page-header">
-  <h1>Foodie: UI Examples (v2, freezer)</h1>
-  <p>Foodie is a household inventory app for the freezer, fridge, pantry and everything else a household regularly stocks up on. These examples show the part that is built today, the freezer; screens for other storage places are planned (see the architecture document, section 10.7). The same principles apply to them: the most frequent actions take one or two taps, optional features disappear completely when switched off, and nothing leaves the phone.</p>
+  <h1>Foodie: UI Examples (v3)</h1>
+  <p>Foodie is a household inventory app. Food comes first: the freezer, which is built, then the pantry and fridge, and receipt scanning to add a whole shop at once. Household supplies (cleaning, bathroom, garden and so on) are firmly in scope and come later as a third domain in the same screens. Phones 1 to 11 are interactive and show the app as built today. Phones 12 to 16 are static sketches of the planned food features (architecture sections 10.7, 10.8 and 10.10).</p>
+  <p>The same principles hold for every screen: the most frequent actions take one or two taps, optional features disappear completely when switched off, and nothing leaves the phone.</p>
   <p>Eleven interactive screen suggestions sharing one in-memory freezer and two years of generated history. Version 2 adds the <strong>Config tab</strong> (language, appearance, optional features), the <strong>freezer layout editor</strong> (add, rename, reorder and remove drawers) and a much richer <strong>Insights</strong> area with a shared filter, cross-filtering and twelve chart types.</p>
   <p>The app language is now chosen inside the app, in the Config screen (phone 10), just as users will do it. Dates, numbers and relative ages follow the chosen language through the browser's <code>Intl</code> formatters. The notes under each phone stay in English.</p>
   <div class="page-controls">
@@ -669,6 +689,146 @@ button.config-row:hover { background: var(--app-surface-muted); }
       <li>Rename a drawer by typing over its name; names must be unique. Clear the name to go back to the translated default.</li>
       <li>Reorder with the arrows, tap the dot to change the colour tag, add a drawer at the bottom.</li>
       <li>Removing a drawer that holds food asks where the food should go, then archives the drawer so statistics keep its history.</li>
+    </ul>
+  </article>
+
+  <h2 class="gallery-section-title">Planned: food first<small>Static sketches, in English only. Pantry and fridge next to the freezer, best-before dates down to a single day, and receipt scanning with a searchable archive. Household supplies will appear as a third chip in the same places once they are built.</small></h2>
+
+  <!-- 12 Stock tab with domains -->
+  <article class="screen-example" id="examplePlannedStock">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3>Stock</h3><div class="app-bar-subtitle">23 items in the fridge and pantry</div></div>
+      <div class="screen-content">
+        <div class="chip-row" style="margin-bottom:10px"><span class="chip">❄ Freezer</span><span class="chip is-selected">🥫 Pantry</span></div>
+        <div class="search-field"><span>⌕</span><span>Search products</span></div>
+        <div class="section-label">Fridge · Shelf 1</div>
+        <div class="app-card">
+          <div class="item-row"><div class="item-visual">🥛</div><div class="item-text"><div class="item-name">Whole milk</div><div class="item-detail"><span class="age-badge is-urgent">Use today</span> opened 3 days ago</div></div><div class="item-quantity">0.4 l</div></div>
+          <div class="item-row"><div class="item-visual">🌿</div><div class="item-text"><div class="item-name">Fresh basil</div><div class="item-detail"><span class="age-badge is-aging">Use by tomorrow</span> bought today</div></div><div class="item-quantity">1 pot</div></div>
+          <div class="item-row"><div class="item-visual">🧀</div><div class="item-text"><div class="item-name">Gouda</div><div class="item-detail"><span class="age-badge is-fresh">Best before 18 Oct</span></div></div><div class="item-quantity">350 g</div></div>
+        </div>
+        <div class="section-label">Pantry · Shelf 2</div>
+        <div class="app-card">
+          <div class="item-row"><div class="item-visual">🍝</div><div class="item-text"><div class="item-name">Spaghetti</div><div class="item-detail"><span class="age-badge is-fresh">Best before 3/27</span></div></div><div class="item-quantity">1 kg</div></div>
+          <div class="item-row"><div class="item-visual">🫒</div><div class="item-text"><div class="item-name">Olive oil</div><div class="item-detail">opened 5 weeks ago</div></div><div class="item-quantity">0.3 l</div></div>
+        </div>
+      </div>
+      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="▦" class="is-current">Stock</span><span data-icon="☑">List</span><span data-icon="▥">Insights</span><span data-icon="⚙">Config</span></nav>
+    </div></div>
+    <h2>12 · Stock tab with domains <span class="planned-tag">Planned</span></h2>
+    <ul>
+      <li>The "Freezer" tab becomes "Stock". The domain chips only appear when more than one domain is on, so a freezer-only household sees today's screen.</li>
+      <li>Badges use the earliest of shelf life, best-before and "opened" dates, with colour, icon and word. "Use today" and "Use by tomorrow" cover food that lasts a day or two.</li>
+      <li>Household supplies will add a third chip here later; nothing in this screen is specific to food.</li>
+    </ul>
+  </article>
+
+  <!-- 13 Add to pantry -->
+  <article class="screen-example" id="examplePlannedAddPantry">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3>Add</h3></div>
+      <div class="screen-content">
+        <div class="static-field"><label>Product</label><strong>🥬 Lamb's lettuce</strong></div>
+        <div class="static-field"><label>Amount</label><strong>150 g</strong> <span class="item-detail">Package: 150 g</span></div>
+        <div class="static-field"><label>Best before</label><strong>Mon, 5 Oct 2026</strong> <span class="item-detail">usually keeps 2 days</span></div>
+        <div class="chip-row" style="margin:-2px 0 12px"><span class="chip">Today</span><span class="chip is-selected">+2 days</span><span class="chip">+3 days</span><span class="chip">+1 week</span><span class="chip">📅 Date</span></div>
+        <div class="section-label" style="margin-top:4px">Where</div>
+        <div class="chip-row" style="margin-bottom:16px"><span class="chip is-selected">Fridge · Vegetable drawer</span><span class="chip">Fridge · Shelf 1</span><span class="chip">Pantry · Shelf 1</span></div>
+        <button type="button" class="primary-button">Save</button>
+      </div>
+    </div></div>
+    <h2>13 · Add to the pantry <span class="planned-tag">Planned</span></h2>
+    <ul>
+      <li>Best before is pre-filled from the product's typical shelf life, which can be as short as one day. Quick chips cover the usual cases; the date picker covers the rest.</li>
+      <li>Storage places come from the layout editor, as for freezer drawers. Fridge, pantry and cupboard templates are added there.</li>
+      <li>"Mark as opened" on an item later switches it to its shelf life after opening (milk: 3 days).</li>
+    </ul>
+  </article>
+
+  <!-- 14 Receipt review -->
+  <article class="screen-example" id="examplePlannedReceiptReview">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3>Receipt</h3><div class="app-bar-subtitle">Corner Market · 3 Oct 2026 · 38,46 €</div></div>
+      <div class="screen-content">
+        <div class="section-label" style="margin-top:2px">Needs you · 2</div>
+        <div class="receipt-flag">
+          <div class="receipt-text">KNOBL. 3ST · 1,19</div>
+          <div class="item-detail">We don't know this line yet. Is it one of your products?</div>
+          <div class="flag-actions"><span class="chip">Garlic?</span><span class="chip">Pick product</span><span class="chip">＋ New</span><span class="chip">Ignore</span></div>
+        </div>
+        <div class="receipt-flag">
+          <div class="receipt-text">ZEITSCHR. WOCHE · 2,90</div>
+          <div class="item-detail">Not recognised.</div>
+          <div class="flag-actions"><span class="chip">Pick product</span><span class="chip">＋ New</span><span class="chip is-selected">Ignore at this store</span></div>
+        </div>
+        <div class="section-label">Recognised · 12</div>
+        <div class="app-card">
+          <div class="item-row"><span class="tick">✓</span><div class="item-text"><div class="item-name">Whole milk · 2 × 1 l</div><div class="receipt-line-text">BIO VOLLM. 1,5% 2x1,29</div></div><div class="item-detail">Fridge</div></div>
+          <div class="item-row"><span class="tick">✓</span><div class="item-text"><div class="item-name">Minced meat · 512 g</div><div class="receipt-line-text">HACKFL. 0,512kg x 8,99</div></div><div class="item-detail">Freezer</div></div>
+          <div class="item-row"><span class="tick is-suggested">?</span><div class="item-text"><div class="item-name">Basmati rice? · 1 kg</div><div class="receipt-line-text">REIS BASM. 1KG</div></div><div class="item-detail">Pantry</div></div>
+        </div>
+        <button type="button" class="primary-button">Add 12 items</button>
+      </div>
+    </div></div>
+    <h2>14 · Receipt review <span class="planned-tag">Planned</span></h2>
+    <ul>
+      <li>The text is recognised on the phone. Lines that match no known product are flagged at the top with a short explanation and the choices: pick a product, create one, or ignore it.</li>
+      <li>Likely matches show a question mark and need one tap. Every answer is learned for this store, so the next receipt needs fewer taps.</li>
+      <li>Nothing is added until "Add 12 items"; flagged lines left open stay on the archived receipt.</li>
+    </ul>
+  </article>
+
+  <!-- 15 Receipt archive -->
+  <article class="screen-example" id="examplePlannedReceiptArchive">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3>Receipts</h3><div class="app-bar-subtitle">Kept on this phone, encrypted</div></div>
+      <div class="screen-content">
+        <div class="search-field"><span>⌕</span><span style="color:var(--app-text)">olive oil</span></div>
+        <div class="chip-row" style="margin-bottom:10px"><span class="chip">All stores</span><span class="chip is-selected">12 months</span><span class="chip">Any amount</span></div>
+        <div class="section-label">3 receipts</div>
+        <div class="app-card">
+          <div class="item-row"><div class="item-visual">🧾</div><div class="item-text"><div class="item-name">Corner Market · 26 Sep</div><div class="receipt-line-text"><mark>OLIVENÖL</mark> NATIVE 0,75L · 6,49</div></div><div class="item-quantity">41,20 €</div></div>
+          <div class="item-row"><div class="item-visual">🧾</div><div class="item-text"><div class="item-name">Organic store · 2 Aug</div><div class="receipt-line-text"><mark>OLIVE OIL</mark> GREEK 1L · 9,90</div></div><div class="item-quantity">23,75 €</div></div>
+          <div class="item-row"><div class="item-visual">🧾</div><div class="item-text"><div class="item-name">Corner Market · 14 May</div><div class="receipt-line-text"><mark>OLIVENÖL</mark> NATIVE 0,75L · 5,99</div></div><div class="item-quantity">57,08 €</div></div>
+        </div>
+      </div>
+      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="▦">Stock</span><span data-icon="☑" class="is-current">List</span><span data-icon="▥">Insights</span><span data-icon="⚙">Config</span></nav>
+    </div></div>
+    <h2>15 · Receipt archive and search <span class="planned-tag">Planned</span></h2>
+    <ul>
+      <li>Reached from the shopping list, so it needs no tab of its own. Search covers every recognised line, with store, period and amount filters.</li>
+      <li>Results show the matching line, not the receipt image; card and loyalty numbers are masked in the stored text.</li>
+      <li>Opening a result shows the receipt image at that line and the items it added.</li>
+    </ul>
+  </article>
+
+  <!-- 16 Optional features -->
+  <article class="screen-example" id="examplePlannedOptionalFeatures">
+    <div class="phone-frame"><div class="phone-screen">
+      <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
+      <div class="app-bar"><h3>Config</h3></div>
+      <div class="screen-content">
+        <div class="config-section"><h4>Optional features</h4>
+          <div class="config-row"><div class="config-row-text"><div>Pantry and fridge</div><div class="config-row-detail">Best-before dates, opened items</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Pantry and fridge"></span></div>
+          <div class="config-row"><div class="config-row-text"><div>Receipt scanning</div><div class="config-row-detail">Read receipts on this phone only</div></div><span class="toggle-switch" role="switch" aria-checked="false" aria-label="Receipt scanning"></span></div>
+          <div class="config-row"><div class="config-row-text"><div>Barcode scanning</div><div class="config-row-detail">Uses the camera, on this phone only</div></div><span class="toggle-switch" role="switch" aria-checked="false" aria-label="Barcode scanning"></span></div>
+          <div class="config-row"><div class="config-row-text"><div>Item pictures</div><div class="config-row-detail">Photos of products and leftovers</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Item pictures"></span></div>
+        </div>
+        <div class="config-section"><h4>Coming later</h4>
+          <div class="config-row"><div class="config-row-text"><div>Household supplies</div><div class="config-row-detail">Cleaning, bathroom, garden and more</div></div><span class="config-row-detail">Later</span></div>
+        </div>
+      </div>
+      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="▦">Stock</span><span data-icon="☑">List</span><span data-icon="▥">Insights</span><span data-icon="⚙" class="is-current">Config</span></nav>
+    </div></div>
+    <h2>16 · Optional features <span class="planned-tag">Planned</span></h2>
+    <ul>
+      <li>Pantry is on by default; receipt scanning, like barcode scanning, is off until the user wants the camera.</li>
+      <li>Switching a domain off hides its items and keeps them; switching it on again shows everything as it was.</li>
+      <li>Household supplies will be one more switch here, off by default, when it is built.</li>
     </ul>
   </article>
 </main>
