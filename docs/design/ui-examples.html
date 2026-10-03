@@ -442,13 +442,14 @@ button.config-row:hover { background: var(--app-surface-muted); }
 .receipt-line-text { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 11.5px; color: var(--app-muted); }
 .tick { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--app-primary); display: grid; place-items: center; font-size: 13px; color: var(--app-on-primary); background: var(--app-primary); flex: none; }
 .tick.is-suggested { background: var(--app-surface); color: var(--app-primary); }
+.app-bar-action { float: right; font-size: 20px; color: var(--app-muted); line-height: 28px; }
 mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px; padding: 0 2px; }
 </style>
 </head>
 <body>
 <header class="page-header">
   <h1>Foodie: UI Examples (v3)</h1>
-  <p>Foodie is a household inventory app. Food comes first: the freezer, which is built, then the pantry and fridge, and receipt scanning to add a whole shop at once. Household supplies (cleaning, bathroom, garden and so on) are firmly in scope and come later as a third domain in the same screens. Phones 1 to 11 are interactive and show the app as built today. Phones 12 to 16 are static sketches of the planned food features (architecture sections 10.7, 10.8 and 10.10).</p>
+  <p>Foodie is a household inventory app. Food comes first: the freezer, which is built, then the pantry and fridge, and receipt scanning to add a whole shop at once. Each storage area is its own tab: Freezer and Pantry are on after installing, and Household (cleaning, bathroom, garden and so on) is one switch away in Config, with its basics built early and its full feature set later. Phones 1 to 11 are interactive and show the app as built today. Phones 12 to 16 are static sketches of the planned food features (architecture sections 10.7, 10.8 and 10.10).</p>
   <p>The same principles hold for every screen: the most frequent actions take one or two taps, optional features disappear completely when switched off, and nothing leaves the phone.</p>
   <p>Eleven interactive screen suggestions sharing one in-memory freezer and two years of generated history. Version 2 adds the <strong>Config tab</strong> (language, appearance, optional features), the <strong>freezer layout editor</strong> (add, rename, reorder and remove drawers) and a much richer <strong>Insights</strong> area with a shared filter, cross-filtering and twelve chart types.</p>
   <p>The app language is now chosen inside the app, in the Config screen (phone 10), just as users will do it. Dates, numbers and relative ages follow the chosen language through the browser's <code>Intl</code> formatters. The notes under each phone stay in English.</p>
@@ -692,15 +693,14 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
     </ul>
   </article>
 
-  <h2 class="gallery-section-title">Planned: food first<small>Static sketches, in English only. Pantry and fridge next to the freezer, best-before dates down to a single day, and receipt scanning with a searchable archive. Household supplies will appear as a third chip in the same places once they are built.</small></h2>
+  <h2 class="gallery-section-title">Planned: food first<small>Static sketches, in English only. One tab per storage area (Freezer, Pantry, Household), best-before dates down to a single day, and receipt scanning with a searchable archive. Config moves behind a gear icon and Insights opens from Home, so the bottom bar never has more than five tabs.</small></h2>
 
-  <!-- 12 Stock tab with domains -->
+  <!-- 12 Pantry tab -->
   <article class="screen-example" id="examplePlannedStock">
     <div class="phone-frame"><div class="phone-screen">
       <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
-      <div class="app-bar"><h3>Stock</h3><div class="app-bar-subtitle">23 items in the fridge and pantry</div></div>
+      <div class="app-bar"><h3>Pantry <span class="app-bar-action" aria-label="Config">⚙</span></h3><div class="app-bar-subtitle">23 items in the fridge and pantry</div></div>
       <div class="screen-content">
-        <div class="chip-row" style="margin-bottom:10px"><span class="chip">❄ Freezer</span><span class="chip is-selected">🥫 Pantry</span></div>
         <div class="search-field"><span>⌕</span><span>Search products</span></div>
         <div class="section-label">Fridge · Shelf 1</div>
         <div class="app-card">
@@ -714,13 +714,14 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
           <div class="item-row"><div class="item-visual">🫒</div><div class="item-text"><div class="item-name">Olive oil</div><div class="item-detail">opened 5 weeks ago</div></div><div class="item-quantity">0.3 l</div></div>
         </div>
       </div>
-      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="▦" class="is-current">Stock</span><span data-icon="☑">List</span><span data-icon="▥">Insights</span><span data-icon="⚙">Config</span></nav>
+      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="❄">Freezer</span><span data-icon="🥫" class="is-current">Pantry</span><span data-icon="☑">List</span></nav>
     </div></div>
-    <h2>12 · Stock tab with domains <span class="planned-tag">Planned</span></h2>
+    <h2>12 · Pantry tab <span class="planned-tag">Planned</span></h2>
     <ul>
-      <li>The "Freezer" tab becomes "Stock". The domain chips only appear when more than one domain is on, so a freezer-only household sees today's screen.</li>
+      <li>Each storage area is its own tab. A new install shows Home, Freezer, Pantry and List; switching Household on in Config adds its tab between Pantry and List.</li>
+      <li>All three tabs share one stock screen (search, grouping by storage place, use-first order); only the storage places, products and wording differ.</li>
       <li>Badges use the earliest of shelf life, best-before and "opened" dates, with colour, icon and word. "Use today" and "Use by tomorrow" cover food that lasts a day or two.</li>
-      <li>Household supplies will add a third chip here later; nothing in this screen is specific to food.</li>
+      <li>Config sits behind the gear icon in the top bar; Insights opens from Home.</li>
     </ul>
   </article>
 
@@ -796,7 +797,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
           <div class="item-row"><div class="item-visual">🧾</div><div class="item-text"><div class="item-name">Corner Market · 14 May</div><div class="receipt-line-text"><mark>OLIVENÖL</mark> NATIVE 0,75L · 5,99</div></div><div class="item-quantity">57,08 €</div></div>
         </div>
       </div>
-      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="▦">Stock</span><span data-icon="☑" class="is-current">List</span><span data-icon="▥">Insights</span><span data-icon="⚙">Config</span></nav>
+      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="❄">Freezer</span><span data-icon="🥫">Pantry</span><span data-icon="☑" class="is-current">List</span></nav>
     </div></div>
     <h2>15 · Receipt archive and search <span class="planned-tag">Planned</span></h2>
     <ul>
@@ -806,29 +807,30 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
     </ul>
   </article>
 
-  <!-- 16 Optional features -->
+  <!-- 16 Tabs and optional features -->
   <article class="screen-example" id="examplePlannedOptionalFeatures">
     <div class="phone-frame"><div class="phone-screen">
       <div class="status-bar"><span>9:41</span><span>▮▮▮ 82%</span></div>
-      <div class="app-bar"><h3>Config</h3></div>
+      <div class="app-bar"><h3>‹ Config</h3><div class="app-bar-subtitle">Opened from the gear icon</div></div>
       <div class="screen-content">
+        <div class="config-section"><h4>Tabs</h4>
+          <div class="config-row"><div class="config-row-text"><div>❄ Freezer</div><div class="config-row-detail">Frozen food, drawers and baskets</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Freezer tab"></span></div>
+          <div class="config-row"><div class="config-row-text"><div>🥫 Pantry</div><div class="config-row-detail">Fridge, pantry and cupboards, best-before dates</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Pantry tab"></span></div>
+          <div class="config-row"><div class="config-row-text"><div>🧴 Household</div><div class="config-row-detail">Cleaning, bathroom, garden and more</div></div><span class="toggle-switch" role="switch" aria-checked="false" aria-label="Household tab"></span></div>
+        </div>
         <div class="config-section"><h4>Optional features</h4>
-          <div class="config-row"><div class="config-row-text"><div>Pantry and fridge</div><div class="config-row-detail">Best-before dates, opened items</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Pantry and fridge"></span></div>
           <div class="config-row"><div class="config-row-text"><div>Receipt scanning</div><div class="config-row-detail">Read receipts on this phone only</div></div><span class="toggle-switch" role="switch" aria-checked="false" aria-label="Receipt scanning"></span></div>
           <div class="config-row"><div class="config-row-text"><div>Barcode scanning</div><div class="config-row-detail">Uses the camera, on this phone only</div></div><span class="toggle-switch" role="switch" aria-checked="false" aria-label="Barcode scanning"></span></div>
           <div class="config-row"><div class="config-row-text"><div>Item pictures</div><div class="config-row-detail">Photos of products and leftovers</div></div><span class="toggle-switch" role="switch" aria-checked="true" aria-label="Item pictures"></span></div>
         </div>
-        <div class="config-section"><h4>Coming later</h4>
-          <div class="config-row"><div class="config-row-text"><div>Household supplies</div><div class="config-row-detail">Cleaning, bathroom, garden and more</div></div><span class="config-row-detail">Later</span></div>
-        </div>
       </div>
-      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="▦">Stock</span><span data-icon="☑">List</span><span data-icon="▥">Insights</span><span data-icon="⚙" class="is-current">Config</span></nav>
+      <nav class="static-navigation"><span data-icon="⌂">Home</span><span data-icon="❄">Freezer</span><span data-icon="🥫">Pantry</span><span data-icon="☑">List</span></nav>
     </div></div>
-    <h2>16 · Optional features <span class="planned-tag">Planned</span></h2>
+    <h2>16 · Tabs and optional features <span class="planned-tag">Planned</span></h2>
     <ul>
-      <li>Pantry is on by default; receipt scanning, like barcode scanning, is off until the user wants the camera.</li>
-      <li>Switching a domain off hides its items and keeps them; switching it on again shows everything as it was.</li>
-      <li>Household supplies will be one more switch here, off by default, when it is built.</li>
+      <li>The three switches under "Tabs" add or remove the Freezer, Pantry and Household tabs instantly. Freezer and Pantry are on after installing; Household is off until the user wants it.</li>
+      <li>Switching a tab off keeps its items; switching it on again brings them back. The last tab that is on cannot be switched off.</li>
+      <li>Receipt scanning, like barcode scanning, is off until the user wants the camera.</li>
     </ul>
   </article>
 </main>
