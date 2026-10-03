@@ -1,9 +1,17 @@
 name: CI
 
+# Documentation-only changes (Markdown anywhere, everything under docs/)
+# do not run CI; any other changed file does.
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
   pull_request:
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
 
 concurrency:
   group: ci-${{ github.ref }}
