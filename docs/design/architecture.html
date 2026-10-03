@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Freezer App Architecture v2</title>
+<title>Foodie Architecture</title>
 <style>
 :root {
   --background: #f7f8fa;
@@ -221,6 +221,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <a href="#data-model">9. Data model</a>
       <a href="#planned-features">10. Planned features</a>
       <a href="#statistics-design">10.6 Statistics in depth</a>
+      <a href="#household-scope">10.7 From freezer to household</a>
       <a href="#privacy">11. Privacy by construction</a>
       <a href="#feasibility">12. Feasibility checks</a>
       <a href="#structure">13. Repository layout</a>
@@ -233,13 +234,17 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
 
   <main>
     <header class="document-header">
-      <h1>Freezer App: Architecture Design (v2)</h1>
-      <div class="document-meta">Foundation plan for a multilingual, offline, privacy-first Flutter app · Version 2 · 2 October 2026 · adds freezer layout editing, a Config tab with language selection and interactive statistics (on top of partial removal, item pictures and barcode scanning)</div>
+      <h1>Foodie: Architecture Design (v3)</h1>
+      <div class="document-meta">Architecture of a multilingual, offline, privacy-first Flutter app for household inventory · Version 3 · 3 October 2026 · widens the scope from the freezer to the whole household (section 10.7). Version 2 added freezer layout editing, the Config tab and interactive statistics.</div>
     </header>
 
     <!-- 1 -->
     <section id="summary">
       <h2>1. Summary</h2>
+      <p><strong>Mission.</strong> Foodie helps a private household know what it has at home, what to use first and what to buy. It started with the freezer; the goal is every place a household keeps things it regularly stocks up on: freezer, fridge, pantry, kitchen cupboards and household supplies such as cleaning products or toiletries. Three principles hold for all of it: no data ever leaves the app, the code is modular and readable Flutter for phones, and the UI is clean, simple and self-explanatory.</p>
+      <div class="callout">
+        <strong>Built versus planned.</strong> The code (release 0.1.1) implements everything below for freezers. Products, quantities, the movement log, restock, the shopping list, statistics, pictures and scanning are not freezer specific. The storage layout, the dates on a batch, the reminders, the seeded catalog and the wording are, and section 10.7 describes how they generalise. Names in code such as <code>Freezer</code> and <code>frozenOn</code> describe what exists today.
+      </div>
       <p>The app is built as a <strong>Dart pub workspace</strong> of small packages: one thin <strong>app shell</strong> that composes everything, eight <strong>core packages</strong> that provide shared infrastructure, and eight <strong>feature packages</strong> that each own one user-facing capability. Every feature follows the same four-layer clean architecture (presentation, application, domain, data) and plugs into the shell through a single <code>FeatureModule</code> contract, which is what makes new features cheap to add.</p>
       <p>All data lives in one encrypted SQLite database on the device (Drift + SQLCipher). An append-only <strong>inventory movement log</strong> records every addition, consumption, discard and move; statistics, restock suggestions and habit analysis are all derived from that log. Features coordinate through an in-process <strong>domain event bus</strong>, but events are only triggers: the database is always the source of truth, so a lost event never corrupts state.</p>
       <p>Three user-facing capabilities are planned in from the start (section 10): <strong>partial removal</strong> (use 200 g of a 1 kg bag) is part of the core inventory model; <strong>item pictures</strong> and <strong>optional barcode scanning</strong> are separate feature packages that plug into the inventory without the inventory depending on them.</p>
@@ -264,12 +269,12 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <div class="table-wrapper"><table>
         <thead><tr><th>Goal</th><th>Architectural consequence</th></tr></thead>
         <tbody>
-          <tr><td>Track what is in the freezer, where, and since when</td><td>Inventory is modelled as <em>stock batches</em> (one physical bag or box with its freezing date) placed in <em>drawers</em> (compartments) of <em>freezers</em>, not as a single counter per product.</td></tr>
-          <tr><td>Remind the user of goods stored for a long time</td><td>Every batch carries <code>frozenOn</code>; every product or category carries a recommended maximum storage duration; a reminder planner turns these into scheduled digests.</td></tr>
+          <tr><td>Track what the household has, where, and since when</td><td>Inventory is modelled as <em>stock batches</em> (one physical package or box with its own date) placed in <em>compartments</em> (drawers, baskets, shelves) of <em>storage places</em>, not as a single counter per product. Built for freezers; fridge, pantry, cupboard and supply storage are planned (10.7).</td></tr>
+          <tr><td>Remind the user of goods to use first</td><td>Every batch carries the date it was stored (<code>frozenOn</code> today) and an optional <code>bestBeforeOn</code>; every product or category carries a recommended maximum storage duration; a reminder planner turns these into scheduled digests. Best-before dates as a reminder trigger are planned (10.7).</td></tr>
           <tr><td>Track needs and advise restocking when running low</td><td>Per-product restock rules (minimum and target quantity), a shopping list, and later consumption-rate forecasts from the movement log.</td></tr>
           <tr><td>Support the user intuitively</td><td>Fast paths (one-tap consume, quick add from shopping list, recently used products), sensible seeded catalog, onboarding, accessible design system.</td></tr>
           <tr><td>Statistics on preferences and habits with graphical tools</td><td>Append-only movement log as the analytic fact table; a read-only statistics module with SQL aggregations and chart widgets.</td></tr>
-          <tr><td>Customize the freezer (drawers, names)</td><td>Freezers and drawers are their own package (<code>feature_storage_layout</code>); removing a drawer moves its contents and archives it, so history stays intact.</td></tr>
+          <tr><td>Customize storage places (compartments, names)</td><td>Storage places and their compartments are their own package (<code>feature_storage_layout</code>); removing a drawer moves its contents and archives it, so history stays intact.</td></tr>
           <tr><td>Statistics with many filters and graphics</td><td>One <code>StatisticsFilter</code> value object drives a dozen chart types; charts write back into the filter when tapped. Custom painters complement fl_chart where it has no chart type.</td></tr>
           <tr><td>Multilingual</td><td>All UI strings in ARB files per package; locale-aware formatting of dates, numbers and units; seeded product names stored as translation keys.</td></tr>
           <tr><td>Extensible with further features</td><td>Package per feature, one <code>FeatureModule</code> contract, events for cross-feature side effects, central versioned schema.</td></tr>
@@ -381,7 +386,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <div class="decision-body">
           <h5>Choice</h5><p><code>feature_storage_layout</code> owns freezers and drawers (moved out of the inventory). Inventory, onboarding and statistics depend on its public API.</p>
           <h5>Alternatives</h5><ul><li><strong>Keep them in the inventory:</strong> fewer packages, but the inventory grows a whole configuration UI and every layout change touches stock code.</li><li><strong>Free-form tags instead of drawers:</strong> flexible, but real freezers have fixed drawers, and fixed drawers make the "drawer" filter and freezer map in statistics meaningful. Tags can come later as an extra.</li></ul>
-          <h5>Why</h5><p>Layout changes rarely and has its own rules (unique names, archiving instead of deleting). It also makes "fridge" or "pantry" storage kinds a change in one package.</p>
+          <h5>Why</h5><p>Layout changes rarely and has its own rules (unique names, archiving instead of deleting). It also makes "fridge", "pantry" and "supplies" storage kinds mostly a change in one package, which is how the household scope is planned (10.7).</p>
           <h5>Risk</h5><p>A drawer removed today still appears in last year's statistics. Mitigation: drawers are archived, never deleted, and shown as "Drawer 3 (removed)" in historical views.</p>
         </div>
       </details>
@@ -598,9 +603,9 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <h3>Ideas this design should not block</h3>
       <ul>
         <li><strong>QR labels for homemade meals</strong>: print a label whose QR code holds the batch id, so leftovers can be scanned out like bought goods.</li>
-        <li><strong>A fridge or pantry next to the freezer</strong>: the storage layout package already supports several freezers; a <code>storageKind</code> column is enough.</li>
+        <li><strong>A fridge, pantry or supply cupboard next to the freezer</strong>: now part of the product scope, planned in section 10.7. The storage layout already stores a <code>storageKind</code> per storage place.</li>
         <li><strong>Consumption forecasts</strong>: the movement log already contains the time series needed.</li>
-        <li><strong>Household sharing</strong> without a server, for example by exchanging encrypted export files. This is the one idea that pulls against "data never leaves the app" and needs a product decision first.</li>
+        <li><strong>Sharing between the phones of one household</strong> without a server, for example by exchanging encrypted export files. This is the one idea that pulls against "data never leaves the app" and needs a product decision first.</li>
       </ul>
     </section>
 
@@ -650,7 +655,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
     <!-- planned features -->
     <section id="planned-features">
       <h2>10. Planned features</h2>
-      <p>Partial removal, pictures, barcode scanning (added in draft 2), and freezer layout editing, the Config tab and in-depth statistics (added in version 2) are designed now so that the foundation does not have to change later. Partial removal is part of the inventory itself. Pictures and barcode scanning are separate packages that the inventory never imports; they plug in through the extension points in section 7.</p>
+      <p>Partial removal, pictures, barcode scanning (added in draft 2), and freezer layout editing, the Config tab and in-depth statistics (added in version 2) are designed so that the foundation does not have to change later. All of them are built. Section 10.7 plans the next step, from the freezer to the whole household. Partial removal is part of the inventory itself. Pictures and barcode scanning are separate packages that the inventory never imports; they plug in through the extension points in section 7.</p>
 
       <h3>10.1 Partial removal</h3>
       <p><strong>Example:</strong> a 1 kg bag of spinach, frozen on 3 March. The user takes 200 g. The batch now holds 800 g and is still "frozen on 3 March", so its storage age keeps counting from the original date.</p>
@@ -804,6 +809,33 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li>Empty and thin data are explained ("Only 3 removals in this period; trends need more data") rather than drawn as misleading charts.</li>
         <li>On phones charts stack in one scrolling column; tablets show two columns. The filter row stays pinned at the top.</li>
       </ul>
+
+      <h3 id="household-scope">10.7 From freezer to household (planned)</h3>
+      <p>The household scope reuses the existing architecture. No new layer and no new kind of module is needed; the work is mostly generalising names, dates and seeded data that were written for freezers, plus a few new fields. Nothing below is built yet.</p>
+      <div class="table-wrapper"><table>
+        <thead><tr><th>Area</th><th>Today (freezer)</th><th>Planned (household)</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td>Storage kinds</td><td><code>StorageKind</code>: upright, chest, fridge freezer compartment</td><td>Add fridge, pantry, cupboard and supplies kinds, each with templates and default compartment names ("Shelf {number}", "Door", "Vegetable drawer"). The freezer kinds stay.</td><td>storage_layout</td></tr>
+          <tr><td>Storage places</td><td><code>Freezer</code> entity and <code>freezers</code> table</td><td>Renamed to a neutral storage place (for example <code>StoragePlace</code>) in one migration; the table already has <code>storageKind</code>, so no data changes shape.</td><td>storage_layout, core_database</td></tr>
+          <tr><td>Batch date</td><td><code>frozenOn</code></td><td>A neutral <code>storedOn</code>, shown as "Frozen on" for freezer kinds and "Bought on" or "Stored on" elsewhere. Optional <code>openedOn</code> for products that spoil once opened.</td><td>inventory, core_database</td></tr>
+          <tr><td>When to use first</td><td>Storage age against the recommended maximum storage duration</td><td>The earlier of storage age and <code>bestBeforeOn</code> (already stored, not yet used for reminders), plus a shorter limit after opening. Supplies such as dish soap usually have neither and simply never trigger a reminder.</td><td>inventory (<code>StorageAgePolicy</code>), storage_reminders</td></tr>
+          <tr><td>Recommended durations</td><td>One value per category or product, freezer specific</td><td>A value per storage kind where it matters (butter in the fridge versus the freezer), falling back to one value.</td><td>product_catalog</td></tr>
+          <tr><td>Seeded catalog</td><td>Frozen foods in seven categories</td><td>Additional categories and products for fridge, pantry and household supplies (cleaning, laundry, toiletries, paper goods). Onboarding asks which storage places the household has and offers matching products.</td><td>product_catalog, onboarding</td></tr>
+          <tr><td>Discard reasons</td><td><code>tooOld</code>, <code>freezerBurn</code>, <code>unwanted</code>, <code>other</code></td><td>Add <code>expired</code> and <code>spoiled</code>; <code>freezerBurn</code> stays for freezer kinds and history.</td><td>inventory, statistics</td></tr>
+          <tr><td>Restock</td><td>Minimum and target per product</td><td>Unchanged. For household supplies this becomes the main reason to use the app: never run out of toilet paper or detergent.</td><td>restock</td></tr>
+          <tr><td>Wording</td><td>"Freezer" tab, "Eat soon", "Add to freezer", "In freezer"</td><td>"Stock" tab, "Use soon", "Add", "At home"; the storage place's own name wherever a place is meant.</td><td>all ARB files</td></tr>
+          <tr><td>Statistics</td><td>Freezer and drawer filter, freezer map</td><td>The same filter over storage places and compartments; the map shows any storage place. "Eaten" becomes "Used" so supplies fit.</td><td>statistics</td></tr>
+          <tr><td>App shell</td><td><code>apps/freezer_app</code>, app name "Freezer"</td><td>Renamed together with the app's display name and icon. The Android application id stays, so updates keep working without reinstalling.</td><td>app shell, release workflow</td></tr>
+        </tbody>
+      </table></div>
+      <h4>What does not change</h4>
+      <ul>
+        <li><strong>Privacy:</strong> a household catalog is seeded offline like the freezer catalog. Product lookup services (Open Food Facts and similar) stay out of scope, for groceries and household goods alike.</li>
+        <li><strong>Architecture:</strong> the same packages, layers, module contract, event bus and single encrypted database. Each step is one reviewed migration plus the code that uses it.</li>
+        <li><strong>Simplicity:</strong> a household that only has a freezer sees the app as it is today. Storage kinds it does not use never appear, and five bottom-navigation tabs stay the ceiling.</li>
+      </ul>
+      <h4>Order</h4>
+      <p>Wording and neutral names come first, because every later step builds on them. Then storage kinds and templates, then dates and reminders, then the household catalog. Each step ships on its own and keeps existing data, so a freezer-only household notices nothing but new words.</p>
     </section>
 
     <!-- 10 -->
@@ -965,6 +997,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>5 · Insights</td><td>Shared filter, saved views, KPI tiles, trend, category, calendar, weekday, duration, freezer map, top products and waste charts, chart kit painters</td><td>statistics, design_system chart kit</td></tr>
           <tr><td>6 · Pictures</td><td>Product and batch photos, thumbnails in lists, pictures in backups</td><td>core_media_storage, item_pictures</td></tr>
           <tr><td>7 · Barcode scanning</td><td>Optional scanner, code learning, scan to add, scan to remove, continuous mode</td><td>barcode_scanning</td></tr>
+          <tr><td>8 · Household (planned)</td><td>Neutral wording and names, fridge, pantry, cupboard and supply storage kinds, stored-on, best-before and opened-on dates in reminders, household catalog (section 10.7)</td><td>storage_layout, inventory, product_catalog, storage_reminders, onboarding, statistics</td></tr>
           <tr><td>Later</td><td>Consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning</td><td>new feature packages</td></tr>
         </tbody>
       </table></div>
@@ -979,7 +1012,10 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Initial languages:</strong> the plan assumes English and German first; any right-to-left language planned early?</li>
         <li><strong>OS backups:</strong> the plan excludes the database from Google Drive and iCloud backups. Some users might prefer the convenience; should it become an opt-in setting?</li>
         <li><strong>Prices:</strong> should batches optionally carry a purchase price, enabling "money saved" or "money wasted" statistics?</li>
-        <li><strong>Household sharing:</strong> is a shared freezer between several phones a future goal? It shapes whether ids should be globally unique now (the plan uses UUIDs anyway, so this stays open cheaply).</li>
+        <li><strong>Household sharing:</strong> is shared stock between the phones of one household a future goal? It shapes whether ids should be globally unique now (the plan uses UUIDs anyway, so this stays open cheaply).</li>
+        <li><strong>App name:</strong> the repository and project are called Foodie, the installed app is still called Freezer. Is Foodie the name for the household app?</li>
+        <li><strong>Non-consumables:</strong> should the app also track things a household keeps but does not use up (tools, spare parts), or only what it regularly restocks? This plan assumes only what gets used up.</li>
+        <li><strong>Which storage places first:</strong> fridge and pantry are the natural next step; are household supplies equally urgent?</li>
       </ol>
     </section>
   </main>
@@ -1042,7 +1078,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       dependencies: ["feature_onboarding", "feature_inventory", "feature_product_catalog", "feature_storage_reminders", "feature_restock", "feature_statistics", "feature_data_portability", "feature_storage_layout", "feature_configuration", "feature_item_pictures", "feature_barcode_scanning"] },
 
     { identifier: "feature_storage_layout", label: "Storage layout", kind: "feature", phase: "1",
-      responsibility: "Freezers and drawers: add from templates, rename, reorder, colour tags, archive. Removing a drawer moves its contents first. Default names stay translatable until renamed. Contributes the 'Freezer layout' Config section.",
+      responsibility: "Storage places and compartments, built for freezers and their drawers: add from templates, rename, reorder, colour tags, archive. Removing a drawer moves its contents first. Default names stay translatable until renamed. Contributes the 'Freezer layout' Config section. Fridge, pantry, cupboard and supply kinds are planned (10.7).",
       publicApi: ["StorageLayoutFeatureModule", "Freezer, Compartment entities", "StorageLayoutQueryService", "CompartmentDisplayNameResolver"],
       events: "Publishes CompartmentCreated, CompartmentRenamed, CompartmentReordered, CompartmentArchived",
       dependencies: ["core_database", "core_events", "core_module_contract", "core_design_system", "core_localization", "core_foundation"] },

@@ -1,8 +1,8 @@
-# Freezer
+# Foodie
 
-A multilingual Flutter app for tracking the contents of your freezer: reminders for goods stored a long time, restock advice when running low, and statistics about your habits. Your data never leaves the app.
+A multilingual Flutter app for managing a household's inventory: what is in the freezer, fridge, pantry and cupboards, what to use first, and what to buy. It started with the freezer, which is what the app covers today; the other storage places are planned. Your data never leaves the app.
 
-The design lives in [`docs/design/`](docs/design): the architecture document is the plan this code follows, and the UI examples show the intended screens.
+[`docs/README.md`](docs/README.md) describes the mission, principles and scope. The design lives in [`docs/design/`](docs/design): the architecture document is the plan this code follows, and the UI examples show the screens.
 
 ## Repository layout
 
