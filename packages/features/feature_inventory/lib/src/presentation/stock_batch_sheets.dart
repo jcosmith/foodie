@@ -7,6 +7,7 @@ import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../application/inventory_overview.dart';
 import '../application/inventory_providers.dart';
@@ -230,6 +231,13 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     }
   }
 
+  /// Opens the product editor of the catalog over the storage tab.
+  void _editProduct() {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.push(ProductCatalogRoutes.productEditor(widget.item.product.identifier));
+  }
+
   void _switchTo(Future<void> Function(BuildContext context, InventoryItem item) openOtherSheet) {
     final parentContext = Navigator.of(context).context;
     Navigator.of(context).pop();
@@ -332,6 +340,11 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
                 ),
                 icon: const Icon(Icons.event_outlined),
                 label: Text(localizations.editDatesAction),
+              ),
+              TextButton.icon(
+                onPressed: _editProduct,
+                icon: const Icon(Icons.tune),
+                label: Text(localizations.editProductAction),
               ),
               TextButton.icon(
                 onPressed: _toggleOpened,

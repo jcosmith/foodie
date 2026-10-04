@@ -97,5 +97,6 @@
   "removeDate": "Datum entfernen",
   "datesChangedSnackbar": "Daten von {product} geändert",
   "openedOnInFuture": "Das Öffnungsdatum kann nicht in der Zukunft liegen.",
-  "openedBeforeStored": "Es kann nicht vor dem Einlagern geöffnet worden sein."
+  "openedBeforeStored": "Es kann nicht vor dem Einlagern geöffnet worden sein.",
+  "editProductAction": "Produkt bearbeiten"
 }

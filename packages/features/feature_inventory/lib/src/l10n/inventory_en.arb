@@ -292,5 +292,6 @@
     }
   },
   "openedOnInFuture": "The opened date cannot be in the future.",
-  "openedBeforeStored": "It cannot be opened before it was stored."
+  "openedBeforeStored": "It cannot be opened before it was stored.",
+  "editProductAction": "Edit product"
 }

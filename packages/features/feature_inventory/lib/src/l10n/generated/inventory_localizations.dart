@@ -682,6 +682,12 @@ abstract class InventoryLocalizations {
   /// In en, this message translates to:
   /// **'It cannot be opened before it was stored.'**
   String get openedBeforeStored;
+
+  /// No description provided for @editProductAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit product'**
+  String get editProductAction;
 }
 
 class _InventoryLocalizationsDelegate extends LocalizationsDelegate<InventoryLocalizations> {

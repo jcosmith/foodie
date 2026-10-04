@@ -9,6 +9,7 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'support/inventory_test_harness.dart';
 import 'support/shelves_module.dart';
@@ -140,6 +141,55 @@ void main() {
   testWidgets('the sheet shows the whole note after the name', (tester) async {
     await showShelvesTab(tester, note: 'from the baker');
     expect(find.text('Wholegrain bread (from the baker)', findRichText: true), findsWidgets);
+  });
+
+  testWidgets('"Edit product" opens the product editor over the tab', (tester) async {
+    final product = (await tester.runAsync(() async {
+      await harness.setUpCatalogAndStoragePlace();
+      final shelves = await harness.addStoragePlace(ShelvesModule.cupboard);
+      final bread = await harness.seededProduct('wholegrainBread');
+      await harness.addBatch(product: bread, compartment: shelves.first, amountInBaseUnits: 1000);
+      return bread;
+    }))!;
+    final router = GoRouter(
+      initialLocation: '/tab',
+      routes: [
+        GoRoute(
+          path: '/tab',
+          builder: (context, state) =>
+              const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.pantry),
+        ),
+        GoRoute(
+          path: '/product_catalog/products/:productIdentifier',
+          builder: (context, state) =>
+              Scaffold(body: Text('Editor of ${state.pathParameters['productIdentifier']}')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: harness.container,
+        child: buildLocalizedTestRouterApplication(
+          routerConfig: router,
+          featureLocalizationDelegates: [
+            ...const InventoryFeatureModule().localizationDelegates,
+            ...const ProductCatalogFeatureModule().localizationDelegates,
+            ...const StorageLayoutFeatureModule().localizationDelegates,
+          ],
+        ),
+      ),
+    );
+    await settle(tester);
+    await tester.tap(find.text('Wholegrain bread'));
+    await settle(tester);
+
+    await tester.ensureVisible(find.text('Edit product'));
+    await tester.tap(find.text('Edit product'));
+    await settle(tester);
+
+    expect(find.text('Editor of ${product.identifier.value}'), findsOneWidget);
+    expect(find.text('Edit product'), findsNothing, reason: 'the sheet is closed');
   });
 
   group('undo time from Options', () {

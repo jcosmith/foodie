@@ -363,4 +363,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
 
   @override
   String get openedBeforeStored => 'It cannot be opened before it was stored.';
+
+  @override
+  String get editProductAction => 'Edit product';
 }
