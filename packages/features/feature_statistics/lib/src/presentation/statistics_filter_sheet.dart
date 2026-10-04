@@ -48,6 +48,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
     final localizations = formatting.localizations;
     final catalog = ref.watch(productCatalogProvider).value;
     final layout = ref.watch(storageLayoutProvider).value;
+    final offeredDomains = ref.watch(offeredStatisticsDomainsProvider);
     final categoryGrouping = ref.watch(statisticsCategoryGroupingProvider).value;
     final periods = ref.watch(statisticsPeriodsProvider).value;
     final savedViews = ref.watch(savedStatisticsViewsProvider).value ?? const [];
@@ -55,7 +56,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
     final chartColors = context.chartColors;
     final productNames = context.productDisplayNameResolver;
     final theme = Theme.of(context);
-    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.freezerColors.textMuted);
+    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.foodieColors.textMuted);
 
     void change(StatisticsFilter Function(StatisticsFilter current) change) =>
         filterNotifier.change(change);
@@ -88,20 +89,20 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
     final listedCompartments = layout == null
         ? const <Compartment>[]
         : [
-            for (final freezerLayout in layout.freezers) ...[
-              ...freezerLayout.compartments,
-              // Removed drawers still have history (decision D13).
-              ...layout.archivedCompartmentsOf(freezerLayout.freezer.identifier),
+            for (final storagePlaceLayout in layout.storagePlaces) ...[
+              ...storagePlaceLayout.compartments,
+              // Removed compartments still have history (decision D13).
+              ...layout.archivedCompartmentsOf(storagePlaceLayout.storagePlace.identifier),
             ],
           ];
 
     return ListView(
       controller: widget.scrollController,
       padding: const EdgeInsets.fromLTRB(
-        FreezerSpacing.large,
+        FoodieSpacing.large,
         0,
-        FreezerSpacing.large,
-        FreezerSpacing.extraLarge,
+        FoodieSpacing.large,
+        FoodieSpacing.extraLarge,
       ),
       children: [
         Text(
@@ -205,6 +206,20 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
               ),
           ],
         ),
+        // With one domain there is nothing to choose.
+        if (offeredDomains.length > 1)
+          _FilterSection(
+            title: localizations.filterStorage,
+            choices: [
+              for (final domain in offeredDomains)
+                FilterChip(
+                  label: Text('${domain.iconEmoji} ${domain.labelBuilder(context)}'),
+                  selected: filter.domainIdentifiers.contains(domain.identifier),
+                  onSelected: (_) =>
+                      change((current) => current.withDomainToggled(domain.identifier)),
+                ),
+            ],
+          ),
         if (catalog != null)
           _FilterSection(
             title: localizations.filterCategories,
@@ -232,7 +247,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
                   avatar: ChartColorSwatch(
                     color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
                   ),
-                  label: Text(compartmentNames.compartmentNameWithFreezer(compartment)),
+                  label: Text(compartmentNames.compartmentNameWithStoragePlace(compartment)),
                   selected: filter.compartmentIdentifiers.contains(compartment.identifier),
                   onSelected: (_) =>
                       change((current) => current.withCompartmentToggled(compartment.identifier)),
@@ -273,7 +288,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
                 ),
             ],
           ),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         OutlinedButton(onPressed: filterNotifier.reset, child: Text(localizations.resetFilters)),
       ],
     );
@@ -376,7 +391,7 @@ class _FilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: FreezerSpacing.large),
+    padding: const EdgeInsets.only(top: FoodieSpacing.large),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -387,14 +402,10 @@ class _FilterSection extends StatelessWidget {
             style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
-        const SizedBox(height: FreezerSpacing.small),
-        if (header != null) ...[header!, const SizedBox(height: FreezerSpacing.small)],
-        Wrap(
-          spacing: FreezerSpacing.small,
-          runSpacing: FreezerSpacing.extraSmall,
-          children: choices,
-        ),
-        if (footer != null) ...[const SizedBox(height: FreezerSpacing.extraSmall), footer!],
+        const SizedBox(height: FoodieSpacing.small),
+        if (header != null) ...[header!, const SizedBox(height: FoodieSpacing.small)],
+        Wrap(spacing: FoodieSpacing.small, runSpacing: FoodieSpacing.extraSmall, children: choices),
+        if (footer != null) ...[const SizedBox(height: FoodieSpacing.extraSmall), footer!],
       ],
     ),
   );

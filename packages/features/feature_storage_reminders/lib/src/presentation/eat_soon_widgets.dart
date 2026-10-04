@@ -9,7 +9,7 @@ import '../application/storage_reminders_providers.dart';
 import '../l10n/generated/storage_reminders_localizations.dart';
 import '../storage_reminders_routes.dart';
 
-/// "Eat soon" on Home (UI example phone 1): the three most urgent items.
+/// "Use soon" on Home (UI example phone 1): the three most urgent items.
 class EatSoonCard extends ConsumerWidget {
   const EatSoonCard({super.key});
 
@@ -42,7 +42,7 @@ class EatSoonCard extends ConsumerWidget {
   }
 }
 
-/// Everything that should be eaten soon; the digest notification opens it.
+/// Everything that should be used soon; the digest notification opens it.
 class EatSoonScreen extends ConsumerWidget {
   const EatSoonScreen({super.key});
 
@@ -64,10 +64,10 @@ class EatSoonScreen extends ConsumerWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                FreezerSpacing.screenGutter,
-                FreezerSpacing.small,
-                FreezerSpacing.screenGutter,
-                FreezerSpacing.small,
+                FoodieSpacing.screenGutter,
+                FoodieSpacing.small,
+                FoodieSpacing.screenGutter,
+                FoodieSpacing.small,
               ),
               child: Text(
                 localizations.eatSoonScreenExplanation,

@@ -54,13 +54,14 @@ final class StatisticsFilter {
     this.categoryIdentifiers = const {},
     this.productIdentifiers = const {},
     this.compartmentIdentifiers = const {},
+    this.domainIdentifiers = const {},
     this.weekdays = const {},
   }) : assert(
          periodPreset != StatisticsPeriodPreset.custom || customPeriod != null,
          'A custom period needs its dates',
        );
 
-  /// Three months, compared with the three before, by weight, eaten
+  /// Three months, compared with the three before, by weight, used
   /// (UI examples document, phone 7).
   static const StatisticsFilter initial = StatisticsFilter();
 
@@ -78,6 +79,9 @@ final class StatisticsFilter {
   final Set<ProductIdentifier> productIdentifiers;
   final Set<CompartmentIdentifier> compartmentIdentifiers;
 
+  /// Storage domains, such as only the fridge.
+  final Set<StorageDomainIdentifier> domainIdentifiers;
+
   /// [DateTime.monday] (1) to [DateTime.sunday] (7).
   final Set<int> weekdays;
 
@@ -87,6 +91,7 @@ final class StatisticsFilter {
       categoryIdentifiers.length +
       productIdentifiers.length +
       compartmentIdentifiers.length +
+      domainIdentifiers.length +
       weekdays.length +
       (measure != initial.measure ? 1 : 0) +
       (activity != initial.activity ? 1 : 0) +
@@ -129,6 +134,9 @@ final class StatisticsFilter {
   StatisticsFilter withCompartmentToggled(CompartmentIdentifier compartmentIdentifier) =>
       _copyWith(compartmentIdentifiers: _toggled(compartmentIdentifiers, compartmentIdentifier));
 
+  StatisticsFilter withDomainToggled(StorageDomainIdentifier domainIdentifier) =>
+      _copyWith(domainIdentifiers: _toggled(domainIdentifiers, domainIdentifier));
+
   StatisticsFilter withWeekdayToggled(int weekday) {
     assert(weekday >= DateTime.monday && weekday <= DateTime.sunday, 'Not a weekday: $weekday');
     return _copyWith(weekdays: _toggled(weekdays, weekday));
@@ -147,6 +155,7 @@ final class StatisticsFilter {
     Set<CategoryIdentifier>? categoryIdentifiers,
     Set<ProductIdentifier>? productIdentifiers,
     Set<CompartmentIdentifier>? compartmentIdentifiers,
+    Set<StorageDomainIdentifier>? domainIdentifiers,
     Set<int>? weekdays,
   }) => StatisticsFilter(
     periodPreset: periodPreset ?? this.periodPreset,
@@ -158,6 +167,7 @@ final class StatisticsFilter {
     categoryIdentifiers: Set.unmodifiable(categoryIdentifiers ?? this.categoryIdentifiers),
     productIdentifiers: Set.unmodifiable(productIdentifiers ?? this.productIdentifiers),
     compartmentIdentifiers: Set.unmodifiable(compartmentIdentifiers ?? this.compartmentIdentifiers),
+    domainIdentifiers: Set.unmodifiable(domainIdentifiers ?? this.domainIdentifiers),
     weekdays: Set.unmodifiable(weekdays ?? this.weekdays),
   );
 
@@ -173,6 +183,7 @@ final class StatisticsFilter {
       _haveSameElements(other.categoryIdentifiers, categoryIdentifiers) &&
       _haveSameElements(other.productIdentifiers, productIdentifiers) &&
       _haveSameElements(other.compartmentIdentifiers, compartmentIdentifiers) &&
+      _haveSameElements(other.domainIdentifiers, domainIdentifiers) &&
       _haveSameElements(other.weekdays, weekdays);
 
   @override
@@ -186,6 +197,7 @@ final class StatisticsFilter {
     Object.hashAllUnordered(categoryIdentifiers),
     Object.hashAllUnordered(productIdentifiers),
     Object.hashAllUnordered(compartmentIdentifiers),
+    Object.hashAllUnordered(domainIdentifiers),
     Object.hashAllUnordered(weekdays),
   );
 

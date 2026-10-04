@@ -155,11 +155,11 @@ abstract class BarcodeScanningLocalizations {
   /// **'Recognised'**
   String get recognized;
 
-  /// No description provided for @amountInFreezer.
+  /// No description provided for @amountInStoragePlace.
   ///
   /// In en, this message translates to:
-  /// **'{amount} in the freezer'**
-  String amountInFreezer(String amount);
+  /// **'{amount} at home'**
+  String amountInStoragePlace(String amount);
 
   /// No description provided for @weightInCode.
   ///
@@ -185,11 +185,11 @@ abstract class BarcodeScanningLocalizations {
   /// **'Added {amount} of {product} to {drawer}'**
   String addedSnackbar(String amount, String product, String drawer);
 
-  /// No description provided for @bagsInFreezer.
+  /// No description provided for @bagsInStoragePlace.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 bag in the freezer. Take from it?} other{{count} bags in the freezer. Take from the oldest?}}'**
-  String bagsInFreezer(int count);
+  /// **'{count, plural, =1{1 pack at home. Take from it?} other{{count} packs at home. Take from the oldest?}}'**
+  String bagsInStoragePlace(int count);
 
   /// No description provided for @chooseAmount.
   ///
@@ -203,11 +203,11 @@ abstract class BarcodeScanningLocalizations {
   /// **'Or another bag'**
   String get otherBags;
 
-  /// No description provided for @notInFreezer.
+  /// No description provided for @notInStoragePlace.
   ///
   /// In en, this message translates to:
-  /// **'None of this product is in the freezer.'**
-  String get notInFreezer;
+  /// **'None of this product is at home.'**
+  String get notInStoragePlace;
 
   /// No description provided for @unknownCode.
   ///
@@ -275,22 +275,22 @@ abstract class BarcodeScanningLocalizations {
   /// **'Amount needed'**
   String get amountNeeded;
 
-  /// No description provided for @noFreezerYet.
+  /// No description provided for @noStoragePlaceYet.
   ///
   /// In en, this message translates to:
-  /// **'Set up a freezer first'**
-  String get noFreezerYet;
+  /// **'Set up a storage place first'**
+  String get noStoragePlaceYet;
 
   /// No description provided for @putAwayButton.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Put 1 item in the freezer} other{Put {count} items in the freezer}}'**
+  /// **'{count, plural, =1{Put 1 item away} other{Put {count} items away}}'**
   String putAwayButton(int count);
 
   /// No description provided for @putAwaySnackbar.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 item put in the freezer} other{{count} items put in the freezer}}'**
+  /// **'{count, plural, =1{1 item put away} other{{count} items put away}}'**
   String putAwaySnackbar(int count);
 
   /// No description provided for @removeFromList.
@@ -320,7 +320,7 @@ abstract class BarcodeScanningLocalizations {
   /// No description provided for @discardListMessage.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 item is not in the freezer yet.} other{{count} items are not in the freezer yet.}}'**
+  /// **'{count, plural, =1{1 item is not put away yet.} other{{count} items are not put away yet.}}'**
   String discardListMessage(int count);
 
   /// No description provided for @discardButton.

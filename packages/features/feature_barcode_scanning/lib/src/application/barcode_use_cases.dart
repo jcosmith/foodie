@@ -87,7 +87,7 @@ final class LearnBarcodeUseCase {
   }
 }
 
-/// What one tap on "Add" would put into the freezer.
+/// What one tap on "Add" would put into storage.
 @immutable
 final class ScanToAddSuggestion {
   const ScanToAddSuggestion({required this.product, this.quantity, this.compartment});
@@ -98,8 +98,8 @@ final class ScanToAddSuggestion {
   /// `null` when neither is known and the user has to type it.
   final Quantity? quantity;
 
-  /// The drawer this product went into last time, else the first drawer;
-  /// `null` while there is no freezer.
+  /// The compartment this product went into last time, else the first compartment;
+  /// `null` while there is no storage place.
   final Compartment? compartment;
 
   bool get canAddWithOneTap => quantity != null && compartment != null;
@@ -109,7 +109,7 @@ final class ScanToAddSuggestion {
 }
 
 /// Scan to add (section 10.3): the product with its package size (or the
-/// weight in the code) into the drawer used last time. Adds through the
+/// weight in the code) into the compartment used last time. Adds through the
 /// inventory's own use case, so restock and reminders react as usual.
 final class ScanToAddUseCase {
   const ScanToAddUseCase({
@@ -117,19 +117,24 @@ final class ScanToAddUseCase {
     required StorageLayoutQueryService storageLayout,
     required AddStockBatchUseCase addStockBatch,
     required Clock clock,
+    required Set<StorageDomainIdentifier> Function() readPausedDomains,
   }) : _inventory = inventory,
        _storageLayout = storageLayout,
+       _readPausedDomains = readPausedDomains,
        _addStockBatch = addStockBatch,
        _clock = clock;
 
   final InventoryQueryService _inventory;
   final StorageLayoutQueryService _storageLayout;
+
+  /// Switched-off domains, whose places are never suggested.
+  final Set<StorageDomainIdentifier> Function() _readPausedDomains;
   final AddStockBatchUseCase _addStockBatch;
   final Clock _clock;
 
   Future<ScanToAddSuggestion> suggest(RecognizedBarcode recognizedBarcode) async {
     final product = recognizedBarcode.product;
-    final layout = await _storageLayout.readStorageLayout();
+    final layout = (await _storageLayout.readStorageLayout()).withoutDomains(_readPausedDomains());
     final lastCompartmentIdentifier = await _inventory.readLastCompartmentOfProduct(
       product.identifier,
     );
@@ -152,7 +157,7 @@ final class ScanToAddUseCase {
       _addStockBatch.execute(_commandFor(suggestion));
 
   /// Unpacking groceries (section 10.3): everything scanned in a row goes
-  /// into the freezer in one transaction, or nothing does.
+  /// into storage in one transaction, or nothing does.
   Future<Result<List<StockBatchIdentifier>, InventoryFailure>> addAll(
     List<ScanToAddSuggestion> suggestions,
   ) => _addStockBatch.executeAll([for (final suggestion in suggestions) _commandFor(suggestion)]);
@@ -167,7 +172,7 @@ final class ScanToAddUseCase {
       productIdentifier: suggestion.product.identifier,
       compartmentIdentifier: compartment.identifier,
       quantity: quantity,
-      frozenOn: _clock.todayLocal(),
+      storedOn: _clock.todayLocal(),
     );
   }
 }

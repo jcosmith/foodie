@@ -26,6 +26,7 @@ dependencies:
   meta: ^1.16.0
 
 dev_dependencies:
+  feature_freezer: any
   flutter_test:
     sdk: flutter
 

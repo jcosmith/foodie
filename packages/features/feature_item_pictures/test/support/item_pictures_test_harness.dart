@@ -9,6 +9,7 @@ import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_media_storage/core_media_storage.dart';
 import 'package:core_media_storage/testing.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_item_pictures/feature_item_pictures.dart';
 import 'package:feature_item_pictures/src/application/item_picture_providers.dart';
@@ -21,7 +22,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -64,7 +65,9 @@ final class ItemPicturesTestHarness {
         localLoggerProvider.overrideWithValue(logger),
         registeredFeatureModulesProvider.overrideWithValue(modules),
         enabledFeatureModulesProvider.overrideWith(
-          (ref) => Stream.value(isPictureModuleEnabled ? modules : modules.sublist(0, 3)),
+          (ref) => Stream.value(
+            isPictureModuleEnabled ? modules : modules.sublist(0, modules.length - 1),
+          ),
         ),
         for (final module in modules) ...module.buildProviderOverrides(dependencies),
       ],
@@ -87,6 +90,7 @@ final class ItemPicturesTestHarness {
     const StorageLayoutFeatureModule(),
     const ProductCatalogFeatureModule(),
     const InventoryFeatureModule(),
+    const FreezerFeatureModule(),
     pictureModule,
   ];
 
@@ -94,12 +98,12 @@ final class ItemPicturesTestHarness {
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
 
-  Future<void> seedCatalogAndFreezer() async {
+  Future<void> seedCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(initializationContext);
     await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
   }
@@ -123,7 +127,7 @@ final class ItemPicturesTestHarness {
               amountInBaseUnits: amountInBaseUnits ?? 500,
               unit: product.canonicalUnit,
             ),
-            frozenOn: clock.todayLocal(),
+            storedOn: clock.todayLocal(),
           ),
         );
     return result.valueOrNull!;

@@ -21,7 +21,7 @@ import 'unpacking_list_card.dart';
 /// One screen with an Add / Remove switch (UI examples document, phone 4):
 /// the camera picture, and below it what the last code turned out to be.
 /// "Several in a row" collects scanned groceries in a review list instead
-/// and puts them all into the freezer at once (section 10.3).
+/// and puts them all into storage at once (section 10.3).
 class BarcodeScannerScreen extends ConsumerStatefulWidget {
   const BarcodeScannerScreen({required this.initialMode, super.key});
 
@@ -125,7 +125,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
     );
   }
 
-  /// Leaving with scanned items that are not in the freezer yet asks first.
+  /// Leaving with scanned items that are not at home yet asks first.
   Future<void> _confirmLeavingWithUnpackingList() async {
     final localizations = BarcodeScanningLocalizations.of(context);
     final navigator = Navigator.of(context);
@@ -165,7 +165,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
       child: Scaffold(
         appBar: AppBar(title: Text(localizations.scannerTitle)),
         body: ListView(
-          padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+          padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
           children: [
             SegmentedButton<ScanMode>(
               segments: [
@@ -184,7 +184,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               onSelectionChanged: (modes) => setState(() => _mode = modes.single),
             ),
             if (_mode == ScanMode.add) ...[
-              const SizedBox(height: FreezerSpacing.small),
+              const SizedBox(height: FoodieSpacing.small),
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: FilterChip(
@@ -198,7 +198,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             _CameraFrame(
               camera: ref
                   .read(barcodeDecoderProvider)
@@ -208,14 +208,14 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                     problemBuilder: (context, problem) => _CameraProblemView(problem: problem),
                   ),
             ),
-            const SizedBox(height: FreezerSpacing.small),
+            const SizedBox(height: FoodieSpacing.small),
             Text(
               localizations.scannerHint,
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
             ),
             if (_collectsIntoList) ...[
-              const SizedBox(height: FreezerSpacing.medium),
+              const SizedBox(height: FoodieSpacing.medium),
               UnpackingListCard(
                 entries: _unpackingList,
                 isPuttingAway: _isPuttingAway,
@@ -227,10 +227,10 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               ),
             ],
             if (resolution != null) ...[
-              const SizedBox(height: FreezerSpacing.medium),
+              const SizedBox(height: FoodieSpacing.medium),
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(FreezerSpacing.medium),
+                  padding: const EdgeInsets.all(FoodieSpacing.medium),
                   child: switch (resolution) {
                     UnrecognizedBarcode() => UnknownCodePanel(
                       unrecognizedBarcode: resolution,
@@ -254,7 +254,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                 ),
               ),
             ],
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             Text(
               localizations.scannerPrivacy,
               textAlign: TextAlign.center,
@@ -312,12 +312,12 @@ class _CameraProblemView extends StatelessWidget {
       color: const Color(0xFF0B0F15),
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(FreezerSpacing.large),
+          padding: const EdgeInsets.all(FoodieSpacing.large),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.no_photography_outlined, color: Colors.white70, size: 36),
-              const SizedBox(height: FreezerSpacing.small),
+              const SizedBox(height: FoodieSpacing.small),
               Text(
                 switch (problem) {
                   CameraProblem.permissionDenied => localizations.cameraPermissionDenied,

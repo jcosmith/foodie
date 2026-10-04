@@ -29,7 +29,7 @@ class RunsOutInChartCard extends ConsumerWidget {
 
     final productNames = context.productDisplayNameResolver;
     final quantityFormatter = context.quantityFormatter;
-    final urgentColor = context.freezerColors.statusUrgent;
+    final urgentColor = context.foodieColors.statusUrgent;
     final shownForecasts = [
       for (final forecast in forecasts)
         if (catalog.productOf(forecast.productIdentifier) case final product?
@@ -82,7 +82,7 @@ class RunsOutInChartCard extends ConsumerWidget {
     );
   }
 
-  /// Follows the category and product filters; period and drawers do not
+  /// Follows the category and product filters; period and compartments do not
   /// change when the current stock runs out.
   bool _matchesFilter(Product product) =>
       (filter.categoryIdentifiers.isEmpty ||

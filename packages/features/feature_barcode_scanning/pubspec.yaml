@@ -27,6 +27,7 @@ dependencies:
   mobile_scanner: ^7.4.2
 
 dev_dependencies:
+  feature_freezer: any
   flutter_localizations:
     sdk: flutter
   flutter_test:

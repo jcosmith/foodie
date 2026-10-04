@@ -31,11 +31,9 @@ class ProductEditorScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
-  static const double _averageDaysPerMonth = 30.4;
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _packageSizeController = TextEditingController();
-  final TextEditingController _storageMonthsController = TextEditingController();
+  final ShelfLifeFieldController _shelfLifeController = ShelfLifeFieldController();
   final TextEditingController _iconController = TextEditingController();
   bool _hasLoadedInitialValues = false;
   CategoryIdentifier? _categoryIdentifier;
@@ -45,7 +43,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
   QuantityUnit _unit = QuantityUnit.gram;
   String? _nameError;
   String? _packageSizeError;
-  String? _storageMonthsError;
+  String? _shelfLifeError;
   bool _isSaving = false;
 
   /// A photo taken for a new product, attached once the product is saved.
@@ -57,7 +55,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
   void dispose() {
     _nameController.dispose();
     _packageSizeController.dispose();
-    _storageMonthsController.dispose();
+    _shelfLifeController.dispose();
     _iconController.dispose();
     _pictureDraft.dispose();
     super.dispose();
@@ -79,10 +77,12 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
       final packageQuantity? => quantityFormatter.formatAmountForInput(packageQuantity),
       null => '',
     };
-    _storageMonthsController.text = switch (product.recommendedMaximumStorageDays) {
-      final storageDays? => (storageDays / _averageDaysPerMonth).round().toString(),
-      null => '',
-    };
+    if (product.recommendedMaximumStorageDays case final storageDays?) {
+      final shelfLife = ShelfLife.fromDays(storageDays);
+      _shelfLifeController
+        ..amountController.text = '${shelfLife.amount}'
+        ..unit = shelfLife.unit;
+    }
     _iconController.text = product.iconEmoji ?? '';
     _defaultCompartmentIdentifier = product.defaultCompartmentIdentifier;
     _iconImage = product.iconImage;
@@ -119,24 +119,20 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
     final packageQuantity = packageSizeText.isEmpty
         ? null
         : QuantityFormatter.parseDisplayAmount(packageSizeText, _unit);
-    final storageMonthsText = _storageMonthsController.text.trim();
-    final storageMonths = storageMonthsText.isEmpty ? null : int.tryParse(storageMonthsText);
     setState(() {
       _packageSizeError = packageSizeText.isNotEmpty && packageQuantity == null
           ? localizations.invalidNumber
           : null;
-      _storageMonthsError = storageMonthsText.isNotEmpty && storageMonths == null
-          ? localizations.invalidNumber
-          : null;
+      _shelfLifeError = _shelfLifeController.isValid
+          ? null
+          : context.commonLocalizations.shelfLifeOutOfRange;
     });
-    if (_packageSizeError != null || _storageMonthsError != null) return null;
+    if (_packageSizeError != null || _shelfLifeError != null) return null;
     return ProductSettings(
       enteredName: _nameController.text,
       categoryIdentifier: _categoryIdentifier!,
       defaultPackageQuantity: packageQuantity,
-      recommendedMaximumStorageDays: storageMonths == null
-          ? null
-          : (storageMonths * _averageDaysPerMonth).round(),
+      recommendedMaximumStorageDays: _shelfLifeController.inDays,
       iconEmoji: _iconController.text,
       iconImage: _iconImage,
       defaultCompartmentIdentifier: _activeDefaultCompartmentIdentifier(
@@ -248,11 +244,11 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+        padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
           if (pictureSection != null) ...[
             pictureSection,
-            const SizedBox(height: FreezerSpacing.large),
+            const SizedBox(height: FoodieSpacing.large),
           ],
           TextField(
             controller: _nameController,
@@ -272,7 +268,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
               if (_nameError != null) setState(() => _nameError = null);
             },
           ),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           DropdownButtonFormField<CategoryIdentifier>(
             initialValue: _categoryIdentifier,
             decoration: InputDecoration(labelText: localizations.categoryLabel),
@@ -286,9 +282,9 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
             onChanged: (categoryIdentifier) =>
                 setState(() => _categoryIdentifier = categoryIdentifier),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           Text(localizations.unitLabel, style: Theme.of(context).textTheme.labelLarge),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           SegmentedButton<QuantityUnit>(
             segments: [
               for (final unit in QuantityUnit.values)
@@ -302,13 +298,13 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
           ),
           if (!_isNewProduct)
             Padding(
-              padding: const EdgeInsets.only(top: FreezerSpacing.extraSmall),
+              padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),
               child: Text(
                 localizations.unitLockedHint,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           TextField(
             controller: _packageSizeController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -319,31 +315,29 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
               errorText: _packageSizeError,
             ),
           ),
-          const SizedBox(height: FreezerSpacing.medium),
-          TextField(
-            controller: _storageMonthsController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: localizations.storageMonthsLabel,
-              helperText: selectedCategory == null
-                  ? null
-                  : localizations.storageMonthsHelper(
-                      (selectedCategory.recommendedMaximumStorageDays / _averageDaysPerMonth)
-                          .round(),
+          const SizedBox(height: FoodieSpacing.medium),
+          ShelfLifeField(
+            controller: _shelfLifeController,
+            labelText: localizations.shelfLifeLabel,
+            helperText: selectedCategory == null
+                ? null
+                : switch (selectedCategory.recommendedMaximumStorageDays) {
+                    final int categoryDays => localizations.shelfLifeHelper(
+                      context.shelfLifeFormatter.formatDays(categoryDays),
                     ),
-              helperMaxLines: 2,
-              errorText: _storageMonthsError,
-            ),
+                    null => localizations.shelfLifeHelperNone,
+                  },
+            errorText: _shelfLifeError,
           ),
           Padding(
-            padding: const EdgeInsets.only(top: FreezerSpacing.extraSmall),
+            padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),
             child: Text(
               localizations.storageRecommendationNote,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
-          if (layout != null && layout.hasFreezer) ...[
-            const SizedBox(height: FreezerSpacing.medium),
+          if (layout != null && layout.hasStoragePlace) ...[
+            const SizedBox(height: FoodieSpacing.medium),
             _DefaultCompartmentField(
               layout: layout,
               selectedCompartmentIdentifier: _activeDefaultCompartmentIdentifier(layout),
@@ -351,7 +345,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
                   setState(() => _defaultCompartmentIdentifier = compartmentIdentifier),
             ),
           ],
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           _ProductIconField(
             emojiController: _iconController,
             categoryEmoji: selectedCategory?.iconEmoji,
@@ -360,7 +354,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
             onChooseImage: _chooseIconImage,
             onRemoveImage: () => setState(() => _iconImage = null),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           FilledButton(
             onPressed: _isSaving ? null : _save,
             child: Text(context.commonLocalizations.actionSave),
@@ -409,10 +403,10 @@ class _DefaultCompartmentField extends StatelessWidget {
                   size: 12,
                   color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
                 ),
-                const SizedBox(width: FreezerSpacing.small),
+                const SizedBox(width: FoodieSpacing.small),
                 Expanded(
                   child: Text(
-                    nameResolver.compartmentNameWithFreezer(compartment),
+                    nameResolver.compartmentNameWithStoragePlace(compartment),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -466,7 +460,7 @@ class _ProductIconField extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(width: FreezerSpacing.medium),
+            const SizedBox(width: FoodieSpacing.medium),
             Expanded(
               child: TextField(
                 controller: emojiController,
@@ -480,7 +474,7 @@ class _ProductIconField extends StatelessWidget {
           ],
         ),
         Wrap(
-          spacing: FreezerSpacing.small,
+          spacing: FoodieSpacing.small,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             OutlinedButton.icon(
@@ -493,7 +487,7 @@ class _ProductIconField extends StatelessWidget {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top: FreezerSpacing.extraSmall),
+          padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),
           child: Text(localizations.iconImageHint, style: Theme.of(context).textTheme.bodySmall),
         ),
       ],

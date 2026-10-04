@@ -16,7 +16,7 @@ void main() {
 
   setUp(() async {
     harness = BarcodeScanningTestHarness();
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     spinach = await harness.productWithKey('leafSpinach');
     mincedMeat = await harness.productWithKey('mincedMeat');
   });
@@ -83,7 +83,7 @@ void main() {
     await harness.addBatch(
       spinach,
       amountInBaseUnits: 400,
-      frozenOn: CalendarDate(2026, 9, 1),
+      storedOn: CalendarDate(2026, 9, 1),
       compartmentIndex: 2,
     );
     final recognized = await learn('4001234567891', spinach);
@@ -101,7 +101,7 @@ void main() {
     );
     expect(batch.quantityRemaining, spinach.defaultPackageQuantity);
     expect(batch.compartmentIdentifier, compartments[2].identifier);
-    expect(batch.frozenOn, CalendarDate(2026, 10, 3));
+    expect(batch.storedOn, CalendarDate(2026, 10, 3));
     expect(harness.publishedEvents.whereType<StockBatchAdded>(), hasLength(2));
   });
 

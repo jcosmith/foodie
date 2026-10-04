@@ -39,8 +39,8 @@ final class MoveContentsAndArchiveCompartmentUseCase {
     if (compartment == null || compartment.isArchived) {
       return const Result.failure(CompartmentNotFound());
     }
-    final siblings = await _repository.readActiveCompartmentsOfFreezer(
-      compartment.freezerIdentifier,
+    final siblings = await _repository.readActiveCompartmentsOfStoragePlace(
+      compartment.storagePlaceIdentifier,
     );
     if (siblings.length <= 1) return const Result.failure(LastCompartmentCannotBeRemoved());
 

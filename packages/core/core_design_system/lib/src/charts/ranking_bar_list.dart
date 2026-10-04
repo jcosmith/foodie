@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_chart_colors.dart';
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_chart_colors.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 
 /// One row of a [RankingBarList].
 @immutable
@@ -43,7 +43,7 @@ class RankingBarList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = context.freezerColors;
+    final tokens = context.foodieColors;
     final barColor = context.chartColors.singleSeries;
     final maximum =
         maximumValue ??
@@ -59,16 +59,16 @@ class RankingBarList extends StatelessWidget {
             excludeSemantics: true,
             child: InkWell(
               onTap: onRowTapped == null ? null : () => onRowTapped!(index),
-              borderRadius: BorderRadius.circular(FreezerSpacing.small),
+              borderRadius: BorderRadius.circular(FoodieSpacing.small),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  vertical: FreezerSpacing.extraSmall,
-                  horizontal: FreezerSpacing.extraSmall,
+                  vertical: FoodieSpacing.extraSmall,
+                  horizontal: FoodieSpacing.extraSmall,
                 ),
                 decoration: row.isSelected
                     ? BoxDecoration(
                         color: tokens.primarySoft,
-                        borderRadius: BorderRadius.circular(FreezerSpacing.small),
+                        borderRadius: BorderRadius.circular(FoodieSpacing.small),
                       )
                     : null,
                 child: Row(
@@ -81,7 +81,7 @@ class RankingBarList extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: FreezerSpacing.small),
+                    const SizedBox(width: FoodieSpacing.small),
                     Expanded(
                       flex: 4,
                       child: ClipRRect(
@@ -97,7 +97,7 @@ class RankingBarList extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: FreezerSpacing.small),
+                    const SizedBox(width: FoodieSpacing.small),
                     SizedBox(
                       width: 64,
                       child: Text(

@@ -1,5 +1,7 @@
 import 'package:core_design_system/testing.dart';
 import 'package:core_notifications/core_notifications.dart';
+import 'package:feature_freezer/feature_freezer.dart';
+import 'package:feature_household_supplies/feature_household_supplies.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_reminders/feature_storage_reminders.dart';
@@ -18,7 +20,7 @@ void main() {
 
   setUp(() async {
     harness = StorageRemindersTestHarness();
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
   });
   tearDown(() => harness.dispose());
 
@@ -42,7 +44,7 @@ void main() {
   Future<void> addOldBatch(WidgetTester tester, String catalogKey, int daysAgo) async {
     await tester.runAsync(() async {
       final product = await harness.productWithKey(catalogKey);
-      await harness.addBatch(product, frozenOn: harness.today.addDays(-daysAgo));
+      await harness.addBatch(product, storedOn: harness.today.addDays(-daysAgo));
     });
   }
 
@@ -100,7 +102,39 @@ void main() {
     );
   });
 
-  testWidgets('storage limits are shown and changed in months', (tester) async {
+  testWidgets('storage limits are grouped by storage area, without switched-off ones', (
+    tester,
+  ) async {
+    await tester.runAsync(harness.dispose);
+    harness = StorageRemindersTestHarness(
+      registeredModules: const [FreezerFeatureModule(), HouseholdSuppliesFeatureModule()],
+      enabledModules: const [FreezerFeatureModule()],
+    );
+    await tester.runAsync(harness.seedCatalogAndStoragePlace);
+    await show(tester, const StorageLimitsScreen());
+
+    expect(find.text('❄️ Freezer'), findsOneWidget);
+    expect(find.text('Vegetables'), findsOneWidget);
+    expect(find.text('Cleaning'), findsNothing, reason: 'Household is switched off');
+
+    await tester.tap(find.text('Vegetables'));
+    await _settle(tester);
+    await tester.tap(find.text('No shelf life'));
+    await _settle(tester);
+
+    final catalog = await tester.runAsync(
+      () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
+    );
+    expect(
+      catalog!.categories
+          .firstWhere((category) => category.catalogKey == 'vegetables')
+          .recommendedMaximumStorageDays,
+      isNull,
+    );
+    expect(find.text('No shelf life'), findsOneWidget, reason: 'shown on the row');
+  });
+
+  testWidgets('storage limits are shown and changed in days, weeks or months', (tester) async {
     await show(tester, const StorageLimitsScreen());
     final catalog = await tester.runAsync(
       () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
@@ -108,28 +142,37 @@ void main() {
     final vegetables = catalog!.categories.firstWhere(
       (category) => category.catalogKey == 'vegetables',
     );
+    Future<int?> vegetableDays() async {
+      final changedCatalog = await tester.runAsync(
+        () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
+      );
+      return changedCatalog!.categories
+          .firstWhere((category) => category.identifier == vegetables.identifier)
+          .recommendedMaximumStorageDays;
+    }
 
     await tester.tap(find.text('Vegetables'));
     await _settle(tester);
     await tester.enterText(find.byType(TextField), '40');
     await tester.tap(find.text('Save'));
     await _settle(tester);
-    expect(find.text('Enter a number from 1 to 36.'), findsOneWidget);
+    expect(find.text('Enter between 1 day and 36 months.'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), '2');
     await tester.tap(find.text('Save'));
     await _settle(tester);
-
-    final changedCatalog = await tester.runAsync(
-      () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
-    );
-    expect(
-      changedCatalog!.categories
-          .firstWhere((category) => category.identifier == vegetables.identifier)
-          .recommendedMaximumStorageDays,
-      61,
-    );
+    expect(await vegetableDays(), 61);
     expect(find.text('2 months'), findsOneWidget);
+
+    await tester.tap(find.text('Vegetables'));
+    await _settle(tester);
+    await tester.enterText(find.byType(TextField), '3');
+    await tester.tap(find.text('days'));
+    await _settle(tester);
+    await tester.tap(find.text('Save'));
+    await _settle(tester);
+    expect(await vegetableDays(), 3);
+    expect(find.text('3 days'), findsOneWidget);
   });
 }
 

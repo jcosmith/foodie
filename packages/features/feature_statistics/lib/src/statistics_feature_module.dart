@@ -35,23 +35,26 @@ final class StatisticsFeatureModule extends FeatureModuleBase {
   ];
 
   @override
-  NavigationDestinationContribution get navigationDestination => NavigationDestinationContribution(
-    sortOrder: 30,
-    icon: Icons.insights_outlined,
-    selectedIcon: Icons.insights,
-    labelBuilder: (context) => StatisticsLocalizations.of(context).navigationLabel,
-    initialLocation: StatisticsRoutes.insights,
-    routes: [
-      GoRoute(
-        path: StatisticsRoutes.insights,
-        builder: (context, state) => const InsightsScreen(),
-        routes: [
-          GoRoute(
-            path: StatisticsRoutes.details.substring(StatisticsRoutes.insights.length + 1),
-            builder: (context, state) => const InsightDetailsScreen(),
-          ),
-        ],
-      ),
-    ],
-  );
+  List<MoreEntryContribution> get moreEntries => [
+    MoreEntryContribution(
+      identifier: '$identifier.statistics',
+      sortOrder: 10,
+      iconEmoji: '📊',
+      titleBuilder: (context) => StatisticsLocalizations.of(context).moreEntryTitle,
+      subtitleBuilder: (context) => StatisticsLocalizations.of(context).moreEntrySubtitle,
+      location: StatisticsRoutes.insights,
+      routes: [
+        GoRoute(
+          path: StatisticsRoutes.insights,
+          builder: (context, state) => const InsightsScreen(),
+          routes: [
+            GoRoute(
+              path: StatisticsRoutes.details.substring(StatisticsRoutes.insights.length + 1),
+              builder: (context, state) => const InsightDetailsScreen(),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ];
 }

@@ -7,7 +7,7 @@ import 'application/onboarding_completion.dart';
 import 'l10n/generated/onboarding_localizations.dart';
 import 'presentation/onboarding_screen.dart';
 
-/// The first start: language, kind of freezer, privacy and notifications.
+/// The first start: language, first storage place, privacy and notifications.
 final class OnboardingFeatureModule extends FeatureModuleBase {
   const OnboardingFeatureModule();
 

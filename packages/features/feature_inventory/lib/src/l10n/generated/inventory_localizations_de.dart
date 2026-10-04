@@ -9,10 +9,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   InventoryLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get navigationLabel => 'Gefrierfach';
-
-  @override
-  String get overviewTitle => 'Mein Gefrierschrank';
+  String get overviewTitle => 'Zu Hause';
 
   @override
   String itemCount(int count) {
@@ -30,8 +27,8 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Schubladen',
-      one: '1 Schublade',
+      other: '$count Fächer',
+      one: '1 Fach',
     );
     return '$_temp0';
   }
@@ -45,10 +42,10 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get searchHint => 'Produkte suchen';
 
   @override
-  String get sortByDrawer => 'Nach Schublade';
+  String get sortByDrawer => 'Nach Ort';
 
   @override
-  String get sortByEatBefore => 'Zuerst essen';
+  String get sortByEatBefore => 'Zuerst verbrauchen';
 
   @override
   String get expandAllDrawers => 'Alle aufklappen';
@@ -58,8 +55,64 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
 
   @override
   String frozenAgo(String age) {
-    return 'eingefroren $age';
+    return 'eingelagert $age';
   }
+
+  @override
+  String openedAgo(String age) {
+    return 'geöffnet $age';
+  }
+
+  @override
+  String bestBeforeHint(String shelfLife) {
+    return 'Hält sich meist $shelfLife';
+  }
+
+  @override
+  String get bestBeforeToday => 'Heute';
+
+  @override
+  String get bestBeforePlusOneDay => '+1 Tag';
+
+  @override
+  String get bestBeforePlusThreeDays => '+3 Tage';
+
+  @override
+  String get bestBeforePlusOneWeek => '+1 Woche';
+
+  @override
+  String get bestBeforeNone => 'Keins';
+
+  @override
+  String get bestBeforePickDate => 'Datum';
+
+  @override
+  String get noBestBefore => 'Kein Datum';
+
+  @override
+  String get markOpenedAction => 'Als geöffnet markieren';
+
+  @override
+  String get markNotOpenedAction => 'Als ungeöffnet markieren';
+
+  @override
+  String markedOpenedSnackbar(String product) {
+    return '$product als geöffnet markiert';
+  }
+
+  @override
+  String get useToday => 'Heute verbrauchen';
+
+  @override
+  String get useByTomorrow => 'Bis morgen verbrauchen';
+
+  @override
+  String useByWeekday(String weekday) {
+    return 'Bis $weekday verbrauchen';
+  }
+
+  @override
+  String get pastBestBefore => 'Mindesthaltbarkeit vorbei';
 
   @override
   String ofInitial(String remaining, String initial) {
@@ -72,21 +125,21 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get noFreezerTitle => 'Richte zuerst dein Gefriergerät ein';
+  String get noStoragePlaceTitle => 'Richte zuerst einen Lagerort ein';
 
   @override
-  String get noFreezerMessage =>
-      'Sag der App, welche Schubladen dein Gefriergerät hat, und trage dann ein, was drin ist.';
+  String get noStoragePlaceMessage =>
+      'Sag der App, wo du Dinge aufbewahrst und wie es aufgeteilt ist, und trage dann ein, was drin ist.';
 
   @override
-  String get setUpFreezerButton => 'Gefriergerät einrichten';
+  String get setUpStoragePlaceButton => 'Lagerort hinzufügen';
 
   @override
-  String get emptyTitle => 'Dein Gefrierschrank ist leer';
+  String get emptyTitle => 'Hier ist noch nichts';
 
   @override
   String get emptyMessage =>
-      'Trag ein, was du einfrierst, und die App merkt sich, wie lange es schon drin ist.';
+      'Trag ein, was du einräumst, und die App merkt sich, wie lange es schon da ist.';
 
   @override
   String noSearchResults(String query) {
@@ -97,7 +150,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get addButton => 'Hinzufügen';
 
   @override
-  String get quickActionAdd => 'Einfrieren';
+  String get quickActionAdd => 'Eintragen';
 
   @override
   String get takeTitle => 'Wie viel nimmst du?';
@@ -107,7 +160,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
 
   @override
   String leftAfter(String amount) {
-    return '$amount bleiben im Gefrierfach';
+    return '$amount bleiben';
   }
 
   @override
@@ -151,6 +204,12 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get reasonFreezerBurn => 'Gefrierbrand';
 
   @override
+  String get reasonExpired => 'Abgelaufen';
+
+  @override
+  String get reasonSpoiled => 'Verdorben';
+
+  @override
   String get reasonUnwanted => 'Wollte keiner';
 
   @override
@@ -167,7 +226,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get moveTitle => 'In eine andere Schublade';
+  String get moveTitle => 'In ein anderes Fach';
 
   @override
   String get moveDestinationLabel => 'Verschieben nach';
@@ -186,8 +245,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get noOtherCompartment =>
-      'Lege in der Aufteilung eine weitere Schublade an, um etwas zu verschieben.';
+  String get noOtherCompartment => 'Lege ein weiteres Fach an, um etwas zu verschieben.';
 
   @override
   String get correctTitle => 'Wie viel ist wirklich noch da?';
@@ -202,7 +260,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get addTitle => 'Einfrieren';
+  String get addTitle => 'Hinzufügen';
 
   @override
   String get productLabel => 'Produkt';
@@ -219,10 +277,10 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get frozenOnLabel => 'Eingefroren am';
+  String get storedOnLabel => 'Eingelagert am';
 
   @override
-  String get compartmentLabel => 'Schublade';
+  String get compartmentLabel => 'Wo';
 
   @override
   String get noteLabel => 'Notiz (optional)';
@@ -245,10 +303,10 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get productMissing => 'Wähle zuerst ein Produkt.';
 
   @override
-  String get compartmentMissing => 'Wähle eine Schublade.';
+  String get compartmentMissing => 'Wähle, wohin es kommt.';
 
   @override
-  String get frozenOnInFuture => 'Das Einfrierdatum kann nicht in der Zukunft liegen.';
+  String get storedOnInFuture => 'Das Datum kann nicht in der Zukunft liegen.';
 
   @override
   String get genericFailure => 'Das hat nicht geklappt. Bitte versuche es noch einmal.';

@@ -15,6 +15,7 @@ import 'package:feature_data_portability/src/application/backup_file_store.dart'
 import 'package:feature_data_portability/src/application/csv_export_use_case.dart';
 import 'package:feature_data_portability/src/application/data_portability_providers.dart';
 import 'package:feature_data_portability/src/domain/data_portability_failure.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -71,7 +72,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -114,6 +115,7 @@ void main() {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
+        registeredFeatureModulesProvider.overrideWithValue(const [FreezerFeatureModule()]),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -261,13 +263,13 @@ void main() {
     await const ProductCatalogFeatureModule().initializeModule(
       _ContainerInitializationContext(container),
     );
-    final freezerCreation = await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+    final storagePlaceCreation = await container
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
-    expect(freezerCreation.isSuccess, isTrue);
+    expect(storagePlaceCreation.isSuccess, isTrue);
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
     final catalog = await container.read(productCatalogQueryServiceProvider).readCatalog();
     final mincedMeat = catalog.activeProducts.firstWhere(
@@ -281,7 +283,7 @@ void main() {
                     productIdentifier: mincedMeat.identifier,
                     compartmentIdentifier: layout.activeCompartments.first.identifier,
                     quantity: const Quantity(amountInBaseUnits: 500, unit: QuantityUnit.gram),
-                    frozenOn: CalendarDate(2026, 9, 1),
+                    storedOn: CalendarDate(2026, 9, 1),
                     note: 'For lasagne, "the good one"',
                   ),
                 ))
@@ -293,16 +295,8 @@ void main() {
           quantity: const Quantity(amountInBaseUnits: 250, unit: QuantityUnit.gram),
         );
     final texts = CsvExportTexts(
-      contentsHeader: const [
-        'Product',
-        'Category',
-        'Amount',
-        'Unit',
-        'Frozen on',
-        'Drawer',
-        'Note',
-      ],
-      historyHeader: const ['Time', 'Change', 'Product', 'Amount', 'Unit', 'Drawer', 'Reason'],
+      contentsHeader: const ['Product', 'Category', 'Amount', 'Unit', 'Stored on', 'Where', 'Note'],
+      historyHeader: const ['Time', 'Change', 'Product', 'Amount', 'Unit', 'Where', 'Reason'],
       catalogNames: const _EnglishCatalogNames(),
       layoutDefaultNames: const _EnglishLayoutDefaultNames(),
       movementKindName: (kind) => kind.name,
@@ -312,7 +306,7 @@ void main() {
     final csvExport = container.read(csvExportUseCaseProvider);
 
     final contentsLines = (await csvExport.buildCsv(
-      CsvExportKind.freezerContents,
+      CsvExportKind.stockContents,
       texts,
     )).split('\r\n');
     final historyLines = (await csvExport.buildCsv(CsvExportKind.history, texts)).split('\r\n');
@@ -331,9 +325,9 @@ void main() {
       _ContainerInitializationContext(container),
     );
     await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
     await const DataPortabilityFeatureModule().initializeModule(
@@ -353,7 +347,7 @@ void main() {
               amountInBaseUnits: 1,
               unit: catalog.activeProducts.first.canonicalUnit,
             ),
-            frozenOn: CalendarDate(2026, 10, 1),
+            storedOn: CalendarDate(2026, 10, 1),
           ),
         );
     final firstReminder = notificationServices.scheduledRequests[7200];

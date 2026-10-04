@@ -104,7 +104,7 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
 
   @override
   String get reminderCardMessage =>
-      'Deine Gefrierschrank-Daten sind nur auf diesem Telefon. Speichere eine Sicherung, damit ein verlorenes oder kaputtes Telefon sie nicht mitnimmt.';
+      'Deine Foodie-Daten sind nur auf diesem Telefon. Speichere eine Sicherung, damit ein verlorenes oder kaputtes Telefon sie nicht mitnimmt.';
 
   @override
   String get csvColumnProduct => 'Produkt';
@@ -119,10 +119,10 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
   String get csvColumnUnit => 'Einheit';
 
   @override
-  String get csvColumnFrozenOn => 'Eingefroren am';
+  String get csvColumnStoredOn => 'Eingelagert am';
 
   @override
-  String get csvColumnDrawer => 'Schublade';
+  String get csvColumnDrawer => 'Fach';
 
   @override
   String get csvColumnNote => 'Notiz';
@@ -137,7 +137,7 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
   String get csvColumnReason => 'Grund';
 
   @override
-  String get movementAdded => 'Eingefroren';
+  String get movementAdded => 'Eingelagert';
 
   @override
   String get movementConsumed => 'Entnommen';
@@ -158,6 +158,12 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
   String get reasonFreezerBurn => 'Gefrierbrand';
 
   @override
+  String get reasonExpired => 'Abgelaufen';
+
+  @override
+  String get reasonSpoiled => 'Verdorben';
+
+  @override
   String get reasonUnwanted => 'Wollte keiner';
 
   @override
@@ -168,7 +174,7 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
 
   @override
   String get backupNotificationBody =>
-      'Alles in dieser App gibt es nur auf diesem Telefon. Speichere eine Sicherung, damit ein verlorenes Telefon deine Gefrierliste nicht mitnimmt.';
+      'Alles in dieser App gibt es nur auf diesem Telefon. Speichere eine Sicherung, damit ein verlorenes Telefon deine Listen nicht mitnimmt.';
 
   @override
   String get includePicturesLabel => 'Fotos einschließen';

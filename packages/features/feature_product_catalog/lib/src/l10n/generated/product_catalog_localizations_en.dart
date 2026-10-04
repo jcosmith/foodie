@@ -79,18 +79,15 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
   String get packageSizeHelper => 'Pre-fills the amount when you add it.';
 
   @override
-  String get storageMonthsLabel => 'Keep for at most, in months (optional)';
+  String get shelfLifeLabel => 'Keeps for (optional)';
 
   @override
-  String storageMonthsHelper(int months) {
-    String _temp0 = intl.Intl.pluralLogic(
-      months,
-      locale: localeName,
-      other: 'Leave empty to follow the category: about $months months.',
-      one: 'Leave empty to follow the category: about 1 month.',
-    );
-    return '$_temp0';
+  String shelfLifeHelper(String shelfLife) {
+    return 'Leave empty to follow the category: $shelfLife.';
   }
+
+  @override
+  String get shelfLifeHelperNone => 'Leave empty to keep no shelf life, as the category does.';
 
   @override
   String get storageRecommendationNote => 'Storage times are guidance, not a safety guarantee.';
@@ -112,13 +109,13 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
   String get iconImageUnreadable => 'This file is no picture the app can read.';
 
   @override
-  String get defaultCompartmentLabel => 'Default drawer';
+  String get defaultCompartmentLabel => 'Default compartment';
 
   @override
-  String get defaultCompartmentNone => 'The drawer used last time';
+  String get defaultCompartmentNone => 'The compartment used last time';
 
   @override
-  String get defaultCompartmentHelper => 'Chosen for you when you add this product to the freezer.';
+  String get defaultCompartmentHelper => 'Chosen for you when you add this product.';
 
   @override
   String get archiveProductAction => 'Hide product';
@@ -130,7 +127,7 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
 
   @override
   String get archiveProductDialogText =>
-      'It disappears from the product list. Items already in the freezer and your statistics keep it.';
+      'It disappears from the product list. Items already at home and your statistics keep it.';
 
   @override
   String get nameMissing => 'Please enter a name.';
@@ -146,97 +143,4 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
 
   @override
   String get genericFailure => 'That did not work. Please try again.';
-
-  @override
-  String get categoryVegetables => 'Vegetables';
-
-  @override
-  String get categoryFruit => 'Fruit';
-
-  @override
-  String get categoryMeatAndFish => 'Meat & fish';
-
-  @override
-  String get categoryMeals => 'Meals';
-
-  @override
-  String get categoryBakery => 'Bakery';
-
-  @override
-  String get categoryDesserts => 'Desserts';
-
-  @override
-  String get categoryOther => 'Other';
-
-  @override
-  String get productLeafSpinach => 'Leaf spinach';
-
-  @override
-  String get productGardenPeas => 'Garden peas';
-
-  @override
-  String get productBroccoli => 'Broccoli';
-
-  @override
-  String get productMixedVegetables => 'Mixed vegetables';
-
-  @override
-  String get productHerbs => 'Herbs';
-
-  @override
-  String get productFrenchFries => 'French fries';
-
-  @override
-  String get productMixedBerries => 'Mixed berries';
-
-  @override
-  String get productStrawberries => 'Strawberries';
-
-  @override
-  String get productMango => 'Mango';
-
-  @override
-  String get productChickenBreast => 'Chicken breast';
-
-  @override
-  String get productMincedMeat => 'Minced meat';
-
-  @override
-  String get productSalmonFillet => 'Salmon fillet';
-
-  @override
-  String get productFishFingers => 'Fish fingers';
-
-  @override
-  String get productPrawns => 'Prawns';
-
-  @override
-  String get productBologneseHomemade => 'Bolognese (homemade)';
-
-  @override
-  String get productSoupHomemade => 'Soup (homemade)';
-
-  @override
-  String get productLasagne => 'Lasagne';
-
-  @override
-  String get productPizzaMargherita => 'Pizza Margherita';
-
-  @override
-  String get productWholegrainBread => 'Wholegrain bread';
-
-  @override
-  String get productBreadRolls => 'Bread rolls';
-
-  @override
-  String get productCroissants => 'Croissants';
-
-  @override
-  String get productVanillaIceCream => 'Vanilla ice cream';
-
-  @override
-  String get productCake => 'Cake';
-
-  @override
-  String get productButter => 'Butter';
 }

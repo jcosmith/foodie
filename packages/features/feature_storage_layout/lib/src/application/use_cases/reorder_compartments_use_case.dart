@@ -2,12 +2,12 @@ import 'package:core_events/core_events.dart';
 import 'package:core_foundation/core_foundation.dart';
 
 import '../../domain/compartment.dart';
-import '../../domain/freezer.dart';
 import '../../domain/storage_layout_events.dart';
 import '../../domain/storage_layout_failure.dart';
 import '../../domain/storage_layout_repository.dart';
+import '../../domain/storage_place.dart';
 
-/// Stores a new order of a freezer's active compartments.
+/// Stores a new order of a storage place's active compartments.
 final class ReorderCompartmentsUseCase {
   const ReorderCompartmentsUseCase({
     required StorageLayoutRepository repository,
@@ -22,10 +22,12 @@ final class ReorderCompartmentsUseCase {
   final Clock _clock;
 
   Future<Result<Unit, StorageLayoutFailure>> execute({
-    required FreezerIdentifier freezerIdentifier,
+    required StoragePlaceIdentifier storagePlaceIdentifier,
     required List<CompartmentIdentifier> orderedCompartmentIdentifiers,
   }) async {
-    final compartments = await _repository.readActiveCompartmentsOfFreezer(freezerIdentifier);
+    final compartments = await _repository.readActiveCompartmentsOfStoragePlace(
+      storagePlaceIdentifier,
+    );
     final activeIdentifiers = {for (final compartment in compartments) compartment.identifier};
     if (orderedCompartmentIdentifiers.length != activeIdentifiers.length ||
         !activeIdentifiers.containsAll(orderedCompartmentIdentifiers)) {
@@ -36,7 +38,10 @@ final class ReorderCompartmentsUseCase {
         compartmentIdentifier: index,
     });
     await _domainEventBus.publish(
-      CompartmentReordered(freezerIdentifier: freezerIdentifier, occurredAt: _clock.nowUtc()),
+      CompartmentReordered(
+        storagePlaceIdentifier: storagePlaceIdentifier,
+        occurredAt: _clock.nowUtc(),
+      ),
     );
     return const Result.success(unit);
   }

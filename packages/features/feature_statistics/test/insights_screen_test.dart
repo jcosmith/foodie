@@ -1,5 +1,6 @@
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_design_system/testing.dart';
+import 'package:core_foundation/core_foundation.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
@@ -9,6 +10,7 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'support/statistics_test_harness.dart';
 
@@ -30,6 +32,31 @@ final class _ChartContributingModule extends FeatureModuleBase {
       ),
     ),
   ];
+}
+
+String _pantryLabel(BuildContext context) => 'Pantry';
+
+/// A second storage domain, so the filter sheet offers a choice.
+final class _PantryModule extends FeatureModuleBase {
+  const _PantryModule();
+
+  @override
+  String get moduleIdentifier => 'pantry';
+
+  @override
+  ModuleAvailability get availability =>
+      const ModuleAvailability.optional(isEnabledByDefault: true);
+
+  @override
+  StorageDomainContribution get storageDomain => const StorageDomainContribution(
+    identifier: StorageDomainIdentifier.pantry,
+    sortOrder: 30,
+    iconEmoji: '🥫',
+    labelBuilder: _pantryLabel,
+    descriptionBuilder: _pantryLabel,
+    storedOnLabelBuilder: _pantryLabel,
+    countsDiscardsAsWaste: true,
+  );
 }
 
 Future<void> _pumpInsights(
@@ -66,7 +93,7 @@ Future<void> _settle(WidgetTester tester) async {
 
 /// Peas and chicken by weight, pizza by the piece, over the last 40 days.
 Future<void> _recordHistory(StatisticsTestHarness harness) async {
-  await harness.seedCatalogAndFreezer();
+  await harness.seedCatalogAndStoragePlace();
   final peas = await harness.productWithKey('gardenPeas');
   final chicken = await harness.productWithKey('chickenBreast');
   final pizza = await harness.productWithKey('pizzaMargherita');
@@ -88,7 +115,7 @@ void main() {
   tearDown(() => harness.dispose());
 
   testWidgets('explains that insights need some history first', (tester) async {
-    await tester.runAsync(harness.seedCatalogAndFreezer);
+    await tester.runAsync(harness.seedCatalogAndStoragePlace);
     await _pumpInsights(tester, harness);
 
     expect(find.text('No activity yet'), findsOneWidget);
@@ -100,8 +127,8 @@ void main() {
     await _pumpInsights(tester, harness);
 
     expect(find.text('Jul 5, 2026 – Oct 2, 2026'), findsOneWidget);
-    expect(find.text('Filters · 0'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 0.5 kg, no comparison'), findsOneWidget);
+    expect(find.text('Filters'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 0.5 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Added: 1.8 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Thrown away: 44.4%, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Avg. days stored: 27 days, no comparison'), findsOneWidget);
@@ -110,7 +137,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(TrendLineChart), findsOneWidget);
-    expect(find.text('Eaten by category'), findsOneWidget);
+    expect(find.text('Used by category'), findsOneWidget);
     expect(find.text('🫛 Garden peas'), findsOneWidget);
     expect(find.text('Freezer burn'), findsOneWidget);
     expect(find.text('More insights'), findsOneWidget);
@@ -129,27 +156,27 @@ void main() {
 
     expect(find.text('Filters · 1'), findsOneWidget);
     expect(find.widgetWithText(InputChip, 'Meat & fish'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 0 kg, no comparison'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 0 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Thrown away: 100%, no comparison'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(ActionChip, 'Reset'));
     await _settle(tester);
-    expect(find.text('Filters · 0'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 0.5 kg, no comparison'), findsOneWidget);
+    expect(find.text('Filters'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 0.5 kg, no comparison'), findsOneWidget);
   });
 
   testWidgets('the filter sheet switches the measure and says what it leaves out', (tester) async {
     await tester.runAsync(() => _recordHistory(harness));
     await _pumpInsights(tester, harness);
 
-    await tester.tap(find.text('Filters · 0'));
+    await tester.tap(find.text('Filters'));
     await _settle(tester);
     expect(find.text('1 product uses another unit and is left out.'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(ChoiceChip, 'Count'));
     await _settle(tester);
     expect(find.text('Counts every item, whatever its unit.'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 3×, no comparison'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 3×, no comparison'), findsOneWidget);
     expect(harness.read(statisticsFilterProvider).measure, StatisticsMeasure.count);
 
     await tester.tap(find.widgetWithText(ChoiceChip, 'All time'));
@@ -162,12 +189,33 @@ void main() {
     await _pumpInsights(tester, harness, locale: const Locale('de'));
 
     expect(find.text('Auswertung'), findsOneWidget);
-    expect(find.text('Filter · 0'), findsOneWidget);
-    expect(find.bySemanticsLabel('Gegessen: 0,5 kg, kein Vergleich'), findsOneWidget);
+    expect(find.text('Filter'), findsOneWidget);
+    expect(find.bySemanticsLabel('Verbraucht: 0,5 kg, kein Vergleich'), findsOneWidget);
   });
 
   test('the module is wired into the inventory it reads', () {
-    expect(const StatisticsFeatureModule().navigationDestination.initialLocation, '/statistics');
+    final entry = const StatisticsFeatureModule().moreEntries.single;
+    expect(entry.location, '/statistics');
+    expect(entry.routes.whereType<GoRoute>().single.path, '/statistics');
     expect(DiscardReason.values, hasLength(StatisticsDiscardReason.values.length - 1));
+  });
+
+  testWidgets('the filter sheet narrows the charts to one storage domain', (tester) async {
+    final twoDomains = StatisticsTestHarness(registeredModules: [const _PantryModule()]);
+    addTearDown(twoDomains.dispose);
+    await tester.runAsync(() => _recordHistory(twoDomains));
+    await _pumpInsights(tester, twoDomains);
+
+    await tester.tap(find.text('Filters'));
+    await _settle(tester);
+    expect(find.text('Storage'), findsOneWidget);
+    await tester.ensureVisible(find.widgetWithText(FilterChip, '🥫 Pantry'));
+    await tester.tap(find.widgetWithText(FilterChip, '🥫 Pantry'));
+    await _settle(tester);
+
+    expect(twoDomains.read(statisticsFilterProvider).domainIdentifiers, {
+      StorageDomainIdentifier.pantry,
+    });
+    expect(twoDomains.read(statisticsAnalysisProvider).value?.hasAnyActivity, isFalse);
   });
 }

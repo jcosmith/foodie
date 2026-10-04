@@ -10,8 +10,9 @@ import '../domain/shopping_list_entry.dart';
 import '../l10n/generated/restock_localizations.dart';
 import 'restock_texts.dart';
 
-/// The "List" tab (UI example phone 6): running-low products and what the
-/// user added; ticked items go into the freezer in one step.
+/// The shopping list, a segment of the Lists tab (UI example phone 6):
+/// running-low products and what the user added; ticked items are put away
+/// in one step.
 class ShoppingListScreen extends ConsumerWidget {
   const ShoppingListScreen({super.key});
 
@@ -22,16 +23,8 @@ class ShoppingListScreen extends ConsumerWidget {
     final catalog = ref.watch(productCatalogProvider).value;
     final tickedCount = entries?.where((entry) => entry.isChecked).length ?? 0;
 
+    // The Lists tab shows the title above it.
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(localizations.shoppingListTitle),
-            Text(localizations.shoppingListSubtitle, style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addProduct(context, ref),
         icon: const Icon(Icons.add),
@@ -49,14 +42,14 @@ class ShoppingListScreen extends ConsumerWidget {
           children: [
             for (final entry in entries) _ShoppingListEntryTile(entry: entry, catalog: catalog),
             Padding(
-              padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+              padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
               child: FilledButton.icon(
-                onPressed: tickedCount == 0 ? null : () => _putTickedItemsInFreezer(context, ref),
+                onPressed: tickedCount == 0 ? null : () => _putTickedItemsAway(context, ref),
                 icon: const Icon(Icons.kitchen_outlined),
                 label: Text(
                   tickedCount == 0
                       ? localizations.nothingTicked
-                      : localizations.putTickedInFreezer(tickedCount),
+                      : localizations.putTickedInStoragePlace(tickedCount),
                 ),
               ),
             ),
@@ -72,12 +65,12 @@ class ShoppingListScreen extends ConsumerWidget {
     await ref.read(addProductToShoppingListUseCaseProvider).execute(productIdentifier);
   }
 
-  Future<void> _putTickedItemsInFreezer(BuildContext context, WidgetRef ref) async {
+  Future<void> _putTickedItemsAway(BuildContext context, WidgetRef ref) async {
     final localizations = RestockLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final result = await ref.read(putTickedItemsInFreezerUseCaseProvider).execute();
+    final result = await ref.read(putTickedItemsAwayUseCaseProvider).execute();
     final message = switch (result) {
-      SuccessfulResult(value: final addedBatchCount) => localizations.itemsPutInFreezer(
+      SuccessfulResult(value: final addedBatchCount) => localizations.itemsPutInStoragePlace(
         addedBatchCount,
       ),
       FailedResult(:final failure) => localizations.describeFailure(failure),
@@ -135,7 +128,7 @@ class _ShoppingListEntryTile extends ConsumerWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: AlignmentDirectional.centerEnd,
-        padding: const EdgeInsetsDirectional.only(end: FreezerSpacing.screenGutter),
+        padding: const EdgeInsetsDirectional.only(end: FoodieSpacing.screenGutter),
         color: Theme.of(context).colorScheme.errorContainer,
         child: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onErrorContainer),
       ),

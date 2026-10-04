@@ -1,3 +1,4 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_product_catalog/domain.dart';
 import 'package:feature_storage_layout/domain.dart';
 
@@ -37,6 +38,14 @@ abstract interface class InventoryRepository {
     StockBatchIdentifier stockBatchIdentifier,
     CompartmentIdentifier compartmentIdentifier,
   );
+
+  /// Sets the stored-on, best-before and opened-on dates; `null` clears one.
+  Future<void> updateDates(
+    StockBatchIdentifier stockBatchIdentifier, {
+    required CalendarDate storedOn,
+    required CalendarDate? bestBeforeOn,
+    required CalendarDate? openedOn,
+  });
 
   Future<void> appendMovement(InventoryMovement movement);
 

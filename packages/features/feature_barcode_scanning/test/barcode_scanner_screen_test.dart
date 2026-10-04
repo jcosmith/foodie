@@ -22,7 +22,7 @@ void main() {
   tearDown(() => harness.dispose());
 
   Future<void> prepare(WidgetTester tester) => tester.runAsync(() async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     spinach = await harness.productWithKey('leafSpinach');
   });
 
@@ -47,7 +47,7 @@ void main() {
         container: harness.container,
         child: MaterialApp.router(
           routerConfig: router,
-          theme: FreezerTheme.light(),
+          theme: FoodieTheme.light(),
           supportedLocales: SupportedLocales.all,
           localizationsDelegates: [
             ...GlobalMaterialLocalizations.delegates,
@@ -88,14 +88,14 @@ void main() {
     // Back to scanning: the next code shows up.
     harness.decoder.showCode('4001234567891');
     await _settle(tester);
-    expect(find.text('1 kg in the freezer'), findsOneWidget);
+    expect(find.text('1 kg at home'), findsOneWidget);
   });
 
   testWidgets('scan to remove suggests the oldest bag and opens the take sheet', (tester) async {
     await prepare(tester);
     await tester.runAsync(() async {
-      await harness.addBatch(spinach, amountInBaseUnits: 300, frozenOn: CalendarDate(2026, 9, 20));
-      await harness.addBatch(spinach, amountInBaseUnits: 700, frozenOn: CalendarDate(2026, 6, 1));
+      await harness.addBatch(spinach, amountInBaseUnits: 300, storedOn: CalendarDate(2026, 9, 20));
+      await harness.addBatch(spinach, amountInBaseUnits: 700, storedOn: CalendarDate(2026, 6, 1));
       final resolution = await harness
           .read(resolveBarcodeUseCaseProvider)
           .execute(const ScannedBarcode(value: '4001234567891', symbology: BarcodeSymbology.ean13));
@@ -108,7 +108,7 @@ void main() {
     harness.decoder.showCode('4001234567891');
     await _settle(tester);
 
-    expect(find.text('2 bags in the freezer. Take from the oldest?'), findsOneWidget);
+    expect(find.text('2 packs at home. Take from the oldest?'), findsOneWidget);
     expect(find.text('Or another bag'), findsOneWidget);
     await tester.tap(find.text('Choose amount'));
     await _settle(tester);
@@ -136,7 +136,7 @@ void main() {
     await tester.tap(find.text('Change details'));
     await _settle(tester);
 
-    expect(find.text('Add to freezer'), findsOneWidget);
+    expect(find.text('Add'), findsOneWidget);
     expect(find.widgetWithText(TextField, '420'), findsOneWidget);
   });
 
@@ -197,10 +197,10 @@ void main() {
     await tester.tap(find.byTooltip('Remove from the list').first);
     await _settle(tester);
 
-    await tester.tap(find.text('Put 3 items in the freezer'));
+    await tester.tap(find.text('Put 3 items away'));
     await _settle(tester);
 
-    expect(find.text('3 items put in the freezer'), findsOneWidget);
+    expect(find.text('3 items put away'), findsOneWidget);
     expect(find.text('Scan your groceries one after another'), findsOneWidget);
     final batches = (await tester.runAsync(harness.activeBatches))!;
     expect(
@@ -240,7 +240,7 @@ void main() {
     await _settle(tester);
     await tester.tap(find.text('Leaf spinach').last);
     await _settle(tester);
-    expect(find.text('None of this product is in the freezer.'), findsOneWidget);
+    expect(find.text('None of this product is at home.'), findsOneWidget);
 
     await tester.tap(find.text('Add'));
     await _settle(tester);

@@ -95,16 +95,10 @@ abstract class InventoryLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('de'), Locale('en')];
 
-  /// No description provided for @navigationLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Freezer'**
-  String get navigationLabel;
-
   /// No description provided for @overviewTitle.
   ///
   /// In en, this message translates to:
-  /// **'My freezer'**
+  /// **'At home'**
   String get overviewTitle;
 
   /// No description provided for @itemCount.
@@ -116,7 +110,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @drawerCount.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 drawer} other{{count} drawers}}'**
+  /// **'{count, plural, =1{1 compartment} other{{count} compartments}}'**
   String drawerCount(int count);
 
   /// No description provided for @itemsInDrawers.
@@ -134,13 +128,13 @@ abstract class InventoryLocalizations {
   /// No description provided for @sortByDrawer.
   ///
   /// In en, this message translates to:
-  /// **'By drawer'**
+  /// **'By place'**
   String get sortByDrawer;
 
   /// No description provided for @sortByEatBefore.
   ///
   /// In en, this message translates to:
-  /// **'Eat first'**
+  /// **'Use first'**
   String get sortByEatBefore;
 
   /// No description provided for @expandAllDrawers.
@@ -158,8 +152,104 @@ abstract class InventoryLocalizations {
   /// No description provided for @frozenAgo.
   ///
   /// In en, this message translates to:
-  /// **'frozen {age}'**
+  /// **'added {age}'**
   String frozenAgo(String age);
+
+  /// No description provided for @openedAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'opened {age}'**
+  String openedAgo(String age);
+
+  /// No description provided for @bestBeforeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually keeps {shelfLife}'**
+  String bestBeforeHint(String shelfLife);
+
+  /// No description provided for @bestBeforeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get bestBeforeToday;
+
+  /// No description provided for @bestBeforePlusOneDay.
+  ///
+  /// In en, this message translates to:
+  /// **'+1 day'**
+  String get bestBeforePlusOneDay;
+
+  /// No description provided for @bestBeforePlusThreeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'+3 days'**
+  String get bestBeforePlusThreeDays;
+
+  /// No description provided for @bestBeforePlusOneWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'+1 week'**
+  String get bestBeforePlusOneWeek;
+
+  /// No description provided for @bestBeforeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get bestBeforeNone;
+
+  /// No description provided for @bestBeforePickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get bestBeforePickDate;
+
+  /// No description provided for @noBestBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'No date'**
+  String get noBestBefore;
+
+  /// No description provided for @markOpenedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as opened'**
+  String get markOpenedAction;
+
+  /// No description provided for @markNotOpenedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as not opened'**
+  String get markNotOpenedAction;
+
+  /// No description provided for @markedOpenedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'{product} marked as opened'**
+  String markedOpenedSnackbar(String product);
+
+  /// No description provided for @useToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Use today'**
+  String get useToday;
+
+  /// No description provided for @useByTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Use by tomorrow'**
+  String get useByTomorrow;
+
+  /// No description provided for @useByWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'Use by {weekday}'**
+  String useByWeekday(String weekday);
+
+  /// No description provided for @pastBestBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Past best before'**
+  String get pastBestBefore;
 
   /// No description provided for @ofInitial.
   ///
@@ -173,34 +263,34 @@ abstract class InventoryLocalizations {
   /// **'{percent}% left'**
   String remainingShare(int percent);
 
-  /// No description provided for @noFreezerTitle.
+  /// No description provided for @noStoragePlaceTitle.
   ///
   /// In en, this message translates to:
-  /// **'Set up your freezer first'**
-  String get noFreezerTitle;
+  /// **'Set up a storage place first'**
+  String get noStoragePlaceTitle;
 
-  /// No description provided for @noFreezerMessage.
+  /// No description provided for @noStoragePlaceMessage.
   ///
   /// In en, this message translates to:
-  /// **'Tell the app which drawers your freezer has, then add what is inside.'**
-  String get noFreezerMessage;
+  /// **'Tell the app where you keep things and how it is divided, then add what is inside.'**
+  String get noStoragePlaceMessage;
 
-  /// No description provided for @setUpFreezerButton.
+  /// No description provided for @setUpStoragePlaceButton.
   ///
   /// In en, this message translates to:
-  /// **'Set up freezer'**
-  String get setUpFreezerButton;
+  /// **'Add storage place'**
+  String get setUpStoragePlaceButton;
 
   /// No description provided for @emptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your freezer is empty'**
+  /// **'Nothing in here yet'**
   String get emptyTitle;
 
   /// No description provided for @emptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Add what you freeze, and the app keeps track of how long it has been in there.'**
+  /// **'Add what you put away, and the app keeps track of how long it has been there.'**
   String get emptyMessage;
 
   /// No description provided for @noSearchResults.
@@ -218,7 +308,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @quickActionAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add to freezer'**
+  /// **'Add item'**
   String get quickActionAdd;
 
   /// No description provided for @takeTitle.
@@ -236,7 +326,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @leftAfter.
   ///
   /// In en, this message translates to:
-  /// **'{amount} stays in the freezer'**
+  /// **'{amount} stays'**
   String leftAfter(String amount);
 
   /// No description provided for @allTaken.
@@ -311,6 +401,18 @@ abstract class InventoryLocalizations {
   /// **'Freezer burn'**
   String get reasonFreezerBurn;
 
+  /// No description provided for @reasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Past its date'**
+  String get reasonExpired;
+
+  /// No description provided for @reasonSpoiled.
+  ///
+  /// In en, this message translates to:
+  /// **'Gone off'**
+  String get reasonSpoiled;
+
   /// No description provided for @reasonUnwanted.
   ///
   /// In en, this message translates to:
@@ -338,7 +440,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @moveTitle.
   ///
   /// In en, this message translates to:
-  /// **'Move to another drawer'**
+  /// **'Move to another compartment'**
   String get moveTitle;
 
   /// No description provided for @moveDestinationLabel.
@@ -368,7 +470,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @noOtherCompartment.
   ///
   /// In en, this message translates to:
-  /// **'Add another drawer in the freezer layout to move things.'**
+  /// **'Add another compartment to move things.'**
   String get noOtherCompartment;
 
   /// No description provided for @correctTitle.
@@ -392,7 +494,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @addTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add to freezer'**
+  /// **'Add'**
   String get addTitle;
 
   /// No description provided for @productLabel.
@@ -419,16 +521,16 @@ abstract class InventoryLocalizations {
   /// **'Package: {amount}'**
   String packageHint(String amount);
 
-  /// No description provided for @frozenOnLabel.
+  /// No description provided for @storedOnLabel.
   ///
   /// In en, this message translates to:
-  /// **'Frozen on'**
-  String get frozenOnLabel;
+  /// **'Stored on'**
+  String get storedOnLabel;
 
   /// No description provided for @compartmentLabel.
   ///
   /// In en, this message translates to:
-  /// **'Drawer'**
+  /// **'Where'**
   String get compartmentLabel;
 
   /// No description provided for @noteLabel.
@@ -470,14 +572,14 @@ abstract class InventoryLocalizations {
   /// No description provided for @compartmentMissing.
   ///
   /// In en, this message translates to:
-  /// **'Choose a drawer.'**
+  /// **'Choose where it goes.'**
   String get compartmentMissing;
 
-  /// No description provided for @frozenOnInFuture.
+  /// No description provided for @storedOnInFuture.
   ///
   /// In en, this message translates to:
-  /// **'The freezing date cannot be in the future.'**
-  String get frozenOnInFuture;
+  /// **'The date cannot be in the future.'**
+  String get storedOnInFuture;
 
   /// No description provided for @genericFailure.
   ///

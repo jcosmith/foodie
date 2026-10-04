@@ -14,8 +14,8 @@ import 'presentation/runs_out_in_chart_card.dart';
 import 'presentation/shopping_list_screen.dart';
 
 /// Restock (build order phase 4): minimum quantities per product, low-stock
-/// detection, the shopping list tab and putting bought items into the
-/// freezer. The inventory never knows about it; it reacts to stock events.
+/// detection, the shopping list in the Lists tab and putting bought items
+/// away. The inventory never knows about it; it reacts to stock events.
 final class RestockFeatureModule extends FeatureModuleBase {
   const RestockFeatureModule();
 
@@ -40,19 +40,15 @@ final class RestockFeatureModule extends FeatureModuleBase {
   ];
 
   @override
-  NavigationDestinationContribution get navigationDestination => NavigationDestinationContribution(
-    sortOrder: 20,
-    icon: Icons.checklist_outlined,
-    selectedIcon: Icons.checklist,
-    labelBuilder: (context) => RestockLocalizations.of(context).navigationLabel,
-    initialLocation: RestockRoutes.shoppingList,
-    routes: [
-      GoRoute(
-        path: RestockRoutes.shoppingList,
-        builder: (context, state) => const ShoppingListScreen(),
-      ),
-    ],
-  );
+  List<ListsSegmentContribution> get listsSegments => [
+    ListsSegmentContribution(
+      identifier: RestockRoutes.shoppingListSegment,
+      sortOrder: 10,
+      labelBuilder: (context) => RestockLocalizations.of(context).shoppingListTitle,
+      subtitleBuilder: (context) => RestockLocalizations.of(context).shoppingListSubtitle,
+      builder: (context) => const ShoppingListScreen(),
+    ),
+  ];
 
   @override
   List<RouteBase> buildRoutes() => [

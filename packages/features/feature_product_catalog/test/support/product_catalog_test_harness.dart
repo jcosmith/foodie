@@ -5,6 +5,7 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_product_catalog/src/application/product_catalog_providers.dart';
 import 'package:feature_product_catalog/src/application/product_icon_image_file_picker.dart';
@@ -16,8 +17,11 @@ import 'package:flutter_riverpod/misc.dart';
 /// A provider container on an in-memory database with the module wired in.
 final class ProductCatalogTestHarness {
   /// [iconImageFilePicker] stands in for the system's open dialog.
-  ProductCatalogTestHarness({ProductIconImageFilePicker? iconImageFilePicker})
-    : database = createInMemoryApplicationDatabase(clock: clock) {
+  /// The seeded catalog comes from [registeredModules].
+  ProductCatalogTestHarness({
+    ProductIconImageFilePicker? iconImageFilePicker,
+    List<FeatureModule> registeredModules = const [FreezerFeatureModule()],
+  }) : database = createInMemoryApplicationDatabase(clock: clock) {
     final eventBus = InProcessDomainEventBus(logger: RecordingLogger());
     eventBus.subscribe<DomainEvent>(publishedEvents.add);
     final dependencies = ModuleDependencies(
@@ -29,6 +33,7 @@ final class ProductCatalogTestHarness {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
+        registeredFeatureModulesProvider.overrideWithValue(registeredModules),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(eventBus),
@@ -58,9 +63,9 @@ final class ProductCatalogTestHarness {
       container.read(productCatalogQueryServiceProvider).readCatalog();
 
   /// Creates a freezer with three drawers, for products' default drawers.
-  Future<List<Compartment>> setUpFreezer() async {
-    await read(createFreezerFromTemplateUseCaseProvider).execute(
-      template: FreezerTemplate.uprightWithThreeDrawers,
+  Future<List<Compartment>> setUpStoragePlace() async {
+    await read(createStoragePlaceFromTemplateUseCaseProvider).execute(
+      template: FreezerStorageTemplates.uprightWithThreeDrawers,
       enteredName: 'Freezer',
       defaultNames: const _EnglishLayoutDefaultNames(),
     );
@@ -78,7 +83,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';

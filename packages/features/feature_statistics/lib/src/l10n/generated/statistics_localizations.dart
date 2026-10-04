@@ -95,11 +95,17 @@ abstract class StatisticsLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('de'), Locale('en')];
 
-  /// No description provided for @navigationLabel.
+  /// No description provided for @moreEntryTitle.
   ///
   /// In en, this message translates to:
-  /// **'Insights'**
-  String get navigationLabel;
+  /// **'Statistics'**
+  String get moreEntryTitle;
+
+  /// No description provided for @moreEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits, waste and trends, with one shared filter'**
+  String get moreEntrySubtitle;
 
   /// No description provided for @insightsTitle.
   ///
@@ -152,7 +158,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @filtersButton.
   ///
   /// In en, this message translates to:
-  /// **'Filters · {count}'**
+  /// **'{count, plural, =0{Filters} other{Filters · {count}}}'**
   String filtersButton(int count);
 
   /// No description provided for @resetFilters.
@@ -164,7 +170,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @kpiEaten.
   ///
   /// In en, this message translates to:
-  /// **'Eaten'**
+  /// **'Used'**
   String get kpiEaten;
 
   /// No description provided for @kpiAdded.
@@ -212,7 +218,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @trendTitle.
   ///
   /// In en, this message translates to:
-  /// **'Eaten vs added'**
+  /// **'Used vs added'**
   String get trendTitle;
 
   /// No description provided for @trendSubtitle.
@@ -224,13 +230,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @trendSubtitleWithComparison.
   ///
   /// In en, this message translates to:
-  /// **'Dashed: eaten in the comparison period · drag to zoom'**
+  /// **'Dashed: used in the comparison period · drag to zoom'**
   String get trendSubtitleWithComparison;
 
   /// No description provided for @seriesEaten.
   ///
   /// In en, this message translates to:
-  /// **'Eaten'**
+  /// **'Used'**
   String get seriesEaten;
 
   /// No description provided for @seriesAdded.
@@ -302,13 +308,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @noHistoryMessage.
   ///
   /// In en, this message translates to:
-  /// **'Insights appear once you put items in the freezer and take them out.'**
+  /// **'Insights appear once you put items away and take them out.'**
   String get noHistoryMessage;
 
   /// No description provided for @activityConsumed.
   ///
   /// In en, this message translates to:
-  /// **'Eaten'**
+  /// **'Used'**
   String get activityConsumed;
 
   /// No description provided for @activityAdded.
@@ -470,8 +476,14 @@ abstract class StatisticsLocalizations {
   /// No description provided for @filterDrawers.
   ///
   /// In en, this message translates to:
-  /// **'Drawers'**
+  /// **'Compartments'**
   String get filterDrawers;
+
+  /// No description provided for @filterStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get filterStorage;
 
   /// No description provided for @filterProducts.
   ///
@@ -508,6 +520,18 @@ abstract class StatisticsLocalizations {
   /// In en, this message translates to:
   /// **'Freezer burn'**
   String get reasonFreezerBurn;
+
+  /// No description provided for @reasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Past its date'**
+  String get reasonExpired;
+
+  /// No description provided for @reasonSpoiled.
+  ///
+  /// In en, this message translates to:
+  /// **'Gone off'**
+  String get reasonSpoiled;
 
   /// No description provided for @reasonUnwanted.
   ///
@@ -554,13 +578,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @detailsButtonSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer days, weekdays, storage time and the freezer map'**
+  /// **'Busy days, weekdays, storage time and the storage map'**
   String get detailsButtonSubtitle;
 
   /// No description provided for @calendarTitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer days'**
+  /// **'Busy days'**
   String get calendarTitle;
 
   /// No description provided for @calendarSubtitle.
@@ -578,7 +602,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @activityItemsConsumed.
   ///
   /// In en, this message translates to:
-  /// **'items eaten'**
+  /// **'items used'**
   String get activityItemsConsumed;
 
   /// No description provided for @activityItemsAdded.
@@ -608,13 +632,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @durationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Time in freezer before eaten'**
+  /// **'Time stored before use'**
   String get durationTitle;
 
   /// No description provided for @durationSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Number of items eaten, by storage time'**
+  /// **'Number of items used, by storage time'**
   String get durationSubtitle;
 
   /// No description provided for @durationUnderOneMonth.
@@ -653,23 +677,59 @@ abstract class StatisticsLocalizations {
   /// **'> 12 mo'**
   String get durationOverTwelveMonths;
 
+  /// No description provided for @durationUnderTwoDays.
+  ///
+  /// In en, this message translates to:
+  /// **'< 2 d'**
+  String get durationUnderTwoDays;
+
+  /// No description provided for @durationTwoToThreeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'2–3 d'**
+  String get durationTwoToThreeDays;
+
+  /// No description provided for @durationFourToSevenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'4–7 d'**
+  String get durationFourToSevenDays;
+
+  /// No description provided for @durationOneToTwoWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'1–2 wk'**
+  String get durationOneToTwoWeeks;
+
+  /// No description provided for @durationTwoToFourWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'2–4 wk'**
+  String get durationTwoToFourWeeks;
+
+  /// No description provided for @durationOverOneMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'> 1 mo'**
+  String get durationOverOneMonth;
+
   /// No description provided for @sixMonthMarker.
   ///
   /// In en, this message translates to:
   /// **'6 mo'**
   String get sixMonthMarker;
 
-  /// No description provided for @freezerMapTitle.
+  /// No description provided for @storageMapTitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer map'**
-  String get freezerMapTitle;
+  /// **'Storage map'**
+  String get storageMapTitle;
 
-  /// No description provided for @freezerMapSubtitle.
+  /// No description provided for @storageMapSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Current contents by drawer, coloured by age. Tap to filter.'**
-  String get freezerMapSubtitle;
+  /// **'Current contents by compartment, coloured by age. Tap to filter.'**
+  String get storageMapSubtitle;
 
   /// No description provided for @drawerItems.
   ///

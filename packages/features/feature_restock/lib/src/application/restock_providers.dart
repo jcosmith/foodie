@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:core_database/core_database.dart';
 import 'package:core_events/core_events.dart';
 import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -27,9 +30,43 @@ final restockRulesProvider = StreamProvider<List<RestockRule>>(
   (ref) => ref.watch(restockRepositoryProvider).watchRules(),
 );
 
-final shoppingListEntriesProvider = StreamProvider<List<ShoppingListEntry>>(
-  (ref) => ref.watch(restockRepositoryProvider).watchShoppingList(),
-);
+/// The shopping list as shown: entries of products whose domain is switched
+/// off are hidden, not deleted.
+final shoppingListEntriesProvider = StreamProvider<List<ShoppingListEntry>>((ref) async* {
+  final pausedDomains = ref.watch(pausedStorageDomainIdentifiersProvider);
+  final entries = ref.watch(restockRepositoryProvider).watchShoppingList();
+  if (pausedDomains.isEmpty) {
+    yield* entries;
+    return;
+  }
+  final pausedProducts = _productsIn(pausedDomains, await ref.watch(productCatalogProvider.future));
+  yield* entries.map(
+    (entries) => [
+      for (final entry in entries)
+        if (!pausedProducts.contains(entry.productIdentifier)) entry,
+    ],
+  );
+});
+
+Set<ProductIdentifier> _productsIn(Set<StorageDomainIdentifier> domains, ProductCatalog catalog) =>
+    {
+      for (final product in catalog.activeProducts)
+        if (domains.contains(catalog.storageDomainOf(product))) product.identifier,
+    };
+
+/// Rules of products whose domain is switched on; `null` while loading.
+final _activeRulesProvider = Provider<List<RestockRule>?>((ref) {
+  final rules = ref.watch(restockRulesProvider).value;
+  final pausedDomains = ref.watch(pausedStorageDomainIdentifiersProvider);
+  if (rules == null || pausedDomains.isEmpty) return rules;
+  final catalog = ref.watch(productCatalogProvider).value;
+  if (catalog == null) return null;
+  final pausedProducts = _productsIn(pausedDomains, catalog);
+  return [
+    for (final rule in rules)
+      if (!pausedProducts.contains(rule.productIdentifier)) rule,
+  ];
+});
 
 final stockByProductProvider = StreamProvider<Map<ProductIdentifier, Quantity>>(
   (ref) => ref.watch(inventoryQueryServiceProvider).watchActiveBatches().map(sumStockByProduct),
@@ -37,7 +74,7 @@ final stockByProductProvider = StreamProvider<Map<ProductIdentifier, Quantity>>(
 
 /// Products below their minimum, for the "Running low" card; `null` while loading.
 final runningLowProductsProvider = Provider<List<Product>?>((ref) {
-  final rules = ref.watch(restockRulesProvider).value;
+  final rules = ref.watch(_activeRulesProvider);
   final stockByProduct = ref.watch(stockByProductProvider).value;
   final catalog = ref.watch(productCatalogProvider).value;
   if (rules == null || stockByProduct == null || catalog == null) return null;
@@ -65,7 +102,7 @@ final recentMovementsProvider = StreamProvider<List<InventoryMovement>>((ref) {
 /// When each product with a restock rule runs out, soonest first; `null`
 /// while loading.
 final stockRunOutForecastsProvider = Provider<List<StockRunOutForecast>?>((ref) {
-  final rules = ref.watch(restockRulesProvider).value;
+  final rules = ref.watch(_activeRulesProvider);
   final stockByProduct = ref.watch(stockByProductProvider).value;
   final recentMovements = ref.watch(recentMovementsProvider).value;
   final catalog = ref.watch(productCatalogProvider).value;
@@ -91,6 +128,7 @@ final reconcileShoppingListUseCaseProvider = Provider<ReconcileShoppingListUseCa
     repository: ref.watch(restockRepositoryProvider),
     inventory: ref.watch(inventoryQueryServiceProvider),
     productCatalog: ref.watch(productCatalogQueryServiceProvider),
+    readPausedDomains: () => ref.read(pausedStorageDomainIdentifiersProvider),
     transactionRunner: ref.watch(transactionRunnerProvider),
     domainEventBus: ref.watch(domainEventBusProvider),
     clock: ref.watch(clockProvider),
@@ -134,8 +172,8 @@ final removeShoppingListEntryUseCaseProvider = Provider<RemoveShoppingListEntryU
   (ref) => RemoveShoppingListEntryUseCase(repository: ref.watch(restockRepositoryProvider)),
 );
 
-final putTickedItemsInFreezerUseCaseProvider = Provider<PutTickedItemsInFreezerUseCase>(
-  (ref) => PutTickedItemsInFreezerUseCase(
+final putTickedItemsAwayUseCaseProvider = Provider<PutTickedItemsAwayUseCase>(
+  (ref) => PutTickedItemsAwayUseCase(
     repository: ref.watch(restockRepositoryProvider),
     productCatalog: ref.watch(productCatalogQueryServiceProvider),
     inventory: ref.watch(inventoryQueryServiceProvider),
@@ -161,6 +199,13 @@ final shoppingListReconciliationCoordinatorProvider = Provider<RecomputationCoor
     recompute: ref.watch(reconcileShoppingListUseCaseProvider).execute,
     logger: ref.watch(localLoggerProvider),
   );
+  // Switching a domain on again lets its minimums catch up; listening keeps
+  // the switches loaded for the use case.
+  ref.listen(pausedStorageDomainIdentifiersProvider, (previous, next) {
+    if (previous != null && !(previous.length == next.length && previous.containsAll(next))) {
+      unawaited(coordinator.requestRecomputation());
+    }
+  });
   ref.onDispose(coordinator.stop);
   return coordinator;
 });

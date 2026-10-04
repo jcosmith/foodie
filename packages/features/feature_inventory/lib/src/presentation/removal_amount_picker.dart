@@ -81,7 +81,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
     final quantityFormatter = context.quantityFormatter;
-    final colors = context.freezerColors;
+    final colors = context.foodieColors;
     final theme = Theme.of(context);
     final step = RemovalAmountPolicy.stepFor(_remaining.unit);
     final remainingAfter = _remaining - widget.amount;
@@ -110,7 +110,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
             ),
           ],
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         _PackageBar(batch: widget.batch, amount: widget.amount),
         if (sliderDivisions > 0)
           Slider(
@@ -136,7 +136,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
             ])
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.extraSmall),
+                  padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.extraSmall),
                   child: OutlinedButton(
                     onPressed: () =>
                         _selectAmount(RemovalAmountPolicy.fractionOf(_remaining, fraction)),
@@ -146,7 +146,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
               ),
           ],
         ),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         TextField(
           controller: _exactAmountController,
           focusNode: _exactAmountFocusNode,
@@ -173,7 +173,7 @@ class _PackageBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.freezerColors;
+    final colors = context.foodieColors;
     final initialAmount = batch.initialQuantity.amountInBaseUnits;
     if (initialAmount <= 0) return const SizedBox.shrink();
     final takenAmount = amount.amountInBaseUnits.clamp(0, initialAmount);

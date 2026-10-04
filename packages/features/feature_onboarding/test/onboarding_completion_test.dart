@@ -6,6 +6,7 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:core_preferences/core_preferences.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_onboarding/feature_onboarding.dart';
 import 'package:feature_onboarding/src/application/onboarding_completion.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -17,7 +18,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -60,6 +61,7 @@ void main() {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
+        registeredFeatureModulesProvider.overrideWithValue(const [FreezerFeatureModule()]),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -82,7 +84,7 @@ void main() {
     await container
         .read(completeOnboardingUseCaseProvider)
         .execute(
-          freezerTemplate: FreezerTemplate.uprightWithFiveDrawers,
+          storageTemplate: FreezerStorageTemplates.uprightWithFiveDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
 
@@ -92,23 +94,23 @@ void main() {
       isTrue,
     );
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
-    expect(layout.freezers.single.compartments, hasLength(5));
+    expect(layout.storagePlaces.single.compartments, hasLength(5));
   });
 
   test('never adds a second freezer', () async {
     final completeOnboarding = container.read(completeOnboardingUseCaseProvider);
     for (final template in [
-      FreezerTemplate.chestWithBaskets,
-      FreezerTemplate.uprightWithThreeDrawers,
+      FreezerStorageTemplates.chestWithBaskets,
+      FreezerStorageTemplates.uprightWithThreeDrawers,
     ]) {
       await completeOnboarding.execute(
-        freezerTemplate: template,
+        storageTemplate: template,
         defaultNames: const _EnglishLayoutDefaultNames(),
       );
     }
 
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
-    expect(layout.freezers, hasLength(1));
-    expect(layout.freezers.single.freezer.storageKind, StorageKind.chest);
+    expect(layout.storagePlaces, hasLength(1));
+    expect(layout.storagePlaces.single.storagePlace.storageKind, FreezerStorageKinds.chest);
   });
 }

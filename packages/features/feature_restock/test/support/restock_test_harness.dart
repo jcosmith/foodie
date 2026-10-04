@@ -5,7 +5,7 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
-
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_restock/feature_restock.dart';
@@ -17,7 +17,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -28,8 +28,14 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
 
 /// A provider container over an in-memory database with the catalog seeded,
 /// one freezer and the restock module wired up. 2 October 2026, 09:00 UTC.
+///
+/// With [enabledModules] set, the domains of the other [registeredModules]
+/// are switched off.
 final class RestockTestHarness {
-  RestockTestHarness() {
+  RestockTestHarness({
+    List<FeatureModule> registeredModules = const [FreezerFeatureModule()],
+    List<FeatureModule>? enabledModules,
+  }) {
     final dependencies = ModuleDependencies(
       clock: clock,
       identifierGenerator: SequentialIdentifierGenerator(),
@@ -40,6 +46,9 @@ final class RestockTestHarness {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
+        registeredFeatureModulesProvider.overrideWithValue(registeredModules),
+        if (enabledModules != null)
+          enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(enabledModules)),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -68,12 +77,12 @@ final class RestockTestHarness {
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
 
-  Future<void> seedCatalogAndFreezer() async {
+  Future<void> seedCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(initializationContext);
     await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
   }
@@ -90,7 +99,7 @@ final class RestockTestHarness {
 
   Future<StockBatchIdentifier> addBatch(
     Product product, {
-    CalendarDate? frozenOn,
+    CalendarDate? storedOn,
     Quantity? quantity,
     int compartmentIndex = 0,
   }) async {
@@ -105,7 +114,7 @@ final class RestockTestHarness {
                 quantity ??
                 product.defaultPackageQuantity ??
                 Quantity(amountInBaseUnits: 1, unit: product.canonicalUnit),
-            frozenOn: frozenOn ?? today,
+            storedOn: storedOn ?? today,
           ),
         );
     return result.valueOrNull!;

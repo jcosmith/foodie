@@ -1,4 +1,5 @@
 import 'package:core_design_system/core_design_system.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,15 @@ class StatisticsFilterBar extends ConsumerWidget {
     final productNames = context.productDisplayNameResolver;
     final compartmentNames = layout == null ? null : context.compartmentDisplayNameResolver(layout);
 
+    final registeredDomains = ref.watch(registeredStorageDomainsProvider);
     final activeChips = <Widget>[
+      for (final domain in registeredDomains)
+        if (filter.domainIdentifiers.contains(domain.identifier))
+          _RemovableChip(
+            label: '${domain.iconEmoji} ${domain.labelBuilder(context)}',
+            onDeleted: () =>
+                filterNotifier.change((current) => current.withDomainToggled(domain.identifier)),
+          ),
       if (catalog != null)
         for (final categoryIdentifier in filter.categoryIdentifiers)
           if (catalog.categoryOf(categoryIdentifier) case final category?)
@@ -106,7 +115,7 @@ class StatisticsFilterBar extends ConsumerWidget {
     return Material(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: FreezerSpacing.extraSmall),
+        padding: const EdgeInsets.only(bottom: FoodieSpacing.extraSmall),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -140,7 +149,7 @@ class StatisticsFilterBar extends ConsumerWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsetsDirectional.only(end: FreezerSpacing.screenGutter),
+                  padding: const EdgeInsetsDirectional.only(end: FoodieSpacing.screenGutter),
                   child: ActionChip(
                     avatar: const Icon(Icons.tune, size: 18),
                     label: Text(localizations.filtersButton(filter.activeFilterCount)),
@@ -175,13 +184,13 @@ class _ChipRow extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
     scrollDirection: Axis.horizontal,
     padding: const EdgeInsets.symmetric(
-      horizontal: FreezerSpacing.screenGutter,
-      vertical: FreezerSpacing.extraSmall,
+      horizontal: FoodieSpacing.screenGutter,
+      vertical: FoodieSpacing.extraSmall,
     ),
     child: Row(
       children: [
         for (final (index, child) in children.indexed) ...[
-          if (index > 0) const SizedBox(width: FreezerSpacing.small),
+          if (index > 0) const SizedBox(width: FoodieSpacing.small),
           child,
         ],
       ],

@@ -96,6 +96,7 @@ abstract final class SavedStatisticsViewCodec {
     'categories': [for (final identifier in filter.categoryIdentifiers) identifier.value],
     'products': [for (final identifier in filter.productIdentifiers) identifier.value],
     'compartments': [for (final identifier in filter.compartmentIdentifiers) identifier.value],
+    'domains': [for (final identifier in filter.domainIdentifiers) identifier.value],
     'weekdays': [...filter.weekdays],
   };
 
@@ -131,6 +132,11 @@ abstract final class SavedStatisticsViewCodec {
     }
     for (final identifier in texts('compartments')) {
       filter = filter.withCompartmentToggled(CompartmentIdentifier(identifier));
+    }
+    for (final identifier in texts('domains')) {
+      if (identifier.isNotEmpty) {
+        filter = filter.withDomainToggled(StorageDomainIdentifier(identifier));
+      }
     }
     if (encoded['weekdays'] case final List<Object?> weekdays) {
       for (final weekday in weekdays.whereType<int>()) {

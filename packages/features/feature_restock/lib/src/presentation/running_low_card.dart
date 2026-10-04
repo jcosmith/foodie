@@ -25,8 +25,8 @@ class RunningLowCard extends ConsumerWidget {
       child: runningLowProducts.isEmpty || catalog == null
           ? Text(localizations.runningLowEmpty)
           : Wrap(
-              spacing: FreezerSpacing.small,
-              runSpacing: FreezerSpacing.small,
+              spacing: FoodieSpacing.small,
+              runSpacing: FoodieSpacing.small,
               children: [
                 for (final product in runningLowProducts)
                   Chip(

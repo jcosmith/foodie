@@ -1,36 +1,43 @@
 import 'compartment.dart';
-import 'freezer.dart';
+import 'storage_place.dart';
 
-/// Storage of freezers and compartments. Implemented in the data layer on
+/// Storage of storage places and compartments. Implemented in the data layer on
 /// top of the storage layout DAO.
 abstract interface class StorageLayoutRepository {
-  Stream<List<Freezer>> watchFreezersIncludingArchived();
+  Stream<List<StoragePlace>> watchStoragePlacesIncludingArchived();
 
   Stream<List<Compartment>> watchCompartmentsIncludingArchived();
 
-  /// Active freezers in the user's order.
-  Future<List<Freezer>> readActiveFreezers();
+  /// Active storage places in the user's order.
+  Future<List<StoragePlace>> readActiveStoragePlaces();
 
-  Future<Freezer?> readFreezer(FreezerIdentifier freezerIdentifier);
+  Future<StoragePlace?> readStoragePlace(StoragePlaceIdentifier storagePlaceIdentifier);
 
   Future<Compartment?> readCompartment(CompartmentIdentifier compartmentIdentifier);
 
-  /// Active compartments of a freezer in the user's order.
-  Future<List<Compartment>> readActiveCompartmentsOfFreezer(FreezerIdentifier freezerIdentifier);
+  /// Active compartments of a storage place in the user's order.
+  Future<List<Compartment>> readActiveCompartmentsOfStoragePlace(
+    StoragePlaceIdentifier storagePlaceIdentifier,
+  );
 
   /// The next number for a default name such as "Drawer 4"; numbers of
   /// archived compartments are never reused.
-  Future<int> readNextCompartmentDefaultNumber(FreezerIdentifier freezerIdentifier);
+  Future<int> readNextCompartmentDefaultNumber(StoragePlaceIdentifier storagePlaceIdentifier);
 
-  Future<void> insertFreezer(Freezer freezer);
+  Future<void> insertStoragePlace(StoragePlace storagePlace);
 
   Future<void> insertCompartment(Compartment compartment);
 
-  Future<void> updateFreezerCustomName(FreezerIdentifier freezerIdentifier, String? customName);
+  Future<void> updateStoragePlaceCustomName(
+    StoragePlaceIdentifier storagePlaceIdentifier,
+    String? customName,
+  );
 
-  Future<void> updateFreezerSortOrders(Map<FreezerIdentifier, int> sortOrderByFreezer);
+  Future<void> updateStoragePlaceSortOrders(
+    Map<StoragePlaceIdentifier, int> sortOrderByStoragePlace,
+  );
 
-  Future<void> archiveFreezer(FreezerIdentifier freezerIdentifier);
+  Future<void> archiveStoragePlace(StoragePlaceIdentifier storagePlaceIdentifier);
 
   Future<void> updateCompartmentCustomName(
     CompartmentIdentifier compartmentIdentifier,

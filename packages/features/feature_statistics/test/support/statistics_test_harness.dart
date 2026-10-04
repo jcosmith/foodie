@@ -5,6 +5,7 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_statistics/feature_statistics.dart';
@@ -16,7 +17,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -45,6 +46,7 @@ final class StatisticsTestHarness {
         localLoggerProvider.overrideWithValue(logger),
         registeredFeatureModulesProvider.overrideWithValue([
           const StatisticsFeatureModule(),
+          const FreezerFeatureModule(),
           ...registeredModules,
         ]),
         for (final module in const [
@@ -69,12 +71,12 @@ final class StatisticsTestHarness {
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
 
-  Future<void> seedCatalogAndFreezer() async {
+  Future<void> seedCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(initializationContext);
     await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
   }
@@ -108,7 +110,7 @@ final class StatisticsTestHarness {
             productIdentifier: product.identifier,
             compartmentIdentifier: layout.activeCompartments[compartmentIndex].identifier,
             quantity: Quantity.fromDisplayAmount(displayAmount, product.canonicalUnit),
-            frozenOn: clock.todayLocal(),
+            storedOn: clock.todayLocal(),
           ),
         );
     return result.valueOrNull!;

@@ -5,7 +5,7 @@ extension RestockFailureTexts on RestockLocalizations {
   String describeFailure(RestockFailure failure) => switch (failure) {
     MinimumQuantityNotPositive() => minimumNotPositive,
     TargetBelowMinimum() => targetBelowMinimum,
-    NoCompartmentForBoughtItems() => noFreezerForBoughtItems,
+    NoCompartmentForBoughtItems() => noStoragePlaceForBoughtItems,
     AutomaticEntryCannotBeRemoved() => automaticEntryCannotBeRemoved,
     RestockUnitMismatch() ||
     RestockProductNotFound() ||

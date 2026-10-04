@@ -6,15 +6,19 @@ import 'package:flutter_test/flutter_test.dart';
 
 RemindableBatch _batch(
   String identifier, {
-  required CalendarDate frozenOn,
-  required int storageDays,
+  required CalendarDate storedOn,
+  int? storageDays,
+  CalendarDate? bestBeforeOn,
   CalendarDate? storedSince,
 }) => RemindableBatch(
   stockBatchIdentifier: StockBatchIdentifier(identifier),
   productIdentifier: ProductIdentifier('product-$identifier'),
-  frozenOn: frozenOn,
-  storedSince: storedSince ?? frozenOn,
-  recommendedMaximumStorageDays: storageDays,
+  storedSince: storedSince ?? storedOn,
+  deadline: UseByPolicy.deadlineOf(
+    storedOn: storedOn,
+    shelfLifeDays: storageDays,
+    bestBeforeOn: bestBeforeOn,
+  )!,
 );
 
 void main() {
@@ -25,7 +29,7 @@ void main() {
 
   test('plans a digest at 18:00 on each day a batch becomes due, and only then', () {
     // 30 days of storage: "eat soon" after 26 days (85 %), used up after 30.
-    final spinach = _batch('spinach', frozenOn: today.addDays(-20), storageDays: 30);
+    final spinach = _batch('spinach', storedOn: today.addDays(-20), storageDays: 30);
 
     final digests = StorageReminderPlanner.plan(
       batches: [spinach],
@@ -40,8 +44,8 @@ void main() {
   });
 
   test('a digest also counts food that was already due, newly due first', () {
-    final oldPeas = _batch('peas', frozenOn: today.addDays(-95), storageDays: 100);
-    final berries = _batch('berries', frozenOn: today.addDays(-84), storageDays: 100);
+    final oldPeas = _batch('peas', storedOn: today.addDays(-95), storageDays: 100);
+    final berries = _batch('berries', storedOn: today.addDays(-84), storageDays: 100);
 
     final firstDigest = StorageReminderPlanner.plan(
       batches: [oldPeas, berries],
@@ -57,7 +61,7 @@ void main() {
   test('food entered when it is already old is due on the day it was entered', () {
     final foundInTheBack = _batch(
       'found',
-      frozenOn: today.addDays(-400),
+      storedOn: today.addDays(-400),
       storageDays: 180,
       storedSince: today,
     );
@@ -74,7 +78,7 @@ void main() {
   test('skips today once the digest time has passed', () {
     final foundInTheBack = _batch(
       'found',
-      frozenOn: today.addDays(-400),
+      storedOn: today.addDays(-400),
       storageDays: 180,
       storedSince: today,
     );
@@ -89,7 +93,7 @@ void main() {
   });
 
   test('follows the chosen time and plans nothing when switched off', () {
-    final spinach = _batch('spinach', frozenOn: today.addDays(-80), storageDays: 100);
+    final spinach = _batch('spinach', storedOn: today.addDays(-80), storageDays: 100);
 
     final morningDigests = StorageReminderPlanner.plan(
       batches: [spinach],
@@ -117,7 +121,7 @@ void main() {
   test('never plans beyond the 14-day horizon', () {
     final batches = [
       for (var index = 0; index < 60; index++)
-        _batch('batch-$index', frozenOn: today.addDays(-index), storageDays: 40),
+        _batch('batch-$index', storedOn: today.addDays(-index), storageDays: 40),
     ];
 
     final digests = StorageReminderPlanner.plan(
@@ -128,5 +132,27 @@ void main() {
 
     expect(digests, hasLength(StorageReminderPlanner.planningHorizonDays));
     expect(digests.last.dayOffset, StorageReminderPlanner.planningHorizonDays - 1);
+  });
+
+  test('food that keeps one day is in tonight\'s digest; best before tomorrow is tomorrow\'s', () {
+    final rolls = _batch('rolls', storedOn: today, storageDays: 1);
+    final yoghurt = _batch(
+      'yoghurt',
+      storedOn: today.addDays(-3),
+      storageDays: 300,
+      bestBeforeOn: today.addDays(1),
+    );
+
+    final digests = StorageReminderPlanner.plan(
+      batches: [rolls, yoghurt],
+      settings: settings,
+      nowLocal: nowLocal,
+    );
+
+    expect(digests.first.dayOffset, 0);
+    expect(digests.first.batchesToEatSoon, [rolls]);
+    expect(digests[1].dayOffset, 1);
+    expect(digests[1].batchesToEatSoon, [rolls, yoghurt], reason: 'the rolls are past their day');
+    expect(digests[1].newlyDueCount, 2);
   });
 }

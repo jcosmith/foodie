@@ -9,7 +9,11 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   StatisticsLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get navigationLabel => 'Auswertung';
+  String get moreEntryTitle => 'Statistik';
+
+  @override
+  String get moreEntrySubtitle =>
+      'Gewohnheiten, Verschwendung und Trends, mit einem gemeinsamen Filter';
 
   @override
   String get insightsTitle => 'Auswertung';
@@ -39,14 +43,20 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
 
   @override
   String filtersButton(int count) {
-    return 'Filter · $count';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Filter · $count',
+      zero: 'Filter',
+    );
+    return '$_temp0';
   }
 
   @override
   String get resetFilters => 'Zurücksetzen';
 
   @override
-  String get kpiEaten => 'Gegessen';
+  String get kpiEaten => 'Verbraucht';
 
   @override
   String get kpiAdded => 'Eingelagert';
@@ -74,17 +84,17 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get deltaNone => 'kein Vergleich';
 
   @override
-  String get trendTitle => 'Gegessen vs. eingelagert';
+  String get trendTitle => 'Verbraucht vs. eingelagert';
 
   @override
   String get trendSubtitle => 'Über das Diagramm ziehen zum Zoomen';
 
   @override
   String get trendSubtitleWithComparison =>
-      'Gestrichelt: gegessen im Vergleichszeitraum · ziehen zum Zoomen';
+      'Gestrichelt: verbraucht im Vergleichszeitraum · ziehen zum Zoomen';
 
   @override
-  String get seriesEaten => 'Gegessen';
+  String get seriesEaten => 'Verbraucht';
 
   @override
   String get seriesAdded => 'Eingelagert';
@@ -131,10 +141,10 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
 
   @override
   String get noHistoryMessage =>
-      'Die Auswertung erscheint, sobald du Produkte einfrierst und entnimmst.';
+      'Die Auswertung erscheint, sobald du Produkte einlagerst und entnimmst.';
 
   @override
-  String get activityConsumed => 'Gegessen';
+  String get activityConsumed => 'Verbraucht';
 
   @override
   String get activityAdded => 'Eingelagert';
@@ -223,7 +233,10 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get filterCategories => 'Kategorien';
 
   @override
-  String get filterDrawers => 'Schubladen';
+  String get filterDrawers => 'Fächer';
+
+  @override
+  String get filterStorage => 'Lagerort';
 
   @override
   String get filterProducts => 'Produkte';
@@ -242,6 +255,12 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
 
   @override
   String get reasonFreezerBurn => 'Gefrierbrand';
+
+  @override
+  String get reasonExpired => 'Abgelaufen';
+
+  @override
+  String get reasonSpoiled => 'Verdorben';
 
   @override
   String get reasonUnwanted => 'Wollte keiner';
@@ -275,11 +294,10 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get detailsButton => 'Mehr Auswertungen';
 
   @override
-  String get detailsButtonSubtitle =>
-      'Gefrierfach-Tage, Wochentage, Lagerdauer und Gefrierfach-Karte';
+  String get detailsButtonSubtitle => 'Aktive Tage, Wochentage, Lagerdauer und Lagerkarte';
 
   @override
-  String get calendarTitle => 'Gefrierfach-Tage';
+  String get calendarTitle => 'Aktive Tage';
 
   @override
   String calendarSubtitle(String activityItems) {
@@ -292,7 +310,7 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   }
 
   @override
-  String get activityItemsConsumed => 'gegessener Produkte';
+  String get activityItemsConsumed => 'verbrauchter Produkte';
 
   @override
   String get activityItemsAdded => 'eingelagerter Produkte';
@@ -307,10 +325,10 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get weekdayTitle => 'Nach Wochentag';
 
   @override
-  String get durationTitle => 'Zeit im Gefrierfach vor dem Essen';
+  String get durationTitle => 'Lagerdauer vor dem Verbrauch';
 
   @override
-  String get durationSubtitle => 'Anzahl gegessener Produkte nach Lagerdauer';
+  String get durationSubtitle => 'Anzahl verbrauchter Produkte nach Lagerdauer';
 
   @override
   String get durationUnderOneMonth => '< 1 Mon.';
@@ -331,14 +349,32 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get durationOverTwelveMonths => '> 12 Mon.';
 
   @override
+  String get durationUnderTwoDays => '< 2 T.';
+
+  @override
+  String get durationTwoToThreeDays => '2–3 T.';
+
+  @override
+  String get durationFourToSevenDays => '4–7 T.';
+
+  @override
+  String get durationOneToTwoWeeks => '1–2 Wo.';
+
+  @override
+  String get durationTwoToFourWeeks => '2–4 Wo.';
+
+  @override
+  String get durationOverOneMonth => '> 1 Mon.';
+
+  @override
   String get sixMonthMarker => '6 Mon.';
 
   @override
-  String get freezerMapTitle => 'Gefrierfach-Karte';
+  String get storageMapTitle => 'Lagerkarte';
 
   @override
-  String get freezerMapSubtitle =>
-      'Aktueller Inhalt je Schublade, nach Alter gefärbt. Tippen zum Filtern.';
+  String get storageMapSubtitle =>
+      'Aktueller Inhalt je Fach, nach Alter gefärbt. Tippen zum Filtern.';
 
   @override
   String drawerItems(int count) {

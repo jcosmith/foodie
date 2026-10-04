@@ -3,9 +3,9 @@ import 'dart:math' as math;
 import 'package:core_foundation/core_foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_chart_colors.dart';
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_chart_colors.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 import 'chart_legend.dart';
 
 /// A GitHub-style calendar: one column per week (Monday on top), one cell
@@ -45,7 +45,7 @@ class CalendarHeatmap extends StatelessWidget {
     final chartColors = context.chartColors;
     final theme = Theme.of(context);
     final labelStyle = theme.textTheme.labelSmall!.copyWith(
-      color: context.freezerColors.textMuted,
+      color: context.foodieColors.textMuted,
       fontSize: 9.5,
     );
     final maximumCount = countsByDay.values.fold(0, math.max);
@@ -92,17 +92,17 @@ class CalendarHeatmap extends StatelessWidget {
           },
         ),
         Padding(
-          padding: const EdgeInsets.only(top: FreezerSpacing.small),
+          padding: const EdgeInsets.only(top: FoodieSpacing.small),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('0', style: labelStyle),
-              const SizedBox(width: FreezerSpacing.extraSmall),
+              const SizedBox(width: FoodieSpacing.extraSmall),
               for (final color in chartColors.heatLevels.skip(1)) ...[
                 ChartColorSwatch(color: color),
                 const SizedBox(width: 2),
               ],
-              const SizedBox(width: FreezerSpacing.extraSmall),
+              const SizedBox(width: FoodieSpacing.extraSmall),
               Text('$maximumCount', style: labelStyle),
             ],
           ),

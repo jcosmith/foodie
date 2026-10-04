@@ -23,14 +23,22 @@ enum MovementKind {
   );
 }
 
-/// Why food was thrown away; feeds the "waste by reason" chart.
+/// Why something was thrown away; feeds the "waste by reason" chart.
 enum DiscardReason {
   tooOld,
   freezerBurn,
+  expired,
+  spoiled,
   unwanted,
   other;
 
   String get storageName => name;
+
+  /// The reasons the discard sheet offers; freezer burn only for frozen food.
+  static List<DiscardReason> offeredFor({required bool isFrozen}) => [
+    for (final reason in values)
+      if (reason != freezerBurn || isFrozen) reason,
+  ];
 
   static DiscardReason fromStorageName(String storageName) => DiscardReason.values.firstWhere(
     (reason) => reason.storageName == storageName,

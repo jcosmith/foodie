@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 import 'chart_data.dart';
 import 'chart_legend.dart';
 
@@ -75,7 +75,7 @@ class DonutChart extends StatelessWidget {
                     Text(
                       centerLabel,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: context.freezerColors.textMuted,
+                        color: context.foodieColors.textMuted,
                       ),
                     ),
                     Text(
@@ -88,7 +88,7 @@ class DonutChart extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: FreezerSpacing.large),
+        const SizedBox(width: FoodieSpacing.large),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -96,13 +96,13 @@ class DonutChart extends StatelessWidget {
               for (final (index, slice) in slices.indexed)
                 InkWell(
                   onTap: onSliceTapped == null ? null : () => onSliceTapped!(index),
-                  borderRadius: BorderRadius.circular(FreezerSpacing.extraSmall),
+                  borderRadius: BorderRadius.circular(FoodieSpacing.extraSmall),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 3),
                     child: Row(
                       children: [
                         ChartColorSwatch(color: slice.color),
-                        const SizedBox(width: FreezerSpacing.small),
+                        const SizedBox(width: FoodieSpacing.small),
                         Expanded(child: Text(slice.label, style: theme.textTheme.bodySmall)),
                         Text(
                           formatShare(total == 0 ? 0 : slice.value / total),

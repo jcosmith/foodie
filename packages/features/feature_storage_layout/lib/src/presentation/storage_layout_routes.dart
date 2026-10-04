@@ -1,17 +1,22 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:go_router/go_router.dart';
 
-import '../domain/freezer.dart';
-import 'freezer_layout_editor_screen.dart';
-import 'freezer_template_picker_screen.dart';
+import '../domain/storage_place.dart';
 import 'storage_layout_overview_screen.dart';
+import 'storage_place_editor_screen.dart';
+import 'storage_template_picker_screen.dart';
 
 /// Paths of the storage layout screens, for other features to link to.
 abstract final class StorageLayoutRoutes {
   static const String overview = '/storage_layout';
-  static const String newFreezer = '/storage_layout/freezers/new';
+  static const String newStoragePlace = '/storage_layout/places/new';
 
-  static String freezerEditor(FreezerIdentifier freezerIdentifier) =>
-      '/storage_layout/freezers/${Uri.encodeComponent(freezerIdentifier.value)}';
+  /// Adds a storage place to [domainIdentifier], offering its templates.
+  static String newStoragePlaceIn(StorageDomainIdentifier domainIdentifier) =>
+      '$newStoragePlace?domain=${Uri.encodeQueryComponent(domainIdentifier.value)}';
+
+  static String storagePlaceEditor(StoragePlaceIdentifier storagePlaceIdentifier) =>
+      '/storage_layout/places/${Uri.encodeComponent(storagePlaceIdentifier.value)}';
 }
 
 List<RouteBase> buildStorageLayoutRoutes() => [
@@ -20,13 +25,19 @@ List<RouteBase> buildStorageLayoutRoutes() => [
     builder: (context, state) => const StorageLayoutOverviewScreen(),
     routes: [
       GoRoute(
-        path: 'freezers/new',
-        builder: (context, state) => const FreezerTemplatePickerScreen(),
+        path: 'places/new',
+        builder: (context, state) => StorageTemplatePickerScreen(
+          domainIdentifier: StorageDomainIdentifier(
+            state.uri.queryParameters['domain'] ?? StorageDomainIdentifier.freezer.value,
+          ),
+        ),
       ),
       GoRoute(
-        path: 'freezers/:freezerIdentifier',
-        builder: (context, state) => FreezerLayoutEditorScreen(
-          freezerIdentifier: FreezerIdentifier(state.pathParameters['freezerIdentifier']!),
+        path: 'places/:storagePlaceIdentifier',
+        builder: (context, state) => StoragePlaceEditorScreen(
+          storagePlaceIdentifier: StoragePlaceIdentifier(
+            state.pathParameters['storagePlaceIdentifier']!,
+          ),
         ),
       ),
     ],

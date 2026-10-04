@@ -42,7 +42,7 @@ class InsightScreenScaffold extends ConsumerWidget {
                 [formatting.periodLabel(period), ?subtitleSuffix].join(' · '),
                 style: Theme.of(
                   context,
-                ).textTheme.bodySmall?.copyWith(color: context.freezerColors.textMuted),
+                ).textTheme.bodySmall?.copyWith(color: context.foodieColors.textMuted),
               ),
           ],
         ),
@@ -76,7 +76,7 @@ class _InsightCharts extends ConsumerWidget {
         ),
         AsyncValue(error: final error?) => Center(
           child: Padding(
-            padding: const EdgeInsets.all(FreezerSpacing.extraLarge),
+            padding: const EdgeInsets.all(FoodieSpacing.extraLarge),
             child: Text('$error', textAlign: TextAlign.center),
           ),
         ),
@@ -95,13 +95,13 @@ class InsightChartList extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final isWide = constraints.maxWidth >= 720;
-      const gutter = FreezerSpacing.screenGutter;
+      const gutter = FoodieSpacing.screenGutter;
       final contentWidth = constraints.maxWidth - gutter * 2;
-      final halfWidth = isWide ? (contentWidth - FreezerSpacing.medium) / 2 : contentWidth;
+      final halfWidth = isWide ? (contentWidth - FoodieSpacing.medium) / 2 : contentWidth;
       return SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(gutter, FreezerSpacing.small, gutter, 96),
+        padding: const EdgeInsets.fromLTRB(gutter, FoodieSpacing.small, gutter, 96),
         child: Wrap(
-          spacing: FreezerSpacing.medium,
+          spacing: FoodieSpacing.medium,
           children: [
             for (final child in children)
               SizedBox(width: child is InsightFullWidth ? contentWidth : halfWidth, child: child),

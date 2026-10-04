@@ -1,8 +1,8 @@
 import 'package:core_localization/core_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 import 'chart_data.dart';
 
 /// The frame of every chart: title, optional subtitle, and a "Table" switch
@@ -46,14 +46,14 @@ class _ChartCardState extends State<ChartCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final commonLocalizations = context.commonLocalizations;
-    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.freezerColors.textMuted);
+    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.foodieColors.textMuted);
     return Card(
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(
-          FreezerSpacing.medium,
-          FreezerSpacing.small,
-          FreezerSpacing.medium,
-          FreezerSpacing.medium,
+          FoodieSpacing.medium,
+          FoodieSpacing.small,
+          FoodieSpacing.medium,
+          FoodieSpacing.medium,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,7 +74,7 @@ class _ChartCardState extends State<ChartCard> {
                     onPressed: () => setState(() => _isShowingTable = !_isShowingTable),
                     style: TextButton.styleFrom(
                       visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.small),
+                      padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.small),
                     ),
                     child: Text(
                       _isShowingTable
@@ -85,18 +85,18 @@ class _ChartCardState extends State<ChartCard> {
               ],
             ),
             if (widget.subtitle != null) Text(widget.subtitle!, style: mutedStyle),
-            const SizedBox(height: FreezerSpacing.small),
+            const SizedBox(height: FoodieSpacing.small),
             ?widget.headerControl,
             if (widget.notice != null && widget.emptyMessage == null)
               Padding(
-                padding: const EdgeInsets.only(bottom: FreezerSpacing.small),
+                padding: const EdgeInsets.only(bottom: FoodieSpacing.small),
                 child: Text(widget.notice!, style: mutedStyle),
               ),
             if (widget.emptyMessage != null)
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: FreezerSpacing.large,
-                  horizontal: FreezerSpacing.extraSmall,
+                  vertical: FoodieSpacing.large,
+                  horizontal: FoodieSpacing.extraSmall,
                 ),
                 child: Text(widget.emptyMessage!, style: mutedStyle, textAlign: TextAlign.center),
               )
@@ -121,13 +121,13 @@ class ChartDataTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final headerStyle = theme.textTheme.labelMedium?.copyWith(
-      color: context.freezerColors.textMuted,
+      color: context.foodieColors.textMuted,
     );
     final cellStyle = theme.textTheme.bodySmall;
     Widget cell(String text, TextStyle? style, {required bool isFirstColumn}) => Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: FreezerSpacing.extraSmall,
-        horizontal: FreezerSpacing.small,
+        vertical: FoodieSpacing.extraSmall,
+        horizontal: FoodieSpacing.small,
       ),
       child: Text(text, style: style, textAlign: isFirstColumn ? TextAlign.start : TextAlign.end),
     );
@@ -135,7 +135,7 @@ class ChartDataTable extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Table(
         defaultColumnWidth: const IntrinsicColumnWidth(),
-        border: TableBorder(horizontalInside: BorderSide(color: context.freezerColors.border)),
+        border: TableBorder(horizontalInside: BorderSide(color: context.foodieColors.border)),
         children: [
           TableRow(
             children: [

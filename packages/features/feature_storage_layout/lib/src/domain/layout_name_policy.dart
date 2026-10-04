@@ -2,7 +2,7 @@ import 'package:core_foundation/core_foundation.dart';
 
 import 'storage_layout_failure.dart';
 
-/// Rules for the names users give freezers and drawers (architecture
+/// Rules for the names users give storage places and compartments (architecture
 /// document, section 10.4): at most 30 characters, unique among their
 /// siblings ignoring case, and an empty name goes back to the translated default.
 abstract final class LayoutNamePolicy {
@@ -11,8 +11,8 @@ abstract final class LayoutNamePolicy {
   /// Returns the custom name to store, or `null` to go back to the default name.
   ///
   /// [siblingDisplayNames] are the names the siblings currently show,
-  /// translated defaults included, so "Drawer 2" cannot be typed for drawer 1
-  /// while drawer 2 still shows that default.
+  /// translated defaults included, so "Drawer 2" cannot be typed for compartment 1
+  /// while compartment 2 still shows that default.
   static Result<String?, StorageLayoutFailure> validate({
     required String enteredName,
     required Iterable<String> siblingDisplayNames,

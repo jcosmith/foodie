@@ -2,12 +2,12 @@ import 'package:core_events/core_events.dart';
 import 'package:core_foundation/core_foundation.dart';
 
 import '../../domain/compartment.dart';
-import '../../domain/freezer.dart';
 import '../../domain/storage_layout_events.dart';
 import '../../domain/storage_layout_failure.dart';
 import '../../domain/storage_layout_repository.dart';
+import '../../domain/storage_place.dart';
 
-/// Adds a compartment at the bottom of a freezer, named "Drawer {next number}".
+/// Adds a compartment at the bottom of a storage place, named "Drawer {next number}".
 final class AddCompartmentUseCase {
   const AddCompartmentUseCase({
     required StorageLayoutRepository repository,
@@ -25,18 +25,22 @@ final class AddCompartmentUseCase {
   final IdentifierGenerator _identifierGenerator;
 
   Future<Result<CompartmentIdentifier, StorageLayoutFailure>> execute(
-    FreezerIdentifier freezerIdentifier,
+    StoragePlaceIdentifier storagePlaceIdentifier,
   ) async {
-    final freezer = await _repository.readFreezer(freezerIdentifier);
-    if (freezer == null || freezer.isArchived) return const Result.failure(FreezerNotFound());
+    final storagePlace = await _repository.readStoragePlace(storagePlaceIdentifier);
+    if (storagePlace == null || storagePlace.isArchived) {
+      return const Result.failure(StoragePlaceNotFound());
+    }
 
-    final existingCompartments = await _repository.readActiveCompartmentsOfFreezer(
-      freezerIdentifier,
+    final existingCompartments = await _repository.readActiveCompartmentsOfStoragePlace(
+      storagePlaceIdentifier,
     );
-    final defaultNumber = await _repository.readNextCompartmentDefaultNumber(freezerIdentifier);
+    final defaultNumber = await _repository.readNextCompartmentDefaultNumber(
+      storagePlaceIdentifier,
+    );
     final compartment = Compartment(
       identifier: _identifierGenerator.createIdentifier(),
-      freezerIdentifier: freezerIdentifier,
+      storagePlaceIdentifier: storagePlaceIdentifier,
       defaultNumber: defaultNumber,
       colorTagIndex: defaultColorTagIndexFor(defaultNumber),
       sortOrder: existingCompartments.isEmpty ? 0 : existingCompartments.last.sortOrder + 1,
@@ -46,7 +50,7 @@ final class AddCompartmentUseCase {
     await _domainEventBus.publish(
       CompartmentCreated(
         compartmentIdentifier: compartment.identifier,
-        freezerIdentifier: freezerIdentifier,
+        storagePlaceIdentifier: storagePlaceIdentifier,
         occurredAt: compartment.createdAt,
       ),
     );

@@ -9,29 +9,17 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   StorageLayoutLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get configSectionTitle => 'Freezer layout';
+  String get configSectionTitle => 'Storage places';
 
   @override
-  String get layoutOverviewTitle => 'Freezer layout';
+  String get layoutOverviewTitle => 'Storage places';
 
   @override
-  String defaultFreezerName(String storageKind) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'Chest freezer',
-      'fridgeFreezerCompartment': 'Fridge freezer',
-      'other': 'Freezer',
-    });
-    return '$_temp0';
-  }
+  String get defaultStoragePlaceName => 'Storage place';
 
   @override
-  String defaultCompartmentName(String storageKind, int number) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'Basket $number',
-      'fridgeFreezerCompartment': 'Compartment $number',
-      'other': 'Drawer $number',
-    });
-    return '$_temp0';
+  String defaultCompartmentName(int number) {
+    return 'Compartment $number';
   }
 
   @override
@@ -40,39 +28,10 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   }
 
   @override
-  String storageKindDescription(String storageKind) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'chest freezer',
-      'fridgeFreezerCompartment': 'in the fridge',
-      'other': 'upright',
-    });
-    return '$_temp0';
-  }
+  String get storageKindDescription => 'storage place';
 
   @override
-  String drawerCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count drawers',
-      one: '1 drawer',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String basketCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count baskets',
-      one: '1 basket',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String shelfCount(int count) {
+  String compartmentCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -83,54 +42,29 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   }
 
   @override
-  String freezerSummary(String kind, String compartments) {
+  String storagePlaceSummary(String kind, String compartments) {
     return '$kind · $compartments';
   }
 
   @override
-  String get addFreezerButton => 'Add freezer';
+  String get addStoragePlaceButton => 'Add storage place';
 
   @override
-  String get newFreezerTitle => 'Add a freezer';
+  String get newStoragePlaceTitle => 'Add a storage place';
 
   @override
   String get templatePrompt => 'Which one is closest to yours? You can change everything later.';
 
   @override
-  String get templateUprightWithThreeDrawers => 'Upright freezer with 3 drawers';
+  String get storagePlaceNameLabel => 'Name (optional)';
 
   @override
-  String get templateUprightWithFiveDrawers => 'Upright freezer with 5 drawers';
-
-  @override
-  String get templateUprightWithSevenDrawers => 'Upright freezer with 7 drawers';
-
-  @override
-  String get templateChestWithBaskets => 'Chest freezer with 3 baskets';
-
-  @override
-  String get templateFridgeFreezerCompartment => 'Freezer compartment of a fridge';
-
-  @override
-  String get templateEmpty => 'Start with one drawer and add the rest yourself';
-
-  @override
-  String get freezerNameLabel => 'Name (optional)';
-
-  @override
-  String freezerNameHelper(String defaultName) {
+  String storagePlaceNameHelper(String defaultName) {
     return 'For example \"Kitchen\" or \"Cellar\". Leave empty to use \"$defaultName\".';
   }
 
   @override
-  String addCompartmentButton(String storageKind) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'Add basket',
-      'fridgeFreezerCompartment': 'Add compartment',
-      'other': 'Add drawer',
-    });
-    return '$_temp0';
-  }
+  String get addCompartmentButton => 'Add compartment';
 
   @override
   String compartmentItemCount(int count) {
@@ -157,10 +91,10 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   String get changeColor => 'Change colour';
 
   @override
-  String get compartmentNameTaken => 'Another drawer already has this name.';
+  String get compartmentNameTaken => 'Another compartment already has this name.';
 
   @override
-  String get freezerNameTaken => 'Another freezer already has this name.';
+  String get storagePlaceNameTaken => 'Another storage place already has this name.';
 
   @override
   String get nameTooLong => 'At most 30 characters.';
@@ -193,52 +127,53 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   }
 
   @override
-  String get lastCompartmentHint => 'A freezer needs at least one drawer.';
+  String get lastCompartmentHint => 'A storage place needs at least one compartment.';
 
   @override
   String get layoutHint =>
       'Untouched names follow the app language. Names you type stay as you wrote them.';
 
   @override
-  String get renameFreezerAction => 'Rename freezer';
+  String get renameStoragePlaceAction => 'Rename';
 
   @override
-  String get renameFreezerDialogTitle => 'Rename freezer';
+  String get renameStoragePlaceDialogTitle => 'Rename storage place';
 
   @override
-  String get removeFreezerAction => 'Remove freezer';
+  String get removeStoragePlaceAction => 'Remove storage place';
 
   @override
-  String removeFreezerDialogTitle(String name) {
+  String removeStoragePlaceDialogTitle(String name) {
     return 'Remove $name?';
   }
 
   @override
-  String get removeFreezerDialogText =>
-      'It disappears from the app. Its drawers are kept for your statistics.';
+  String get removeStoragePlaceDialogText =>
+      'It disappears from the app. Its compartments are kept for your statistics.';
 
   @override
-  String freezerNotEmpty(int count) {
+  String storagePlaceNotEmpty(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Take out or move the $count items in this freezer first.',
-      one: 'Take out or move the 1 item in this freezer first.',
+      other: 'Take out or move the $count items in here first.',
+      one: 'Take out or move the 1 item in here first.',
     );
     return '$_temp0';
   }
 
   @override
-  String get lastFreezerCannotBeRemoved => 'You need at least one freezer.';
+  String get lastStoragePlaceCannotBeRemoved => 'You need at least one storage place.';
 
   @override
-  String get freezerNotFound => 'This freezer was removed.';
+  String get storagePlaceNotFound => 'This storage place was removed.';
 
   @override
-  String get noFreezerTitle => 'No freezer yet';
+  String get noStoragePlaceTitle => 'No storage place yet';
 
   @override
-  String get noFreezerMessage => 'Add your freezer and its drawers, then start filling it.';
+  String get noStoragePlaceMessage =>
+      'Add where you keep things and how it is divided, then start filling it.';
 
   @override
   String get genericFailure => 'That did not work. Please try again.';

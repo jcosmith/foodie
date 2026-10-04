@@ -1,0 +1,73 @@
+{
+  "@@locale": "en",
+  "domainLabel": "Fridge",
+  "domainDescription": "Fresh food that keeps for days",
+  "storedOnLabel": "Bought on",
+  "addTitle": "Add to the fridge",
+  "bestBeforeLabel": "Best before",
+  "fridgeName": "Fridge",
+  "drinksFridgeName": "Drinks fridge",
+  "wineFridgeName": "Wine fridge",
+  "fridgeDescription": "fridge",
+  "drinksFridgeDescription": "drinks fridge",
+  "wineFridgeDescription": "wine fridge",
+  "shelfName": "Shelf {number}",
+  "@shelfName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfCount": "{count, plural, =1{1 shelf} other{{count} shelves}}",
+  "@shelfCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addShelf": "Add shelf",
+  "rackName": "Rack {number}",
+  "@rackName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "rackCount": "{count, plural, =1{1 rack} other{{count} racks}}",
+  "@rackCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addRack": "Add rack",
+  "templateThreeShelves": "Fridge with 3 shelves",
+  "templateFiveShelves": "Fridge with 5 shelves",
+  "templateDrinks": "Drinks fridge with 3 shelves",
+  "templateWine": "Wine fridge with 4 racks",
+  "categoryDairy": "Dairy and eggs",
+  "categoryFreshProduce": "Fruit and vegetables",
+  "categoryFreshMeatAndFish": "Fresh meat and fish",
+  "categoryLeftovers": "Leftovers",
+  "categoryChilledOther": "Other chilled food",
+  "productMilk": "Milk",
+  "productYoghurt": "Yoghurt",
+  "productCream": "Cream",
+  "productSlicedCheese": "Sliced cheese",
+  "productMozzarella": "Mozzarella",
+  "productEggs": "Eggs",
+  "productLettuce": "Lettuce",
+  "productTomatoes": "Tomatoes",
+  "productCucumber": "Cucumber",
+  "productFreshHerbs": "Fresh herbs",
+  "productFreshMincedMeat": "Fresh minced meat",
+  "productFreshChickenBreast": "Fresh chicken breast",
+  "productFreshFish": "Fresh fish",
+  "productColdCuts": "Cold cuts",
+  "productLeftovers": "Leftovers",
+  "productPesto": "Pesto"
+}

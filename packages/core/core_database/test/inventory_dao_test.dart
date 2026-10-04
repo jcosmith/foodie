@@ -9,9 +9,9 @@ void main() {
 
   setUp(() async {
     database = createInMemoryApplicationDatabase();
-    await database.storageLayoutDao.insertFreezer(
-      FreezerRow(
-        freezerIdentifier: 'freezer-1',
+    await database.storageLayoutDao.insertStoragePlace(
+      StoragePlaceRow(
+        storagePlaceIdentifier: 'freezer-1',
         defaultNameKey: 'kitchen_freezer',
         storageKind: 'upright',
         sortOrder: 0,
@@ -23,7 +23,7 @@ void main() {
       await database.storageLayoutDao.insertCompartment(
         CompartmentRow(
           compartmentIdentifier: 'drawer-$number',
-          freezerIdentifier: 'freezer-1',
+          storagePlaceIdentifier: 'freezer-1',
           defaultNumber: number,
           colorTagIndex: number - 1,
           sortOrder: number,
@@ -39,6 +39,7 @@ void main() {
         recommendedMaximumStorageDays: 365,
         iconEmoji: '🥦',
         sortOrder: 0,
+        storageDomain: 'freezer',
       ),
     );
     await database.productCatalogDao.insertProduct(
@@ -73,7 +74,7 @@ void main() {
         quantityUnit: 'gram',
         initialQuantity: 1000,
         quantityRemaining: 800,
-        frozenOn: CalendarDate(2026, 3, 3),
+        storedOn: CalendarDate(2026, 3, 3),
         createdAt: createdAt,
       ),
     );
@@ -102,7 +103,7 @@ void main() {
       ),
     );
     expect(await inventoryDao.findInconsistentBatchIdentifiers(), isEmpty);
-    expect((await inventoryDao.readActiveBatches()).single.frozenOn, CalendarDate(2026, 3, 3));
+    expect((await inventoryDao.readActiveBatches()).single.storedOn, CalendarDate(2026, 3, 3));
   });
 
   test('foreign keys are enforced', () async {
@@ -115,11 +116,77 @@ void main() {
           quantityUnit: 'gram',
           initialQuantity: 1,
           quantityRemaining: 1,
-          frozenOn: CalendarDate(2026, 3, 3),
+          storedOn: CalendarDate(2026, 3, 3),
           createdAt: createdAt,
         ),
       ),
       throwsA(anything),
     );
+  });
+  test('a batch keeps its stored-on date and an optional opened-on date', () async {
+    final inventoryDao = database.inventoryDao;
+    await inventoryDao.insertBatch(
+      StockBatchRow(
+        stockBatchIdentifier: 'batch-3',
+        productIdentifier: 'product-1',
+        compartmentIdentifier: 'drawer-1',
+        quantityUnit: 'gram',
+        initialQuantity: 500,
+        quantityRemaining: 500,
+        storedOn: CalendarDate(2026, 10, 1),
+        bestBeforeOn: CalendarDate(2026, 10, 8),
+        openedOn: CalendarDate(2026, 10, 2),
+        createdAt: createdAt,
+      ),
+    );
+    final batch = (await inventoryDao.readBatch('batch-3'))!;
+    expect(batch.storedOn, CalendarDate(2026, 10, 1));
+    expect(batch.bestBeforeOn, CalendarDate(2026, 10, 8));
+    expect(batch.openedOn, CalendarDate(2026, 10, 2));
+  });
+
+  test(
+    'categories carry their storage domain; categories and products a shelf life after opening',
+    () async {
+      final catalogDao = database.productCatalogDao;
+      await catalogDao.insertCategory(
+        const CategoryRow(
+          categoryIdentifier: 'category-2',
+          catalogKey: 'dairyAndEggs',
+          recommendedMaximumStorageDays: 7,
+          shelfLifeAfterOpeningDays: 3,
+          iconEmoji: '🥛',
+          sortOrder: 1,
+          storageDomain: 'fridge',
+        ),
+      );
+      await catalogDao.insertProduct(
+        ProductRow(
+          productIdentifier: 'product-2',
+          categoryIdentifier: 'category-2',
+          catalogKey: 'wholeMilk',
+          canonicalUnit: 'milliliter',
+          recommendedMaximumStorageDays: 10,
+          shelfLifeAfterOpeningDays: 3,
+          isArchived: false,
+          createdAt: createdAt,
+        ),
+      );
+      final category = (await catalogDao.readCategories()).singleWhere(
+        (row) => row.categoryIdentifier == 'category-2',
+      );
+      expect(category.storageDomain, 'fridge');
+      expect(category.shelfLifeAfterOpeningDays, 3);
+      expect((await catalogDao.readProduct('product-2'))!.shelfLifeAfterOpeningDays, 3);
+    },
+  );
+
+  test('storage places are stored in the storage_places table', () async {
+    final tables = await database
+        .customSelect("SELECT name FROM sqlite_master WHERE type = 'table'")
+        .map((row) => row.read<String>('name'))
+        .get();
+    expect(tables, containsAll(['storage_places', 'compartments', 'stock_batches']));
+    expect(tables, isNot(contains('freezers')));
   });
 }

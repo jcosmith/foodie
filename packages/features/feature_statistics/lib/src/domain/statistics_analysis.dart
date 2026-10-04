@@ -40,6 +40,10 @@ final class StatisticsCategorySeries {
   double get total => bucketValues.fold(0, (sum, value) => sum + value);
 }
 
+/// How the storage-time columns are cut: [days] and weeks when everything
+/// eaten was kept for a month at most, as with fridge food, else [months].
+enum StatisticsDurationScale { days, months }
+
 /// Everything the Insights charts show, computed from the movement facts of
 /// the period (and the comparison period) and the shared filter. Pure and
 /// synchronous: a filter change other than the period recomputes this in
@@ -51,6 +55,7 @@ final class StatisticsAnalysis {
     required List<StatisticsMovementFact> periodFacts,
     required List<StatisticsMovementFact> comparisonFacts,
     required this.categoryGrouping,
+    this.domainsWithoutWaste = const {},
   }) : bucketSize = StatisticsBucketing.bucketSizeFor(filter.granularity, periods.period),
        _periodFacts = periodFacts,
        _comparisonFacts = comparisonFacts {
@@ -70,8 +75,6 @@ final class StatisticsAnalysis {
   /// Fewer removals than this in a period makes trends unreliable.
   static const int thinDataRemovalCount = 5;
 
-  /// Width of a bin of the storage-duration sparkline.
-  static const int storedDaysHistogramBinWidth = 45;
   static const int storedDaysHistogramBinCount = 8;
 
   /// Rows in the top products ranking.
@@ -80,13 +83,23 @@ final class StatisticsAnalysis {
   /// The calendar shows at most this many weeks, ending with the period.
   static const int calendarWeekLimit = 26;
 
-  /// Upper limits (exclusive) of the storage-duration columns in days:
-  /// under a month, 1–3, 3–6, 6–9, 9–12 months, and longer.
-  static const List<int> storageDurationLimitsInDays = [30, 91, 182, 273, 365];
+  /// Upper limits (exclusive) of the storage-duration columns in days on the
+  /// [StatisticsDurationScale.months] scale: under a month, 1–3, 3–6, 6–9,
+  /// 9–12 months, and longer.
+  static const List<int> monthStorageDurationLimitsInDays = [30, 91, 182, 273, 365];
+
+  /// The same on the [StatisticsDurationScale.days] scale: under 2 days, 2–3
+  /// days, 4–7 days, 1–2 weeks, 2–4 weeks, and longer.
+  static const List<int> dayStorageDurationLimitsInDays = [2, 4, 8, 15, 31];
 
   final StatisticsFilter filter;
   final StatisticsPeriods periods;
   final StatisticsCategoryGrouping categoryGrouping;
+
+  /// Domains whose discards are not waste, such as household supplies
+  /// (architecture 10.7, "Waste is a domain property"). Throwing away from
+  /// them counts nowhere as thrown away.
+  final Set<StorageDomainIdentifier> domainsWithoutWaste;
   final StatisticsBucketSize bucketSize;
   late final List<StatisticsDateRange> buckets;
   late final StatisticsBucketIndex _bucketIndex;
@@ -99,7 +112,7 @@ final class StatisticsAnalysis {
   /// Whether anything at all happened in the period with the current filter.
   bool get hasAnyActivity => _selectedFacts(_periodFacts).isNotEmpty;
 
-  /// Items eaten or thrown away in the period.
+  /// Items used or thrown away in the period.
   int get removalCount => _selectedFacts(_periodFacts)
       .where(
         (fact) =>
@@ -135,18 +148,32 @@ final class StatisticsAnalysis {
     previous: hasComparison ? _averageStoredDaysOf(_comparisonFacts) : null,
   );
 
-  /// Eaten items per storage-duration bin of 45 days, the last bin open-ended.
+  /// Eaten items per storage-duration bin, the last bin open-ended: bins of
+  /// 45 days, or of 4 days on the [StatisticsDurationScale.days] scale.
   List<double> get storedDaysHistogram {
+    final binWidth = storageDurationScale == StatisticsDurationScale.days ? 4 : 45;
     final bins = List<double>.filled(storedDaysHistogramBinCount, 0);
     for (final fact in _selectedFacts(_periodFacts, activity: StatisticsActivity.consumed)) {
-      final bin = (fact.storedDays ~/ storedDaysHistogramBinWidth).clamp(
-        0,
-        storedDaysHistogramBinCount - 1,
-      );
+      final bin = (fact.storedDays ~/ binWidth).clamp(0, storedDaysHistogramBinCount - 1);
       bins[bin] += fact.movementCount;
     }
     return bins;
   }
+
+  /// The scale of the storage-time charts, from what was eaten.
+  late final StatisticsDurationScale storageDurationScale =
+      _selectedFacts(
+        _periodFacts,
+        activity: StatisticsActivity.consumed,
+      ).any((fact) => fact.storedDays >= dayStorageDurationLimitsInDays.last)
+      ? StatisticsDurationScale.months
+      : StatisticsDurationScale.days;
+
+  /// The column limits of [storageDurationScale].
+  List<int> get storageDurationLimitsInDays => switch (storageDurationScale) {
+    StatisticsDurationScale.days => dayStorageDurationLimitsInDays,
+    StatisticsDurationScale.months => monthStorageDurationLimitsInDays,
+  };
 
   /// The measure per bucket of the period.
   List<double> bucketValuesOf(StatisticsActivity activity) =>
@@ -226,10 +253,11 @@ final class StatisticsAnalysis {
   /// Eaten items per column of [storageDurationLimitsInDays], the last
   /// column open-ended.
   List<int> get eatenItemsByStorageDuration {
-    final counts = List<int>.filled(storageDurationLimitsInDays.length + 1, 0);
+    final limits = storageDurationLimitsInDays;
+    final counts = List<int>.filled(limits.length + 1, 0);
     for (final fact in _selectedFacts(_periodFacts, activity: StatisticsActivity.consumed)) {
-      final column = storageDurationLimitsInDays.indexWhere((limit) => fact.storedDays < limit);
-      counts[column < 0 ? storageDurationLimitsInDays.length : column] += fact.movementCount;
+      final column = limits.indexWhere((limit) => fact.storedDays < limit);
+      counts[column < 0 ? limits.length : column] += fact.movementCount;
     }
     return counts;
   }
@@ -268,6 +296,10 @@ final class StatisticsAnalysis {
   }) => facts.where(
     (fact) =>
         (activity == null || fact.activity == activity) &&
+        !(fact.activity == StatisticsActivity.discarded &&
+            domainsWithoutWaste.contains(fact.domainIdentifier)) &&
+        (filter.domainIdentifiers.isEmpty ||
+            filter.domainIdentifiers.contains(fact.domainIdentifier)) &&
         (filter.categoryIdentifiers.isEmpty ||
             filter.categoryIdentifiers.contains(fact.categoryIdentifier)) &&
         (ignoreProducts ||

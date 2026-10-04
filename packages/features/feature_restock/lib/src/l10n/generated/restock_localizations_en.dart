@@ -9,9 +9,6 @@ class RestockLocalizationsEn extends RestockLocalizations {
   RestockLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get navigationLabel => 'List';
-
-  @override
   String get shoppingListTitle => 'Shopping list';
 
   @override
@@ -24,12 +21,12 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get originManual => 'Added by you';
 
   @override
-  String putTickedInFreezer(int count) {
+  String putTickedInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Put $count ticked items in the freezer',
-      one: 'Put 1 ticked item in the freezer',
+      other: 'Put $count ticked items away',
+      one: 'Put 1 ticked item away',
     );
     return '$_temp0';
   }
@@ -38,12 +35,12 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get nothingTicked => 'Tick what you bought';
 
   @override
-  String itemsPutInFreezer(int count) {
+  String itemsPutInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items are in the freezer now',
-      one: '1 item is in the freezer now',
+      other: '$count items are put away now',
+      one: '1 item is put away now',
       zero: 'Ticked items removed from the list',
     );
     return '$_temp0';
@@ -76,7 +73,7 @@ class RestockLocalizationsEn extends RestockLocalizations {
 
   @override
   String get configSectionExplanation =>
-      'Set a minimum for food you always want at home. When the freezer holds less, it goes on the shopping list.';
+      'Set a minimum for things you always want at home. When there is less, they go on the shopping list.';
 
   @override
   String get minimumQuantitiesRow => 'Minimum quantities';
@@ -97,19 +94,19 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get rulesEmptyTitle => 'No minimum quantities yet';
 
   @override
-  String get rulesEmptyMessage => 'Add a product you always want in the freezer.';
+  String get rulesEmptyMessage => 'Add a product you always want at home.';
 
   @override
   String get addRuleButton => 'Add product';
 
   @override
   String ruleSummary(String minimum, String stock) {
-    return 'Keep at least $minimum · $stock in the freezer';
+    return 'Keep at least $minimum · $stock at home';
   }
 
   @override
   String ruleSummaryWithTarget(String minimum, String target, String stock) {
-    return 'Keep at least $minimum, buy up to $target · $stock in the freezer';
+    return 'Keep at least $minimum, buy up to $target · $stock at home';
   }
 
   @override
@@ -125,7 +122,8 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get targetBelowMinimum => 'This must be at least the minimum.';
 
   @override
-  String get noFreezerForBoughtItems => 'Set up your freezer first, then put the items in.';
+  String get noStoragePlaceForBoughtItems =>
+      'Set up a storage place first, then put the items away.';
 
   @override
   String get automaticEntryCannotBeRemoved =>
@@ -138,7 +136,7 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get forecastTitle => 'Runs out in';
 
   @override
-  String get forecastSubtitle => 'From the last 60 days of eating';
+  String get forecastSubtitle => 'From the last 60 days of use';
 
   @override
   String forecastDays(int count) {
@@ -164,7 +162,7 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get forecastTableProduct => 'Product';
 
   @override
-  String get forecastTableStock => 'In freezer';
+  String get forecastTableStock => 'At home';
 
   @override
   String get forecastTableDays => 'Days left';

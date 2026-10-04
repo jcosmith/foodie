@@ -83,7 +83,7 @@ class _ItemPictureSlotState extends ConsumerState<ItemPictureSlot> {
   Widget build(BuildContext context) {
     final localizations = ItemPicturesLocalizations.of(context);
     final theme = Theme.of(context);
-    final tokens = context.freezerColors;
+    final tokens = context.foodieColors;
     final stagedPicture = _stagedPicture;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -111,7 +111,7 @@ class _ItemPictureSlotState extends ConsumerState<ItemPictureSlot> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const CircularProgressIndicator(),
-                      const SizedBox(height: FreezerSpacing.small),
+                      const SizedBox(height: FoodieSpacing.small),
                       Text(localizations.photoProcessing, style: theme.textTheme.bodySmall),
                     ],
                   ),
@@ -132,7 +132,7 @@ class _ItemPictureSlotState extends ConsumerState<ItemPictureSlot> {
           ),
         ),
         if (stagedPicture == null) ...[
-          const SizedBox(height: FreezerSpacing.extraSmall),
+          const SizedBox(height: FoodieSpacing.extraSmall),
           Text(
             localizations.photoOptional,
             style: theme.textTheme.bodySmall?.copyWith(color: tokens.textMuted),
@@ -167,8 +167,8 @@ class _StagedPicturePreview extends StatelessWidget {
           child: Image.memory(stagedPicture.pictureBytes, fit: BoxFit.cover),
         ),
         PositionedDirectional(
-          top: FreezerSpacing.extraSmall,
-          end: FreezerSpacing.extraSmall,
+          top: FoodieSpacing.extraSmall,
+          end: FoodieSpacing.extraSmall,
           child: Row(
             children: [
               IconButton.filledTonal(
@@ -185,9 +185,9 @@ class _StagedPicturePreview extends StatelessWidget {
           ),
         ),
         PositionedDirectional(
-          start: FreezerSpacing.small,
-          end: FreezerSpacing.small,
-          bottom: FreezerSpacing.small,
+          start: FoodieSpacing.small,
+          end: FoodieSpacing.small,
+          bottom: FoodieSpacing.small,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.88),
@@ -195,8 +195,8 @@ class _StagedPicturePreview extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: FreezerSpacing.small,
-                vertical: FreezerSpacing.extraSmall,
+                horizontal: FoodieSpacing.small,
+                vertical: FoodieSpacing.extraSmall,
               ),
               child: Text(
                 localizations.photoAdded,

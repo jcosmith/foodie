@@ -39,7 +39,7 @@ void main() {
           quantityUnit: 'gram',
           initialQuantity: 1000,
           quantityRemaining: 0,
-          frozenOn: CalendarDate(2026, 9, 1),
+          storedOn: CalendarDate(2026, 9, 1),
           createdAt: createdAt,
         ),
       );
@@ -47,9 +47,9 @@ void main() {
   setUp(() async {
     movementNumber = 0;
     database = createInMemoryApplicationDatabase();
-    await database.storageLayoutDao.insertFreezer(
-      FreezerRow(
-        freezerIdentifier: 'freezer-1',
+    await database.storageLayoutDao.insertStoragePlace(
+      StoragePlaceRow(
+        storagePlaceIdentifier: 'freezer-1',
         defaultNameKey: 'kitchen_freezer',
         storageKind: 'upright',
         sortOrder: 0,
@@ -61,7 +61,7 @@ void main() {
       await database.storageLayoutDao.insertCompartment(
         CompartmentRow(
           compartmentIdentifier: 'drawer-$number',
-          freezerIdentifier: 'freezer-1',
+          storagePlaceIdentifier: 'freezer-1',
           defaultNumber: number,
           colorTagIndex: number - 1,
           sortOrder: number,
@@ -77,6 +77,7 @@ void main() {
         recommendedMaximumStorageDays: 365,
         iconEmoji: '🥦',
         sortOrder: 0,
+        storageDomain: 'freezer',
       ),
     );
     await database.productCatalogDao.insertProduct(

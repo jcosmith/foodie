@@ -65,7 +65,7 @@ Future<void> _settle(WidgetTester tester) async {
 /// Today is Friday 2 October 2026. Peas eaten on Saturday 12 and Sunday 27
 /// September, pizza on Tuesday 29 September; chicken thrown away.
 Future<void> _recordHistory(StatisticsTestHarness harness) async {
-  await harness.seedCatalogAndFreezer();
+  await harness.seedCatalogAndStoragePlace();
   final peas = await harness.productWithKey('gardenPeas');
   final chicken = await harness.productWithKey('chickenBreast');
   final pizza = await harness.productWithKey('pizzaMargherita');
@@ -91,16 +91,16 @@ void main() {
     await _pumpDetails(tester, harness);
 
     expect(find.text('Insights · details'), findsOneWidget);
-    expect(find.text('Freezer days'), findsOneWidget);
+    expect(find.text('Busy days'), findsOneWidget);
     expect(find.byType(CalendarHeatmap), findsOneWidget);
     expect(find.text('By weekday'), findsOneWidget);
     expect(find.bySemanticsLabel('Sat: 0.3 kg'), findsOneWidget);
     expect(find.bySemanticsLabel('Sun: 0.2 kg'), findsOneWidget);
-    expect(find.text('Time in freezer before eaten'), findsOneWidget);
+    expect(find.text('Time stored before use'), findsOneWidget);
     expect(find.bySemanticsLabel('< 1 mo: 2'), findsOneWidget);
     expect(find.bySemanticsLabel('1–3 mo: 1'), findsOneWidget);
-    expect(find.text('Freezer map'), findsOneWidget);
-    expect(find.byType(FreezerMap), findsOneWidget);
+    expect(find.text('Storage map'), findsOneWidget);
+    expect(find.byType(StorageMap), findsOneWidget);
     // The contributed chart sees the same 90-day period.
     expect(find.text('Contributed: 90 days, 0 categories'), findsOneWidget);
   });
@@ -115,7 +115,8 @@ void main() {
     expect(find.widgetWithText(InputChip, 'Sat'), findsOneWidget);
     // The weekday chart keeps showing every day, so it can be changed again.
     expect(find.bySemanticsLabel('Sun: 0.2 kg'), findsOneWidget);
-    expect(find.bySemanticsLabel('1–3 mo: 0'), findsOneWidget);
+    // Only peas kept for 20 days are left, so storage time counts in weeks.
+    expect(find.bySemanticsLabel('2–4 wk: 1'), findsOneWidget);
 
     await tester.tap(find.bySemanticsLabel(RegExp('^Drawer 2')));
     await _settle(tester);
@@ -127,7 +128,7 @@ void main() {
     await tester.runAsync(() => _recordHistory(harness));
     await _pumpDetails(tester, harness);
 
-    await tester.tap(find.text('Filters · 0'));
+    await tester.tap(find.text('Filters'));
     await _settle(tester);
     await tester.tap(find.widgetWithText(ActionChip, 'Waste check'));
     await _settle(tester);
@@ -162,7 +163,7 @@ void main() {
   });
 
   test('saved views keep every filter choice through the preference codec', () async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     final catalog = await harness.read(productCatalogQueryServiceProvider).readCatalog();
     final layout = await harness.read(storageLayoutQueryServiceProvider).readStorageLayout();
     final filter = SuggestedStatisticsView.weekendMeals

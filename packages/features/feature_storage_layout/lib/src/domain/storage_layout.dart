@@ -1,93 +1,163 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:meta/meta.dart';
 
 import 'compartment.dart';
-import 'freezer.dart';
+import 'storage_kind.dart';
+import 'storage_place.dart';
 
-/// One freezer with its active compartments in the user's order.
+/// One storage place with its active compartments in the user's order.
 @immutable
-final class FreezerLayout {
-  const FreezerLayout({required this.freezer, required this.compartments});
+final class StoragePlaceLayout {
+  const StoragePlaceLayout({
+    required this.storagePlace,
+    required this.compartments,
+    this.domainIdentifier,
+  });
 
-  final Freezer freezer;
+  final StoragePlace storagePlace;
   final List<Compartment> compartments;
+
+  /// The domain of the place's kind; `null` when no registered module knows
+  /// the kind.
+  final StorageDomainIdentifier? domainIdentifier;
 }
 
-/// The whole layout as a read model: active freezers in order, each with its
+/// The whole layout as a read model: active storage places in order, each with its
 /// active compartments, plus everything archived for historical names.
 @immutable
 final class StorageLayout {
   const StorageLayout._({
-    required this.freezers,
-    required Map<FreezerIdentifier, Freezer> freezerByIdentifier,
+    required this.storagePlaces,
+    required Map<StoragePlaceIdentifier, StoragePlace> storagePlaceByIdentifier,
     required Map<CompartmentIdentifier, Compartment> compartmentByIdentifier,
-  }) : _freezerByIdentifier = freezerByIdentifier,
-       _compartmentByIdentifier = compartmentByIdentifier;
+    required Map<StorageKind, StorageDomainIdentifier> domainOfStorageKind,
+  }) : _storagePlaceByIdentifier = storagePlaceByIdentifier,
+       _compartmentByIdentifier = compartmentByIdentifier,
+       _domainOfStorageKind = domainOfStorageKind;
 
   /// Builds the read model from flat lists, archived entries included.
+  /// [domainOfStorageKind] tells which domain each known kind belongs to.
   factory StorageLayout.fromEntities({
-    required List<Freezer> freezersIncludingArchived,
+    required List<StoragePlace> storagePlacesIncludingArchived,
     required List<Compartment> compartmentsIncludingArchived,
+    Map<StorageKind, StorageDomainIdentifier> domainOfStorageKind = const {},
   }) {
-    final activeFreezers =
-        freezersIncludingArchived.where((freezer) => !freezer.isArchived).toList()
+    final activeStoragePlaces =
+        storagePlacesIncludingArchived.where((storagePlace) => !storagePlace.isArchived).toList()
           ..sort((first, second) => first.sortOrder.compareTo(second.sortOrder));
     return StorageLayout._(
-      freezers: [
-        for (final freezer in activeFreezers)
-          FreezerLayout(
-            freezer: freezer,
+      storagePlaces: [
+        for (final storagePlace in activeStoragePlaces)
+          StoragePlaceLayout(
+            storagePlace: storagePlace,
+            domainIdentifier: domainOfStorageKind[storagePlace.storageKind],
             compartments:
                 compartmentsIncludingArchived
                     .where(
                       (compartment) =>
-                          compartment.freezerIdentifier == freezer.identifier &&
+                          compartment.storagePlaceIdentifier == storagePlace.identifier &&
                           !compartment.isArchived,
                     )
                     .toList()
                   ..sort((first, second) => first.sortOrder.compareTo(second.sortOrder)),
           ),
       ],
-      freezerByIdentifier: {
-        for (final freezer in freezersIncludingArchived) freezer.identifier: freezer,
+      storagePlaceByIdentifier: {
+        for (final storagePlace in storagePlacesIncludingArchived)
+          storagePlace.identifier: storagePlace,
       },
       compartmentByIdentifier: {
         for (final compartment in compartmentsIncludingArchived)
           compartment.identifier: compartment,
       },
+      domainOfStorageKind: domainOfStorageKind,
     );
   }
 
   static final StorageLayout empty = StorageLayout.fromEntities(
-    freezersIncludingArchived: const [],
+    storagePlacesIncludingArchived: const [],
     compartmentsIncludingArchived: const [],
   );
 
-  /// Active freezers in the user's order.
-  final List<FreezerLayout> freezers;
-  final Map<FreezerIdentifier, Freezer> _freezerByIdentifier;
+  /// Active storage places in the user's order.
+  final List<StoragePlaceLayout> storagePlaces;
+  final Map<StoragePlaceIdentifier, StoragePlace> _storagePlaceByIdentifier;
   final Map<CompartmentIdentifier, Compartment> _compartmentByIdentifier;
+  final Map<StorageKind, StorageDomainIdentifier> _domainOfStorageKind;
 
-  bool get hasFreezer => freezers.isNotEmpty;
+  bool get hasStoragePlace => storagePlaces.isNotEmpty;
 
-  /// Active compartments of every active freezer, in display order.
+  /// Active compartments of every active storage place, in display order.
   List<Compartment> get activeCompartments => [
-    for (final freezer in freezers) ...freezer.compartments,
+    for (final storagePlace in storagePlaces) ...storagePlace.compartments,
   ];
 
-  /// Archived compartments of the given freezer, for the "removed drawers" note.
-  List<Compartment> archivedCompartmentsOf(FreezerIdentifier freezerIdentifier) => [
+  /// Active storage places of one domain, in the user's order.
+  List<StoragePlaceLayout> storagePlacesIn(StorageDomainIdentifier domainIdentifier) => [
+    for (final storagePlace in storagePlaces)
+      if (storagePlace.domainIdentifier == domainIdentifier) storagePlace,
+  ];
+
+  /// The same layout with only the active storage places of one domain, as
+  /// that domain's tab shows it. Every place and compartment can still be
+  /// looked up, for names in history.
+  StorageLayout restrictedTo(StorageDomainIdentifier domainIdentifier) => StorageLayout._(
+    storagePlaces: storagePlacesIn(domainIdentifier),
+    storagePlaceByIdentifier: _storagePlaceByIdentifier,
+    compartmentByIdentifier: _compartmentByIdentifier,
+    domainOfStorageKind: _domainOfStorageKind,
+  );
+
+  /// The same layout without the active storage places of switched-off
+  /// domains. Places of kinds no module knows stay, so nothing goes missing
+  /// without a switch. Every place and compartment can still be looked up.
+  StorageLayout withoutDomains(Set<StorageDomainIdentifier> pausedDomains) {
+    if (pausedDomains.isEmpty) return this;
+    return StorageLayout._(
+      storagePlaces: [
+        for (final storagePlace in storagePlaces)
+          if (!pausedDomains.contains(storagePlace.domainIdentifier)) storagePlace,
+      ],
+      storagePlaceByIdentifier: _storagePlaceByIdentifier,
+      compartmentByIdentifier: _compartmentByIdentifier,
+      domainOfStorageKind: _domainOfStorageKind,
+    );
+  }
+
+  /// Active compartments of the active storage places of one domain.
+  List<Compartment> activeCompartmentsIn(StorageDomainIdentifier domainIdentifier) => [
+    for (final storagePlace in storagePlacesIn(domainIdentifier)) ...storagePlace.compartments,
+  ];
+
+  /// The domain of any storage place, archived ones included.
+  StorageDomainIdentifier? domainOfStoragePlace(StoragePlaceIdentifier storagePlaceIdentifier) {
+    final storagePlace = _storagePlaceByIdentifier[storagePlaceIdentifier];
+    return storagePlace == null ? null : _domainOfStorageKind[storagePlace.storageKind];
+  }
+
+  /// The domain of any compartment, archived ones included.
+  StorageDomainIdentifier? domainOfCompartment(CompartmentIdentifier compartmentIdentifier) {
+    final compartment = _compartmentByIdentifier[compartmentIdentifier];
+    return compartment == null ? null : domainOfStoragePlace(compartment.storagePlaceIdentifier);
+  }
+
+  /// Archived compartments of the given storage place, for the "removed compartments" note.
+  List<Compartment> archivedCompartmentsOf(StoragePlaceIdentifier storagePlaceIdentifier) => [
     for (final compartment in _compartmentByIdentifier.values)
-      if (compartment.isArchived && compartment.freezerIdentifier == freezerIdentifier) compartment,
+      if (compartment.isArchived && compartment.storagePlaceIdentifier == storagePlaceIdentifier)
+        compartment,
   ]..sort((first, second) => first.defaultNumber.compareTo(second.defaultNumber));
 
-  /// Any freezer, archived ones included.
-  Freezer? freezerOf(FreezerIdentifier freezerIdentifier) =>
-      _freezerByIdentifier[freezerIdentifier];
+  /// Any storage place, archived ones included.
+  StoragePlace? storagePlaceOf(StoragePlaceIdentifier storagePlaceIdentifier) =>
+      _storagePlaceByIdentifier[storagePlaceIdentifier];
 
-  /// An active freezer with its active compartments.
-  FreezerLayout? freezerLayoutOf(FreezerIdentifier freezerIdentifier) {
-    for (final freezerLayout in freezers) {
-      if (freezerLayout.freezer.identifier == freezerIdentifier) return freezerLayout;
+  /// An active storage place with its active compartments.
+  StoragePlaceLayout? storagePlaceLayoutOf(StoragePlaceIdentifier storagePlaceIdentifier) {
+    for (final storagePlaceLayout in storagePlaces) {
+      if (storagePlaceLayout.storagePlace.identifier == storagePlaceIdentifier) {
+        return storagePlaceLayout;
+      }
     }
     return null;
   }

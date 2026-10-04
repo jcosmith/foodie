@@ -1,61 +1,45 @@
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/catalog_names.dart';
 import '../domain/product_catalog_failure.dart';
 import '../l10n/generated/product_catalog_localizations.dart';
 
-/// Seeded catalog names in the current app language.
-final class LocalizedCatalogNames implements CatalogNames {
-  const LocalizedCatalogNames(this._localizations);
+/// Seeded catalog names in [locale], translated by the module that seeded
+/// each entry. Works without a widget, for example for reminders.
+final class ContributedCatalogNames implements CatalogNames {
+  const ContributedCatalogNames(this._contributions, this._locale);
 
-  final ProductCatalogLocalizations _localizations;
-
-  @override
-  String? categoryName(String catalogKey) => switch (catalogKey) {
-    'vegetables' => _localizations.categoryVegetables,
-    'fruit' => _localizations.categoryFruit,
-    'meatAndFish' => _localizations.categoryMeatAndFish,
-    'meals' => _localizations.categoryMeals,
-    'bakery' => _localizations.categoryBakery,
-    'desserts' => _localizations.categoryDesserts,
-    'other' => _localizations.categoryOther,
-    _ => null,
-  };
+  final List<CatalogContribution> _contributions;
+  final Locale _locale;
 
   @override
-  String? productName(String catalogKey) => switch (catalogKey) {
-    'leafSpinach' => _localizations.productLeafSpinach,
-    'gardenPeas' => _localizations.productGardenPeas,
-    'broccoli' => _localizations.productBroccoli,
-    'mixedVegetables' => _localizations.productMixedVegetables,
-    'herbs' => _localizations.productHerbs,
-    'frenchFries' => _localizations.productFrenchFries,
-    'mixedBerries' => _localizations.productMixedBerries,
-    'strawberries' => _localizations.productStrawberries,
-    'mango' => _localizations.productMango,
-    'chickenBreast' => _localizations.productChickenBreast,
-    'mincedMeat' => _localizations.productMincedMeat,
-    'salmonFillet' => _localizations.productSalmonFillet,
-    'fishFingers' => _localizations.productFishFingers,
-    'prawns' => _localizations.productPrawns,
-    'bologneseHomemade' => _localizations.productBologneseHomemade,
-    'soupHomemade' => _localizations.productSoupHomemade,
-    'lasagne' => _localizations.productLasagne,
-    'pizzaMargherita' => _localizations.productPizzaMargherita,
-    'wholegrainBread' => _localizations.productWholegrainBread,
-    'breadRolls' => _localizations.productBreadRolls,
-    'croissants' => _localizations.productCroissants,
-    'vanillaIceCream' => _localizations.productVanillaIceCream,
-    'cake' => _localizations.productCake,
-    'butter' => _localizations.productButter,
-    _ => null,
-  };
+  String? categoryName(String catalogKey) {
+    for (final contribution in _contributions) {
+      final name = contribution.categoryNameBuilder(_locale, catalogKey);
+      if (name != null) return name;
+    }
+    return null;
+  }
+
+  @override
+  String? productName(String catalogKey) {
+    for (final contribution in _contributions) {
+      final name = contribution.productNameBuilder(_locale, catalogKey);
+      if (name != null) return name;
+    }
+    return null;
+  }
 }
 
 /// Display names for screens of any feature that shows products.
 extension ProductCatalogLocalizationContext on BuildContext {
   /// Seeded catalog names in the current app language.
-  CatalogNames get catalogNames => LocalizedCatalogNames(ProductCatalogLocalizations.of(this));
+  CatalogNames get catalogNames => ContributedCatalogNames(
+    ProviderScope.containerOf(this, listen: false).read(registeredCatalogContributionsProvider),
+    Localizations.localeOf(this),
+  );
 
   ProductDisplayNameResolver get productDisplayNameResolver =>
       ProductDisplayNameResolver(catalogNames);

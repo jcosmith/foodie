@@ -2,7 +2,7 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_product_catalog/domain.dart';
 import 'package:meta/meta.dart';
 
-/// How much of a product the user wants to keep in the freezer.
+/// How much of a product the user wants to keep at home.
 @immutable
 final class RestockRule {
   const RestockRule({

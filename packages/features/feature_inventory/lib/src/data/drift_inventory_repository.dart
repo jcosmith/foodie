@@ -60,8 +60,9 @@ final class DriftInventoryRepository implements InventoryRepository {
       initialQuantity: batch.initialQuantity.amountInBaseUnits,
       quantityRemaining: batch.quantityRemaining.amountInBaseUnits,
       parentBatchIdentifier: batch.parentBatchIdentifier?.value,
-      frozenOn: batch.frozenOn,
+      storedOn: batch.storedOn,
       bestBeforeOn: batch.bestBeforeOn,
+      openedOn: batch.openedOn,
       note: batch.note,
       createdAt: batch.createdAt,
     ),
@@ -82,6 +83,19 @@ final class DriftInventoryRepository implements InventoryRepository {
     CompartmentIdentifier compartmentIdentifier,
   ) =>
       _inventoryDao.updateBatchCompartment(stockBatchIdentifier.value, compartmentIdentifier.value);
+
+  @override
+  Future<void> updateDates(
+    StockBatchIdentifier stockBatchIdentifier, {
+    required CalendarDate storedOn,
+    required CalendarDate? bestBeforeOn,
+    required CalendarDate? openedOn,
+  }) => _inventoryDao.updateBatchDates(
+    stockBatchIdentifier.value,
+    storedOn: storedOn,
+    bestBeforeOn: bestBeforeOn,
+    openedOn: openedOn,
+  );
 
   @override
   Future<void> appendMovement(InventoryMovement movement) => _inventoryDao.appendMovement(
@@ -166,8 +180,9 @@ final class DriftInventoryRepository implements InventoryRepository {
         final parentIdentifier? => StockBatchIdentifier(parentIdentifier),
         null => null,
       },
-      frozenOn: row.frozenOn,
+      storedOn: row.storedOn,
       bestBeforeOn: row.bestBeforeOn,
+      openedOn: row.openedOn,
       note: row.note,
       createdAt: row.createdAt,
     );

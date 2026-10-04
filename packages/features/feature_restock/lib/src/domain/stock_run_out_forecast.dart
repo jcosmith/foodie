@@ -18,7 +18,7 @@ final class StockRunOutForecast {
   final ProductIdentifier productIdentifier;
   final Quantity stock;
 
-  /// Rounded; `null` when nothing was eaten in the look-back window.
+  /// Rounded; `null` when nothing was used in the look-back window.
   final int? daysLeft;
 
   bool get runsOutSoon =>
@@ -26,7 +26,7 @@ final class StockRunOutForecast {
 }
 
 abstract final class StockRunOutForecasting {
-  /// The eating rate is the amount eaten over this many days, per day.
+  /// The eating rate is the amount used over this many days, per day.
   static const int lookBackInDays = 60;
 
   /// Products that run out within fewer days are highlighted.

@@ -1,7 +1,9 @@
 {
   "@@locale": "de",
-  "navigationLabel": "Konfig.",
-  "screenTitle": "Konfiguration",
+  "screenTitle": "Optionen",
+  "moreEntrySubtitle": "Tabs, optionale Funktionen, Sprache, Darstellung, Erinnerungen, Sicherung",
+  "tabsSectionTitle": "Tabs",
+  "lastTabHint": "Mindestens ein Tab bleibt eingeschaltet.",
   "languageSectionTitle": "Sprache",
   "systemLanguage": "Systemsprache",
   "systemLanguageDetail": "Wie das Telefon: {languageName}",

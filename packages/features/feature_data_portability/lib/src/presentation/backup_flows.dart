@@ -119,7 +119,7 @@ Future<void> showRestoreBackupFlow(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// Exports the freezer contents or the history as CSV.
+/// Exports what is stored or the history as CSV.
 Future<void> showCsvExportFlow(BuildContext context, WidgetRef ref, CsvExportKind kind) async {
   final localizations = DataPortabilityLocalizations.of(context);
   final quantityFormatter = context.quantityFormatter;
@@ -130,7 +130,7 @@ Future<void> showCsvExportFlow(BuildContext context, WidgetRef ref, CsvExportKin
       localizations.csvColumnCategory,
       localizations.csvColumnAmount,
       localizations.csvColumnUnit,
-      localizations.csvColumnFrozenOn,
+      localizations.csvColumnStoredOn,
       localizations.csvColumnDrawer,
       localizations.csvColumnNote,
     ],
@@ -155,6 +155,8 @@ Future<void> showCsvExportFlow(BuildContext context, WidgetRef ref, CsvExportKin
     discardReasonName: (reason) => switch (reason) {
       DiscardReason.tooOld => localizations.reasonTooOld,
       DiscardReason.freezerBurn => localizations.reasonFreezerBurn,
+      DiscardReason.expired => localizations.reasonExpired,
+      DiscardReason.spoiled => localizations.reasonSpoiled,
       DiscardReason.unwanted => localizations.reasonUnwanted,
       DiscardReason.other => localizations.reasonOther,
     },
@@ -182,7 +184,7 @@ Future<TResult> _whileShowingProgress<TResult>(BuildContext context, Future<TRes
         content: Row(
           children: [
             const CircularProgressIndicator(),
-            const SizedBox(width: FreezerSpacing.large),
+            const SizedBox(width: FoodieSpacing.large),
             Expanded(child: Text(message)),
           ],
         ),
@@ -258,7 +260,7 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(localizations.passwordDialogMessage(BackupPasswordPolicy.minimumLength)),
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -271,7 +273,7 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
                     : null,
               ),
             ),
-            const SizedBox(height: FreezerSpacing.small),
+            const SizedBox(height: FoodieSpacing.small),
             TextField(
               controller: _repeatedPasswordController,
               obscureText: true,
@@ -284,7 +286,7 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
               onSubmitted: (_) => _submit(),
             ),
             if (widget.pictureCount > 0) ...[
-              const SizedBox(height: FreezerSpacing.small),
+              const SizedBox(height: FoodieSpacing.small),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(localizations.includePicturesLabel),
@@ -336,7 +338,7 @@ class _BackupPasswordDialogState extends State<_BackupPasswordDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(localizations.restorePasswordMessage),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           TextField(
             controller: _passwordController,
             obscureText: true,

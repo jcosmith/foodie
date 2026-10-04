@@ -1,0 +1,10 @@
+-- The full-text index of the receipt archive (architecture 10.10): one row
+-- per receipt for its store name and whole text, and one per line. Bodies
+-- are normalised by the receipt module before they are stored, and the row
+-- is written in the same transaction as the receipt.
+CREATE VIRTUAL TABLE receipt_search_index USING fts5(
+  receipt_identifier UNINDEXED,
+  receipt_line_identifier UNINDEXED,
+  body,
+  tokenize = 'unicode61 remove_diacritics 2'
+);

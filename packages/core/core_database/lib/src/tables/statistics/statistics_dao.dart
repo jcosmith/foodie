@@ -11,7 +11,7 @@ part 'statistics_dao.g.dart';
 /// Movements of one local day that share kind, product, compartment, unit,
 /// discard reason and storage age, summed.
 ///
-/// Quantities are positive for every kind: what was added, eaten, thrown
+/// Quantities are positive for every kind: what was added, used, thrown
 /// away or moved. Undone removals cancel out, because their compensating
 /// movement has the same kind and the opposite delta.
 @immutable
@@ -110,7 +110,7 @@ class StatisticsDao extends DatabaseAccessor<ApplicationDatabase> with _$Statist
         'm.compartment_identifier AS compartment_identifier, '
         'b.quantity_unit AS quantity_unit, '
         'm.discard_reason AS discard_reason, '
-        'CAST(julianday(date(m.occurred_at, \'localtime\')) - julianday(b.frozen_on) AS INTEGER) '
+        'CAST(julianday(date(m.occurred_at, \'localtime\')) - julianday(b.stored_on) AS INTEGER) '
         'AS stored_days, '
         'SUM(CASE WHEN m.movement_kind IN (\'added\', \'moved\') '
         'THEN m.quantity_delta ELSE -m.quantity_delta END) AS quantity_in_base_units, '

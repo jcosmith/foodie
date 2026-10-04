@@ -180,7 +180,7 @@ void main() {
   testWidgets('KPI tiles read as one sentence and render in the dark theme', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: FreezerTheme.dark(),
+        theme: FoodieTheme.dark(),
         home: const Scaffold(
           body: SizedBox(
             width: 180,
@@ -197,8 +197,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('Eaten: 12 kg, ▲ 8 % vs before'), findsOneWidget);
     expect(
-      Theme.of(tester.element(find.byType(KpiTile))).extension<FreezerChartColors>(),
-      FreezerChartColors.dark,
+      Theme.of(tester.element(find.byType(KpiTile))).extension<FoodieChartColors>(),
+      FoodieChartColors.dark,
     );
   });
 
@@ -241,9 +241,9 @@ void main() {
               marker: const ColumnBarMarker(position: 2, label: '6 mo'),
               onColumnTapped: tappedColumns.add,
             ),
-            FreezerMap(
+            StorageMap(
               drawers: const [
-                FreezerMapDrawer(
+                StorageMapCompartment(
                   label: 'Drawer 1',
                   tagColor: Colors.blue,
                   itemCountLabel: '3 items',
@@ -261,7 +261,7 @@ void main() {
       ),
     );
     await tester.tap(find.bySemanticsLabel('Wed: 5'));
-    await tester.tap(find.bySemanticsLabel('Drawer 1, 3 items, Fresh: 2, Eat now: 1'));
+    await tester.tap(find.bySemanticsLabel('Drawer 1, 3 items, Fresh: 2, Use now: 1'));
     expect(tappedColumns, [2]);
     expect(tappedDrawers, [0]);
     expect(find.text('▲ 6 mo'), findsOneWidget);

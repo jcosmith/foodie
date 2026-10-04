@@ -104,7 +104,7 @@ void main() {
 
     expect(
       (await gateway.inspectBackup(backupPath: strangerPath, password: password)).failureOrNull,
-      isA<NotAFreezerBackup>(),
+      isA<NotAFoodieBackup>(),
     );
     expect(
       (await gateway.inspectBackup(backupPath: newerBackupPath, password: password)).failureOrNull,

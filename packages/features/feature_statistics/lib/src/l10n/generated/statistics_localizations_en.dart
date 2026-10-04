@@ -9,7 +9,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   StatisticsLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get navigationLabel => 'Insights';
+  String get moreEntryTitle => 'Statistics';
+
+  @override
+  String get moreEntrySubtitle => 'Habits, waste and trends, with one shared filter';
 
   @override
   String get insightsTitle => 'Insights';
@@ -39,14 +42,20 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
 
   @override
   String filtersButton(int count) {
-    return 'Filters · $count';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Filters · $count',
+      zero: 'Filters',
+    );
+    return '$_temp0';
   }
 
   @override
   String get resetFilters => 'Reset';
 
   @override
-  String get kpiEaten => 'Eaten';
+  String get kpiEaten => 'Used';
 
   @override
   String get kpiAdded => 'Added';
@@ -74,16 +83,16 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get deltaNone => 'no comparison';
 
   @override
-  String get trendTitle => 'Eaten vs added';
+  String get trendTitle => 'Used vs added';
 
   @override
   String get trendSubtitle => 'Drag across the chart to zoom in';
 
   @override
-  String get trendSubtitleWithComparison => 'Dashed: eaten in the comparison period · drag to zoom';
+  String get trendSubtitleWithComparison => 'Dashed: used in the comparison period · drag to zoom';
 
   @override
-  String get seriesEaten => 'Eaten';
+  String get seriesEaten => 'Used';
 
   @override
   String get seriesAdded => 'Added';
@@ -129,11 +138,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get noHistoryTitle => 'No activity yet';
 
   @override
-  String get noHistoryMessage =>
-      'Insights appear once you put items in the freezer and take them out.';
+  String get noHistoryMessage => 'Insights appear once you put items away and take them out.';
 
   @override
-  String get activityConsumed => 'Eaten';
+  String get activityConsumed => 'Used';
 
   @override
   String get activityAdded => 'Added';
@@ -222,7 +230,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get filterCategories => 'Categories';
 
   @override
-  String get filterDrawers => 'Drawers';
+  String get filterDrawers => 'Compartments';
+
+  @override
+  String get filterStorage => 'Storage';
 
   @override
   String get filterProducts => 'Products';
@@ -241,6 +252,12 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
 
   @override
   String get reasonFreezerBurn => 'Freezer burn';
+
+  @override
+  String get reasonExpired => 'Past its date';
+
+  @override
+  String get reasonSpoiled => 'Gone off';
 
   @override
   String get reasonUnwanted => 'Nobody wanted it';
@@ -274,10 +291,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get detailsButton => 'More insights';
 
   @override
-  String get detailsButtonSubtitle => 'Freezer days, weekdays, storage time and the freezer map';
+  String get detailsButtonSubtitle => 'Busy days, weekdays, storage time and the storage map';
 
   @override
-  String get calendarTitle => 'Freezer days';
+  String get calendarTitle => 'Busy days';
 
   @override
   String calendarSubtitle(String activityItems) {
@@ -290,7 +307,7 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   }
 
   @override
-  String get activityItemsConsumed => 'items eaten';
+  String get activityItemsConsumed => 'items used';
 
   @override
   String get activityItemsAdded => 'items added';
@@ -305,10 +322,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get weekdayTitle => 'By weekday';
 
   @override
-  String get durationTitle => 'Time in freezer before eaten';
+  String get durationTitle => 'Time stored before use';
 
   @override
-  String get durationSubtitle => 'Number of items eaten, by storage time';
+  String get durationSubtitle => 'Number of items used, by storage time';
 
   @override
   String get durationUnderOneMonth => '< 1 mo';
@@ -329,13 +346,32 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get durationOverTwelveMonths => '> 12 mo';
 
   @override
+  String get durationUnderTwoDays => '< 2 d';
+
+  @override
+  String get durationTwoToThreeDays => '2–3 d';
+
+  @override
+  String get durationFourToSevenDays => '4–7 d';
+
+  @override
+  String get durationOneToTwoWeeks => '1–2 wk';
+
+  @override
+  String get durationTwoToFourWeeks => '2–4 wk';
+
+  @override
+  String get durationOverOneMonth => '> 1 mo';
+
+  @override
   String get sixMonthMarker => '6 mo';
 
   @override
-  String get freezerMapTitle => 'Freezer map';
+  String get storageMapTitle => 'Storage map';
 
   @override
-  String get freezerMapSubtitle => 'Current contents by drawer, coloured by age. Tap to filter.';
+  String get storageMapSubtitle =>
+      'Current contents by compartment, coloured by age. Tap to filter.';
 
   @override
   String drawerItems(int count) {

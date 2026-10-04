@@ -15,7 +15,7 @@ Widget buildLocalizedTestApplication({
   Locale locale = const Locale('en'),
 }) => MaterialApp(
   locale: locale,
-  theme: FreezerTheme.light(),
+  theme: FoodieTheme.light(),
   supportedLocales: SupportedLocales.all,
   localizationsDelegates: _localizationDelegates(featureLocalizationDelegates),
   home: home,
@@ -29,7 +29,7 @@ Widget buildLocalizedTestRouterApplication({
   Locale locale = const Locale('en'),
 }) => MaterialApp.router(
   locale: locale,
-  theme: FreezerTheme.light(),
+  theme: FoodieTheme.light(),
   supportedLocales: SupportedLocales.all,
   localizationsDelegates: _localizationDelegates(featureLocalizationDelegates),
   routerConfig: routerConfig,

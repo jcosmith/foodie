@@ -95,12 +95,6 @@ abstract class RestockLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('de'), Locale('en')];
 
-  /// No description provided for @navigationLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'List'**
-  String get navigationLabel;
-
   /// No description provided for @shoppingListTitle.
   ///
   /// In en, this message translates to:
@@ -125,11 +119,11 @@ abstract class RestockLocalizations {
   /// **'Added by you'**
   String get originManual;
 
-  /// No description provided for @putTickedInFreezer.
+  /// No description provided for @putTickedInStoragePlace.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Put 1 ticked item in the freezer} other{Put {count} ticked items in the freezer}}'**
-  String putTickedInFreezer(int count);
+  /// **'{count, plural, =1{Put 1 ticked item away} other{Put {count} ticked items away}}'**
+  String putTickedInStoragePlace(int count);
 
   /// No description provided for @nothingTicked.
   ///
@@ -137,11 +131,11 @@ abstract class RestockLocalizations {
   /// **'Tick what you bought'**
   String get nothingTicked;
 
-  /// No description provided for @itemsPutInFreezer.
+  /// No description provided for @itemsPutInStoragePlace.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =0{Ticked items removed from the list} =1{1 item is in the freezer now} other{{count} items are in the freezer now}}'**
-  String itemsPutInFreezer(int count);
+  /// **'{count, plural, =0{Ticked items removed from the list} =1{1 item is put away now} other{{count} items are put away now}}'**
+  String itemsPutInStoragePlace(int count);
 
   /// No description provided for @addToListButton.
   ///
@@ -194,7 +188,7 @@ abstract class RestockLocalizations {
   /// No description provided for @configSectionExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Set a minimum for food you always want at home. When the freezer holds less, it goes on the shopping list.'**
+  /// **'Set a minimum for things you always want at home. When there is less, they go on the shopping list.'**
   String get configSectionExplanation;
 
   /// No description provided for @minimumQuantitiesRow.
@@ -218,7 +212,7 @@ abstract class RestockLocalizations {
   /// No description provided for @rulesEmptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Add a product you always want in the freezer.'**
+  /// **'Add a product you always want at home.'**
   String get rulesEmptyMessage;
 
   /// No description provided for @addRuleButton.
@@ -230,13 +224,13 @@ abstract class RestockLocalizations {
   /// No description provided for @ruleSummary.
   ///
   /// In en, this message translates to:
-  /// **'Keep at least {minimum} · {stock} in the freezer'**
+  /// **'Keep at least {minimum} · {stock} at home'**
   String ruleSummary(String minimum, String stock);
 
   /// No description provided for @ruleSummaryWithTarget.
   ///
   /// In en, this message translates to:
-  /// **'Keep at least {minimum}, buy up to {target} · {stock} in the freezer'**
+  /// **'Keep at least {minimum}, buy up to {target} · {stock} at home'**
   String ruleSummaryWithTarget(String minimum, String target, String stock);
 
   /// No description provided for @minimumLabel.
@@ -263,11 +257,11 @@ abstract class RestockLocalizations {
   /// **'This must be at least the minimum.'**
   String get targetBelowMinimum;
 
-  /// No description provided for @noFreezerForBoughtItems.
+  /// No description provided for @noStoragePlaceForBoughtItems.
   ///
   /// In en, this message translates to:
-  /// **'Set up your freezer first, then put the items in.'**
-  String get noFreezerForBoughtItems;
+  /// **'Set up a storage place first, then put the items away.'**
+  String get noStoragePlaceForBoughtItems;
 
   /// No description provided for @automaticEntryCannotBeRemoved.
   ///
@@ -290,7 +284,7 @@ abstract class RestockLocalizations {
   /// No description provided for @forecastSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'From the last 60 days of eating'**
+  /// **'From the last 60 days of use'**
   String get forecastSubtitle;
 
   /// No description provided for @forecastDays.
@@ -326,7 +320,7 @@ abstract class RestockLocalizations {
   /// No description provided for @forecastTableStock.
   ///
   /// In en, this message translates to:
-  /// **'In freezer'**
+  /// **'At home'**
   String get forecastTableStock;
 
   /// No description provided for @forecastTableDays.

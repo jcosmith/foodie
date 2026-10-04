@@ -15,20 +15,47 @@ Widget _wrapInApp(Widget child, {Locale locale = SupportedLocales.english, Theme
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: theme ?? FreezerTheme.light(),
+      theme: theme ?? FoodieTheme.light(),
       home: Scaffold(body: Center(child: child)),
     );
 
 void main() {
-  testWidgets('age badge shows a symbol and a word, not only a colour', (tester) async {
-    await tester.pumpWidget(_wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.urgent)));
-    expect(find.text('▲ Eat now'), findsOneWidget);
+  testWidgets('a filled field keeps its floating label inside the field', (tester) async {
+    final controller = TextEditingController(text: 'Peas');
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      _wrapInApp(
+        SizedBox(
+          width: 300,
+          child: TextField(
+            controller: controller,
+            decoration: const InputDecoration(labelText: 'Product'),
+          ),
+        ),
+      ),
+    );
+    final field = tester.getRect(find.byType(InputDecorator));
+    final label = tester.getRect(find.text('Product'));
+    expect(label.top, greaterThanOrEqualTo(field.top), reason: 'not on the top edge');
   });
 
-  testWidgets('an overdue item says so instead of "Eat now"', (tester) async {
+  testWidgets('age badge shows a symbol and a word, not only a colour', (tester) async {
+    await tester.pumpWidget(_wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.urgent)));
+    expect(find.text('▲ Use now'), findsOneWidget);
+  });
+
+  testWidgets('age badge can say when to use the item instead', (tester) async {
+    await tester.pumpWidget(
+      _wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.urgent, label: 'Use today')),
+    );
+    expect(find.text('▲ Use today'), findsOneWidget);
+    expect(find.bySemanticsLabel('Use today'), findsOneWidget);
+  });
+
+  testWidgets('an overdue item says so instead of "Use now"', (tester) async {
     await tester.pumpWidget(_wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.overdue)));
     expect(find.text('✕ Overdue'), findsOneWidget);
-    expect(find.textContaining('Eat now'), findsNothing);
+    expect(find.textContaining('Use now'), findsNothing);
   });
 
   testWidgets('age badge is translated', (tester) async {
@@ -67,18 +94,76 @@ void main() {
   });
 
   testWidgets('dark theme carries the dark colour tokens', (tester) async {
-    late FreezerColorTokens resolvedTokens;
+    late FoodieColorTokens resolvedTokens;
     await tester.pumpWidget(
       _wrapInApp(
         Builder(
           builder: (context) {
-            resolvedTokens = context.freezerColors;
+            resolvedTokens = context.foodieColors;
             return const SizedBox();
           },
         ),
-        theme: FreezerTheme.dark(),
+        theme: FoodieTheme.dark(),
       ),
     );
-    expect(resolvedTokens, FreezerColorTokens.dark);
+    expect(resolvedTokens, FoodieColorTokens.dark);
+  });
+
+  group('shelf life field', () {
+    testWidgets('shows a stored shelf life in its unit and reads back what is typed', (
+      tester,
+    ) async {
+      final controller = ShelfLifeFieldController(initialDays: 14);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrapInApp(ShelfLifeField(controller: controller, labelText: 'Keeps for')),
+      );
+      expect(find.text('Keeps for'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '2'), findsOneWidget);
+      expect(_selectedShelfLifeUnit(tester), ShelfLifeUnit.weeks);
+
+      await tester.enterText(find.byType(TextField), '3');
+      await tester.tap(find.text('days'));
+      await tester.pumpAndSettle();
+      expect(controller.shelfLife, const ShelfLife(3, ShelfLifeUnit.days));
+      expect(controller.inDays, 3);
+      expect(controller.isValid, isTrue);
+    });
+
+    testWidgets('empty means none; out of range or not a number is invalid', (tester) async {
+      final controller = ShelfLifeFieldController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrapInApp(ShelfLifeField(controller: controller, labelText: 'Keeps for')),
+      );
+      expect(_selectedShelfLifeUnit(tester), ShelfLifeUnit.months, reason: 'unless told otherwise');
+      expect(controller.shelfLife, isNull);
+      expect(controller.isValid, isTrue);
+
+      await tester.enterText(find.byType(TextField), '40');
+      expect(controller.isValid, isFalse);
+      await tester.enterText(find.byType(TextField), '0');
+      expect(controller.isValid, isFalse);
+    });
+
+    testWidgets('the units are translated', (tester) async {
+      final controller = ShelfLifeFieldController(initialDays: 1);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrapInApp(
+          ShelfLifeField(controller: controller, labelText: 'Haltbar'),
+          locale: SupportedLocales.german,
+        ),
+      );
+      expect(find.text('Tage'), findsOneWidget);
+      expect(find.text('Wochen'), findsOneWidget);
+      expect(_selectedShelfLifeUnit(tester), ShelfLifeUnit.days);
+      expect(find.widgetWithText(TextField, '1'), findsOneWidget);
+    });
   });
 }
+
+ShelfLifeUnit _selectedShelfLifeUnit(WidgetTester tester) => tester
+    .widget<SegmentedButton<ShelfLifeUnit>>(find.byType(SegmentedButton<ShelfLifeUnit>))
+    .selected
+    .single;

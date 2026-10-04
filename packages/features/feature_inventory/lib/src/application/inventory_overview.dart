@@ -4,7 +4,7 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:meta/meta.dart';
 
 import '../domain/stock_batch.dart';
-import '../domain/storage_age_policy.dart';
+import '../domain/use_by_policy.dart';
 
 /// A batch with everything a list row shows about it.
 @immutable
@@ -15,8 +15,8 @@ final class InventoryItem {
     required this.category,
     required this.compartment,
     required this.iconEmoji,
-    required this.storageAgeStatus,
-    this.eatBefore,
+    required this.useByStatus,
+    this.useBy,
   });
 
   final StockBatch batch;
@@ -24,40 +24,36 @@ final class InventoryItem {
   final Category? category;
   final Compartment? compartment;
   final String iconEmoji;
-  final StorageAgeStatus storageAgeStatus;
+  final UseByStatus useByStatus;
 
-  /// The day the recommended maximum storage time is used up; `null` when
-  /// there is no recommendation.
-  final CalendarDate? eatBefore;
+  /// When the batch should be used; `null` when nothing says so.
+  final UseByDeadline? useBy;
 
-  /// Orders by the freshness time left, least first: the earliest
-  /// [eatBefore] first, items without one last, and otherwise the oldest
-  /// frozen first.
-  static int compareByEatBefore(InventoryItem first, InventoryItem second) {
-    final firstEatBefore = first.eatBefore;
-    final secondEatBefore = second.eatBefore;
-    final byEatBefore = switch ((firstEatBefore, secondEatBefore)) {
+  /// Orders by the time left, least first: the earliest last good day
+  /// first, items without one last, and otherwise the oldest stored first.
+  static int compareByUseBy(InventoryItem first, InventoryItem second) {
+    final byUseBy = switch ((first.useBy?.lastGoodDay, second.useBy?.lastGoodDay)) {
       (null, null) => 0,
       (null, _) => 1,
       (_, null) => -1,
       (final firstDay?, final secondDay?) => firstDay.compareTo(secondDay),
     };
-    return byEatBefore != 0 ? byEatBefore : first.batch.frozenOn.compareTo(second.batch.frozenOn);
+    return byUseBy != 0 ? byUseBy : first.batch.storedOn.compareTo(second.batch.storedOn);
   }
 }
 
-/// [items] ordered by the freshness time left, least first
-/// ([InventoryItem.compareByEatBefore]); the order is stable.
-List<InventoryItem> sortedByEatBefore(Iterable<InventoryItem> items) {
+/// [items] ordered by the time left, least first
+/// ([InventoryItem.compareByUseBy]); the order is stable.
+List<InventoryItem> sortedByUseBy(Iterable<InventoryItem> items) {
   final indexedItems = items.indexed.toList()
     ..sort((first, second) {
-      final byEatBefore = InventoryItem.compareByEatBefore(first.$2, second.$2);
-      return byEatBefore != 0 ? byEatBefore : first.$1.compareTo(second.$1);
+      final byUseBy = InventoryItem.compareByUseBy(first.$2, second.$2);
+      return byUseBy != 0 ? byUseBy : first.$1.compareTo(second.$1);
     });
   return [for (final (_, item) in indexedItems) item];
 }
 
-/// The freezer contents joined with the catalog and the layout.
+/// What is stored joined with the catalog and the layout.
 @immutable
 final class InventoryOverview {
   const InventoryOverview({
@@ -91,34 +87,59 @@ final class InventoryOverview {
     required StorageLayout layout,
     required CalendarDate today,
   }) {
-    final recommendedMaximumStorageDays = catalog.recommendedMaximumStorageDaysOf(product) ?? 0;
+    final useBy = UseByPolicy.deadlineOfBatch(
+      batch,
+      shelfLifeDays: catalog.recommendedMaximumStorageDaysOf(product),
+      shelfLifeAfterOpeningDays: catalog.shelfLifeAfterOpeningDaysOf(product),
+    );
     return InventoryItem(
       batch: batch,
       product: product,
       category: catalog.categoryOfProduct(product),
       compartment: layout.compartmentOf(batch.compartmentIdentifier),
       iconEmoji: catalog.iconEmojiOf(product),
-      storageAgeStatus: StorageAgePolicy.evaluate(
-        frozenOn: batch.frozenOn,
-        today: today,
-        recommendedMaximumStorageDays: recommendedMaximumStorageDays,
-      ),
-      eatBefore: recommendedMaximumStorageDays <= 0
-          ? null
-          : StorageAgePolicy.storageLimitReachedOn(
-              frozenOn: batch.frozenOn,
-              recommendedMaximumStorageDays: recommendedMaximumStorageDays,
-            ),
+      useByStatus: useBy?.statusOn(today) ?? UseByStatus.fresh,
+      useBy: useBy,
     );
   }
 
-  /// Oldest frozen first.
+  /// Oldest stored first.
   final List<InventoryItem> items;
   final ProductCatalog catalog;
   final StorageLayout layout;
   final CalendarDate today;
 
-  bool get hasFreezer => layout.hasFreezer;
+  bool get hasStoragePlace => layout.hasStoragePlace;
+
+  /// The part of the overview one domain tab shows: its items, and a layout
+  /// with only its storage places.
+  InventoryOverview ofDomain(StorageDomainIdentifier domainIdentifier) => InventoryOverview(
+    items: [
+      for (final item in items)
+        if (layout.domainOfCompartment(item.batch.compartmentIdentifier) == domainIdentifier) item,
+    ],
+    catalog: catalog,
+    layout: layout.restrictedTo(domainIdentifier),
+    today: today,
+  );
+
+  /// The overview without the items and places of switched-off domains.
+  /// Items in places no module knows stay.
+  InventoryOverview withoutDomains(Set<StorageDomainIdentifier> pausedDomains) =>
+      pausedDomains.isEmpty
+      ? this
+      : InventoryOverview(
+          items: [
+            for (final item in items)
+              if (!pausedDomains.contains(
+                layout.domainOfCompartment(item.batch.compartmentIdentifier),
+              ))
+                item,
+          ],
+          catalog: catalog,
+          layout: layout.withoutDomains(pausedDomains),
+          today: today,
+        );
 
   /// Items of one compartment, oldest frozen first.
   List<InventoryItem> itemsIn(CompartmentIdentifier compartmentIdentifier) => [

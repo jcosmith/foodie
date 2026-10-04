@@ -31,7 +31,7 @@ final class StockBatchAdded extends StockBatchEvent {
   final Quantity quantity;
 }
 
-/// Some or all of a batch was eaten.
+/// Some or all of a batch was used.
 final class StockBatchConsumed extends StockBatchEvent {
   const StockBatchConsumed({
     required super.stockBatchIdentifier,
@@ -83,6 +83,20 @@ final class StockBatchMoved extends StockBatchEvent {
 
   /// The new batch when only part of [stockBatchIdentifier] moved.
   final StockBatchIdentifier? splitOffBatchIdentifier;
+}
+
+/// A batch was marked as opened, or as not opened again; its use-by date
+/// may have moved.
+final class StockBatchOpened extends StockBatchEvent {
+  const StockBatchOpened({
+    required super.stockBatchIdentifier,
+    required super.productIdentifier,
+    required this.openedOn,
+    required super.occurredAt,
+  });
+
+  /// `null` when the batch was marked as not opened.
+  final CalendarDate? openedOn;
 }
 
 /// The remaining amount was set to what is really left, or a removal was undone.

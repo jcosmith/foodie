@@ -130,7 +130,7 @@ final class RestoreBackupUseCase {
     FailedResult(failure: WrongPasswordOrUnreadableFile()) => const Result.failure(
       BackupNotReadable(),
     ),
-    FailedResult(failure: NotAFreezerBackup()) => const Result.failure(NotABackupOfThisApp()),
+    FailedResult(failure: NotAFoodieBackup()) => const Result.failure(NotABackupOfThisApp()),
     FailedResult(failure: BackupFromNewerVersion(:final manifest)) => Result.failure(
       BackupNeedsNewerApp(manifest.applicationVersion),
     ),

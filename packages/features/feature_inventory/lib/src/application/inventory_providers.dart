@@ -2,6 +2,7 @@ import 'package:core_database/core_database.dart';
 import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ import 'inventory_query_service.dart';
 import 'use_cases/add_stock_batch_use_case.dart';
 import 'use_cases/correct_remaining_quantity_use_case.dart';
 import 'use_cases/inventory_use_case_dependencies.dart';
+import 'use_cases/mark_stock_batch_opened_use_case.dart';
 import 'use_cases/move_stock_batch_use_case.dart';
 import 'use_cases/remove_stock_use_cases.dart';
 import 'use_cases/undo_stock_removal_use_case.dart';
@@ -25,8 +27,9 @@ final inventoryQueryServiceProvider = Provider<InventoryQueryService>(
   (ref) => InventoryQueryService(ref.watch(inventoryRepositoryProvider)),
 );
 
-/// Everything in the freezer, joined with products and drawers, live.
-final inventoryOverviewProvider = StreamProvider<InventoryOverview>((ref) {
+/// Everything at home, joined with products and compartments, live,
+/// switched-off domains included.
+final allInventoryOverviewProvider = StreamProvider<InventoryOverview>((ref) {
   final clock = ref.watch(clockProvider);
   final catalogAndLayout = combineLatestOfTwo(
     ref.watch(productCatalogQueryServiceProvider).watchCatalog(),
@@ -44,6 +47,17 @@ final inventoryOverviewProvider = StreamProvider<InventoryOverview>((ref) {
     ),
   );
 });
+
+/// What the app shows: [allInventoryOverviewProvider] without the items and
+/// places of switched-off domains. Switching a domain filters again without
+/// reopening the database queries.
+final inventoryOverviewProvider = Provider<AsyncValue<InventoryOverview>>(
+  (ref) => ref
+      .watch(allInventoryOverviewProvider)
+      .whenData(
+        (overview) => overview.withoutDomains(ref.watch(pausedStorageDomainIdentifiersProvider)),
+      ),
+);
 
 final inventoryUseCaseDependenciesProvider = Provider<InventoryUseCaseDependencies>(
   (ref) => InventoryUseCaseDependencies(
@@ -85,6 +99,11 @@ final moveStockBatchUseCaseProvider = Provider<MoveStockBatchUseCase>(
 /// Moves without checking the destination, for emptying a compartment.
 final stockBatchMoverProvider = Provider<StockBatchMover>(
   (ref) => StockBatchMover(ref.watch(inventoryUseCaseDependenciesProvider)),
+);
+
+final markStockBatchOpenedUseCaseProvider = Provider<MarkStockBatchOpenedUseCase>(
+  (ref) =>
+      MarkStockBatchOpenedUseCase(dependencies: ref.watch(inventoryUseCaseDependenciesProvider)),
 );
 
 final correctRemainingQuantityUseCaseProvider = Provider<CorrectRemainingQuantityUseCase>(

@@ -108,12 +108,12 @@ final class RemoveShoppingListEntryUseCase {
   }
 }
 
-/// "Put ticked items in the freezer" (UI example phone 6): every ticked
-/// product becomes a batch frozen today, in the drawer the product went into
+/// "Put ticked items away" (UI example phone 6): every ticked
+/// product becomes a batch stored today, in the compartment the product went into
 /// last time, through the inventory's own use case. Returns how many batches
 /// were added.
-final class PutTickedItemsInFreezerUseCase {
-  const PutTickedItemsInFreezerUseCase({
+final class PutTickedItemsAwayUseCase {
+  const PutTickedItemsAwayUseCase({
     required RestockRepository repository,
     required ProductCatalogQueryService productCatalog,
     required InventoryQueryService inventory,
@@ -170,7 +170,7 @@ final class PutTickedItemsInFreezerUseCase {
                 entry.requestedQuantity ??
                 product.defaultPackageQuantity ??
                 Quantity.fromDisplayAmount(1, product.canonicalUnit),
-            frozenOn: _clock.todayLocal(),
+            storedOn: _clock.todayLocal(),
           ),
         );
         // A batch that could not be added keeps its entry on the list.

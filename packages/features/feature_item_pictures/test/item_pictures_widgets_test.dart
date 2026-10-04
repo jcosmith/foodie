@@ -23,7 +23,7 @@ void main() {
   tearDown(() => harness.dispose());
 
   Future<void> prepare(WidgetTester tester) => tester.runAsync(() async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     await harness.startPictureModule();
     spinach = await harness.productWithKey('leafSpinach');
   });
@@ -49,7 +49,7 @@ void main() {
         container: harness.container,
         child: MaterialApp.router(
           routerConfig: router,
-          theme: FreezerTheme.light(),
+          theme: FoodieTheme.light(),
           supportedLocales: SupportedLocales.all,
           localizationsDelegates: [
             ...GlobalMaterialLocalizations.delegates,
@@ -117,7 +117,7 @@ void main() {
           .read(attachItemPictureUseCaseProvider)
           .execute(owner: ProductPictureOwner(spinach.identifier), stagedPicture: stagedPicture);
     });
-    await showAt(tester, InventoryRoutes.overview);
+    await showAt(tester, '/freezer');
 
     expect(find.bySemanticsLabel('Photo'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);

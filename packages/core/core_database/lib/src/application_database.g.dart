@@ -3,6 +3,309 @@
 part of 'application_database.dart';
 
 // ignore_for_file: type=lint
+class ReceiptSearchIndex extends Table
+    with
+        TableInfo<ReceiptSearchIndex, ReceiptSearchIndexData>,
+        VirtualTableInfo<ReceiptSearchIndex, ReceiptSearchIndexData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ReceiptSearchIndex(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _receiptLineIdentifierMeta =
+      const VerificationMeta('receiptLineIdentifier');
+  late final GeneratedColumn<String> receiptLineIdentifier =
+      GeneratedColumn<String>(
+        'receipt_line_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    receiptLineIdentifier,
+    body,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_search_index';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptSearchIndexData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('receipt_line_identifier')) {
+      context.handle(
+        _receiptLineIdentifierMeta,
+        receiptLineIdentifier.isAcceptableOrUnknown(
+          data['receipt_line_identifier']!,
+          _receiptLineIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptLineIdentifierMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  ReceiptSearchIndexData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptSearchIndexData(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      receiptLineIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_line_identifier'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+    );
+  }
+
+  @override
+  ReceiptSearchIndex createAlias(String alias) {
+    return ReceiptSearchIndex(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(receipt_identifier UNINDEXED, receipt_line_identifier UNINDEXED, body, tokenize = \'unicode61 remove_diacritics 2\')';
+}
+
+class ReceiptSearchIndexData extends DataClass
+    implements Insertable<ReceiptSearchIndexData> {
+  final String receiptIdentifier;
+  final String receiptLineIdentifier;
+  final String body;
+  const ReceiptSearchIndexData({
+    required this.receiptIdentifier,
+    required this.receiptLineIdentifier,
+    required this.body,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['receipt_line_identifier'] = Variable<String>(receiptLineIdentifier);
+    map['body'] = Variable<String>(body);
+    return map;
+  }
+
+  ReceiptSearchIndexCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptSearchIndexCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      receiptLineIdentifier: Value(receiptLineIdentifier),
+      body: Value(body),
+    );
+  }
+
+  factory ReceiptSearchIndexData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptSearchIndexData(
+      receiptIdentifier: serializer.fromJson<String>(
+        json['receipt_identifier'],
+      ),
+      receiptLineIdentifier: serializer.fromJson<String>(
+        json['receipt_line_identifier'],
+      ),
+      body: serializer.fromJson<String>(json['body']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receipt_identifier': serializer.toJson<String>(receiptIdentifier),
+      'receipt_line_identifier': serializer.toJson<String>(
+        receiptLineIdentifier,
+      ),
+      'body': serializer.toJson<String>(body),
+    };
+  }
+
+  ReceiptSearchIndexData copyWith({
+    String? receiptIdentifier,
+    String? receiptLineIdentifier,
+    String? body,
+  }) => ReceiptSearchIndexData(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    receiptLineIdentifier: receiptLineIdentifier ?? this.receiptLineIdentifier,
+    body: body ?? this.body,
+  );
+  ReceiptSearchIndexData copyWithCompanion(ReceiptSearchIndexCompanion data) {
+    return ReceiptSearchIndexData(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      receiptLineIdentifier: data.receiptLineIdentifier.present
+          ? data.receiptLineIdentifier.value
+          : this.receiptLineIdentifier,
+      body: data.body.present ? data.body.value : this.body,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptSearchIndexData(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('body: $body')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(receiptIdentifier, receiptLineIdentifier, body);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptSearchIndexData &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.receiptLineIdentifier == this.receiptLineIdentifier &&
+          other.body == this.body);
+}
+
+class ReceiptSearchIndexCompanion
+    extends UpdateCompanion<ReceiptSearchIndexData> {
+  final Value<String> receiptIdentifier;
+  final Value<String> receiptLineIdentifier;
+  final Value<String> body;
+  final Value<int> rowid;
+  const ReceiptSearchIndexCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.receiptLineIdentifier = const Value.absent(),
+    this.body = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptSearchIndexCompanion.insert({
+    required String receiptIdentifier,
+    required String receiptLineIdentifier,
+    required String body,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       receiptLineIdentifier = Value(receiptLineIdentifier),
+       body = Value(body);
+  static Insertable<ReceiptSearchIndexData> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<String>? receiptLineIdentifier,
+    Expression<String>? body,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (receiptLineIdentifier != null)
+        'receipt_line_identifier': receiptLineIdentifier,
+      if (body != null) 'body': body,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptSearchIndexCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<String>? receiptLineIdentifier,
+    Value<String>? body,
+    Value<int>? rowid,
+  }) {
+    return ReceiptSearchIndexCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      receiptLineIdentifier:
+          receiptLineIdentifier ?? this.receiptLineIdentifier,
+      body: body ?? this.body,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (receiptLineIdentifier.present) {
+      map['receipt_line_identifier'] = Variable<String>(
+        receiptLineIdentifier.value,
+      );
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptSearchIndexCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('body: $body, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PreferenceEntriesTable extends PreferenceEntries
     with TableInfo<$PreferenceEntriesTable, PreferenceEntryRow> {
   @override
@@ -644,19 +947,18 @@ class SchemaMetadataEntriesCompanion
   }
 }
 
-class $FreezersTable extends Freezers
-    with TableInfo<$FreezersTable, FreezerRow> {
+class $StoragePlacesTable extends StoragePlaces
+    with TableInfo<$StoragePlacesTable, StoragePlaceRow> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $FreezersTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _freezerIdentifierMeta = const VerificationMeta(
-    'freezerIdentifier',
-  );
+  $StoragePlacesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _storagePlaceIdentifierMeta =
+      const VerificationMeta('storagePlaceIdentifier');
   @override
-  late final GeneratedColumn<String> freezerIdentifier =
+  late final GeneratedColumn<String> storagePlaceIdentifier =
       GeneratedColumn<String>(
-        'freezer_identifier',
+        'storage_place_identifier',
         aliasedName,
         false,
         type: DriftSqlType.string,
@@ -734,7 +1036,7 @@ class $FreezersTable extends Freezers
   );
   @override
   List<GeneratedColumn> get $columns => [
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNameKey,
     customName,
     storageKind,
@@ -746,24 +1048,24 @@ class $FreezersTable extends Freezers
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'freezers';
+  static const String $name = 'storage_places';
   @override
   VerificationContext validateIntegrity(
-    Insertable<FreezerRow> instance, {
+    Insertable<StoragePlaceRow> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('freezer_identifier')) {
+    if (data.containsKey('storage_place_identifier')) {
       context.handle(
-        _freezerIdentifierMeta,
-        freezerIdentifier.isAcceptableOrUnknown(
-          data['freezer_identifier']!,
-          _freezerIdentifierMeta,
+        _storagePlaceIdentifierMeta,
+        storagePlaceIdentifier.isAcceptableOrUnknown(
+          data['storage_place_identifier']!,
+          _storagePlaceIdentifierMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_freezerIdentifierMeta);
+      context.missing(_storagePlaceIdentifierMeta);
     }
     if (data.containsKey('default_name_key')) {
       context.handle(
@@ -819,14 +1121,14 @@ class $FreezersTable extends Freezers
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {freezerIdentifier};
+  Set<GeneratedColumn> get $primaryKey => {storagePlaceIdentifier};
   @override
-  FreezerRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+  StoragePlaceRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return FreezerRow(
-      freezerIdentifier: attachedDatabase.typeMapping.read(
+    return StoragePlaceRow(
+      storagePlaceIdentifier: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}freezer_identifier'],
+        data['${effectivePrefix}storage_place_identifier'],
       )!,
       defaultNameKey: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -856,25 +1158,26 @@ class $FreezersTable extends Freezers
   }
 
   @override
-  $FreezersTable createAlias(String alias) {
-    return $FreezersTable(attachedDatabase, alias);
+  $StoragePlacesTable createAlias(String alias) {
+    return $StoragePlacesTable(attachedDatabase, alias);
   }
 }
 
-class FreezerRow extends DataClass implements Insertable<FreezerRow> {
-  final String freezerIdentifier;
+class StoragePlaceRow extends DataClass implements Insertable<StoragePlaceRow> {
+  final String storagePlaceIdentifier;
 
   /// Translation key of the default name, used until the user renames it.
   final String defaultNameKey;
   final String? customName;
 
-  /// `upright`, `chest` or `fridgeFreezerCompartment`.
+  /// The stored name of a storage kind contributed by a domain module, such
+  /// as `upright`, `chest` or `fridgeFreezerCompartment`.
   final String storageKind;
   final int sortOrder;
   final bool isArchived;
   final DateTime createdAt;
-  const FreezerRow({
-    required this.freezerIdentifier,
+  const StoragePlaceRow({
+    required this.storagePlaceIdentifier,
     required this.defaultNameKey,
     this.customName,
     required this.storageKind,
@@ -885,7 +1188,7 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['freezer_identifier'] = Variable<String>(freezerIdentifier);
+    map['storage_place_identifier'] = Variable<String>(storagePlaceIdentifier);
     map['default_name_key'] = Variable<String>(defaultNameKey);
     if (!nullToAbsent || customName != null) {
       map['custom_name'] = Variable<String>(customName);
@@ -897,9 +1200,9 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     return map;
   }
 
-  FreezersCompanion toCompanion(bool nullToAbsent) {
-    return FreezersCompanion(
-      freezerIdentifier: Value(freezerIdentifier),
+  StoragePlacesCompanion toCompanion(bool nullToAbsent) {
+    return StoragePlacesCompanion(
+      storagePlaceIdentifier: Value(storagePlaceIdentifier),
       defaultNameKey: Value(defaultNameKey),
       customName: customName == null && nullToAbsent
           ? const Value.absent()
@@ -911,13 +1214,15 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     );
   }
 
-  factory FreezerRow.fromJson(
+  factory StoragePlaceRow.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return FreezerRow(
-      freezerIdentifier: serializer.fromJson<String>(json['freezerIdentifier']),
+    return StoragePlaceRow(
+      storagePlaceIdentifier: serializer.fromJson<String>(
+        json['storagePlaceIdentifier'],
+      ),
       defaultNameKey: serializer.fromJson<String>(json['defaultNameKey']),
       customName: serializer.fromJson<String?>(json['customName']),
       storageKind: serializer.fromJson<String>(json['storageKind']),
@@ -930,7 +1235,9 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'freezerIdentifier': serializer.toJson<String>(freezerIdentifier),
+      'storagePlaceIdentifier': serializer.toJson<String>(
+        storagePlaceIdentifier,
+      ),
       'defaultNameKey': serializer.toJson<String>(defaultNameKey),
       'customName': serializer.toJson<String?>(customName),
       'storageKind': serializer.toJson<String>(storageKind),
@@ -940,16 +1247,17 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     };
   }
 
-  FreezerRow copyWith({
-    String? freezerIdentifier,
+  StoragePlaceRow copyWith({
+    String? storagePlaceIdentifier,
     String? defaultNameKey,
     Value<String?> customName = const Value.absent(),
     String? storageKind,
     int? sortOrder,
     bool? isArchived,
     DateTime? createdAt,
-  }) => FreezerRow(
-    freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+  }) => StoragePlaceRow(
+    storagePlaceIdentifier:
+        storagePlaceIdentifier ?? this.storagePlaceIdentifier,
     defaultNameKey: defaultNameKey ?? this.defaultNameKey,
     customName: customName.present ? customName.value : this.customName,
     storageKind: storageKind ?? this.storageKind,
@@ -957,11 +1265,11 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     isArchived: isArchived ?? this.isArchived,
     createdAt: createdAt ?? this.createdAt,
   );
-  FreezerRow copyWithCompanion(FreezersCompanion data) {
-    return FreezerRow(
-      freezerIdentifier: data.freezerIdentifier.present
-          ? data.freezerIdentifier.value
-          : this.freezerIdentifier,
+  StoragePlaceRow copyWithCompanion(StoragePlacesCompanion data) {
+    return StoragePlaceRow(
+      storagePlaceIdentifier: data.storagePlaceIdentifier.present
+          ? data.storagePlaceIdentifier.value
+          : this.storagePlaceIdentifier,
       defaultNameKey: data.defaultNameKey.present
           ? data.defaultNameKey.value
           : this.defaultNameKey,
@@ -981,8 +1289,8 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
 
   @override
   String toString() {
-    return (StringBuffer('FreezerRow(')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+    return (StringBuffer('StoragePlaceRow(')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNameKey: $defaultNameKey, ')
           ..write('customName: $customName, ')
           ..write('storageKind: $storageKind, ')
@@ -995,7 +1303,7 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
 
   @override
   int get hashCode => Object.hash(
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNameKey,
     customName,
     storageKind,
@@ -1006,8 +1314,8 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is FreezerRow &&
-          other.freezerIdentifier == this.freezerIdentifier &&
+      (other is StoragePlaceRow &&
+          other.storagePlaceIdentifier == this.storagePlaceIdentifier &&
           other.defaultNameKey == this.defaultNameKey &&
           other.customName == this.customName &&
           other.storageKind == this.storageKind &&
@@ -1016,8 +1324,8 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
           other.createdAt == this.createdAt);
 }
 
-class FreezersCompanion extends UpdateCompanion<FreezerRow> {
-  final Value<String> freezerIdentifier;
+class StoragePlacesCompanion extends UpdateCompanion<StoragePlaceRow> {
+  final Value<String> storagePlaceIdentifier;
   final Value<String> defaultNameKey;
   final Value<String?> customName;
   final Value<String> storageKind;
@@ -1025,8 +1333,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
   final Value<bool> isArchived;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
-  const FreezersCompanion({
-    this.freezerIdentifier = const Value.absent(),
+  const StoragePlacesCompanion({
+    this.storagePlaceIdentifier = const Value.absent(),
     this.defaultNameKey = const Value.absent(),
     this.customName = const Value.absent(),
     this.storageKind = const Value.absent(),
@@ -1035,8 +1343,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  FreezersCompanion.insert({
-    required String freezerIdentifier,
+  StoragePlacesCompanion.insert({
+    required String storagePlaceIdentifier,
     required String defaultNameKey,
     this.customName = const Value.absent(),
     required String storageKind,
@@ -1044,13 +1352,13 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     this.isArchived = const Value.absent(),
     required DateTime createdAt,
     this.rowid = const Value.absent(),
-  }) : freezerIdentifier = Value(freezerIdentifier),
+  }) : storagePlaceIdentifier = Value(storagePlaceIdentifier),
        defaultNameKey = Value(defaultNameKey),
        storageKind = Value(storageKind),
        sortOrder = Value(sortOrder),
        createdAt = Value(createdAt);
-  static Insertable<FreezerRow> custom({
-    Expression<String>? freezerIdentifier,
+  static Insertable<StoragePlaceRow> custom({
+    Expression<String>? storagePlaceIdentifier,
     Expression<String>? defaultNameKey,
     Expression<String>? customName,
     Expression<String>? storageKind,
@@ -1060,7 +1368,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (freezerIdentifier != null) 'freezer_identifier': freezerIdentifier,
+      if (storagePlaceIdentifier != null)
+        'storage_place_identifier': storagePlaceIdentifier,
       if (defaultNameKey != null) 'default_name_key': defaultNameKey,
       if (customName != null) 'custom_name': customName,
       if (storageKind != null) 'storage_kind': storageKind,
@@ -1071,8 +1380,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     });
   }
 
-  FreezersCompanion copyWith({
-    Value<String>? freezerIdentifier,
+  StoragePlacesCompanion copyWith({
+    Value<String>? storagePlaceIdentifier,
     Value<String>? defaultNameKey,
     Value<String?>? customName,
     Value<String>? storageKind,
@@ -1081,8 +1390,9 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     Value<DateTime>? createdAt,
     Value<int>? rowid,
   }) {
-    return FreezersCompanion(
-      freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+    return StoragePlacesCompanion(
+      storagePlaceIdentifier:
+          storagePlaceIdentifier ?? this.storagePlaceIdentifier,
       defaultNameKey: defaultNameKey ?? this.defaultNameKey,
       customName: customName ?? this.customName,
       storageKind: storageKind ?? this.storageKind,
@@ -1096,8 +1406,10 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (freezerIdentifier.present) {
-      map['freezer_identifier'] = Variable<String>(freezerIdentifier.value);
+    if (storagePlaceIdentifier.present) {
+      map['storage_place_identifier'] = Variable<String>(
+        storagePlaceIdentifier.value,
+      );
     }
     if (defaultNameKey.present) {
       map['default_name_key'] = Variable<String>(defaultNameKey.value);
@@ -1125,8 +1437,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
 
   @override
   String toString() {
-    return (StringBuffer('FreezersCompanion(')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+    return (StringBuffer('StoragePlacesCompanion(')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNameKey: $defaultNameKey, ')
           ..write('customName: $customName, ')
           ..write('storageKind: $storageKind, ')
@@ -1156,19 +1468,18 @@ class $CompartmentsTable extends Compartments
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       );
-  static const VerificationMeta _freezerIdentifierMeta = const VerificationMeta(
-    'freezerIdentifier',
-  );
+  static const VerificationMeta _storagePlaceIdentifierMeta =
+      const VerificationMeta('storagePlaceIdentifier');
   @override
-  late final GeneratedColumn<String> freezerIdentifier =
+  late final GeneratedColumn<String> storagePlaceIdentifier =
       GeneratedColumn<String>(
-        'freezer_identifier',
+        'storage_place_identifier',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
         defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES freezers (freezer_identifier)',
+          'REFERENCES storage_places (storage_place_identifier)',
         ),
       );
   static const VerificationMeta _defaultNumberMeta = const VerificationMeta(
@@ -1244,7 +1555,7 @@ class $CompartmentsTable extends Compartments
   @override
   List<GeneratedColumn> get $columns => [
     compartmentIdentifier,
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNumber,
     customName,
     colorTagIndex,
@@ -1275,16 +1586,16 @@ class $CompartmentsTable extends Compartments
     } else if (isInserting) {
       context.missing(_compartmentIdentifierMeta);
     }
-    if (data.containsKey('freezer_identifier')) {
+    if (data.containsKey('storage_place_identifier')) {
       context.handle(
-        _freezerIdentifierMeta,
-        freezerIdentifier.isAcceptableOrUnknown(
-          data['freezer_identifier']!,
-          _freezerIdentifierMeta,
+        _storagePlaceIdentifierMeta,
+        storagePlaceIdentifier.isAcceptableOrUnknown(
+          data['storage_place_identifier']!,
+          _storagePlaceIdentifierMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_freezerIdentifierMeta);
+      context.missing(_storagePlaceIdentifierMeta);
     }
     if (data.containsKey('default_number')) {
       context.handle(
@@ -1349,9 +1660,9 @@ class $CompartmentsTable extends Compartments
         DriftSqlType.string,
         data['${effectivePrefix}compartment_identifier'],
       )!,
-      freezerIdentifier: attachedDatabase.typeMapping.read(
+      storagePlaceIdentifier: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}freezer_identifier'],
+        data['${effectivePrefix}storage_place_identifier'],
       )!,
       defaultNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -1388,7 +1699,7 @@ class $CompartmentsTable extends Compartments
 
 class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   final String compartmentIdentifier;
-  final String freezerIdentifier;
+  final String storagePlaceIdentifier;
 
   /// The number in the default name "Drawer {number}"; stays fixed when reordering.
   final int defaultNumber;
@@ -1401,7 +1712,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   final DateTime createdAt;
   const CompartmentRow({
     required this.compartmentIdentifier,
-    required this.freezerIdentifier,
+    required this.storagePlaceIdentifier,
     required this.defaultNumber,
     this.customName,
     required this.colorTagIndex,
@@ -1413,7 +1724,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['compartment_identifier'] = Variable<String>(compartmentIdentifier);
-    map['freezer_identifier'] = Variable<String>(freezerIdentifier);
+    map['storage_place_identifier'] = Variable<String>(storagePlaceIdentifier);
     map['default_number'] = Variable<int>(defaultNumber);
     if (!nullToAbsent || customName != null) {
       map['custom_name'] = Variable<String>(customName);
@@ -1428,7 +1739,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   CompartmentsCompanion toCompanion(bool nullToAbsent) {
     return CompartmentsCompanion(
       compartmentIdentifier: Value(compartmentIdentifier),
-      freezerIdentifier: Value(freezerIdentifier),
+      storagePlaceIdentifier: Value(storagePlaceIdentifier),
       defaultNumber: Value(defaultNumber),
       customName: customName == null && nullToAbsent
           ? const Value.absent()
@@ -1449,7 +1760,9 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
       compartmentIdentifier: serializer.fromJson<String>(
         json['compartmentIdentifier'],
       ),
-      freezerIdentifier: serializer.fromJson<String>(json['freezerIdentifier']),
+      storagePlaceIdentifier: serializer.fromJson<String>(
+        json['storagePlaceIdentifier'],
+      ),
       defaultNumber: serializer.fromJson<int>(json['defaultNumber']),
       customName: serializer.fromJson<String?>(json['customName']),
       colorTagIndex: serializer.fromJson<int>(json['colorTagIndex']),
@@ -1463,7 +1776,9 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'compartmentIdentifier': serializer.toJson<String>(compartmentIdentifier),
-      'freezerIdentifier': serializer.toJson<String>(freezerIdentifier),
+      'storagePlaceIdentifier': serializer.toJson<String>(
+        storagePlaceIdentifier,
+      ),
       'defaultNumber': serializer.toJson<int>(defaultNumber),
       'customName': serializer.toJson<String?>(customName),
       'colorTagIndex': serializer.toJson<int>(colorTagIndex),
@@ -1475,7 +1790,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
 
   CompartmentRow copyWith({
     String? compartmentIdentifier,
-    String? freezerIdentifier,
+    String? storagePlaceIdentifier,
     int? defaultNumber,
     Value<String?> customName = const Value.absent(),
     int? colorTagIndex,
@@ -1484,7 +1799,8 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
     DateTime? createdAt,
   }) => CompartmentRow(
     compartmentIdentifier: compartmentIdentifier ?? this.compartmentIdentifier,
-    freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+    storagePlaceIdentifier:
+        storagePlaceIdentifier ?? this.storagePlaceIdentifier,
     defaultNumber: defaultNumber ?? this.defaultNumber,
     customName: customName.present ? customName.value : this.customName,
     colorTagIndex: colorTagIndex ?? this.colorTagIndex,
@@ -1497,9 +1813,9 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
       compartmentIdentifier: data.compartmentIdentifier.present
           ? data.compartmentIdentifier.value
           : this.compartmentIdentifier,
-      freezerIdentifier: data.freezerIdentifier.present
-          ? data.freezerIdentifier.value
-          : this.freezerIdentifier,
+      storagePlaceIdentifier: data.storagePlaceIdentifier.present
+          ? data.storagePlaceIdentifier.value
+          : this.storagePlaceIdentifier,
       defaultNumber: data.defaultNumber.present
           ? data.defaultNumber.value
           : this.defaultNumber,
@@ -1521,7 +1837,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   String toString() {
     return (StringBuffer('CompartmentRow(')
           ..write('compartmentIdentifier: $compartmentIdentifier, ')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNumber: $defaultNumber, ')
           ..write('customName: $customName, ')
           ..write('colorTagIndex: $colorTagIndex, ')
@@ -1535,7 +1851,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   @override
   int get hashCode => Object.hash(
     compartmentIdentifier,
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNumber,
     customName,
     colorTagIndex,
@@ -1548,7 +1864,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
       identical(this, other) ||
       (other is CompartmentRow &&
           other.compartmentIdentifier == this.compartmentIdentifier &&
-          other.freezerIdentifier == this.freezerIdentifier &&
+          other.storagePlaceIdentifier == this.storagePlaceIdentifier &&
           other.defaultNumber == this.defaultNumber &&
           other.customName == this.customName &&
           other.colorTagIndex == this.colorTagIndex &&
@@ -1559,7 +1875,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
 
 class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   final Value<String> compartmentIdentifier;
-  final Value<String> freezerIdentifier;
+  final Value<String> storagePlaceIdentifier;
   final Value<int> defaultNumber;
   final Value<String?> customName;
   final Value<int> colorTagIndex;
@@ -1569,7 +1885,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   final Value<int> rowid;
   const CompartmentsCompanion({
     this.compartmentIdentifier = const Value.absent(),
-    this.freezerIdentifier = const Value.absent(),
+    this.storagePlaceIdentifier = const Value.absent(),
     this.defaultNumber = const Value.absent(),
     this.customName = const Value.absent(),
     this.colorTagIndex = const Value.absent(),
@@ -1580,7 +1896,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   });
   CompartmentsCompanion.insert({
     required String compartmentIdentifier,
-    required String freezerIdentifier,
+    required String storagePlaceIdentifier,
     required int defaultNumber,
     this.customName = const Value.absent(),
     required int colorTagIndex,
@@ -1589,14 +1905,14 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
     required DateTime createdAt,
     this.rowid = const Value.absent(),
   }) : compartmentIdentifier = Value(compartmentIdentifier),
-       freezerIdentifier = Value(freezerIdentifier),
+       storagePlaceIdentifier = Value(storagePlaceIdentifier),
        defaultNumber = Value(defaultNumber),
        colorTagIndex = Value(colorTagIndex),
        sortOrder = Value(sortOrder),
        createdAt = Value(createdAt);
   static Insertable<CompartmentRow> custom({
     Expression<String>? compartmentIdentifier,
-    Expression<String>? freezerIdentifier,
+    Expression<String>? storagePlaceIdentifier,
     Expression<int>? defaultNumber,
     Expression<String>? customName,
     Expression<int>? colorTagIndex,
@@ -1608,7 +1924,8 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
     return RawValuesInsertable({
       if (compartmentIdentifier != null)
         'compartment_identifier': compartmentIdentifier,
-      if (freezerIdentifier != null) 'freezer_identifier': freezerIdentifier,
+      if (storagePlaceIdentifier != null)
+        'storage_place_identifier': storagePlaceIdentifier,
       if (defaultNumber != null) 'default_number': defaultNumber,
       if (customName != null) 'custom_name': customName,
       if (colorTagIndex != null) 'color_tag_index': colorTagIndex,
@@ -1621,7 +1938,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
 
   CompartmentsCompanion copyWith({
     Value<String>? compartmentIdentifier,
-    Value<String>? freezerIdentifier,
+    Value<String>? storagePlaceIdentifier,
     Value<int>? defaultNumber,
     Value<String?>? customName,
     Value<int>? colorTagIndex,
@@ -1633,7 +1950,8 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
     return CompartmentsCompanion(
       compartmentIdentifier:
           compartmentIdentifier ?? this.compartmentIdentifier,
-      freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+      storagePlaceIdentifier:
+          storagePlaceIdentifier ?? this.storagePlaceIdentifier,
       defaultNumber: defaultNumber ?? this.defaultNumber,
       customName: customName ?? this.customName,
       colorTagIndex: colorTagIndex ?? this.colorTagIndex,
@@ -1652,8 +1970,10 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
         compartmentIdentifier.value,
       );
     }
-    if (freezerIdentifier.present) {
-      map['freezer_identifier'] = Variable<String>(freezerIdentifier.value);
+    if (storagePlaceIdentifier.present) {
+      map['storage_place_identifier'] = Variable<String>(
+        storagePlaceIdentifier.value,
+      );
     }
     if (defaultNumber.present) {
       map['default_number'] = Variable<int>(defaultNumber.value);
@@ -1683,7 +2003,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   String toString() {
     return (StringBuffer('CompartmentsCompanion(')
           ..write('compartmentIdentifier: $compartmentIdentifier, ')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNumber: $defaultNumber, ')
           ..write('customName: $customName, ')
           ..write('colorTagIndex: $colorTagIndex, ')
@@ -1743,9 +2063,20 @@ class $CategoriesTable extends Categories
       GeneratedColumn<int>(
         'recommended_maximum_storage_days',
         aliasedName,
-        false,
+        true,
         type: DriftSqlType.int,
-        requiredDuringInsert: true,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _shelfLifeAfterOpeningDaysMeta =
+      const VerificationMeta('shelfLifeAfterOpeningDays');
+  @override
+  late final GeneratedColumn<int> shelfLifeAfterOpeningDays =
+      GeneratedColumn<int>(
+        'shelf_life_after_opening_days',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
       );
   static const VerificationMeta _iconEmojiMeta = const VerificationMeta(
     'iconEmoji',
@@ -1769,14 +2100,28 @@ class $CategoriesTable extends Categories
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _storageDomainMeta = const VerificationMeta(
+    'storageDomain',
+  );
+  @override
+  late final GeneratedColumn<String> storageDomain = GeneratedColumn<String>(
+    'storage_domain',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('freezer'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     categoryIdentifier,
     catalogKey,
     customName,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     sortOrder,
+    storageDomain,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1821,8 +2166,15 @@ class $CategoriesTable extends Categories
           _recommendedMaximumStorageDaysMeta,
         ),
       );
-    } else if (isInserting) {
-      context.missing(_recommendedMaximumStorageDaysMeta);
+    }
+    if (data.containsKey('shelf_life_after_opening_days')) {
+      context.handle(
+        _shelfLifeAfterOpeningDaysMeta,
+        shelfLifeAfterOpeningDays.isAcceptableOrUnknown(
+          data['shelf_life_after_opening_days']!,
+          _shelfLifeAfterOpeningDaysMeta,
+        ),
+      );
     }
     if (data.containsKey('icon_emoji')) {
       context.handle(
@@ -1839,6 +2191,15 @@ class $CategoriesTable extends Categories
       );
     } else if (isInserting) {
       context.missing(_sortOrderMeta);
+    }
+    if (data.containsKey('storage_domain')) {
+      context.handle(
+        _storageDomainMeta,
+        storageDomain.isAcceptableOrUnknown(
+          data['storage_domain']!,
+          _storageDomainMeta,
+        ),
+      );
     }
     return context;
   }
@@ -1864,7 +2225,11 @@ class $CategoriesTable extends Categories
       recommendedMaximumStorageDays: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}recommended_maximum_storage_days'],
-      )!,
+      ),
+      shelfLifeAfterOpeningDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}shelf_life_after_opening_days'],
+      ),
       iconEmoji: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}icon_emoji'],
@@ -1872,6 +2237,10 @@ class $CategoriesTable extends Categories
       sortOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
+      )!,
+      storageDomain: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_domain'],
       )!,
     );
   }
@@ -1889,16 +2258,30 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
   /// translated until the user renames it.
   final String? catalogKey;
   final String? customName;
-  final int recommendedMaximumStorageDays;
+
+  /// The shelf life in days; `null` for things that keep no time, such as
+  /// dish soap (allowed from schema version 9).
+  final int? recommendedMaximumStorageDays;
+
+  /// How long an opened package keeps, in days; `null` when opening makes
+  /// no difference.
+  final int? shelfLifeAfterOpeningDays;
   final String iconEmoji;
   final int sortOrder;
+
+  /// The storage domain the category's products usually live in, such as
+  /// `freezer` or `pantry`. Categories from before schema version 9 were all
+  /// freezer categories.
+  final String storageDomain;
   const CategoryRow({
     required this.categoryIdentifier,
     this.catalogKey,
     this.customName,
-    required this.recommendedMaximumStorageDays,
+    this.recommendedMaximumStorageDays,
+    this.shelfLifeAfterOpeningDays,
     required this.iconEmoji,
     required this.sortOrder,
+    required this.storageDomain,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1910,11 +2293,19 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     if (!nullToAbsent || customName != null) {
       map['custom_name'] = Variable<String>(customName);
     }
-    map['recommended_maximum_storage_days'] = Variable<int>(
-      recommendedMaximumStorageDays,
-    );
+    if (!nullToAbsent || recommendedMaximumStorageDays != null) {
+      map['recommended_maximum_storage_days'] = Variable<int>(
+        recommendedMaximumStorageDays,
+      );
+    }
+    if (!nullToAbsent || shelfLifeAfterOpeningDays != null) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays,
+      );
+    }
     map['icon_emoji'] = Variable<String>(iconEmoji);
     map['sort_order'] = Variable<int>(sortOrder);
+    map['storage_domain'] = Variable<String>(storageDomain);
     return map;
   }
 
@@ -1927,9 +2318,17 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       customName: customName == null && nullToAbsent
           ? const Value.absent()
           : Value(customName),
-      recommendedMaximumStorageDays: Value(recommendedMaximumStorageDays),
+      recommendedMaximumStorageDays:
+          recommendedMaximumStorageDays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedMaximumStorageDays),
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(shelfLifeAfterOpeningDays),
       iconEmoji: Value(iconEmoji),
       sortOrder: Value(sortOrder),
+      storageDomain: Value(storageDomain),
     );
   }
 
@@ -1944,11 +2343,15 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       ),
       catalogKey: serializer.fromJson<String?>(json['catalogKey']),
       customName: serializer.fromJson<String?>(json['customName']),
-      recommendedMaximumStorageDays: serializer.fromJson<int>(
+      recommendedMaximumStorageDays: serializer.fromJson<int?>(
         json['recommendedMaximumStorageDays'],
+      ),
+      shelfLifeAfterOpeningDays: serializer.fromJson<int?>(
+        json['shelfLifeAfterOpeningDays'],
       ),
       iconEmoji: serializer.fromJson<String>(json['iconEmoji']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      storageDomain: serializer.fromJson<String>(json['storageDomain']),
     );
   }
   @override
@@ -1958,11 +2361,15 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       'categoryIdentifier': serializer.toJson<String>(categoryIdentifier),
       'catalogKey': serializer.toJson<String?>(catalogKey),
       'customName': serializer.toJson<String?>(customName),
-      'recommendedMaximumStorageDays': serializer.toJson<int>(
+      'recommendedMaximumStorageDays': serializer.toJson<int?>(
         recommendedMaximumStorageDays,
+      ),
+      'shelfLifeAfterOpeningDays': serializer.toJson<int?>(
+        shelfLifeAfterOpeningDays,
       ),
       'iconEmoji': serializer.toJson<String>(iconEmoji),
       'sortOrder': serializer.toJson<int>(sortOrder),
+      'storageDomain': serializer.toJson<String>(storageDomain),
     };
   }
 
@@ -1970,17 +2377,24 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     String? categoryIdentifier,
     Value<String?> catalogKey = const Value.absent(),
     Value<String?> customName = const Value.absent(),
-    int? recommendedMaximumStorageDays,
+    Value<int?> recommendedMaximumStorageDays = const Value.absent(),
+    Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
     String? iconEmoji,
     int? sortOrder,
+    String? storageDomain,
   }) => CategoryRow(
     categoryIdentifier: categoryIdentifier ?? this.categoryIdentifier,
     catalogKey: catalogKey.present ? catalogKey.value : this.catalogKey,
     customName: customName.present ? customName.value : this.customName,
-    recommendedMaximumStorageDays:
-        recommendedMaximumStorageDays ?? this.recommendedMaximumStorageDays,
+    recommendedMaximumStorageDays: recommendedMaximumStorageDays.present
+        ? recommendedMaximumStorageDays.value
+        : this.recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays.present
+        ? shelfLifeAfterOpeningDays.value
+        : this.shelfLifeAfterOpeningDays,
     iconEmoji: iconEmoji ?? this.iconEmoji,
     sortOrder: sortOrder ?? this.sortOrder,
+    storageDomain: storageDomain ?? this.storageDomain,
   );
   CategoryRow copyWithCompanion(CategoriesCompanion data) {
     return CategoryRow(
@@ -1996,8 +2410,14 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       recommendedMaximumStorageDays: data.recommendedMaximumStorageDays.present
           ? data.recommendedMaximumStorageDays.value
           : this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays: data.shelfLifeAfterOpeningDays.present
+          ? data.shelfLifeAfterOpeningDays.value
+          : this.shelfLifeAfterOpeningDays,
       iconEmoji: data.iconEmoji.present ? data.iconEmoji.value : this.iconEmoji,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      storageDomain: data.storageDomain.present
+          ? data.storageDomain.value
+          : this.storageDomain,
     );
   }
 
@@ -2010,8 +2430,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
-          ..write('sortOrder: $sortOrder')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('storageDomain: $storageDomain')
           ..write(')'))
         .toString();
   }
@@ -2022,8 +2444,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     catalogKey,
     customName,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     sortOrder,
+    storageDomain,
   );
   @override
   bool operator ==(Object other) =>
@@ -2034,37 +2458,44 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           other.customName == this.customName &&
           other.recommendedMaximumStorageDays ==
               this.recommendedMaximumStorageDays &&
+          other.shelfLifeAfterOpeningDays == this.shelfLifeAfterOpeningDays &&
           other.iconEmoji == this.iconEmoji &&
-          other.sortOrder == this.sortOrder);
+          other.sortOrder == this.sortOrder &&
+          other.storageDomain == this.storageDomain);
 }
 
 class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   final Value<String> categoryIdentifier;
   final Value<String?> catalogKey;
   final Value<String?> customName;
-  final Value<int> recommendedMaximumStorageDays;
+  final Value<int?> recommendedMaximumStorageDays;
+  final Value<int?> shelfLifeAfterOpeningDays;
   final Value<String> iconEmoji;
   final Value<int> sortOrder;
+  final Value<String> storageDomain;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.categoryIdentifier = const Value.absent(),
     this.catalogKey = const Value.absent(),
     this.customName = const Value.absent(),
     this.recommendedMaximumStorageDays = const Value.absent(),
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     this.iconEmoji = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.storageDomain = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
     required String categoryIdentifier,
     this.catalogKey = const Value.absent(),
     this.customName = const Value.absent(),
-    required int recommendedMaximumStorageDays,
+    this.recommendedMaximumStorageDays = const Value.absent(),
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     required String iconEmoji,
     required int sortOrder,
+    this.storageDomain = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : categoryIdentifier = Value(categoryIdentifier),
-       recommendedMaximumStorageDays = Value(recommendedMaximumStorageDays),
        iconEmoji = Value(iconEmoji),
        sortOrder = Value(sortOrder);
   static Insertable<CategoryRow> custom({
@@ -2072,8 +2503,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Expression<String>? catalogKey,
     Expression<String>? customName,
     Expression<int>? recommendedMaximumStorageDays,
+    Expression<int>? shelfLifeAfterOpeningDays,
     Expression<String>? iconEmoji,
     Expression<int>? sortOrder,
+    Expression<String>? storageDomain,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2082,8 +2515,11 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       if (customName != null) 'custom_name': customName,
       if (recommendedMaximumStorageDays != null)
         'recommended_maximum_storage_days': recommendedMaximumStorageDays,
+      if (shelfLifeAfterOpeningDays != null)
+        'shelf_life_after_opening_days': shelfLifeAfterOpeningDays,
       if (iconEmoji != null) 'icon_emoji': iconEmoji,
       if (sortOrder != null) 'sort_order': sortOrder,
+      if (storageDomain != null) 'storage_domain': storageDomain,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2092,9 +2528,11 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Value<String>? categoryIdentifier,
     Value<String?>? catalogKey,
     Value<String?>? customName,
-    Value<int>? recommendedMaximumStorageDays,
+    Value<int?>? recommendedMaximumStorageDays,
+    Value<int?>? shelfLifeAfterOpeningDays,
     Value<String>? iconEmoji,
     Value<int>? sortOrder,
+    Value<String>? storageDomain,
     Value<int>? rowid,
   }) {
     return CategoriesCompanion(
@@ -2103,8 +2541,11 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       customName: customName ?? this.customName,
       recommendedMaximumStorageDays:
           recommendedMaximumStorageDays ?? this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays ?? this.shelfLifeAfterOpeningDays,
       iconEmoji: iconEmoji ?? this.iconEmoji,
       sortOrder: sortOrder ?? this.sortOrder,
+      storageDomain: storageDomain ?? this.storageDomain,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2126,11 +2567,19 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
         recommendedMaximumStorageDays.value,
       );
     }
+    if (shelfLifeAfterOpeningDays.present) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays.value,
+      );
+    }
     if (iconEmoji.present) {
       map['icon_emoji'] = Variable<String>(iconEmoji.value);
     }
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (storageDomain.present) {
+      map['storage_domain'] = Variable<String>(storageDomain.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2147,8 +2596,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
           ..write('sortOrder: $sortOrder, ')
+          ..write('storageDomain: $storageDomain, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2242,6 +2693,17 @@ class $ProductsTable extends Products
         type: DriftSqlType.int,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _shelfLifeAfterOpeningDaysMeta =
+      const VerificationMeta('shelfLifeAfterOpeningDays');
+  @override
+  late final GeneratedColumn<int> shelfLifeAfterOpeningDays =
+      GeneratedColumn<int>(
+        'shelf_life_after_opening_days',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _iconEmojiMeta = const VerificationMeta(
     'iconEmoji',
   );
@@ -2313,6 +2775,7 @@ class $ProductsTable extends Products
     canonicalUnit,
     defaultPackageQuantity,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     iconImage,
     defaultCompartmentIdentifier,
@@ -2394,6 +2857,15 @@ class $ProductsTable extends Products
         ),
       );
     }
+    if (data.containsKey('shelf_life_after_opening_days')) {
+      context.handle(
+        _shelfLifeAfterOpeningDaysMeta,
+        shelfLifeAfterOpeningDays.isAcceptableOrUnknown(
+          data['shelf_life_after_opening_days']!,
+          _shelfLifeAfterOpeningDaysMeta,
+        ),
+      );
+    }
     if (data.containsKey('icon_emoji')) {
       context.handle(
         _iconEmojiMeta,
@@ -2466,6 +2938,10 @@ class $ProductsTable extends Products
         DriftSqlType.int,
         data['${effectivePrefix}recommended_maximum_storage_days'],
       ),
+      shelfLifeAfterOpeningDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}shelf_life_after_opening_days'],
+      ),
       iconEmoji: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}icon_emoji'],
@@ -2506,8 +2982,11 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
   final String canonicalUnit;
   final int? defaultPackageQuantity;
 
-  /// Overrides the category's recommendation when set.
+  /// Overrides the category's shelf life when set.
   final int? recommendedMaximumStorageDays;
+
+  /// Overrides the category's shelf life after opening when set.
+  final int? shelfLifeAfterOpeningDays;
 
   /// Falls back to the category icon when null.
   final String? iconEmoji;
@@ -2530,6 +3009,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     required this.canonicalUnit,
     this.defaultPackageQuantity,
     this.recommendedMaximumStorageDays,
+    this.shelfLifeAfterOpeningDays,
     this.iconEmoji,
     this.iconImage,
     this.defaultCompartmentIdentifier,
@@ -2554,6 +3034,11 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     if (!nullToAbsent || recommendedMaximumStorageDays != null) {
       map['recommended_maximum_storage_days'] = Variable<int>(
         recommendedMaximumStorageDays,
+      );
+    }
+    if (!nullToAbsent || shelfLifeAfterOpeningDays != null) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays,
       );
     }
     if (!nullToAbsent || iconEmoji != null) {
@@ -2590,6 +3075,10 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           recommendedMaximumStorageDays == null && nullToAbsent
           ? const Value.absent()
           : Value(recommendedMaximumStorageDays),
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(shelfLifeAfterOpeningDays),
       iconEmoji: iconEmoji == null && nullToAbsent
           ? const Value.absent()
           : Value(iconEmoji),
@@ -2624,6 +3113,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       recommendedMaximumStorageDays: serializer.fromJson<int?>(
         json['recommendedMaximumStorageDays'],
       ),
+      shelfLifeAfterOpeningDays: serializer.fromJson<int?>(
+        json['shelfLifeAfterOpeningDays'],
+      ),
       iconEmoji: serializer.fromJson<String?>(json['iconEmoji']),
       iconImage: serializer.fromJson<Uint8List?>(json['iconImage']),
       defaultCompartmentIdentifier: serializer.fromJson<String?>(
@@ -2646,6 +3138,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       'recommendedMaximumStorageDays': serializer.toJson<int?>(
         recommendedMaximumStorageDays,
       ),
+      'shelfLifeAfterOpeningDays': serializer.toJson<int?>(
+        shelfLifeAfterOpeningDays,
+      ),
       'iconEmoji': serializer.toJson<String?>(iconEmoji),
       'iconImage': serializer.toJson<Uint8List?>(iconImage),
       'defaultCompartmentIdentifier': serializer.toJson<String?>(
@@ -2664,6 +3159,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     String? canonicalUnit,
     Value<int?> defaultPackageQuantity = const Value.absent(),
     Value<int?> recommendedMaximumStorageDays = const Value.absent(),
+    Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
     Value<String?> iconEmoji = const Value.absent(),
     Value<Uint8List?> iconImage = const Value.absent(),
     Value<String?> defaultCompartmentIdentifier = const Value.absent(),
@@ -2681,6 +3177,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     recommendedMaximumStorageDays: recommendedMaximumStorageDays.present
         ? recommendedMaximumStorageDays.value
         : this.recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays.present
+        ? shelfLifeAfterOpeningDays.value
+        : this.shelfLifeAfterOpeningDays,
     iconEmoji: iconEmoji.present ? iconEmoji.value : this.iconEmoji,
     iconImage: iconImage.present ? iconImage.value : this.iconImage,
     defaultCompartmentIdentifier: defaultCompartmentIdentifier.present
@@ -2712,6 +3211,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       recommendedMaximumStorageDays: data.recommendedMaximumStorageDays.present
           ? data.recommendedMaximumStorageDays.value
           : this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays: data.shelfLifeAfterOpeningDays.present
+          ? data.shelfLifeAfterOpeningDays.value
+          : this.shelfLifeAfterOpeningDays,
       iconEmoji: data.iconEmoji.present ? data.iconEmoji.value : this.iconEmoji,
       iconImage: data.iconImage.present ? data.iconImage.value : this.iconImage,
       defaultCompartmentIdentifier: data.defaultCompartmentIdentifier.present
@@ -2736,6 +3238,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
           ..write('iconImage: $iconImage, ')
           ..write(
@@ -2756,6 +3259,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     canonicalUnit,
     defaultPackageQuantity,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     $driftBlobEquality.hash(iconImage),
     defaultCompartmentIdentifier,
@@ -2774,6 +3278,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           other.defaultPackageQuantity == this.defaultPackageQuantity &&
           other.recommendedMaximumStorageDays ==
               this.recommendedMaximumStorageDays &&
+          other.shelfLifeAfterOpeningDays == this.shelfLifeAfterOpeningDays &&
           other.iconEmoji == this.iconEmoji &&
           $driftBlobEquality.equals(other.iconImage, this.iconImage) &&
           other.defaultCompartmentIdentifier ==
@@ -2790,6 +3295,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
   final Value<String> canonicalUnit;
   final Value<int?> defaultPackageQuantity;
   final Value<int?> recommendedMaximumStorageDays;
+  final Value<int?> shelfLifeAfterOpeningDays;
   final Value<String?> iconEmoji;
   final Value<Uint8List?> iconImage;
   final Value<String?> defaultCompartmentIdentifier;
@@ -2804,6 +3310,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     this.canonicalUnit = const Value.absent(),
     this.defaultPackageQuantity = const Value.absent(),
     this.recommendedMaximumStorageDays = const Value.absent(),
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     this.iconEmoji = const Value.absent(),
     this.iconImage = const Value.absent(),
     this.defaultCompartmentIdentifier = const Value.absent(),
@@ -2819,6 +3326,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     required String canonicalUnit,
     this.defaultPackageQuantity = const Value.absent(),
     this.recommendedMaximumStorageDays = const Value.absent(),
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     this.iconEmoji = const Value.absent(),
     this.iconImage = const Value.absent(),
     this.defaultCompartmentIdentifier = const Value.absent(),
@@ -2837,6 +3345,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Expression<String>? canonicalUnit,
     Expression<int>? defaultPackageQuantity,
     Expression<int>? recommendedMaximumStorageDays,
+    Expression<int>? shelfLifeAfterOpeningDays,
     Expression<String>? iconEmoji,
     Expression<Uint8List>? iconImage,
     Expression<String>? defaultCompartmentIdentifier,
@@ -2854,6 +3363,8 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
         'default_package_quantity': defaultPackageQuantity,
       if (recommendedMaximumStorageDays != null)
         'recommended_maximum_storage_days': recommendedMaximumStorageDays,
+      if (shelfLifeAfterOpeningDays != null)
+        'shelf_life_after_opening_days': shelfLifeAfterOpeningDays,
       if (iconEmoji != null) 'icon_emoji': iconEmoji,
       if (iconImage != null) 'icon_image': iconImage,
       if (defaultCompartmentIdentifier != null)
@@ -2872,6 +3383,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Value<String>? canonicalUnit,
     Value<int?>? defaultPackageQuantity,
     Value<int?>? recommendedMaximumStorageDays,
+    Value<int?>? shelfLifeAfterOpeningDays,
     Value<String?>? iconEmoji,
     Value<Uint8List?>? iconImage,
     Value<String?>? defaultCompartmentIdentifier,
@@ -2889,6 +3401,8 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
           defaultPackageQuantity ?? this.defaultPackageQuantity,
       recommendedMaximumStorageDays:
           recommendedMaximumStorageDays ?? this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays ?? this.shelfLifeAfterOpeningDays,
       iconEmoji: iconEmoji ?? this.iconEmoji,
       iconImage: iconImage ?? this.iconImage,
       defaultCompartmentIdentifier:
@@ -2927,6 +3441,11 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
         recommendedMaximumStorageDays.value,
       );
     }
+    if (shelfLifeAfterOpeningDays.present) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays.value,
+      );
+    }
     if (iconEmoji.present) {
       map['icon_emoji'] = Variable<String>(iconEmoji.value);
     }
@@ -2962,6 +3481,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
           ..write('iconImage: $iconImage, ')
           ..write(
@@ -3066,14 +3586,14 @@ class $StockBatchesTable extends StockBatches
         requiredDuringInsert: false,
       );
   @override
-  late final GeneratedColumnWithTypeConverter<CalendarDate, String> frozenOn =
+  late final GeneratedColumnWithTypeConverter<CalendarDate, String> storedOn =
       GeneratedColumn<String>(
-        'frozen_on',
+        'stored_on',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<CalendarDate>($StockBatchesTable.$converterfrozenOn);
+      ).withConverter<CalendarDate>($StockBatchesTable.$converterstoredOn);
   @override
   late final GeneratedColumnWithTypeConverter<CalendarDate?, String>
   bestBeforeOn = GeneratedColumn<String>(
@@ -3083,6 +3603,15 @@ class $StockBatchesTable extends StockBatches
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   ).withConverter<CalendarDate?>($StockBatchesTable.$converterbestBeforeOnn);
+  @override
+  late final GeneratedColumnWithTypeConverter<CalendarDate?, String> openedOn =
+      GeneratedColumn<String>(
+        'opened_on',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<CalendarDate?>($StockBatchesTable.$converteropenedOnn);
   static const VerificationMeta _noteMeta = const VerificationMeta('note');
   @override
   late final GeneratedColumn<String> note = GeneratedColumn<String>(
@@ -3112,8 +3641,9 @@ class $StockBatchesTable extends StockBatches
     initialQuantity,
     quantityRemaining,
     parentBatchIdentifier,
-    frozenOn,
+    storedOn,
     bestBeforeOn,
+    openedOn,
     note,
     createdAt,
   ];
@@ -3255,16 +3785,22 @@ class $StockBatchesTable extends StockBatches
         DriftSqlType.string,
         data['${effectivePrefix}parent_batch_identifier'],
       ),
-      frozenOn: $StockBatchesTable.$converterfrozenOn.fromSql(
+      storedOn: $StockBatchesTable.$converterstoredOn.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
-          data['${effectivePrefix}frozen_on'],
+          data['${effectivePrefix}stored_on'],
         )!,
       ),
       bestBeforeOn: $StockBatchesTable.$converterbestBeforeOnn.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}best_before_on'],
+        ),
+      ),
+      openedOn: $StockBatchesTable.$converteropenedOnn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}opened_on'],
         ),
       ),
       note: attachedDatabase.typeMapping.read(
@@ -3283,12 +3819,16 @@ class $StockBatchesTable extends StockBatches
     return $StockBatchesTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<CalendarDate, String> $converterfrozenOn =
+  static TypeConverter<CalendarDate, String> $converterstoredOn =
       const CalendarDateTextConverter();
   static TypeConverter<CalendarDate, String> $converterbestBeforeOn =
       const CalendarDateTextConverter();
   static TypeConverter<CalendarDate?, String?> $converterbestBeforeOnn =
       NullAwareTypeConverter.wrap($converterbestBeforeOn);
+  static TypeConverter<CalendarDate, String> $converteropenedOn =
+      const CalendarDateTextConverter();
+  static TypeConverter<CalendarDate?, String?> $converteropenedOnn =
+      NullAwareTypeConverter.wrap($converteropenedOn);
 }
 
 class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
@@ -3306,8 +3846,14 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
 
   /// Set when this batch was split off another one.
   final String? parentBatchIdentifier;
-  final CalendarDate frozenOn;
+
+  /// The day the batch was put away: frozen or bought. Called `frozen_on`
+  /// before schema version 9.
+  final CalendarDate storedOn;
   final CalendarDate? bestBeforeOn;
+
+  /// The day the package was opened; `null` while it is closed.
+  final CalendarDate? openedOn;
   final String? note;
   final DateTime createdAt;
   const StockBatchRow({
@@ -3318,8 +3864,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     required this.initialQuantity,
     required this.quantityRemaining,
     this.parentBatchIdentifier,
-    required this.frozenOn,
+    required this.storedOn,
     this.bestBeforeOn,
+    this.openedOn,
     this.note,
     required this.createdAt,
   });
@@ -3336,13 +3883,18 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       map['parent_batch_identifier'] = Variable<String>(parentBatchIdentifier);
     }
     {
-      map['frozen_on'] = Variable<String>(
-        $StockBatchesTable.$converterfrozenOn.toSql(frozenOn),
+      map['stored_on'] = Variable<String>(
+        $StockBatchesTable.$converterstoredOn.toSql(storedOn),
       );
     }
     if (!nullToAbsent || bestBeforeOn != null) {
       map['best_before_on'] = Variable<String>(
         $StockBatchesTable.$converterbestBeforeOnn.toSql(bestBeforeOn),
+      );
+    }
+    if (!nullToAbsent || openedOn != null) {
+      map['opened_on'] = Variable<String>(
+        $StockBatchesTable.$converteropenedOnn.toSql(openedOn),
       );
     }
     if (!nullToAbsent || note != null) {
@@ -3363,10 +3915,13 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       parentBatchIdentifier: parentBatchIdentifier == null && nullToAbsent
           ? const Value.absent()
           : Value(parentBatchIdentifier),
-      frozenOn: Value(frozenOn),
+      storedOn: Value(storedOn),
       bestBeforeOn: bestBeforeOn == null && nullToAbsent
           ? const Value.absent()
           : Value(bestBeforeOn),
+      openedOn: openedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openedOn),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       createdAt: Value(createdAt),
     );
@@ -3391,8 +3946,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       parentBatchIdentifier: serializer.fromJson<String?>(
         json['parentBatchIdentifier'],
       ),
-      frozenOn: serializer.fromJson<CalendarDate>(json['frozenOn']),
+      storedOn: serializer.fromJson<CalendarDate>(json['storedOn']),
       bestBeforeOn: serializer.fromJson<CalendarDate?>(json['bestBeforeOn']),
+      openedOn: serializer.fromJson<CalendarDate?>(json['openedOn']),
       note: serializer.fromJson<String?>(json['note']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -3410,8 +3966,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       'parentBatchIdentifier': serializer.toJson<String?>(
         parentBatchIdentifier,
       ),
-      'frozenOn': serializer.toJson<CalendarDate>(frozenOn),
+      'storedOn': serializer.toJson<CalendarDate>(storedOn),
       'bestBeforeOn': serializer.toJson<CalendarDate?>(bestBeforeOn),
+      'openedOn': serializer.toJson<CalendarDate?>(openedOn),
       'note': serializer.toJson<String?>(note),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -3425,8 +3982,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     int? initialQuantity,
     int? quantityRemaining,
     Value<String?> parentBatchIdentifier = const Value.absent(),
-    CalendarDate? frozenOn,
+    CalendarDate? storedOn,
     Value<CalendarDate?> bestBeforeOn = const Value.absent(),
+    Value<CalendarDate?> openedOn = const Value.absent(),
     Value<String?> note = const Value.absent(),
     DateTime? createdAt,
   }) => StockBatchRow(
@@ -3439,8 +3997,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     parentBatchIdentifier: parentBatchIdentifier.present
         ? parentBatchIdentifier.value
         : this.parentBatchIdentifier,
-    frozenOn: frozenOn ?? this.frozenOn,
+    storedOn: storedOn ?? this.storedOn,
     bestBeforeOn: bestBeforeOn.present ? bestBeforeOn.value : this.bestBeforeOn,
+    openedOn: openedOn.present ? openedOn.value : this.openedOn,
     note: note.present ? note.value : this.note,
     createdAt: createdAt ?? this.createdAt,
   );
@@ -3467,10 +4026,11 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       parentBatchIdentifier: data.parentBatchIdentifier.present
           ? data.parentBatchIdentifier.value
           : this.parentBatchIdentifier,
-      frozenOn: data.frozenOn.present ? data.frozenOn.value : this.frozenOn,
+      storedOn: data.storedOn.present ? data.storedOn.value : this.storedOn,
       bestBeforeOn: data.bestBeforeOn.present
           ? data.bestBeforeOn.value
           : this.bestBeforeOn,
+      openedOn: data.openedOn.present ? data.openedOn.value : this.openedOn,
       note: data.note.present ? data.note.value : this.note,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
@@ -3486,8 +4046,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
           ..write('initialQuantity: $initialQuantity, ')
           ..write('quantityRemaining: $quantityRemaining, ')
           ..write('parentBatchIdentifier: $parentBatchIdentifier, ')
-          ..write('frozenOn: $frozenOn, ')
+          ..write('storedOn: $storedOn, ')
           ..write('bestBeforeOn: $bestBeforeOn, ')
+          ..write('openedOn: $openedOn, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -3503,8 +4064,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     initialQuantity,
     quantityRemaining,
     parentBatchIdentifier,
-    frozenOn,
+    storedOn,
     bestBeforeOn,
+    openedOn,
     note,
     createdAt,
   );
@@ -3519,8 +4081,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
           other.initialQuantity == this.initialQuantity &&
           other.quantityRemaining == this.quantityRemaining &&
           other.parentBatchIdentifier == this.parentBatchIdentifier &&
-          other.frozenOn == this.frozenOn &&
+          other.storedOn == this.storedOn &&
           other.bestBeforeOn == this.bestBeforeOn &&
+          other.openedOn == this.openedOn &&
           other.note == this.note &&
           other.createdAt == this.createdAt);
 }
@@ -3533,8 +4096,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
   final Value<int> initialQuantity;
   final Value<int> quantityRemaining;
   final Value<String?> parentBatchIdentifier;
-  final Value<CalendarDate> frozenOn;
+  final Value<CalendarDate> storedOn;
   final Value<CalendarDate?> bestBeforeOn;
+  final Value<CalendarDate?> openedOn;
   final Value<String?> note;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
@@ -3546,8 +4110,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     this.initialQuantity = const Value.absent(),
     this.quantityRemaining = const Value.absent(),
     this.parentBatchIdentifier = const Value.absent(),
-    this.frozenOn = const Value.absent(),
+    this.storedOn = const Value.absent(),
     this.bestBeforeOn = const Value.absent(),
+    this.openedOn = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3560,8 +4125,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     required int initialQuantity,
     required int quantityRemaining,
     this.parentBatchIdentifier = const Value.absent(),
-    required CalendarDate frozenOn,
+    required CalendarDate storedOn,
     this.bestBeforeOn = const Value.absent(),
+    this.openedOn = const Value.absent(),
     this.note = const Value.absent(),
     required DateTime createdAt,
     this.rowid = const Value.absent(),
@@ -3571,7 +4137,7 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
        quantityUnit = Value(quantityUnit),
        initialQuantity = Value(initialQuantity),
        quantityRemaining = Value(quantityRemaining),
-       frozenOn = Value(frozenOn),
+       storedOn = Value(storedOn),
        createdAt = Value(createdAt);
   static Insertable<StockBatchRow> custom({
     Expression<String>? stockBatchIdentifier,
@@ -3581,8 +4147,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     Expression<int>? initialQuantity,
     Expression<int>? quantityRemaining,
     Expression<String>? parentBatchIdentifier,
-    Expression<String>? frozenOn,
+    Expression<String>? storedOn,
     Expression<String>? bestBeforeOn,
+    Expression<String>? openedOn,
     Expression<String>? note,
     Expression<DateTime>? createdAt,
     Expression<int>? rowid,
@@ -3598,8 +4165,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
       if (quantityRemaining != null) 'quantity_remaining': quantityRemaining,
       if (parentBatchIdentifier != null)
         'parent_batch_identifier': parentBatchIdentifier,
-      if (frozenOn != null) 'frozen_on': frozenOn,
+      if (storedOn != null) 'stored_on': storedOn,
       if (bestBeforeOn != null) 'best_before_on': bestBeforeOn,
+      if (openedOn != null) 'opened_on': openedOn,
       if (note != null) 'note': note,
       if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
@@ -3614,8 +4182,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     Value<int>? initialQuantity,
     Value<int>? quantityRemaining,
     Value<String?>? parentBatchIdentifier,
-    Value<CalendarDate>? frozenOn,
+    Value<CalendarDate>? storedOn,
     Value<CalendarDate?>? bestBeforeOn,
+    Value<CalendarDate?>? openedOn,
     Value<String?>? note,
     Value<DateTime>? createdAt,
     Value<int>? rowid,
@@ -3630,8 +4199,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
       quantityRemaining: quantityRemaining ?? this.quantityRemaining,
       parentBatchIdentifier:
           parentBatchIdentifier ?? this.parentBatchIdentifier,
-      frozenOn: frozenOn ?? this.frozenOn,
+      storedOn: storedOn ?? this.storedOn,
       bestBeforeOn: bestBeforeOn ?? this.bestBeforeOn,
+      openedOn: openedOn ?? this.openedOn,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
@@ -3668,14 +4238,19 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
         parentBatchIdentifier.value,
       );
     }
-    if (frozenOn.present) {
-      map['frozen_on'] = Variable<String>(
-        $StockBatchesTable.$converterfrozenOn.toSql(frozenOn.value),
+    if (storedOn.present) {
+      map['stored_on'] = Variable<String>(
+        $StockBatchesTable.$converterstoredOn.toSql(storedOn.value),
       );
     }
     if (bestBeforeOn.present) {
       map['best_before_on'] = Variable<String>(
         $StockBatchesTable.$converterbestBeforeOnn.toSql(bestBeforeOn.value),
+      );
+    }
+    if (openedOn.present) {
+      map['opened_on'] = Variable<String>(
+        $StockBatchesTable.$converteropenedOnn.toSql(openedOn.value),
       );
     }
     if (note.present) {
@@ -3700,8 +4275,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
           ..write('initialQuantity: $initialQuantity, ')
           ..write('quantityRemaining: $quantityRemaining, ')
           ..write('parentBatchIdentifier: $parentBatchIdentifier, ')
-          ..write('frozenOn: $frozenOn, ')
+          ..write('storedOn: $storedOn, ')
           ..write('bestBeforeOn: $bestBeforeOn, ')
+          ..write('openedOn: $openedOn, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
@@ -4008,7 +4584,8 @@ class InventoryMovementRow extends DataClass
   /// Change of the batch's quantity in the product's base unit; negative for removals.
   final int quantityDelta;
 
-  /// `tooOld`, `freezerBurn`, `unwanted` or `other` for discards.
+  /// `tooOld`, `freezerBurn`, `expired`, `spoiled`, `unwanted` or `other`
+  /// for discards.
   final String? discardReason;
 
   /// Set on a compensating movement (undo); it has the same kind and the
@@ -6703,14 +7280,2057 @@ class ProductBarcodesCompanion extends UpdateCompanion<ProductBarcodeRow> {
   }
 }
 
+class $ReceiptsTable extends Receipts
+    with TableInfo<$ReceiptsTable, ReceiptRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _storeNameMeta = const VerificationMeta(
+    'storeName',
+  );
+  @override
+  late final GeneratedColumn<String> storeName = GeneratedColumn<String>(
+    'store_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<CalendarDate?, String>
+  purchasedOn = GeneratedColumn<String>(
+    'purchased_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<CalendarDate?>($ReceiptsTable.$converterpurchasedOnn);
+  static const VerificationMeta _totalInCentsMeta = const VerificationMeta(
+    'totalInCents',
+  );
+  @override
+  late final GeneratedColumn<int> totalInCents = GeneratedColumn<int>(
+    'total_in_cents',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pageCountMeta = const VerificationMeta(
+    'pageCount',
+  );
+  @override
+  late final GeneratedColumn<int> pageCount = GeneratedColumn<int>(
+    'page_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recognizedTextMeta = const VerificationMeta(
+    'recognizedText',
+  );
+  @override
+  late final GeneratedColumn<String> recognizedText = GeneratedColumn<String>(
+    'recognized_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    storeName,
+    purchasedOn,
+    totalInCents,
+    pageCount,
+    recognizedText,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('store_name')) {
+      context.handle(
+        _storeNameMeta,
+        storeName.isAcceptableOrUnknown(data['store_name']!, _storeNameMeta),
+      );
+    }
+    if (data.containsKey('total_in_cents')) {
+      context.handle(
+        _totalInCentsMeta,
+        totalInCents.isAcceptableOrUnknown(
+          data['total_in_cents']!,
+          _totalInCentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('page_count')) {
+      context.handle(
+        _pageCountMeta,
+        pageCount.isAcceptableOrUnknown(data['page_count']!, _pageCountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pageCountMeta);
+    }
+    if (data.containsKey('recognized_text')) {
+      context.handle(
+        _recognizedTextMeta,
+        recognizedText.isAcceptableOrUnknown(
+          data['recognized_text']!,
+          _recognizedTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recognizedTextMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptIdentifier};
+  @override
+  ReceiptRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptRow(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      storeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}store_name'],
+      ),
+      purchasedOn: $ReceiptsTable.$converterpurchasedOnn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}purchased_on'],
+        ),
+      ),
+      totalInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_in_cents'],
+      ),
+      pageCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_count'],
+      )!,
+      recognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recognized_text'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReceiptsTable createAlias(String alias) {
+    return $ReceiptsTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<CalendarDate, String> $converterpurchasedOn =
+      const CalendarDateTextConverter();
+  static TypeConverter<CalendarDate?, String?> $converterpurchasedOnn =
+      NullAwareTypeConverter.wrap($converterpurchasedOn);
+}
+
+class ReceiptRow extends DataClass implements Insertable<ReceiptRow> {
+  final String receiptIdentifier;
+
+  /// As printed at the top of the receipt; `null` when none was found.
+  final String? storeName;
+  final CalendarDate? purchasedOn;
+  final int? totalInCents;
+  final int pageCount;
+
+  /// Every recognised row, top to bottom, with card and loyalty numbers
+  /// masked.
+  final String recognizedText;
+  final DateTime createdAt;
+  const ReceiptRow({
+    required this.receiptIdentifier,
+    this.storeName,
+    this.purchasedOn,
+    this.totalInCents,
+    required this.pageCount,
+    required this.recognizedText,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    if (!nullToAbsent || storeName != null) {
+      map['store_name'] = Variable<String>(storeName);
+    }
+    if (!nullToAbsent || purchasedOn != null) {
+      map['purchased_on'] = Variable<String>(
+        $ReceiptsTable.$converterpurchasedOnn.toSql(purchasedOn),
+      );
+    }
+    if (!nullToAbsent || totalInCents != null) {
+      map['total_in_cents'] = Variable<int>(totalInCents);
+    }
+    map['page_count'] = Variable<int>(pageCount);
+    map['recognized_text'] = Variable<String>(recognizedText);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ReceiptsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptsCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      storeName: storeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(storeName),
+      purchasedOn: purchasedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(purchasedOn),
+      totalInCents: totalInCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalInCents),
+      pageCount: Value(pageCount),
+      recognizedText: Value(recognizedText),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ReceiptRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptRow(
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      storeName: serializer.fromJson<String?>(json['storeName']),
+      purchasedOn: serializer.fromJson<CalendarDate?>(json['purchasedOn']),
+      totalInCents: serializer.fromJson<int?>(json['totalInCents']),
+      pageCount: serializer.fromJson<int>(json['pageCount']),
+      recognizedText: serializer.fromJson<String>(json['recognizedText']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'storeName': serializer.toJson<String?>(storeName),
+      'purchasedOn': serializer.toJson<CalendarDate?>(purchasedOn),
+      'totalInCents': serializer.toJson<int?>(totalInCents),
+      'pageCount': serializer.toJson<int>(pageCount),
+      'recognizedText': serializer.toJson<String>(recognizedText),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ReceiptRow copyWith({
+    String? receiptIdentifier,
+    Value<String?> storeName = const Value.absent(),
+    Value<CalendarDate?> purchasedOn = const Value.absent(),
+    Value<int?> totalInCents = const Value.absent(),
+    int? pageCount,
+    String? recognizedText,
+    DateTime? createdAt,
+  }) => ReceiptRow(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    storeName: storeName.present ? storeName.value : this.storeName,
+    purchasedOn: purchasedOn.present ? purchasedOn.value : this.purchasedOn,
+    totalInCents: totalInCents.present ? totalInCents.value : this.totalInCents,
+    pageCount: pageCount ?? this.pageCount,
+    recognizedText: recognizedText ?? this.recognizedText,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ReceiptRow copyWithCompanion(ReceiptsCompanion data) {
+    return ReceiptRow(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      storeName: data.storeName.present ? data.storeName.value : this.storeName,
+      purchasedOn: data.purchasedOn.present
+          ? data.purchasedOn.value
+          : this.purchasedOn,
+      totalInCents: data.totalInCents.present
+          ? data.totalInCents.value
+          : this.totalInCents,
+      pageCount: data.pageCount.present ? data.pageCount.value : this.pageCount,
+      recognizedText: data.recognizedText.present
+          ? data.recognizedText.value
+          : this.recognizedText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptRow(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('storeName: $storeName, ')
+          ..write('purchasedOn: $purchasedOn, ')
+          ..write('totalInCents: $totalInCents, ')
+          ..write('pageCount: $pageCount, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptIdentifier,
+    storeName,
+    purchasedOn,
+    totalInCents,
+    pageCount,
+    recognizedText,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptRow &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.storeName == this.storeName &&
+          other.purchasedOn == this.purchasedOn &&
+          other.totalInCents == this.totalInCents &&
+          other.pageCount == this.pageCount &&
+          other.recognizedText == this.recognizedText &&
+          other.createdAt == this.createdAt);
+}
+
+class ReceiptsCompanion extends UpdateCompanion<ReceiptRow> {
+  final Value<String> receiptIdentifier;
+  final Value<String?> storeName;
+  final Value<CalendarDate?> purchasedOn;
+  final Value<int?> totalInCents;
+  final Value<int> pageCount;
+  final Value<String> recognizedText;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ReceiptsCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.storeName = const Value.absent(),
+    this.purchasedOn = const Value.absent(),
+    this.totalInCents = const Value.absent(),
+    this.pageCount = const Value.absent(),
+    this.recognizedText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptsCompanion.insert({
+    required String receiptIdentifier,
+    this.storeName = const Value.absent(),
+    this.purchasedOn = const Value.absent(),
+    this.totalInCents = const Value.absent(),
+    required int pageCount,
+    required String recognizedText,
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       pageCount = Value(pageCount),
+       recognizedText = Value(recognizedText),
+       createdAt = Value(createdAt);
+  static Insertable<ReceiptRow> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<String>? storeName,
+    Expression<String>? purchasedOn,
+    Expression<int>? totalInCents,
+    Expression<int>? pageCount,
+    Expression<String>? recognizedText,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (storeName != null) 'store_name': storeName,
+      if (purchasedOn != null) 'purchased_on': purchasedOn,
+      if (totalInCents != null) 'total_in_cents': totalInCents,
+      if (pageCount != null) 'page_count': pageCount,
+      if (recognizedText != null) 'recognized_text': recognizedText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptsCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<String?>? storeName,
+    Value<CalendarDate?>? purchasedOn,
+    Value<int?>? totalInCents,
+    Value<int>? pageCount,
+    Value<String>? recognizedText,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptsCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      storeName: storeName ?? this.storeName,
+      purchasedOn: purchasedOn ?? this.purchasedOn,
+      totalInCents: totalInCents ?? this.totalInCents,
+      pageCount: pageCount ?? this.pageCount,
+      recognizedText: recognizedText ?? this.recognizedText,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (storeName.present) {
+      map['store_name'] = Variable<String>(storeName.value);
+    }
+    if (purchasedOn.present) {
+      map['purchased_on'] = Variable<String>(
+        $ReceiptsTable.$converterpurchasedOnn.toSql(purchasedOn.value),
+      );
+    }
+    if (totalInCents.present) {
+      map['total_in_cents'] = Variable<int>(totalInCents.value);
+    }
+    if (pageCount.present) {
+      map['page_count'] = Variable<int>(pageCount.value);
+    }
+    if (recognizedText.present) {
+      map['recognized_text'] = Variable<String>(recognizedText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptsCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('storeName: $storeName, ')
+          ..write('purchasedOn: $purchasedOn, ')
+          ..write('totalInCents: $totalInCents, ')
+          ..write('pageCount: $pageCount, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ReceiptPagesTable extends ReceiptPages
+    with TableInfo<$ReceiptPagesTable, ReceiptPageRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptPagesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES receipts (receipt_identifier)',
+        ),
+      );
+  static const VerificationMeta _pageNumberMeta = const VerificationMeta(
+    'pageNumber',
+  );
+  @override
+  late final GeneratedColumn<int> pageNumber = GeneratedColumn<int>(
+    'page_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pictureReferenceMeta = const VerificationMeta(
+    'pictureReference',
+  );
+  @override
+  late final GeneratedColumn<String> pictureReference = GeneratedColumn<String>(
+    'picture_reference',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rawRecognizedTextMeta = const VerificationMeta(
+    'rawRecognizedText',
+  );
+  @override
+  late final GeneratedColumn<String> rawRecognizedText =
+      GeneratedColumn<String>(
+        'raw_recognized_text',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    pageNumber,
+    pictureReference,
+    rawRecognizedText,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_pages';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptPageRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('page_number')) {
+      context.handle(
+        _pageNumberMeta,
+        pageNumber.isAcceptableOrUnknown(data['page_number']!, _pageNumberMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pageNumberMeta);
+    }
+    if (data.containsKey('picture_reference')) {
+      context.handle(
+        _pictureReferenceMeta,
+        pictureReference.isAcceptableOrUnknown(
+          data['picture_reference']!,
+          _pictureReferenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('raw_recognized_text')) {
+      context.handle(
+        _rawRecognizedTextMeta,
+        rawRecognizedText.isAcceptableOrUnknown(
+          data['raw_recognized_text']!,
+          _rawRecognizedTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rawRecognizedTextMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptIdentifier, pageNumber};
+  @override
+  ReceiptPageRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptPageRow(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      pageNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_number'],
+      )!,
+      pictureReference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}picture_reference'],
+      ),
+      rawRecognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_recognized_text'],
+      )!,
+    );
+  }
+
+  @override
+  $ReceiptPagesTable createAlias(String alias) {
+    return $ReceiptPagesTable(attachedDatabase, alias);
+  }
+}
+
+class ReceiptPageRow extends DataClass implements Insertable<ReceiptPageRow> {
+  final String receiptIdentifier;
+
+  /// From 1.
+  final int pageNumber;
+
+  /// The encrypted page image (decision D11), or `null` once retention has
+  /// deleted it or when none was kept.
+  final String? pictureReference;
+
+  /// The page's text exactly as recognition returned it, for reference.
+  final String rawRecognizedText;
+  const ReceiptPageRow({
+    required this.receiptIdentifier,
+    required this.pageNumber,
+    this.pictureReference,
+    required this.rawRecognizedText,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['page_number'] = Variable<int>(pageNumber);
+    if (!nullToAbsent || pictureReference != null) {
+      map['picture_reference'] = Variable<String>(pictureReference);
+    }
+    map['raw_recognized_text'] = Variable<String>(rawRecognizedText);
+    return map;
+  }
+
+  ReceiptPagesCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptPagesCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      pageNumber: Value(pageNumber),
+      pictureReference: pictureReference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pictureReference),
+      rawRecognizedText: Value(rawRecognizedText),
+    );
+  }
+
+  factory ReceiptPageRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptPageRow(
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      pageNumber: serializer.fromJson<int>(json['pageNumber']),
+      pictureReference: serializer.fromJson<String?>(json['pictureReference']),
+      rawRecognizedText: serializer.fromJson<String>(json['rawRecognizedText']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'pageNumber': serializer.toJson<int>(pageNumber),
+      'pictureReference': serializer.toJson<String?>(pictureReference),
+      'rawRecognizedText': serializer.toJson<String>(rawRecognizedText),
+    };
+  }
+
+  ReceiptPageRow copyWith({
+    String? receiptIdentifier,
+    int? pageNumber,
+    Value<String?> pictureReference = const Value.absent(),
+    String? rawRecognizedText,
+  }) => ReceiptPageRow(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    pageNumber: pageNumber ?? this.pageNumber,
+    pictureReference: pictureReference.present
+        ? pictureReference.value
+        : this.pictureReference,
+    rawRecognizedText: rawRecognizedText ?? this.rawRecognizedText,
+  );
+  ReceiptPageRow copyWithCompanion(ReceiptPagesCompanion data) {
+    return ReceiptPageRow(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      pageNumber: data.pageNumber.present
+          ? data.pageNumber.value
+          : this.pageNumber,
+      pictureReference: data.pictureReference.present
+          ? data.pictureReference.value
+          : this.pictureReference,
+      rawRecognizedText: data.rawRecognizedText.present
+          ? data.rawRecognizedText.value
+          : this.rawRecognizedText,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptPageRow(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('pageNumber: $pageNumber, ')
+          ..write('pictureReference: $pictureReference, ')
+          ..write('rawRecognizedText: $rawRecognizedText')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptIdentifier,
+    pageNumber,
+    pictureReference,
+    rawRecognizedText,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptPageRow &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.pageNumber == this.pageNumber &&
+          other.pictureReference == this.pictureReference &&
+          other.rawRecognizedText == this.rawRecognizedText);
+}
+
+class ReceiptPagesCompanion extends UpdateCompanion<ReceiptPageRow> {
+  final Value<String> receiptIdentifier;
+  final Value<int> pageNumber;
+  final Value<String?> pictureReference;
+  final Value<String> rawRecognizedText;
+  final Value<int> rowid;
+  const ReceiptPagesCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.pageNumber = const Value.absent(),
+    this.pictureReference = const Value.absent(),
+    this.rawRecognizedText = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptPagesCompanion.insert({
+    required String receiptIdentifier,
+    required int pageNumber,
+    this.pictureReference = const Value.absent(),
+    required String rawRecognizedText,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       pageNumber = Value(pageNumber),
+       rawRecognizedText = Value(rawRecognizedText);
+  static Insertable<ReceiptPageRow> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<int>? pageNumber,
+    Expression<String>? pictureReference,
+    Expression<String>? rawRecognizedText,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (pageNumber != null) 'page_number': pageNumber,
+      if (pictureReference != null) 'picture_reference': pictureReference,
+      if (rawRecognizedText != null) 'raw_recognized_text': rawRecognizedText,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptPagesCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<int>? pageNumber,
+    Value<String?>? pictureReference,
+    Value<String>? rawRecognizedText,
+    Value<int>? rowid,
+  }) {
+    return ReceiptPagesCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      pageNumber: pageNumber ?? this.pageNumber,
+      pictureReference: pictureReference ?? this.pictureReference,
+      rawRecognizedText: rawRecognizedText ?? this.rawRecognizedText,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (pageNumber.present) {
+      map['page_number'] = Variable<int>(pageNumber.value);
+    }
+    if (pictureReference.present) {
+      map['picture_reference'] = Variable<String>(pictureReference.value);
+    }
+    if (rawRecognizedText.present) {
+      map['raw_recognized_text'] = Variable<String>(rawRecognizedText.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptPagesCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('pageNumber: $pageNumber, ')
+          ..write('pictureReference: $pictureReference, ')
+          ..write('rawRecognizedText: $rawRecognizedText, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ReceiptLinesTable extends ReceiptLines
+    with TableInfo<$ReceiptLinesTable, ReceiptLineRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptLinesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptLineIdentifierMeta =
+      const VerificationMeta('receiptLineIdentifier');
+  @override
+  late final GeneratedColumn<String> receiptLineIdentifier =
+      GeneratedColumn<String>(
+        'receipt_line_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES receipts (receipt_identifier)',
+        ),
+      );
+  static const VerificationMeta _positionMeta = const VerificationMeta(
+    'position',
+  );
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recognizedTextMeta = const VerificationMeta(
+    'recognizedText',
+  );
+  @override
+  late final GeneratedColumn<String> recognizedText = GeneratedColumn<String>(
+    'recognized_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _correctedTextMeta = const VerificationMeta(
+    'correctedText',
+  );
+  @override
+  late final GeneratedColumn<String> correctedText = GeneratedColumn<String>(
+    'corrected_text',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unitPriceInCentsMeta = const VerificationMeta(
+    'unitPriceInCents',
+  );
+  @override
+  late final GeneratedColumn<int> unitPriceInCents = GeneratedColumn<int>(
+    'unit_price_in_cents',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lineTotalInCentsMeta = const VerificationMeta(
+    'lineTotalInCents',
+  );
+  @override
+  late final GeneratedColumn<int> lineTotalInCents = GeneratedColumn<int>(
+    'line_total_in_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _weightInGramsMeta = const VerificationMeta(
+    'weightInGrams',
+  );
+  @override
+  late final GeneratedColumn<int> weightInGrams = GeneratedColumn<int>(
+    'weight_in_grams',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _productIdentifierMeta = const VerificationMeta(
+    'productIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> productIdentifier =
+      GeneratedColumn<String>(
+        'product_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES products (product_identifier)',
+        ),
+      );
+  static const VerificationMeta _stockBatchIdentifierMeta =
+      const VerificationMeta('stockBatchIdentifier');
+  @override
+  late final GeneratedColumn<String> stockBatchIdentifier =
+      GeneratedColumn<String>(
+        'stock_batch_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES stock_batches (stock_batch_identifier)',
+        ),
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptLineIdentifier,
+    receiptIdentifier,
+    position,
+    kind,
+    recognizedText,
+    correctedText,
+    quantity,
+    unitPriceInCents,
+    lineTotalInCents,
+    weightInGrams,
+    status,
+    productIdentifier,
+    stockBatchIdentifier,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_lines';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptLineRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_line_identifier')) {
+      context.handle(
+        _receiptLineIdentifierMeta,
+        receiptLineIdentifier.isAcceptableOrUnknown(
+          data['receipt_line_identifier']!,
+          _receiptLineIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptLineIdentifierMeta);
+    }
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('position')) {
+      context.handle(
+        _positionMeta,
+        position.isAcceptableOrUnknown(data['position']!, _positionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_positionMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('recognized_text')) {
+      context.handle(
+        _recognizedTextMeta,
+        recognizedText.isAcceptableOrUnknown(
+          data['recognized_text']!,
+          _recognizedTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recognizedTextMeta);
+    }
+    if (data.containsKey('corrected_text')) {
+      context.handle(
+        _correctedTextMeta,
+        correctedText.isAcceptableOrUnknown(
+          data['corrected_text']!,
+          _correctedTextMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
+    if (data.containsKey('unit_price_in_cents')) {
+      context.handle(
+        _unitPriceInCentsMeta,
+        unitPriceInCents.isAcceptableOrUnknown(
+          data['unit_price_in_cents']!,
+          _unitPriceInCentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('line_total_in_cents')) {
+      context.handle(
+        _lineTotalInCentsMeta,
+        lineTotalInCents.isAcceptableOrUnknown(
+          data['line_total_in_cents']!,
+          _lineTotalInCentsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lineTotalInCentsMeta);
+    }
+    if (data.containsKey('weight_in_grams')) {
+      context.handle(
+        _weightInGramsMeta,
+        weightInGrams.isAcceptableOrUnknown(
+          data['weight_in_grams']!,
+          _weightInGramsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('product_identifier')) {
+      context.handle(
+        _productIdentifierMeta,
+        productIdentifier.isAcceptableOrUnknown(
+          data['product_identifier']!,
+          _productIdentifierMeta,
+        ),
+      );
+    }
+    if (data.containsKey('stock_batch_identifier')) {
+      context.handle(
+        _stockBatchIdentifierMeta,
+        stockBatchIdentifier.isAcceptableOrUnknown(
+          data['stock_batch_identifier']!,
+          _stockBatchIdentifierMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptLineIdentifier};
+  @override
+  ReceiptLineRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptLineRow(
+      receiptLineIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_line_identifier'],
+      )!,
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      recognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recognized_text'],
+      )!,
+      correctedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}corrected_text'],
+      ),
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      unitPriceInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit_price_in_cents'],
+      ),
+      lineTotalInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}line_total_in_cents'],
+      )!,
+      weightInGrams: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}weight_in_grams'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      productIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_identifier'],
+      ),
+      stockBatchIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stock_batch_identifier'],
+      ),
+    );
+  }
+
+  @override
+  $ReceiptLinesTable createAlias(String alias) {
+    return $ReceiptLinesTable(attachedDatabase, alias);
+  }
+}
+
+class ReceiptLineRow extends DataClass implements Insertable<ReceiptLineRow> {
+  final String receiptLineIdentifier;
+  final String receiptIdentifier;
+
+  /// Order on the receipt, from 0.
+  final int position;
+
+  /// `item`, `discount` or `deposit`.
+  final String kind;
+  final String recognizedText;
+
+  /// What the user corrected a misread line to; indexed and learned instead.
+  final String? correctedText;
+  final int quantity;
+  final int? unitPriceInCents;
+
+  /// Negative for discounts.
+  final int lineTotalInCents;
+  final int? weightInGrams;
+
+  /// `matched`, `suggested`, `unrecognised` or `ignored`.
+  final String status;
+  final String? productIdentifier;
+
+  /// The batch this line added; `null` while the line is open or ignored.
+  final String? stockBatchIdentifier;
+  const ReceiptLineRow({
+    required this.receiptLineIdentifier,
+    required this.receiptIdentifier,
+    required this.position,
+    required this.kind,
+    required this.recognizedText,
+    this.correctedText,
+    required this.quantity,
+    this.unitPriceInCents,
+    required this.lineTotalInCents,
+    this.weightInGrams,
+    required this.status,
+    this.productIdentifier,
+    this.stockBatchIdentifier,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_line_identifier'] = Variable<String>(receiptLineIdentifier);
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['position'] = Variable<int>(position);
+    map['kind'] = Variable<String>(kind);
+    map['recognized_text'] = Variable<String>(recognizedText);
+    if (!nullToAbsent || correctedText != null) {
+      map['corrected_text'] = Variable<String>(correctedText);
+    }
+    map['quantity'] = Variable<int>(quantity);
+    if (!nullToAbsent || unitPriceInCents != null) {
+      map['unit_price_in_cents'] = Variable<int>(unitPriceInCents);
+    }
+    map['line_total_in_cents'] = Variable<int>(lineTotalInCents);
+    if (!nullToAbsent || weightInGrams != null) {
+      map['weight_in_grams'] = Variable<int>(weightInGrams);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || productIdentifier != null) {
+      map['product_identifier'] = Variable<String>(productIdentifier);
+    }
+    if (!nullToAbsent || stockBatchIdentifier != null) {
+      map['stock_batch_identifier'] = Variable<String>(stockBatchIdentifier);
+    }
+    return map;
+  }
+
+  ReceiptLinesCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptLinesCompanion(
+      receiptLineIdentifier: Value(receiptLineIdentifier),
+      receiptIdentifier: Value(receiptIdentifier),
+      position: Value(position),
+      kind: Value(kind),
+      recognizedText: Value(recognizedText),
+      correctedText: correctedText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correctedText),
+      quantity: Value(quantity),
+      unitPriceInCents: unitPriceInCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(unitPriceInCents),
+      lineTotalInCents: Value(lineTotalInCents),
+      weightInGrams: weightInGrams == null && nullToAbsent
+          ? const Value.absent()
+          : Value(weightInGrams),
+      status: Value(status),
+      productIdentifier: productIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productIdentifier),
+      stockBatchIdentifier: stockBatchIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(stockBatchIdentifier),
+    );
+  }
+
+  factory ReceiptLineRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptLineRow(
+      receiptLineIdentifier: serializer.fromJson<String>(
+        json['receiptLineIdentifier'],
+      ),
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      position: serializer.fromJson<int>(json['position']),
+      kind: serializer.fromJson<String>(json['kind']),
+      recognizedText: serializer.fromJson<String>(json['recognizedText']),
+      correctedText: serializer.fromJson<String?>(json['correctedText']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unitPriceInCents: serializer.fromJson<int?>(json['unitPriceInCents']),
+      lineTotalInCents: serializer.fromJson<int>(json['lineTotalInCents']),
+      weightInGrams: serializer.fromJson<int?>(json['weightInGrams']),
+      status: serializer.fromJson<String>(json['status']),
+      productIdentifier: serializer.fromJson<String?>(
+        json['productIdentifier'],
+      ),
+      stockBatchIdentifier: serializer.fromJson<String?>(
+        json['stockBatchIdentifier'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptLineIdentifier': serializer.toJson<String>(receiptLineIdentifier),
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'position': serializer.toJson<int>(position),
+      'kind': serializer.toJson<String>(kind),
+      'recognizedText': serializer.toJson<String>(recognizedText),
+      'correctedText': serializer.toJson<String?>(correctedText),
+      'quantity': serializer.toJson<int>(quantity),
+      'unitPriceInCents': serializer.toJson<int?>(unitPriceInCents),
+      'lineTotalInCents': serializer.toJson<int>(lineTotalInCents),
+      'weightInGrams': serializer.toJson<int?>(weightInGrams),
+      'status': serializer.toJson<String>(status),
+      'productIdentifier': serializer.toJson<String?>(productIdentifier),
+      'stockBatchIdentifier': serializer.toJson<String?>(stockBatchIdentifier),
+    };
+  }
+
+  ReceiptLineRow copyWith({
+    String? receiptLineIdentifier,
+    String? receiptIdentifier,
+    int? position,
+    String? kind,
+    String? recognizedText,
+    Value<String?> correctedText = const Value.absent(),
+    int? quantity,
+    Value<int?> unitPriceInCents = const Value.absent(),
+    int? lineTotalInCents,
+    Value<int?> weightInGrams = const Value.absent(),
+    String? status,
+    Value<String?> productIdentifier = const Value.absent(),
+    Value<String?> stockBatchIdentifier = const Value.absent(),
+  }) => ReceiptLineRow(
+    receiptLineIdentifier: receiptLineIdentifier ?? this.receiptLineIdentifier,
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    position: position ?? this.position,
+    kind: kind ?? this.kind,
+    recognizedText: recognizedText ?? this.recognizedText,
+    correctedText: correctedText.present
+        ? correctedText.value
+        : this.correctedText,
+    quantity: quantity ?? this.quantity,
+    unitPriceInCents: unitPriceInCents.present
+        ? unitPriceInCents.value
+        : this.unitPriceInCents,
+    lineTotalInCents: lineTotalInCents ?? this.lineTotalInCents,
+    weightInGrams: weightInGrams.present
+        ? weightInGrams.value
+        : this.weightInGrams,
+    status: status ?? this.status,
+    productIdentifier: productIdentifier.present
+        ? productIdentifier.value
+        : this.productIdentifier,
+    stockBatchIdentifier: stockBatchIdentifier.present
+        ? stockBatchIdentifier.value
+        : this.stockBatchIdentifier,
+  );
+  ReceiptLineRow copyWithCompanion(ReceiptLinesCompanion data) {
+    return ReceiptLineRow(
+      receiptLineIdentifier: data.receiptLineIdentifier.present
+          ? data.receiptLineIdentifier.value
+          : this.receiptLineIdentifier,
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      position: data.position.present ? data.position.value : this.position,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      recognizedText: data.recognizedText.present
+          ? data.recognizedText.value
+          : this.recognizedText,
+      correctedText: data.correctedText.present
+          ? data.correctedText.value
+          : this.correctedText,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unitPriceInCents: data.unitPriceInCents.present
+          ? data.unitPriceInCents.value
+          : this.unitPriceInCents,
+      lineTotalInCents: data.lineTotalInCents.present
+          ? data.lineTotalInCents.value
+          : this.lineTotalInCents,
+      weightInGrams: data.weightInGrams.present
+          ? data.weightInGrams.value
+          : this.weightInGrams,
+      status: data.status.present ? data.status.value : this.status,
+      productIdentifier: data.productIdentifier.present
+          ? data.productIdentifier.value
+          : this.productIdentifier,
+      stockBatchIdentifier: data.stockBatchIdentifier.present
+          ? data.stockBatchIdentifier.value
+          : this.stockBatchIdentifier,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptLineRow(')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('position: $position, ')
+          ..write('kind: $kind, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPriceInCents: $unitPriceInCents, ')
+          ..write('lineTotalInCents: $lineTotalInCents, ')
+          ..write('weightInGrams: $weightInGrams, ')
+          ..write('status: $status, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('stockBatchIdentifier: $stockBatchIdentifier')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptLineIdentifier,
+    receiptIdentifier,
+    position,
+    kind,
+    recognizedText,
+    correctedText,
+    quantity,
+    unitPriceInCents,
+    lineTotalInCents,
+    weightInGrams,
+    status,
+    productIdentifier,
+    stockBatchIdentifier,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptLineRow &&
+          other.receiptLineIdentifier == this.receiptLineIdentifier &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.position == this.position &&
+          other.kind == this.kind &&
+          other.recognizedText == this.recognizedText &&
+          other.correctedText == this.correctedText &&
+          other.quantity == this.quantity &&
+          other.unitPriceInCents == this.unitPriceInCents &&
+          other.lineTotalInCents == this.lineTotalInCents &&
+          other.weightInGrams == this.weightInGrams &&
+          other.status == this.status &&
+          other.productIdentifier == this.productIdentifier &&
+          other.stockBatchIdentifier == this.stockBatchIdentifier);
+}
+
+class ReceiptLinesCompanion extends UpdateCompanion<ReceiptLineRow> {
+  final Value<String> receiptLineIdentifier;
+  final Value<String> receiptIdentifier;
+  final Value<int> position;
+  final Value<String> kind;
+  final Value<String> recognizedText;
+  final Value<String?> correctedText;
+  final Value<int> quantity;
+  final Value<int?> unitPriceInCents;
+  final Value<int> lineTotalInCents;
+  final Value<int?> weightInGrams;
+  final Value<String> status;
+  final Value<String?> productIdentifier;
+  final Value<String?> stockBatchIdentifier;
+  final Value<int> rowid;
+  const ReceiptLinesCompanion({
+    this.receiptLineIdentifier = const Value.absent(),
+    this.receiptIdentifier = const Value.absent(),
+    this.position = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.recognizedText = const Value.absent(),
+    this.correctedText = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unitPriceInCents = const Value.absent(),
+    this.lineTotalInCents = const Value.absent(),
+    this.weightInGrams = const Value.absent(),
+    this.status = const Value.absent(),
+    this.productIdentifier = const Value.absent(),
+    this.stockBatchIdentifier = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptLinesCompanion.insert({
+    required String receiptLineIdentifier,
+    required String receiptIdentifier,
+    required int position,
+    required String kind,
+    required String recognizedText,
+    this.correctedText = const Value.absent(),
+    required int quantity,
+    this.unitPriceInCents = const Value.absent(),
+    required int lineTotalInCents,
+    this.weightInGrams = const Value.absent(),
+    required String status,
+    this.productIdentifier = const Value.absent(),
+    this.stockBatchIdentifier = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : receiptLineIdentifier = Value(receiptLineIdentifier),
+       receiptIdentifier = Value(receiptIdentifier),
+       position = Value(position),
+       kind = Value(kind),
+       recognizedText = Value(recognizedText),
+       quantity = Value(quantity),
+       lineTotalInCents = Value(lineTotalInCents),
+       status = Value(status);
+  static Insertable<ReceiptLineRow> custom({
+    Expression<String>? receiptLineIdentifier,
+    Expression<String>? receiptIdentifier,
+    Expression<int>? position,
+    Expression<String>? kind,
+    Expression<String>? recognizedText,
+    Expression<String>? correctedText,
+    Expression<int>? quantity,
+    Expression<int>? unitPriceInCents,
+    Expression<int>? lineTotalInCents,
+    Expression<int>? weightInGrams,
+    Expression<String>? status,
+    Expression<String>? productIdentifier,
+    Expression<String>? stockBatchIdentifier,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptLineIdentifier != null)
+        'receipt_line_identifier': receiptLineIdentifier,
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (position != null) 'position': position,
+      if (kind != null) 'kind': kind,
+      if (recognizedText != null) 'recognized_text': recognizedText,
+      if (correctedText != null) 'corrected_text': correctedText,
+      if (quantity != null) 'quantity': quantity,
+      if (unitPriceInCents != null) 'unit_price_in_cents': unitPriceInCents,
+      if (lineTotalInCents != null) 'line_total_in_cents': lineTotalInCents,
+      if (weightInGrams != null) 'weight_in_grams': weightInGrams,
+      if (status != null) 'status': status,
+      if (productIdentifier != null) 'product_identifier': productIdentifier,
+      if (stockBatchIdentifier != null)
+        'stock_batch_identifier': stockBatchIdentifier,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptLinesCompanion copyWith({
+    Value<String>? receiptLineIdentifier,
+    Value<String>? receiptIdentifier,
+    Value<int>? position,
+    Value<String>? kind,
+    Value<String>? recognizedText,
+    Value<String?>? correctedText,
+    Value<int>? quantity,
+    Value<int?>? unitPriceInCents,
+    Value<int>? lineTotalInCents,
+    Value<int?>? weightInGrams,
+    Value<String>? status,
+    Value<String?>? productIdentifier,
+    Value<String?>? stockBatchIdentifier,
+    Value<int>? rowid,
+  }) {
+    return ReceiptLinesCompanion(
+      receiptLineIdentifier:
+          receiptLineIdentifier ?? this.receiptLineIdentifier,
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      position: position ?? this.position,
+      kind: kind ?? this.kind,
+      recognizedText: recognizedText ?? this.recognizedText,
+      correctedText: correctedText ?? this.correctedText,
+      quantity: quantity ?? this.quantity,
+      unitPriceInCents: unitPriceInCents ?? this.unitPriceInCents,
+      lineTotalInCents: lineTotalInCents ?? this.lineTotalInCents,
+      weightInGrams: weightInGrams ?? this.weightInGrams,
+      status: status ?? this.status,
+      productIdentifier: productIdentifier ?? this.productIdentifier,
+      stockBatchIdentifier: stockBatchIdentifier ?? this.stockBatchIdentifier,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptLineIdentifier.present) {
+      map['receipt_line_identifier'] = Variable<String>(
+        receiptLineIdentifier.value,
+      );
+    }
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (recognizedText.present) {
+      map['recognized_text'] = Variable<String>(recognizedText.value);
+    }
+    if (correctedText.present) {
+      map['corrected_text'] = Variable<String>(correctedText.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unitPriceInCents.present) {
+      map['unit_price_in_cents'] = Variable<int>(unitPriceInCents.value);
+    }
+    if (lineTotalInCents.present) {
+      map['line_total_in_cents'] = Variable<int>(lineTotalInCents.value);
+    }
+    if (weightInGrams.present) {
+      map['weight_in_grams'] = Variable<int>(weightInGrams.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (productIdentifier.present) {
+      map['product_identifier'] = Variable<String>(productIdentifier.value);
+    }
+    if (stockBatchIdentifier.present) {
+      map['stock_batch_identifier'] = Variable<String>(
+        stockBatchIdentifier.value,
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptLinesCompanion(')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('position: $position, ')
+          ..write('kind: $kind, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPriceInCents: $unitPriceInCents, ')
+          ..write('lineTotalInCents: $lineTotalInCents, ')
+          ..write('weightInGrams: $weightInGrams, ')
+          ..write('status: $status, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('stockBatchIdentifier: $stockBatchIdentifier, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ReceiptTextMappingsTable extends ReceiptTextMappings
+    with TableInfo<$ReceiptTextMappingsTable, ReceiptTextMappingRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptTextMappingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _storeNameMeta = const VerificationMeta(
+    'storeName',
+  );
+  @override
+  late final GeneratedColumn<String> storeName = GeneratedColumn<String>(
+    'store_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lineTextMeta = const VerificationMeta(
+    'lineText',
+  );
+  @override
+  late final GeneratedColumn<String> lineText = GeneratedColumn<String>(
+    'line_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _productIdentifierMeta = const VerificationMeta(
+    'productIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> productIdentifier =
+      GeneratedColumn<String>(
+        'product_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES products (product_identifier)',
+        ),
+      );
+  static const VerificationMeta _learnedAtMeta = const VerificationMeta(
+    'learnedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> learnedAt = GeneratedColumn<DateTime>(
+    'learned_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    storeName,
+    lineText,
+    productIdentifier,
+    learnedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_text_mappings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptTextMappingRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('store_name')) {
+      context.handle(
+        _storeNameMeta,
+        storeName.isAcceptableOrUnknown(data['store_name']!, _storeNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_storeNameMeta);
+    }
+    if (data.containsKey('line_text')) {
+      context.handle(
+        _lineTextMeta,
+        lineText.isAcceptableOrUnknown(data['line_text']!, _lineTextMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_lineTextMeta);
+    }
+    if (data.containsKey('product_identifier')) {
+      context.handle(
+        _productIdentifierMeta,
+        productIdentifier.isAcceptableOrUnknown(
+          data['product_identifier']!,
+          _productIdentifierMeta,
+        ),
+      );
+    }
+    if (data.containsKey('learned_at')) {
+      context.handle(
+        _learnedAtMeta,
+        learnedAt.isAcceptableOrUnknown(data['learned_at']!, _learnedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_learnedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {storeName, lineText};
+  @override
+  ReceiptTextMappingRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptTextMappingRow(
+      storeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}store_name'],
+      )!,
+      lineText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}line_text'],
+      )!,
+      productIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_identifier'],
+      ),
+      learnedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}learned_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReceiptTextMappingsTable createAlias(String alias) {
+    return $ReceiptTextMappingsTable(attachedDatabase, alias);
+  }
+}
+
+class ReceiptTextMappingRow extends DataClass
+    implements Insertable<ReceiptTextMappingRow> {
+  /// Both normalised: lower case, accents folded, punctuation as spaces.
+  final String storeName;
+  final String lineText;
+  final String? productIdentifier;
+  final DateTime learnedAt;
+  const ReceiptTextMappingRow({
+    required this.storeName,
+    required this.lineText,
+    this.productIdentifier,
+    required this.learnedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['store_name'] = Variable<String>(storeName);
+    map['line_text'] = Variable<String>(lineText);
+    if (!nullToAbsent || productIdentifier != null) {
+      map['product_identifier'] = Variable<String>(productIdentifier);
+    }
+    map['learned_at'] = Variable<DateTime>(learnedAt);
+    return map;
+  }
+
+  ReceiptTextMappingsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptTextMappingsCompanion(
+      storeName: Value(storeName),
+      lineText: Value(lineText),
+      productIdentifier: productIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productIdentifier),
+      learnedAt: Value(learnedAt),
+    );
+  }
+
+  factory ReceiptTextMappingRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptTextMappingRow(
+      storeName: serializer.fromJson<String>(json['storeName']),
+      lineText: serializer.fromJson<String>(json['lineText']),
+      productIdentifier: serializer.fromJson<String?>(
+        json['productIdentifier'],
+      ),
+      learnedAt: serializer.fromJson<DateTime>(json['learnedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'storeName': serializer.toJson<String>(storeName),
+      'lineText': serializer.toJson<String>(lineText),
+      'productIdentifier': serializer.toJson<String?>(productIdentifier),
+      'learnedAt': serializer.toJson<DateTime>(learnedAt),
+    };
+  }
+
+  ReceiptTextMappingRow copyWith({
+    String? storeName,
+    String? lineText,
+    Value<String?> productIdentifier = const Value.absent(),
+    DateTime? learnedAt,
+  }) => ReceiptTextMappingRow(
+    storeName: storeName ?? this.storeName,
+    lineText: lineText ?? this.lineText,
+    productIdentifier: productIdentifier.present
+        ? productIdentifier.value
+        : this.productIdentifier,
+    learnedAt: learnedAt ?? this.learnedAt,
+  );
+  ReceiptTextMappingRow copyWithCompanion(ReceiptTextMappingsCompanion data) {
+    return ReceiptTextMappingRow(
+      storeName: data.storeName.present ? data.storeName.value : this.storeName,
+      lineText: data.lineText.present ? data.lineText.value : this.lineText,
+      productIdentifier: data.productIdentifier.present
+          ? data.productIdentifier.value
+          : this.productIdentifier,
+      learnedAt: data.learnedAt.present ? data.learnedAt.value : this.learnedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptTextMappingRow(')
+          ..write('storeName: $storeName, ')
+          ..write('lineText: $lineText, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('learnedAt: $learnedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(storeName, lineText, productIdentifier, learnedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptTextMappingRow &&
+          other.storeName == this.storeName &&
+          other.lineText == this.lineText &&
+          other.productIdentifier == this.productIdentifier &&
+          other.learnedAt == this.learnedAt);
+}
+
+class ReceiptTextMappingsCompanion
+    extends UpdateCompanion<ReceiptTextMappingRow> {
+  final Value<String> storeName;
+  final Value<String> lineText;
+  final Value<String?> productIdentifier;
+  final Value<DateTime> learnedAt;
+  final Value<int> rowid;
+  const ReceiptTextMappingsCompanion({
+    this.storeName = const Value.absent(),
+    this.lineText = const Value.absent(),
+    this.productIdentifier = const Value.absent(),
+    this.learnedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptTextMappingsCompanion.insert({
+    required String storeName,
+    required String lineText,
+    this.productIdentifier = const Value.absent(),
+    required DateTime learnedAt,
+    this.rowid = const Value.absent(),
+  }) : storeName = Value(storeName),
+       lineText = Value(lineText),
+       learnedAt = Value(learnedAt);
+  static Insertable<ReceiptTextMappingRow> custom({
+    Expression<String>? storeName,
+    Expression<String>? lineText,
+    Expression<String>? productIdentifier,
+    Expression<DateTime>? learnedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (storeName != null) 'store_name': storeName,
+      if (lineText != null) 'line_text': lineText,
+      if (productIdentifier != null) 'product_identifier': productIdentifier,
+      if (learnedAt != null) 'learned_at': learnedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptTextMappingsCompanion copyWith({
+    Value<String>? storeName,
+    Value<String>? lineText,
+    Value<String?>? productIdentifier,
+    Value<DateTime>? learnedAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptTextMappingsCompanion(
+      storeName: storeName ?? this.storeName,
+      lineText: lineText ?? this.lineText,
+      productIdentifier: productIdentifier ?? this.productIdentifier,
+      learnedAt: learnedAt ?? this.learnedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (storeName.present) {
+      map['store_name'] = Variable<String>(storeName.value);
+    }
+    if (lineText.present) {
+      map['line_text'] = Variable<String>(lineText.value);
+    }
+    if (productIdentifier.present) {
+      map['product_identifier'] = Variable<String>(productIdentifier.value);
+    }
+    if (learnedAt.present) {
+      map['learned_at'] = Variable<DateTime>(learnedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptTextMappingsCompanion(')
+          ..write('storeName: $storeName, ')
+          ..write('lineText: $lineText, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('learnedAt: $learnedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$ApplicationDatabase extends GeneratedDatabase {
   _$ApplicationDatabase(QueryExecutor e) : super(e);
   $ApplicationDatabaseManager get managers => $ApplicationDatabaseManager(this);
+  late final ReceiptSearchIndex receiptSearchIndex = ReceiptSearchIndex(this);
   late final $PreferenceEntriesTable preferenceEntries =
       $PreferenceEntriesTable(this);
   late final $SchemaMetadataEntriesTable schemaMetadataEntries =
       $SchemaMetadataEntriesTable(this);
-  late final $FreezersTable freezers = $FreezersTable(this);
+  late final $StoragePlacesTable storagePlaces = $StoragePlacesTable(this);
   late final $CompartmentsTable compartments = $CompartmentsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $ProductsTable products = $ProductsTable(this);
@@ -6726,6 +9346,11 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
   late final $ProductBarcodesTable productBarcodes = $ProductBarcodesTable(
     this,
   );
+  late final $ReceiptsTable receipts = $ReceiptsTable(this);
+  late final $ReceiptPagesTable receiptPages = $ReceiptPagesTable(this);
+  late final $ReceiptLinesTable receiptLines = $ReceiptLinesTable(this);
+  late final $ReceiptTextMappingsTable receiptTextMappings =
+      $ReceiptTextMappingsTable(this);
   late final Index inventoryMovementsByTime = Index(
     'inventory_movements_by_time',
     'CREATE INDEX inventory_movements_by_time ON inventory_movements (occurred_at)',
@@ -6745,6 +9370,14 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
   late final Index productBarcodesByProduct = Index(
     'product_barcodes_by_product',
     'CREATE INDEX product_barcodes_by_product ON product_barcodes (product_identifier)',
+  );
+  late final Index receiptsByCreation = Index(
+    'receipts_by_creation',
+    'CREATE INDEX receipts_by_creation ON receipts (created_at)',
+  );
+  late final Index receiptLinesByReceipt = Index(
+    'receipt_lines_by_receipt',
+    'CREATE INDEX receipt_lines_by_receipt ON receipt_lines (receipt_identifier, position)',
   );
   late final PreferencesDao preferencesDao = PreferencesDao(
     this as ApplicationDatabase,
@@ -6773,14 +9406,18 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
   late final StatisticsDao statisticsDao = StatisticsDao(
     this as ApplicationDatabase,
   );
+  late final ReceiptScanningDao receiptScanningDao = ReceiptScanningDao(
+    this as ApplicationDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    receiptSearchIndex,
     preferenceEntries,
     schemaMetadataEntries,
-    freezers,
+    storagePlaces,
     compartments,
     categories,
     products,
@@ -6791,17 +9428,210 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
     shoppingListEntries,
     itemPictures,
     productBarcodes,
+    receipts,
+    receiptPages,
+    receiptLines,
+    receiptTextMappings,
     inventoryMovementsByTime,
     inventoryMovementsByProductAndTime,
     inventoryMovementsByBatch,
     itemPicturesByOwner,
     productBarcodesByProduct,
+    receiptsByCreation,
+    receiptLinesByReceipt,
   ];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
+typedef $ReceiptSearchIndexCreateCompanionBuilder =
+    ReceiptSearchIndexCompanion Function({
+      required String receiptIdentifier,
+      required String receiptLineIdentifier,
+      required String body,
+      Value<int> rowid,
+    });
+typedef $ReceiptSearchIndexUpdateCompanionBuilder =
+    ReceiptSearchIndexCompanion Function({
+      Value<String> receiptIdentifier,
+      Value<String> receiptLineIdentifier,
+      Value<String> body,
+      Value<int> rowid,
+    });
+
+class $ReceiptSearchIndexFilterComposer
+    extends Composer<_$ApplicationDatabase, ReceiptSearchIndex> {
+  $ReceiptSearchIndexFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $ReceiptSearchIndexOrderingComposer
+    extends Composer<_$ApplicationDatabase, ReceiptSearchIndex> {
+  $ReceiptSearchIndexOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $ReceiptSearchIndexAnnotationComposer
+    extends Composer<_$ApplicationDatabase, ReceiptSearchIndex> {
+  $ReceiptSearchIndexAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+}
+
+class $ReceiptSearchIndexTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          ReceiptSearchIndex,
+          ReceiptSearchIndexData,
+          $ReceiptSearchIndexFilterComposer,
+          $ReceiptSearchIndexOrderingComposer,
+          $ReceiptSearchIndexAnnotationComposer,
+          $ReceiptSearchIndexCreateCompanionBuilder,
+          $ReceiptSearchIndexUpdateCompanionBuilder,
+          (
+            ReceiptSearchIndexData,
+            BaseReferences<
+              _$ApplicationDatabase,
+              ReceiptSearchIndex,
+              ReceiptSearchIndexData
+            >,
+          ),
+          ReceiptSearchIndexData,
+          PrefetchHooks Function()
+        > {
+  $ReceiptSearchIndexTableManager(
+    _$ApplicationDatabase db,
+    ReceiptSearchIndex table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $ReceiptSearchIndexFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $ReceiptSearchIndexOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $ReceiptSearchIndexAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<String> receiptLineIdentifier = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptSearchIndexCompanion(
+                receiptIdentifier: receiptIdentifier,
+                receiptLineIdentifier: receiptLineIdentifier,
+                body: body,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptIdentifier,
+                required String receiptLineIdentifier,
+                required String body,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptSearchIndexCompanion.insert(
+                receiptIdentifier: receiptIdentifier,
+                receiptLineIdentifier: receiptLineIdentifier,
+                body: body,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<ReceiptSearchIndex, ReceiptSearchIndexData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$ApplicationDatabase,
+                    ReceiptSearchIndex,
+                    ReceiptSearchIndexData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $ReceiptSearchIndexProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      ReceiptSearchIndex,
+      ReceiptSearchIndexData,
+      $ReceiptSearchIndexFilterComposer,
+      $ReceiptSearchIndexOrderingComposer,
+      $ReceiptSearchIndexAnnotationComposer,
+      $ReceiptSearchIndexCreateCompanionBuilder,
+      $ReceiptSearchIndexUpdateCompanionBuilder,
+      (
+        ReceiptSearchIndexData,
+        BaseReferences<
+          _$ApplicationDatabase,
+          ReceiptSearchIndex,
+          ReceiptSearchIndexData
+        >,
+      ),
+      ReceiptSearchIndexData,
+      PrefetchHooks Function()
+    >;
 typedef $$PreferenceEntriesTableCreateCompanionBuilder =
     PreferenceEntriesCompanion Function({
       required String preferenceKey,
@@ -7211,9 +10041,9 @@ typedef $$SchemaMetadataEntriesTableProcessedTableManager =
       SchemaMetadataRow,
       PrefetchHooks Function()
     >;
-typedef $$FreezersTableCreateCompanionBuilder =
-    FreezersCompanion Function({
-      required String freezerIdentifier,
+typedef $$StoragePlacesTableCreateCompanionBuilder =
+    StoragePlacesCompanion Function({
+      required String storagePlaceIdentifier,
       required String defaultNameKey,
       Value<String?> customName,
       required String storageKind,
@@ -7222,9 +10052,9 @@ typedef $$FreezersTableCreateCompanionBuilder =
       required DateTime createdAt,
       Value<int> rowid,
     });
-typedef $$FreezersTableUpdateCompanionBuilder =
-    FreezersCompanion Function({
-      Value<String> freezerIdentifier,
+typedef $$StoragePlacesTableUpdateCompanionBuilder =
+    StoragePlacesCompanion Function({
+      Value<String> storagePlaceIdentifier,
       Value<String> defaultNameKey,
       Value<String?> customName,
       Value<String> storageKind,
@@ -7234,23 +10064,33 @@ typedef $$FreezersTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-final class $$FreezersTableReferences
-    extends BaseReferences<_$ApplicationDatabase, $FreezersTable, FreezerRow> {
-  $$FreezersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$StoragePlacesTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $StoragePlacesTable,
+          StoragePlaceRow
+        > {
+  $$StoragePlacesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static MultiTypedResultKey<$CompartmentsTable, List<CompartmentRow>>
-  _compartmentsRefsTable(_$ApplicationDatabase db) =>
-      MultiTypedResultKey.fromTable(
-        db.compartments,
-        aliasName:
-            'freezers__freezer_identifier__compartments__freezer_identifier',
-      );
+  _compartmentsRefsTable(
+    _$ApplicationDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.compartments,
+    aliasName:
+        'storage_places__storage_place_identifier__compartments__storage_place_identifier',
+  );
 
   $$CompartmentsTableProcessedTableManager get compartmentsRefs {
     final manager = $$CompartmentsTableTableManager($_db, $_db.compartments)
         .filter(
-          (f) => f.freezerIdentifier.freezerIdentifier.sqlEquals(
-            $_itemColumn<String>('freezer_identifier')!,
+          (f) => f.storagePlaceIdentifier.storagePlaceIdentifier.sqlEquals(
+            $_itemColumn<String>('storage_place_identifier')!,
           ),
         );
 
@@ -7261,17 +10101,17 @@ final class $$FreezersTableReferences
   }
 }
 
-class $$FreezersTableFilterComposer
-    extends Composer<_$ApplicationDatabase, $FreezersTable> {
-  $$FreezersTableFilterComposer({
+class $$StoragePlacesTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $StoragePlacesTable> {
+  $$StoragePlacesTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get freezerIdentifier => $composableBuilder(
-    column: $table.freezerIdentifier,
+  ColumnFilters<String> get storagePlaceIdentifier => $composableBuilder(
+    column: $table.storagePlaceIdentifier,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7310,9 +10150,9 @@ class $$FreezersTableFilterComposer
   ) {
     final $$CompartmentsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
       referencedTable: $db.compartments,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
@@ -7331,17 +10171,17 @@ class $$FreezersTableFilterComposer
   }
 }
 
-class $$FreezersTableOrderingComposer
-    extends Composer<_$ApplicationDatabase, $FreezersTable> {
-  $$FreezersTableOrderingComposer({
+class $$StoragePlacesTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $StoragePlacesTable> {
+  $$StoragePlacesTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get freezerIdentifier => $composableBuilder(
-    column: $table.freezerIdentifier,
+  ColumnOrderings<String> get storagePlaceIdentifier => $composableBuilder(
+    column: $table.storagePlaceIdentifier,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -7376,17 +10216,17 @@ class $$FreezersTableOrderingComposer
   );
 }
 
-class $$FreezersTableAnnotationComposer
-    extends Composer<_$ApplicationDatabase, $FreezersTable> {
-  $$FreezersTableAnnotationComposer({
+class $$StoragePlacesTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $StoragePlacesTable> {
+  $$StoragePlacesTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get freezerIdentifier => $composableBuilder(
-    column: $table.freezerIdentifier,
+  GeneratedColumn<String> get storagePlaceIdentifier => $composableBuilder(
+    column: $table.storagePlaceIdentifier,
     builder: (column) => column,
   );
 
@@ -7421,9 +10261,9 @@ class $$FreezersTableAnnotationComposer
   ) {
     final $$CompartmentsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
       referencedTable: $db.compartments,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
@@ -7442,35 +10282,37 @@ class $$FreezersTableAnnotationComposer
   }
 }
 
-class $$FreezersTableTableManager
+class $$StoragePlacesTableTableManager
     extends
         RootTableManager<
           _$ApplicationDatabase,
-          $FreezersTable,
-          FreezerRow,
-          $$FreezersTableFilterComposer,
-          $$FreezersTableOrderingComposer,
-          $$FreezersTableAnnotationComposer,
-          $$FreezersTableCreateCompanionBuilder,
-          $$FreezersTableUpdateCompanionBuilder,
-          (FreezerRow, $$FreezersTableReferences),
-          FreezerRow,
+          $StoragePlacesTable,
+          StoragePlaceRow,
+          $$StoragePlacesTableFilterComposer,
+          $$StoragePlacesTableOrderingComposer,
+          $$StoragePlacesTableAnnotationComposer,
+          $$StoragePlacesTableCreateCompanionBuilder,
+          $$StoragePlacesTableUpdateCompanionBuilder,
+          (StoragePlaceRow, $$StoragePlacesTableReferences),
+          StoragePlaceRow,
           PrefetchHooks Function({bool compartmentsRefs})
         > {
-  $$FreezersTableTableManager(_$ApplicationDatabase db, $FreezersTable table)
-    : super(
+  $$StoragePlacesTableTableManager(
+    _$ApplicationDatabase db,
+    $StoragePlacesTable table,
+  ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$FreezersTableFilterComposer($db: db, $table: table),
+              $$StoragePlacesTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$FreezersTableOrderingComposer($db: db, $table: table),
+              $$StoragePlacesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$FreezersTableAnnotationComposer($db: db, $table: table),
+              $$StoragePlacesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<String> freezerIdentifier = const Value.absent(),
+                Value<String> storagePlaceIdentifier = const Value.absent(),
                 Value<String> defaultNameKey = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
                 Value<String> storageKind = const Value.absent(),
@@ -7478,8 +10320,8 @@ class $$FreezersTableTableManager
                 Value<bool> isArchived = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => FreezersCompanion(
-                freezerIdentifier: freezerIdentifier,
+              }) => StoragePlacesCompanion(
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNameKey: defaultNameKey,
                 customName: customName,
                 storageKind: storageKind,
@@ -7490,7 +10332,7 @@ class $$FreezersTableTableManager
               ),
           createCompanionCallback:
               ({
-                required String freezerIdentifier,
+                required String storagePlaceIdentifier,
                 required String defaultNameKey,
                 Value<String?> customName = const Value.absent(),
                 required String storageKind,
@@ -7498,8 +10340,8 @@ class $$FreezersTableTableManager
                 Value<bool> isArchived = const Value.absent(),
                 required DateTime createdAt,
                 Value<int> rowid = const Value.absent(),
-              }) => FreezersCompanion.insert(
-                freezerIdentifier: freezerIdentifier,
+              }) => StoragePlacesCompanion.insert(
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNameKey: defaultNameKey,
                 customName: customName,
                 storageKind: storageKind,
@@ -7511,8 +10353,8 @@ class $$FreezersTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$FreezersTable, FreezerRow>(table),
-                  $$FreezersTableReferences(db, table, e),
+                  e.readTable<$StoragePlacesTable, StoragePlaceRow>(table),
+                  $$StoragePlacesTableReferences(db, table, e),
                 ),
               )
               .toList(),
@@ -7525,22 +10367,24 @@ class $$FreezersTableTableManager
                 return [
                   if (compartmentsRefs)
                     await $_getPrefetchedData<
-                      FreezerRow,
-                      $FreezersTable,
+                      StoragePlaceRow,
+                      $StoragePlacesTable,
                       CompartmentRow
                     >(
                       currentTable: table,
-                      referencedTable: $$FreezersTableReferences
+                      referencedTable: $$StoragePlacesTableReferences
                           ._compartmentsRefsTable(db),
-                      managerFromTypedResult: (p0) => $$FreezersTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).compartmentsRefs,
+                      managerFromTypedResult: (p0) =>
+                          $$StoragePlacesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).compartmentsRefs,
                       referencedItemsForCurrentItem: (item, referencedItems) =>
                           referencedItems.where(
                             (e) =>
-                                e.freezerIdentifier == item.freezerIdentifier,
+                                e.storagePlaceIdentifier ==
+                                item.storagePlaceIdentifier,
                           ),
                       typedResults: items,
                     ),
@@ -7552,24 +10396,24 @@ class $$FreezersTableTableManager
       );
 }
 
-typedef $$FreezersTableProcessedTableManager =
+typedef $$StoragePlacesTableProcessedTableManager =
     ProcessedTableManager<
       _$ApplicationDatabase,
-      $FreezersTable,
-      FreezerRow,
-      $$FreezersTableFilterComposer,
-      $$FreezersTableOrderingComposer,
-      $$FreezersTableAnnotationComposer,
-      $$FreezersTableCreateCompanionBuilder,
-      $$FreezersTableUpdateCompanionBuilder,
-      (FreezerRow, $$FreezersTableReferences),
-      FreezerRow,
+      $StoragePlacesTable,
+      StoragePlaceRow,
+      $$StoragePlacesTableFilterComposer,
+      $$StoragePlacesTableOrderingComposer,
+      $$StoragePlacesTableAnnotationComposer,
+      $$StoragePlacesTableCreateCompanionBuilder,
+      $$StoragePlacesTableUpdateCompanionBuilder,
+      (StoragePlaceRow, $$StoragePlacesTableReferences),
+      StoragePlaceRow,
       PrefetchHooks Function({bool compartmentsRefs})
     >;
 typedef $$CompartmentsTableCreateCompanionBuilder =
     CompartmentsCompanion Function({
       required String compartmentIdentifier,
-      required String freezerIdentifier,
+      required String storagePlaceIdentifier,
       required int defaultNumber,
       Value<String?> customName,
       required int colorTagIndex,
@@ -7581,7 +10425,7 @@ typedef $$CompartmentsTableCreateCompanionBuilder =
 typedef $$CompartmentsTableUpdateCompanionBuilder =
     CompartmentsCompanion Function({
       Value<String> compartmentIdentifier,
-      Value<String> freezerIdentifier,
+      Value<String> storagePlaceIdentifier,
       Value<int> defaultNumber,
       Value<String?> customName,
       Value<int> colorTagIndex,
@@ -7600,19 +10444,22 @@ final class $$CompartmentsTableReferences
         > {
   $$CompartmentsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $FreezersTable _freezerIdentifierTable(_$ApplicationDatabase db) =>
-      db.freezers.createAlias(
-        'compartments__freezer_identifier__freezers__freezer_identifier',
-      );
+  static $StoragePlacesTable _storagePlaceIdentifierTable(
+    _$ApplicationDatabase db,
+  ) => db.storagePlaces.createAlias(
+    'compartments__storage_place_identifier__storage_places__storage_place_identifier',
+  );
 
-  $$FreezersTableProcessedTableManager get freezerIdentifier {
-    final $_column = $_itemColumn<String>('freezer_identifier')!;
+  $$StoragePlacesTableProcessedTableManager get storagePlaceIdentifier {
+    final $_column = $_itemColumn<String>('storage_place_identifier')!;
 
-    final manager = $$FreezersTableTableManager(
+    final manager = $$StoragePlacesTableTableManager(
       $_db,
-      $_db.freezers,
-    ).filter((f) => f.freezerIdentifier.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_freezerIdentifierTable($_db));
+      $_db.storagePlaces,
+    ).filter((f) => f.storagePlaceIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _storagePlaceIdentifierTable($_db),
+    );
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -7738,20 +10585,20 @@ class $$CompartmentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$FreezersTableFilterComposer get freezerIdentifier {
-    final $$FreezersTableFilterComposer composer = $composerBuilder(
+  $$StoragePlacesTableFilterComposer get storagePlaceIdentifier {
+    final $$StoragePlacesTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
-      referencedTable: $db.freezers,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
+      referencedTable: $db.storagePlaces,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$FreezersTableFilterComposer(
+          }) => $$StoragePlacesTableFilterComposer(
             $db: $db,
-            $table: $db.freezers,
+            $table: $db.storagePlaces,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7881,20 +10728,20 @@ class $$CompartmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$FreezersTableOrderingComposer get freezerIdentifier {
-    final $$FreezersTableOrderingComposer composer = $composerBuilder(
+  $$StoragePlacesTableOrderingComposer get storagePlaceIdentifier {
+    final $$StoragePlacesTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
-      referencedTable: $db.freezers,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
+      referencedTable: $db.storagePlaces,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$FreezersTableOrderingComposer(
+          }) => $$StoragePlacesTableOrderingComposer(
             $db: $db,
-            $table: $db.freezers,
+            $table: $db.storagePlaces,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7945,20 +10792,20 @@ class $$CompartmentsTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  $$FreezersTableAnnotationComposer get freezerIdentifier {
-    final $$FreezersTableAnnotationComposer composer = $composerBuilder(
+  $$StoragePlacesTableAnnotationComposer get storagePlaceIdentifier {
+    final $$StoragePlacesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
-      referencedTable: $db.freezers,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
+      referencedTable: $db.storagePlaces,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$FreezersTableAnnotationComposer(
+          }) => $$StoragePlacesTableAnnotationComposer(
             $db: $db,
-            $table: $db.freezers,
+            $table: $db.storagePlaces,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8059,7 +10906,7 @@ class $$CompartmentsTableTableManager
           (CompartmentRow, $$CompartmentsTableReferences),
           CompartmentRow,
           PrefetchHooks Function({
-            bool freezerIdentifier,
+            bool storagePlaceIdentifier,
             bool productsRefs,
             bool stockBatchesRefs,
             bool inventoryMovementsRefs,
@@ -8081,7 +10928,7 @@ class $$CompartmentsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> compartmentIdentifier = const Value.absent(),
-                Value<String> freezerIdentifier = const Value.absent(),
+                Value<String> storagePlaceIdentifier = const Value.absent(),
                 Value<int> defaultNumber = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
                 Value<int> colorTagIndex = const Value.absent(),
@@ -8091,7 +10938,7 @@ class $$CompartmentsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => CompartmentsCompanion(
                 compartmentIdentifier: compartmentIdentifier,
-                freezerIdentifier: freezerIdentifier,
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNumber: defaultNumber,
                 customName: customName,
                 colorTagIndex: colorTagIndex,
@@ -8103,7 +10950,7 @@ class $$CompartmentsTableTableManager
           createCompanionCallback:
               ({
                 required String compartmentIdentifier,
-                required String freezerIdentifier,
+                required String storagePlaceIdentifier,
                 required int defaultNumber,
                 Value<String?> customName = const Value.absent(),
                 required int colorTagIndex,
@@ -8113,7 +10960,7 @@ class $$CompartmentsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => CompartmentsCompanion.insert(
                 compartmentIdentifier: compartmentIdentifier,
-                freezerIdentifier: freezerIdentifier,
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNumber: defaultNumber,
                 customName: customName,
                 colorTagIndex: colorTagIndex,
@@ -8132,7 +10979,7 @@ class $$CompartmentsTableTableManager
               .toList(),
           prefetchHooksCallback:
               ({
-                freezerIdentifier = false,
+                storagePlaceIdentifier = false,
                 productsRefs = false,
                 stockBatchesRefs = false,
                 inventoryMovementsRefs = false,
@@ -8160,18 +11007,18 @@ class $$CompartmentsTableTableManager
                           dynamic
                         >
                       >(state) {
-                        if (freezerIdentifier) {
+                        if (storagePlaceIdentifier) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.freezerIdentifier,
+                                    currentColumn: table.storagePlaceIdentifier,
                                     referencedTable:
                                         $$CompartmentsTableReferences
-                                            ._freezerIdentifierTable(db),
+                                            ._storagePlaceIdentifierTable(db),
                                     referencedColumn:
                                         $$CompartmentsTableReferences
-                                            ._freezerIdentifierTable(db)
-                                            .freezerIdentifier,
+                                            ._storagePlaceIdentifierTable(db)
+                                            .storagePlaceIdentifier,
                                   )
                                   as T;
                         }
@@ -8270,7 +11117,7 @@ typedef $$CompartmentsTableProcessedTableManager =
       (CompartmentRow, $$CompartmentsTableReferences),
       CompartmentRow,
       PrefetchHooks Function({
-        bool freezerIdentifier,
+        bool storagePlaceIdentifier,
         bool productsRefs,
         bool stockBatchesRefs,
         bool inventoryMovementsRefs,
@@ -8281,9 +11128,11 @@ typedef $$CategoriesTableCreateCompanionBuilder =
       required String categoryIdentifier,
       Value<String?> catalogKey,
       Value<String?> customName,
-      required int recommendedMaximumStorageDays,
+      Value<int?> recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       required String iconEmoji,
       required int sortOrder,
+      Value<String> storageDomain,
       Value<int> rowid,
     });
 typedef $$CategoriesTableUpdateCompanionBuilder =
@@ -8291,9 +11140,11 @@ typedef $$CategoriesTableUpdateCompanionBuilder =
       Value<String> categoryIdentifier,
       Value<String?> catalogKey,
       Value<String?> customName,
-      Value<int> recommendedMaximumStorageDays,
+      Value<int?> recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       Value<String> iconEmoji,
       Value<int> sortOrder,
+      Value<String> storageDomain,
       Value<int> rowid,
     });
 
@@ -8351,6 +11202,11 @@ class $$CategoriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get iconEmoji => $composableBuilder(
     column: $table.iconEmoji,
     builder: (column) => ColumnFilters(column),
@@ -8358,6 +11214,11 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storageDomain => $composableBuilder(
+    column: $table.storageDomain,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8416,6 +11277,11 @@ class $$CategoriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get iconEmoji => $composableBuilder(
     column: $table.iconEmoji,
     builder: (column) => ColumnOrderings(column),
@@ -8423,6 +11289,11 @@ class $$CategoriesTableOrderingComposer
 
   ColumnOrderings<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storageDomain => $composableBuilder(
+    column: $table.storageDomain,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -8456,11 +11327,21 @@ class $$CategoriesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get iconEmoji =>
       $composableBuilder(column: $table.iconEmoji, builder: (column) => column);
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<String> get storageDomain => $composableBuilder(
+    column: $table.storageDomain,
+    builder: (column) => column,
+  );
 
   Expression<T> productsRefs<T extends Object>(
     Expression<T> Function($$ProductsTableAnnotationComposer a) f,
@@ -8521,17 +11402,22 @@ class $$CategoriesTableTableManager
                 Value<String> categoryIdentifier = const Value.absent(),
                 Value<String?> catalogKey = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
-                Value<int> recommendedMaximumStorageDays = const Value.absent(),
+                Value<int?> recommendedMaximumStorageDays =
+                    const Value.absent(),
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 Value<String> iconEmoji = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String> storageDomain = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion(
                 categoryIdentifier: categoryIdentifier,
                 catalogKey: catalogKey,
                 customName: customName,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 sortOrder: sortOrder,
+                storageDomain: storageDomain,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -8539,17 +11425,22 @@ class $$CategoriesTableTableManager
                 required String categoryIdentifier,
                 Value<String?> catalogKey = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
-                required int recommendedMaximumStorageDays,
+                Value<int?> recommendedMaximumStorageDays =
+                    const Value.absent(),
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 required String iconEmoji,
                 required int sortOrder,
+                Value<String> storageDomain = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 categoryIdentifier: categoryIdentifier,
                 catalogKey: catalogKey,
                 customName: customName,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 sortOrder: sortOrder,
+                storageDomain: storageDomain,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -8620,6 +11511,7 @@ typedef $$ProductsTableCreateCompanionBuilder =
       required String canonicalUnit,
       Value<int?> defaultPackageQuantity,
       Value<int?> recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       Value<String?> iconEmoji,
       Value<Uint8List?> iconImage,
       Value<String?> defaultCompartmentIdentifier,
@@ -8636,6 +11528,7 @@ typedef $$ProductsTableUpdateCompanionBuilder =
       Value<String> canonicalUnit,
       Value<int?> defaultPackageQuantity,
       Value<int?> recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       Value<String?> iconEmoji,
       Value<Uint8List?> iconImage,
       Value<String?> defaultCompartmentIdentifier,
@@ -8819,6 +11712,59 @@ final class $$ProductsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ReceiptLinesTable, List<ReceiptLineRow>>
+  _receiptLinesRefsTable(_$ApplicationDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.receiptLines,
+        aliasName:
+            'products__product_identifier__receipt_lines__product_identifier',
+      );
+
+  $$ReceiptLinesTableProcessedTableManager get receiptLinesRefs {
+    final manager = $$ReceiptLinesTableTableManager($_db, $_db.receiptLines)
+        .filter(
+          (f) => f.productIdentifier.productIdentifier.sqlEquals(
+            $_itemColumn<String>('product_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptLinesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $ReceiptTextMappingsTable,
+    List<ReceiptTextMappingRow>
+  >
+  _receiptTextMappingsRefsTable(
+    _$ApplicationDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.receiptTextMappings,
+    aliasName:
+        'products__product_identifier__receipt_text_mappings__product_identifier',
+  );
+
+  $$ReceiptTextMappingsTableProcessedTableManager get receiptTextMappingsRefs {
+    final manager =
+        $$ReceiptTextMappingsTableTableManager(
+          $_db,
+          $_db.receiptTextMappings,
+        ).filter(
+          (f) => f.productIdentifier.productIdentifier.sqlEquals(
+            $_itemColumn<String>('product_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _receiptTextMappingsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ProductsTableFilterComposer
@@ -8857,6 +11803,11 @@ class $$ProductsTableFilterComposer
 
   ColumnFilters<int> get recommendedMaximumStorageDays => $composableBuilder(
     column: $table.recommendedMaximumStorageDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9050,6 +12001,56 @@ class $$ProductsTableFilterComposer
     );
     return f(composer);
   }
+
+  Expression<bool> receiptLinesRefs(
+    Expression<bool> Function($$ReceiptLinesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptLinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptTextMappingsRefs(
+    Expression<bool> Function($$ReceiptTextMappingsTableFilterComposer f) f,
+  ) {
+    final $$ReceiptTextMappingsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.receiptTextMappings,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptTextMappingsTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptTextMappings,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ProductsTableOrderingComposer
@@ -9088,6 +12089,11 @@ class $$ProductsTableOrderingComposer
 
   ColumnOrderings<int> get recommendedMaximumStorageDays => $composableBuilder(
     column: $table.recommendedMaximumStorageDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -9194,6 +12200,11 @@ class $$ProductsTableAnnotationComposer
 
   GeneratedColumn<int> get recommendedMaximumStorageDays => $composableBuilder(
     column: $table.recommendedMaximumStorageDays,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
     builder: (column) => column,
   );
 
@@ -9383,6 +12394,57 @@ class $$ProductsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> receiptLinesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptLinesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptLinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> receiptTextMappingsRefs<T extends Object>(
+    Expression<T> Function($$ReceiptTextMappingsTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptTextMappingsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.productIdentifier,
+          referencedTable: $db.receiptTextMappings,
+          getReferencedColumn: (t) => t.productIdentifier,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ReceiptTextMappingsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.receiptTextMappings,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$ProductsTableTableManager
@@ -9406,6 +12468,8 @@ class $$ProductsTableTableManager
             bool restockRulesRefs,
             bool shoppingListEntriesRefs,
             bool productBarcodesRefs,
+            bool receiptLinesRefs,
+            bool receiptTextMappingsRefs,
           })
         > {
   $$ProductsTableTableManager(_$ApplicationDatabase db, $ProductsTable table)
@@ -9429,6 +12493,7 @@ class $$ProductsTableTableManager
                 Value<int?> defaultPackageQuantity = const Value.absent(),
                 Value<int?> recommendedMaximumStorageDays =
                     const Value.absent(),
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 Value<String?> iconEmoji = const Value.absent(),
                 Value<Uint8List?> iconImage = const Value.absent(),
                 Value<String?> defaultCompartmentIdentifier =
@@ -9444,6 +12509,7 @@ class $$ProductsTableTableManager
                 canonicalUnit: canonicalUnit,
                 defaultPackageQuantity: defaultPackageQuantity,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 iconImage: iconImage,
                 defaultCompartmentIdentifier: defaultCompartmentIdentifier,
@@ -9461,6 +12527,7 @@ class $$ProductsTableTableManager
                 Value<int?> defaultPackageQuantity = const Value.absent(),
                 Value<int?> recommendedMaximumStorageDays =
                     const Value.absent(),
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 Value<String?> iconEmoji = const Value.absent(),
                 Value<Uint8List?> iconImage = const Value.absent(),
                 Value<String?> defaultCompartmentIdentifier =
@@ -9476,6 +12543,7 @@ class $$ProductsTableTableManager
                 canonicalUnit: canonicalUnit,
                 defaultPackageQuantity: defaultPackageQuantity,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 iconImage: iconImage,
                 defaultCompartmentIdentifier: defaultCompartmentIdentifier,
@@ -9500,6 +12568,8 @@ class $$ProductsTableTableManager
                 restockRulesRefs = false,
                 shoppingListEntriesRefs = false,
                 productBarcodesRefs = false,
+                receiptLinesRefs = false,
+                receiptTextMappingsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -9509,6 +12579,8 @@ class $$ProductsTableTableManager
                     if (restockRulesRefs) db.restockRules,
                     if (shoppingListEntriesRefs) db.shoppingListEntries,
                     if (productBarcodesRefs) db.productBarcodes,
+                    if (receiptLinesRefs) db.receiptLines,
+                    if (receiptTextMappingsRefs) db.receiptTextMappings,
                   ],
                   addJoins:
                       <
@@ -9673,6 +12745,52 @@ class $$ProductsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (receiptLinesRefs)
+                        await $_getPrefetchedData<
+                          ProductRow,
+                          $ProductsTable,
+                          ReceiptLineRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProductsTableReferences
+                              ._receiptLinesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProductsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptLinesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.productIdentifier ==
+                                    item.productIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (receiptTextMappingsRefs)
+                        await $_getPrefetchedData<
+                          ProductRow,
+                          $ProductsTable,
+                          ReceiptTextMappingRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProductsTableReferences
+                              ._receiptTextMappingsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProductsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptTextMappingsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.productIdentifier ==
+                                    item.productIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -9701,6 +12819,8 @@ typedef $$ProductsTableProcessedTableManager =
         bool restockRulesRefs,
         bool shoppingListEntriesRefs,
         bool productBarcodesRefs,
+        bool receiptLinesRefs,
+        bool receiptTextMappingsRefs,
       })
     >;
 typedef $$StockBatchesTableCreateCompanionBuilder =
@@ -9712,8 +12832,9 @@ typedef $$StockBatchesTableCreateCompanionBuilder =
       required int initialQuantity,
       required int quantityRemaining,
       Value<String?> parentBatchIdentifier,
-      required CalendarDate frozenOn,
+      required CalendarDate storedOn,
       Value<CalendarDate?> bestBeforeOn,
+      Value<CalendarDate?> openedOn,
       Value<String?> note,
       required DateTime createdAt,
       Value<int> rowid,
@@ -9727,8 +12848,9 @@ typedef $$StockBatchesTableUpdateCompanionBuilder =
       Value<int> initialQuantity,
       Value<int> quantityRemaining,
       Value<String?> parentBatchIdentifier,
-      Value<CalendarDate> frozenOn,
+      Value<CalendarDate> storedOn,
       Value<CalendarDate?> bestBeforeOn,
+      Value<CalendarDate?> openedOn,
       Value<String?> note,
       Value<DateTime> createdAt,
       Value<int> rowid,
@@ -9814,6 +12936,29 @@ final class $$StockBatchesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ReceiptLinesTable, List<ReceiptLineRow>>
+  _receiptLinesRefsTable(
+    _$ApplicationDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.receiptLines,
+    aliasName:
+        'stock_batches__stock_batch_identifier__receipt_lines__stock_batch_identifier',
+  );
+
+  $$ReceiptLinesTableProcessedTableManager get receiptLinesRefs {
+    final manager = $$ReceiptLinesTableTableManager($_db, $_db.receiptLines)
+        .filter(
+          (f) => f.stockBatchIdentifier.stockBatchIdentifier.sqlEquals(
+            $_itemColumn<String>('stock_batch_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptLinesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$StockBatchesTableFilterComposer
@@ -9851,14 +12996,20 @@ class $$StockBatchesTableFilterComposer
   );
 
   ColumnWithTypeConverterFilters<CalendarDate, CalendarDate, String>
-  get frozenOn => $composableBuilder(
-    column: $table.frozenOn,
+  get storedOn => $composableBuilder(
+    column: $table.storedOn,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnWithTypeConverterFilters<CalendarDate?, CalendarDate, String>
   get bestBeforeOn => $composableBuilder(
     column: $table.bestBeforeOn,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<CalendarDate?, CalendarDate, String>
+  get openedOn => $composableBuilder(
+    column: $table.openedOn,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
@@ -9942,6 +13093,31 @@ class $$StockBatchesTableFilterComposer
     );
     return f(composer);
   }
+
+  Expression<bool> receiptLinesRefs(
+    Expression<bool> Function($$ReceiptLinesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptLinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$StockBatchesTableOrderingComposer
@@ -9978,13 +13154,18 @@ class $$StockBatchesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get frozenOn => $composableBuilder(
-    column: $table.frozenOn,
+  ColumnOrderings<String> get storedOn => $composableBuilder(
+    column: $table.storedOn,
     builder: (column) => ColumnOrderings(column),
   );
 
   ColumnOrderings<String> get bestBeforeOn => $composableBuilder(
     column: $table.bestBeforeOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get openedOn => $composableBuilder(
+    column: $table.openedOn,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -10079,14 +13260,17 @@ class $$StockBatchesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumnWithTypeConverter<CalendarDate, String> get frozenOn =>
-      $composableBuilder(column: $table.frozenOn, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<CalendarDate, String> get storedOn =>
+      $composableBuilder(column: $table.storedOn, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<CalendarDate?, String> get bestBeforeOn =>
       $composableBuilder(
         column: $table.bestBeforeOn,
         builder: (column) => column,
       );
+
+  GeneratedColumnWithTypeConverter<CalendarDate?, String> get openedOn =>
+      $composableBuilder(column: $table.openedOn, builder: (column) => column);
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
@@ -10165,6 +13349,31 @@ class $$StockBatchesTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> receiptLinesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptLinesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptLinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$StockBatchesTableTableManager
@@ -10184,6 +13393,7 @@ class $$StockBatchesTableTableManager
             bool productIdentifier,
             bool compartmentIdentifier,
             bool inventoryMovementsRefs,
+            bool receiptLinesRefs,
           })
         > {
   $$StockBatchesTableTableManager(
@@ -10208,8 +13418,9 @@ class $$StockBatchesTableTableManager
                 Value<int> initialQuantity = const Value.absent(),
                 Value<int> quantityRemaining = const Value.absent(),
                 Value<String?> parentBatchIdentifier = const Value.absent(),
-                Value<CalendarDate> frozenOn = const Value.absent(),
+                Value<CalendarDate> storedOn = const Value.absent(),
                 Value<CalendarDate?> bestBeforeOn = const Value.absent(),
+                Value<CalendarDate?> openedOn = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -10221,8 +13432,9 @@ class $$StockBatchesTableTableManager
                 initialQuantity: initialQuantity,
                 quantityRemaining: quantityRemaining,
                 parentBatchIdentifier: parentBatchIdentifier,
-                frozenOn: frozenOn,
+                storedOn: storedOn,
                 bestBeforeOn: bestBeforeOn,
+                openedOn: openedOn,
                 note: note,
                 createdAt: createdAt,
                 rowid: rowid,
@@ -10236,8 +13448,9 @@ class $$StockBatchesTableTableManager
                 required int initialQuantity,
                 required int quantityRemaining,
                 Value<String?> parentBatchIdentifier = const Value.absent(),
-                required CalendarDate frozenOn,
+                required CalendarDate storedOn,
                 Value<CalendarDate?> bestBeforeOn = const Value.absent(),
+                Value<CalendarDate?> openedOn = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 required DateTime createdAt,
                 Value<int> rowid = const Value.absent(),
@@ -10249,8 +13462,9 @@ class $$StockBatchesTableTableManager
                 initialQuantity: initialQuantity,
                 quantityRemaining: quantityRemaining,
                 parentBatchIdentifier: parentBatchIdentifier,
-                frozenOn: frozenOn,
+                storedOn: storedOn,
                 bestBeforeOn: bestBeforeOn,
+                openedOn: openedOn,
                 note: note,
                 createdAt: createdAt,
                 rowid: rowid,
@@ -10268,11 +13482,13 @@ class $$StockBatchesTableTableManager
                 productIdentifier = false,
                 compartmentIdentifier = false,
                 inventoryMovementsRefs = false,
+                receiptLinesRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (inventoryMovementsRefs) db.inventoryMovements,
+                    if (receiptLinesRefs) db.receiptLines,
                   ],
                   addJoins:
                       <
@@ -10348,6 +13564,29 @@ class $$StockBatchesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (receiptLinesRefs)
+                        await $_getPrefetchedData<
+                          StockBatchRow,
+                          $StockBatchesTable,
+                          ReceiptLineRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$StockBatchesTableReferences
+                              ._receiptLinesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$StockBatchesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptLinesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.stockBatchIdentifier ==
+                                    item.stockBatchIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -10372,6 +13611,7 @@ typedef $$StockBatchesTableProcessedTableManager =
         bool productIdentifier,
         bool compartmentIdentifier,
         bool inventoryMovementsRefs,
+        bool receiptLinesRefs,
       })
     >;
 typedef $$InventoryMovementsTableCreateCompanionBuilder =
@@ -12595,16 +15835,1797 @@ typedef $$ProductBarcodesTableProcessedTableManager =
       ProductBarcodeRow,
       PrefetchHooks Function({bool productIdentifier})
     >;
+typedef $$ReceiptsTableCreateCompanionBuilder =
+    ReceiptsCompanion Function({
+      required String receiptIdentifier,
+      Value<String?> storeName,
+      Value<CalendarDate?> purchasedOn,
+      Value<int?> totalInCents,
+      required int pageCount,
+      required String recognizedText,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$ReceiptsTableUpdateCompanionBuilder =
+    ReceiptsCompanion Function({
+      Value<String> receiptIdentifier,
+      Value<String?> storeName,
+      Value<CalendarDate?> purchasedOn,
+      Value<int?> totalInCents,
+      Value<int> pageCount,
+      Value<String> recognizedText,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptsTableReferences
+    extends BaseReferences<_$ApplicationDatabase, $ReceiptsTable, ReceiptRow> {
+  $$ReceiptsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ReceiptPagesTable, List<ReceiptPageRow>>
+  _receiptPagesRefsTable(_$ApplicationDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.receiptPages,
+        aliasName:
+            'receipts__receipt_identifier__receipt_pages__receipt_identifier',
+      );
+
+  $$ReceiptPagesTableProcessedTableManager get receiptPagesRefs {
+    final manager = $$ReceiptPagesTableTableManager($_db, $_db.receiptPages)
+        .filter(
+          (f) => f.receiptIdentifier.receiptIdentifier.sqlEquals(
+            $_itemColumn<String>('receipt_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptPagesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ReceiptLinesTable, List<ReceiptLineRow>>
+  _receiptLinesRefsTable(_$ApplicationDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.receiptLines,
+        aliasName:
+            'receipts__receipt_identifier__receipt_lines__receipt_identifier',
+      );
+
+  $$ReceiptLinesTableProcessedTableManager get receiptLinesRefs {
+    final manager = $$ReceiptLinesTableTableManager($_db, $_db.receiptLines)
+        .filter(
+          (f) => f.receiptIdentifier.receiptIdentifier.sqlEquals(
+            $_itemColumn<String>('receipt_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptLinesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$ReceiptsTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptsTable> {
+  $$ReceiptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<CalendarDate?, CalendarDate, String>
+  get purchasedOn => $composableBuilder(
+    column: $table.purchasedOn,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get totalInCents => $composableBuilder(
+    column: $table.totalInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get pageCount => $composableBuilder(
+    column: $table.pageCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> receiptPagesRefs(
+    Expression<bool> Function($$ReceiptPagesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptPagesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptPages,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptPagesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptPages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptLinesRefs(
+    Expression<bool> Function($$ReceiptLinesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptLinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ReceiptsTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptsTable> {
+  $$ReceiptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get purchasedOn => $composableBuilder(
+    column: $table.purchasedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalInCents => $composableBuilder(
+    column: $table.totalInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get pageCount => $composableBuilder(
+    column: $table.pageCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ReceiptsTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptsTable> {
+  $$ReceiptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get storeName =>
+      $composableBuilder(column: $table.storeName, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<CalendarDate?, String> get purchasedOn =>
+      $composableBuilder(
+        column: $table.purchasedOn,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<int> get totalInCents => $composableBuilder(
+    column: $table.totalInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get pageCount =>
+      $composableBuilder(column: $table.pageCount, builder: (column) => column);
+
+  GeneratedColumn<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  Expression<T> receiptPagesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptPagesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptPagesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptPages,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptPagesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptPages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> receiptLinesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptLinesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptLinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ReceiptsTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptsTable,
+          ReceiptRow,
+          $$ReceiptsTableFilterComposer,
+          $$ReceiptsTableOrderingComposer,
+          $$ReceiptsTableAnnotationComposer,
+          $$ReceiptsTableCreateCompanionBuilder,
+          $$ReceiptsTableUpdateCompanionBuilder,
+          (ReceiptRow, $$ReceiptsTableReferences),
+          ReceiptRow,
+          PrefetchHooks Function({bool receiptPagesRefs, bool receiptLinesRefs})
+        > {
+  $$ReceiptsTableTableManager(_$ApplicationDatabase db, $ReceiptsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReceiptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<String?> storeName = const Value.absent(),
+                Value<CalendarDate?> purchasedOn = const Value.absent(),
+                Value<int?> totalInCents = const Value.absent(),
+                Value<int> pageCount = const Value.absent(),
+                Value<String> recognizedText = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptsCompanion(
+                receiptIdentifier: receiptIdentifier,
+                storeName: storeName,
+                purchasedOn: purchasedOn,
+                totalInCents: totalInCents,
+                pageCount: pageCount,
+                recognizedText: recognizedText,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptIdentifier,
+                Value<String?> storeName = const Value.absent(),
+                Value<CalendarDate?> purchasedOn = const Value.absent(),
+                Value<int?> totalInCents = const Value.absent(),
+                required int pageCount,
+                required String recognizedText,
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptsCompanion.insert(
+                receiptIdentifier: receiptIdentifier,
+                storeName: storeName,
+                purchasedOn: purchasedOn,
+                totalInCents: totalInCents,
+                pageCount: pageCount,
+                recognizedText: recognizedText,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptsTable, ReceiptRow>(table),
+                  $$ReceiptsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({receiptPagesRefs = false, receiptLinesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (receiptPagesRefs) db.receiptPages,
+                    if (receiptLinesRefs) db.receiptLines,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (receiptPagesRefs)
+                        await $_getPrefetchedData<
+                          ReceiptRow,
+                          $ReceiptsTable,
+                          ReceiptPageRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ReceiptsTableReferences
+                              ._receiptPagesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ReceiptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptPagesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.receiptIdentifier ==
+                                    item.receiptIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (receiptLinesRefs)
+                        await $_getPrefetchedData<
+                          ReceiptRow,
+                          $ReceiptsTable,
+                          ReceiptLineRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ReceiptsTableReferences
+                              ._receiptLinesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ReceiptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptLinesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.receiptIdentifier ==
+                                    item.receiptIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ReceiptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptsTable,
+      ReceiptRow,
+      $$ReceiptsTableFilterComposer,
+      $$ReceiptsTableOrderingComposer,
+      $$ReceiptsTableAnnotationComposer,
+      $$ReceiptsTableCreateCompanionBuilder,
+      $$ReceiptsTableUpdateCompanionBuilder,
+      (ReceiptRow, $$ReceiptsTableReferences),
+      ReceiptRow,
+      PrefetchHooks Function({bool receiptPagesRefs, bool receiptLinesRefs})
+    >;
+typedef $$ReceiptPagesTableCreateCompanionBuilder =
+    ReceiptPagesCompanion Function({
+      required String receiptIdentifier,
+      required int pageNumber,
+      Value<String?> pictureReference,
+      required String rawRecognizedText,
+      Value<int> rowid,
+    });
+typedef $$ReceiptPagesTableUpdateCompanionBuilder =
+    ReceiptPagesCompanion Function({
+      Value<String> receiptIdentifier,
+      Value<int> pageNumber,
+      Value<String?> pictureReference,
+      Value<String> rawRecognizedText,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptPagesTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $ReceiptPagesTable,
+          ReceiptPageRow
+        > {
+  $$ReceiptPagesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ReceiptsTable _receiptIdentifierTable(_$ApplicationDatabase db) =>
+      db.receipts.createAlias(
+        'receipt_pages__receipt_identifier__receipts__receipt_identifier',
+      );
+
+  $$ReceiptsTableProcessedTableManager get receiptIdentifier {
+    final $_column = $_itemColumn<String>('receipt_identifier')!;
+
+    final manager = $$ReceiptsTableTableManager(
+      $_db,
+      $_db.receipts,
+    ).filter((f) => f.receiptIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_receiptIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ReceiptPagesTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptPagesTable> {
+  $$ReceiptPagesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get pageNumber => $composableBuilder(
+    column: $table.pageNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pictureReference => $composableBuilder(
+    column: $table.pictureReference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rawRecognizedText => $composableBuilder(
+    column: $table.rawRecognizedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ReceiptsTableFilterComposer get receiptIdentifier {
+    final $$ReceiptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableFilterComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptPagesTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptPagesTable> {
+  $$ReceiptPagesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get pageNumber => $composableBuilder(
+    column: $table.pageNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pictureReference => $composableBuilder(
+    column: $table.pictureReference,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rawRecognizedText => $composableBuilder(
+    column: $table.rawRecognizedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ReceiptsTableOrderingComposer get receiptIdentifier {
+    final $$ReceiptsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableOrderingComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptPagesTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptPagesTable> {
+  $$ReceiptPagesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get pageNumber => $composableBuilder(
+    column: $table.pageNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get pictureReference => $composableBuilder(
+    column: $table.pictureReference,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get rawRecognizedText => $composableBuilder(
+    column: $table.rawRecognizedText,
+    builder: (column) => column,
+  );
+
+  $$ReceiptsTableAnnotationComposer get receiptIdentifier {
+    final $$ReceiptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptPagesTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptPagesTable,
+          ReceiptPageRow,
+          $$ReceiptPagesTableFilterComposer,
+          $$ReceiptPagesTableOrderingComposer,
+          $$ReceiptPagesTableAnnotationComposer,
+          $$ReceiptPagesTableCreateCompanionBuilder,
+          $$ReceiptPagesTableUpdateCompanionBuilder,
+          (ReceiptPageRow, $$ReceiptPagesTableReferences),
+          ReceiptPageRow,
+          PrefetchHooks Function({bool receiptIdentifier})
+        > {
+  $$ReceiptPagesTableTableManager(
+    _$ApplicationDatabase db,
+    $ReceiptPagesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptPagesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptPagesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReceiptPagesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<int> pageNumber = const Value.absent(),
+                Value<String?> pictureReference = const Value.absent(),
+                Value<String> rawRecognizedText = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptPagesCompanion(
+                receiptIdentifier: receiptIdentifier,
+                pageNumber: pageNumber,
+                pictureReference: pictureReference,
+                rawRecognizedText: rawRecognizedText,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptIdentifier,
+                required int pageNumber,
+                Value<String?> pictureReference = const Value.absent(),
+                required String rawRecognizedText,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptPagesCompanion.insert(
+                receiptIdentifier: receiptIdentifier,
+                pageNumber: pageNumber,
+                pictureReference: pictureReference,
+                rawRecognizedText: rawRecognizedText,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptPagesTable, ReceiptPageRow>(table),
+                  $$ReceiptPagesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({receiptIdentifier = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (receiptIdentifier) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.receiptIdentifier,
+                                referencedTable: $$ReceiptPagesTableReferences
+                                    ._receiptIdentifierTable(db),
+                                referencedColumn: $$ReceiptPagesTableReferences
+                                    ._receiptIdentifierTable(db)
+                                    .receiptIdentifier,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ReceiptPagesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptPagesTable,
+      ReceiptPageRow,
+      $$ReceiptPagesTableFilterComposer,
+      $$ReceiptPagesTableOrderingComposer,
+      $$ReceiptPagesTableAnnotationComposer,
+      $$ReceiptPagesTableCreateCompanionBuilder,
+      $$ReceiptPagesTableUpdateCompanionBuilder,
+      (ReceiptPageRow, $$ReceiptPagesTableReferences),
+      ReceiptPageRow,
+      PrefetchHooks Function({bool receiptIdentifier})
+    >;
+typedef $$ReceiptLinesTableCreateCompanionBuilder =
+    ReceiptLinesCompanion Function({
+      required String receiptLineIdentifier,
+      required String receiptIdentifier,
+      required int position,
+      required String kind,
+      required String recognizedText,
+      Value<String?> correctedText,
+      required int quantity,
+      Value<int?> unitPriceInCents,
+      required int lineTotalInCents,
+      Value<int?> weightInGrams,
+      required String status,
+      Value<String?> productIdentifier,
+      Value<String?> stockBatchIdentifier,
+      Value<int> rowid,
+    });
+typedef $$ReceiptLinesTableUpdateCompanionBuilder =
+    ReceiptLinesCompanion Function({
+      Value<String> receiptLineIdentifier,
+      Value<String> receiptIdentifier,
+      Value<int> position,
+      Value<String> kind,
+      Value<String> recognizedText,
+      Value<String?> correctedText,
+      Value<int> quantity,
+      Value<int?> unitPriceInCents,
+      Value<int> lineTotalInCents,
+      Value<int?> weightInGrams,
+      Value<String> status,
+      Value<String?> productIdentifier,
+      Value<String?> stockBatchIdentifier,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptLinesTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $ReceiptLinesTable,
+          ReceiptLineRow
+        > {
+  $$ReceiptLinesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ReceiptsTable _receiptIdentifierTable(_$ApplicationDatabase db) =>
+      db.receipts.createAlias(
+        'receipt_lines__receipt_identifier__receipts__receipt_identifier',
+      );
+
+  $$ReceiptsTableProcessedTableManager get receiptIdentifier {
+    final $_column = $_itemColumn<String>('receipt_identifier')!;
+
+    final manager = $$ReceiptsTableTableManager(
+      $_db,
+      $_db.receipts,
+    ).filter((f) => f.receiptIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_receiptIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProductsTable _productIdentifierTable(_$ApplicationDatabase db) =>
+      db.products.createAlias(
+        'receipt_lines__product_identifier__products__product_identifier',
+      );
+
+  $$ProductsTableProcessedTableManager? get productIdentifier {
+    final $_column = $_itemColumn<String>('product_identifier');
+    if ($_column == null) return null;
+    final manager = $$ProductsTableTableManager(
+      $_db,
+      $_db.products,
+    ).filter((f) => f.productIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_productIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $StockBatchesTable _stockBatchIdentifierTable(
+    _$ApplicationDatabase db,
+  ) => db.stockBatches.createAlias(
+    'receipt_lines__stock_batch_identifier__stock_batches__stock_batch_identifier',
+  );
+
+  $$StockBatchesTableProcessedTableManager? get stockBatchIdentifier {
+    final $_column = $_itemColumn<String>('stock_batch_identifier');
+    if ($_column == null) return null;
+    final manager = $$StockBatchesTableTableManager(
+      $_db,
+      $_db.stockBatches,
+    ).filter((f) => f.stockBatchIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _stockBatchIdentifierTable($_db),
+    );
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ReceiptLinesTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptLinesTable> {
+  $$ReceiptLinesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get unitPriceInCents => $composableBuilder(
+    column: $table.unitPriceInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lineTotalInCents => $composableBuilder(
+    column: $table.lineTotalInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get weightInGrams => $composableBuilder(
+    column: $table.weightInGrams,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ReceiptsTableFilterComposer get receiptIdentifier {
+    final $$ReceiptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableFilterComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductsTableFilterComposer get productIdentifier {
+    final $$ProductsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableFilterComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$StockBatchesTableFilterComposer get stockBatchIdentifier {
+    final $$StockBatchesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.stockBatches,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockBatchesTableFilterComposer(
+            $db: $db,
+            $table: $db.stockBatches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptLinesTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptLinesTable> {
+  $$ReceiptLinesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get unitPriceInCents => $composableBuilder(
+    column: $table.unitPriceInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lineTotalInCents => $composableBuilder(
+    column: $table.lineTotalInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get weightInGrams => $composableBuilder(
+    column: $table.weightInGrams,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ReceiptsTableOrderingComposer get receiptIdentifier {
+    final $$ReceiptsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableOrderingComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductsTableOrderingComposer get productIdentifier {
+    final $$ProductsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableOrderingComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$StockBatchesTableOrderingComposer get stockBatchIdentifier {
+    final $$StockBatchesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.stockBatches,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockBatchesTableOrderingComposer(
+            $db: $db,
+            $table: $db.stockBatches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptLinesTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptLinesTable> {
+  $$ReceiptLinesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<int> get unitPriceInCents => $composableBuilder(
+    column: $table.unitPriceInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lineTotalInCents => $composableBuilder(
+    column: $table.lineTotalInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get weightInGrams => $composableBuilder(
+    column: $table.weightInGrams,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $$ReceiptsTableAnnotationComposer get receiptIdentifier {
+    final $$ReceiptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductsTableAnnotationComposer get productIdentifier {
+    final $$ProductsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$StockBatchesTableAnnotationComposer get stockBatchIdentifier {
+    final $$StockBatchesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.stockBatches,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockBatchesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.stockBatches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptLinesTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptLinesTable,
+          ReceiptLineRow,
+          $$ReceiptLinesTableFilterComposer,
+          $$ReceiptLinesTableOrderingComposer,
+          $$ReceiptLinesTableAnnotationComposer,
+          $$ReceiptLinesTableCreateCompanionBuilder,
+          $$ReceiptLinesTableUpdateCompanionBuilder,
+          (ReceiptLineRow, $$ReceiptLinesTableReferences),
+          ReceiptLineRow,
+          PrefetchHooks Function({
+            bool receiptIdentifier,
+            bool productIdentifier,
+            bool stockBatchIdentifier,
+          })
+        > {
+  $$ReceiptLinesTableTableManager(
+    _$ApplicationDatabase db,
+    $ReceiptLinesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptLinesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptLinesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReceiptLinesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptLineIdentifier = const Value.absent(),
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<int> position = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> recognizedText = const Value.absent(),
+                Value<String?> correctedText = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
+                Value<int?> unitPriceInCents = const Value.absent(),
+                Value<int> lineTotalInCents = const Value.absent(),
+                Value<int?> weightInGrams = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> productIdentifier = const Value.absent(),
+                Value<String?> stockBatchIdentifier = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptLinesCompanion(
+                receiptLineIdentifier: receiptLineIdentifier,
+                receiptIdentifier: receiptIdentifier,
+                position: position,
+                kind: kind,
+                recognizedText: recognizedText,
+                correctedText: correctedText,
+                quantity: quantity,
+                unitPriceInCents: unitPriceInCents,
+                lineTotalInCents: lineTotalInCents,
+                weightInGrams: weightInGrams,
+                status: status,
+                productIdentifier: productIdentifier,
+                stockBatchIdentifier: stockBatchIdentifier,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptLineIdentifier,
+                required String receiptIdentifier,
+                required int position,
+                required String kind,
+                required String recognizedText,
+                Value<String?> correctedText = const Value.absent(),
+                required int quantity,
+                Value<int?> unitPriceInCents = const Value.absent(),
+                required int lineTotalInCents,
+                Value<int?> weightInGrams = const Value.absent(),
+                required String status,
+                Value<String?> productIdentifier = const Value.absent(),
+                Value<String?> stockBatchIdentifier = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptLinesCompanion.insert(
+                receiptLineIdentifier: receiptLineIdentifier,
+                receiptIdentifier: receiptIdentifier,
+                position: position,
+                kind: kind,
+                recognizedText: recognizedText,
+                correctedText: correctedText,
+                quantity: quantity,
+                unitPriceInCents: unitPriceInCents,
+                lineTotalInCents: lineTotalInCents,
+                weightInGrams: weightInGrams,
+                status: status,
+                productIdentifier: productIdentifier,
+                stockBatchIdentifier: stockBatchIdentifier,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptLinesTable, ReceiptLineRow>(table),
+                  $$ReceiptLinesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                receiptIdentifier = false,
+                productIdentifier = false,
+                stockBatchIdentifier = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (receiptIdentifier) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.receiptIdentifier,
+                                    referencedTable:
+                                        $$ReceiptLinesTableReferences
+                                            ._receiptIdentifierTable(db),
+                                    referencedColumn:
+                                        $$ReceiptLinesTableReferences
+                                            ._receiptIdentifierTable(db)
+                                            .receiptIdentifier,
+                                  )
+                                  as T;
+                        }
+                        if (productIdentifier) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.productIdentifier,
+                                    referencedTable:
+                                        $$ReceiptLinesTableReferences
+                                            ._productIdentifierTable(db),
+                                    referencedColumn:
+                                        $$ReceiptLinesTableReferences
+                                            ._productIdentifierTable(db)
+                                            .productIdentifier,
+                                  )
+                                  as T;
+                        }
+                        if (stockBatchIdentifier) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.stockBatchIdentifier,
+                                    referencedTable:
+                                        $$ReceiptLinesTableReferences
+                                            ._stockBatchIdentifierTable(db),
+                                    referencedColumn:
+                                        $$ReceiptLinesTableReferences
+                                            ._stockBatchIdentifierTable(db)
+                                            .stockBatchIdentifier,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ReceiptLinesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptLinesTable,
+      ReceiptLineRow,
+      $$ReceiptLinesTableFilterComposer,
+      $$ReceiptLinesTableOrderingComposer,
+      $$ReceiptLinesTableAnnotationComposer,
+      $$ReceiptLinesTableCreateCompanionBuilder,
+      $$ReceiptLinesTableUpdateCompanionBuilder,
+      (ReceiptLineRow, $$ReceiptLinesTableReferences),
+      ReceiptLineRow,
+      PrefetchHooks Function({
+        bool receiptIdentifier,
+        bool productIdentifier,
+        bool stockBatchIdentifier,
+      })
+    >;
+typedef $$ReceiptTextMappingsTableCreateCompanionBuilder =
+    ReceiptTextMappingsCompanion Function({
+      required String storeName,
+      required String lineText,
+      Value<String?> productIdentifier,
+      required DateTime learnedAt,
+      Value<int> rowid,
+    });
+typedef $$ReceiptTextMappingsTableUpdateCompanionBuilder =
+    ReceiptTextMappingsCompanion Function({
+      Value<String> storeName,
+      Value<String> lineText,
+      Value<String?> productIdentifier,
+      Value<DateTime> learnedAt,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptTextMappingsTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $ReceiptTextMappingsTable,
+          ReceiptTextMappingRow
+        > {
+  $$ReceiptTextMappingsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ProductsTable _productIdentifierTable(
+    _$ApplicationDatabase db,
+  ) => db.products.createAlias(
+    'receipt_text_mappings__product_identifier__products__product_identifier',
+  );
+
+  $$ProductsTableProcessedTableManager? get productIdentifier {
+    final $_column = $_itemColumn<String>('product_identifier');
+    if ($_column == null) return null;
+    final manager = $$ProductsTableTableManager(
+      $_db,
+      $_db.products,
+    ).filter((f) => f.productIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_productIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ReceiptTextMappingsTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptTextMappingsTable> {
+  $$ReceiptTextMappingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lineText => $composableBuilder(
+    column: $table.lineText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get learnedAt => $composableBuilder(
+    column: $table.learnedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ProductsTableFilterComposer get productIdentifier {
+    final $$ProductsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableFilterComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptTextMappingsTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptTextMappingsTable> {
+  $$ReceiptTextMappingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lineText => $composableBuilder(
+    column: $table.lineText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get learnedAt => $composableBuilder(
+    column: $table.learnedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ProductsTableOrderingComposer get productIdentifier {
+    final $$ProductsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableOrderingComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptTextMappingsTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptTextMappingsTable> {
+  $$ReceiptTextMappingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get storeName =>
+      $composableBuilder(column: $table.storeName, builder: (column) => column);
+
+  GeneratedColumn<String> get lineText =>
+      $composableBuilder(column: $table.lineText, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get learnedAt =>
+      $composableBuilder(column: $table.learnedAt, builder: (column) => column);
+
+  $$ProductsTableAnnotationComposer get productIdentifier {
+    final $$ProductsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptTextMappingsTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptTextMappingsTable,
+          ReceiptTextMappingRow,
+          $$ReceiptTextMappingsTableFilterComposer,
+          $$ReceiptTextMappingsTableOrderingComposer,
+          $$ReceiptTextMappingsTableAnnotationComposer,
+          $$ReceiptTextMappingsTableCreateCompanionBuilder,
+          $$ReceiptTextMappingsTableUpdateCompanionBuilder,
+          (ReceiptTextMappingRow, $$ReceiptTextMappingsTableReferences),
+          ReceiptTextMappingRow,
+          PrefetchHooks Function({bool productIdentifier})
+        > {
+  $$ReceiptTextMappingsTableTableManager(
+    _$ApplicationDatabase db,
+    $ReceiptTextMappingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptTextMappingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptTextMappingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ReceiptTextMappingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> storeName = const Value.absent(),
+                Value<String> lineText = const Value.absent(),
+                Value<String?> productIdentifier = const Value.absent(),
+                Value<DateTime> learnedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptTextMappingsCompanion(
+                storeName: storeName,
+                lineText: lineText,
+                productIdentifier: productIdentifier,
+                learnedAt: learnedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String storeName,
+                required String lineText,
+                Value<String?> productIdentifier = const Value.absent(),
+                required DateTime learnedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptTextMappingsCompanion.insert(
+                storeName: storeName,
+                lineText: lineText,
+                productIdentifier: productIdentifier,
+                learnedAt: learnedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptTextMappingsTable, ReceiptTextMappingRow>(
+                    table,
+                  ),
+                  $$ReceiptTextMappingsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({productIdentifier = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (productIdentifier) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.productIdentifier,
+                                referencedTable:
+                                    $$ReceiptTextMappingsTableReferences
+                                        ._productIdentifierTable(db),
+                                referencedColumn:
+                                    $$ReceiptTextMappingsTableReferences
+                                        ._productIdentifierTable(db)
+                                        .productIdentifier,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ReceiptTextMappingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptTextMappingsTable,
+      ReceiptTextMappingRow,
+      $$ReceiptTextMappingsTableFilterComposer,
+      $$ReceiptTextMappingsTableOrderingComposer,
+      $$ReceiptTextMappingsTableAnnotationComposer,
+      $$ReceiptTextMappingsTableCreateCompanionBuilder,
+      $$ReceiptTextMappingsTableUpdateCompanionBuilder,
+      (ReceiptTextMappingRow, $$ReceiptTextMappingsTableReferences),
+      ReceiptTextMappingRow,
+      PrefetchHooks Function({bool productIdentifier})
+    >;
 
 class $ApplicationDatabaseManager {
   final _$ApplicationDatabase _db;
   $ApplicationDatabaseManager(this._db);
+  $ReceiptSearchIndexTableManager get receiptSearchIndex =>
+      $ReceiptSearchIndexTableManager(_db, _db.receiptSearchIndex);
   $$PreferenceEntriesTableTableManager get preferenceEntries =>
       $$PreferenceEntriesTableTableManager(_db, _db.preferenceEntries);
   $$SchemaMetadataEntriesTableTableManager get schemaMetadataEntries =>
       $$SchemaMetadataEntriesTableTableManager(_db, _db.schemaMetadataEntries);
-  $$FreezersTableTableManager get freezers =>
-      $$FreezersTableTableManager(_db, _db.freezers);
+  $$StoragePlacesTableTableManager get storagePlaces =>
+      $$StoragePlacesTableTableManager(_db, _db.storagePlaces);
   $$CompartmentsTableTableManager get compartments =>
       $$CompartmentsTableTableManager(_db, _db.compartments);
   $$CategoriesTableTableManager get categories =>
@@ -12629,4 +17650,12 @@ class $ApplicationDatabaseManager {
       $$ItemPicturesTableTableManager(_db, _db.itemPictures);
   $$ProductBarcodesTableTableManager get productBarcodes =>
       $$ProductBarcodesTableTableManager(_db, _db.productBarcodes);
+  $$ReceiptsTableTableManager get receipts =>
+      $$ReceiptsTableTableManager(_db, _db.receipts);
+  $$ReceiptPagesTableTableManager get receiptPages =>
+      $$ReceiptPagesTableTableManager(_db, _db.receiptPages);
+  $$ReceiptLinesTableTableManager get receiptLines =>
+      $$ReceiptLinesTableTableManager(_db, _db.receiptLines);
+  $$ReceiptTextMappingsTableTableManager get receiptTextMappings =>
+      $$ReceiptTextMappingsTableTableManager(_db, _db.receiptTextMappings);
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 
 /// Explains why a list or chart is empty and, optionally, what to do next.
 class EmptyStateView extends StatelessWidget {
@@ -22,19 +22,19 @@ class EmptyStateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.freezerColors;
+    final colors = context.foodieColors;
     final textTheme = Theme.of(context).textTheme;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(FreezerSpacing.extraLarge),
+        padding: const EdgeInsets.all(FoodieSpacing.extraLarge),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 48, color: colors.textMuted),
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             Text(title, style: textTheme.titleMedium, textAlign: TextAlign.center),
             if (message != null) ...[
-              const SizedBox(height: FreezerSpacing.small),
+              const SizedBox(height: FoodieSpacing.small),
               Text(
                 message!,
                 style: textTheme.bodyMedium?.copyWith(color: colors.textMuted),
@@ -42,7 +42,7 @@ class EmptyStateView extends StatelessWidget {
               ),
             ],
             if (actionLabel != null && onActionPressed != null) ...[
-              const SizedBox(height: FreezerSpacing.large),
+              const SizedBox(height: FoodieSpacing.large),
               FilledButton(onPressed: onActionPressed, child: Text(actionLabel!)),
             ],
           ],

@@ -48,6 +48,7 @@ final class CreateProductUseCase {
       canonicalUnit: canonicalUnit,
       defaultPackageQuantity: packageQuantity,
       recommendedMaximumStorageDays: settings.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays: settings.shelfLifeAfterOpeningDays,
       iconEmoji: settings.trimmedIconEmoji,
       iconImage: settings.iconImage,
       defaultCompartmentIdentifier: settings.defaultCompartmentIdentifier,

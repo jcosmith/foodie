@@ -1,3 +1,4 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:drift/drift.dart';
 
 import '../../application_database.dart';
@@ -19,7 +20,7 @@ class InventoryDao extends DatabaseAccessor<ApplicationDatabase> with _$Inventor
       select(stockBatches)
         ..where((batch) => batch.quantityRemaining.isBiggerThanValue(0))
         ..orderBy([
-          (batch) => OrderingTerm.asc(batch.frozenOn),
+          (batch) => OrderingTerm.asc(batch.storedOn),
           (batch) => OrderingTerm.asc(batch.createdAt),
         ]);
 
@@ -63,6 +64,23 @@ class InventoryDao extends DatabaseAccessor<ApplicationDatabase> with _$Inventor
       (update(stockBatches)
             ..where((batch) => batch.stockBatchIdentifier.equals(stockBatchIdentifier)))
           .write(StockBatchesCompanion(compartmentIdentifier: Value(compartmentIdentifier)));
+
+  /// Sets all three dates of a batch; `null` clears a date.
+  Future<void> updateBatchDates(
+    String stockBatchIdentifier, {
+    required CalendarDate storedOn,
+    required CalendarDate? bestBeforeOn,
+    required CalendarDate? openedOn,
+  }) =>
+      (update(
+        stockBatches,
+      )..where((batch) => batch.stockBatchIdentifier.equals(stockBatchIdentifier))).write(
+        StockBatchesCompanion(
+          storedOn: Value(storedOn),
+          bestBeforeOn: Value(bestBeforeOn),
+          openedOn: Value(openedOn),
+        ),
+      );
 
   /// Appends to the movement log. There is deliberately no update or delete.
   Future<void> appendMovement(InventoryMovementRow movement) =>

@@ -6,8 +6,9 @@ import '../../domain/product_catalog_events.dart';
 import '../../domain/product_catalog_failure.dart';
 import '../../domain/product_catalog_repository.dart';
 
-/// Sets how long food of a category keeps in the freezer. Products with their
-/// own storage time keep it.
+/// Sets how long food of a category keeps at home, or clears it for a
+/// category that keeps no time. Products with their own storage time keep
+/// it.
 final class ChangeCategoryStorageLimitUseCase {
   const ChangeCategoryStorageLimitUseCase({
     required ProductCatalogRepository repository,
@@ -23,9 +24,11 @@ final class ChangeCategoryStorageLimitUseCase {
 
   Future<Result<Unit, ProductCatalogFailure>> execute({
     required CategoryIdentifier categoryIdentifier,
-    required int recommendedMaximumStorageDays,
+    required int? recommendedMaximumStorageDays,
   }) async {
-    if (recommendedMaximumStorageDays <= 0) return const Result.failure(InvalidProductSetting());
+    if (recommendedMaximumStorageDays != null && recommendedMaximumStorageDays <= 0) {
+      return const Result.failure(InvalidProductSetting());
+    }
     final categories = await _repository.readCategories();
     final category = categories
         .where((candidate) => candidate.identifier == categoryIdentifier)

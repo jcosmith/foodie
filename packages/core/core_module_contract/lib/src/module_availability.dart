@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-/// Whether a module can be switched off by the user in the Config tab.
+/// Whether a module can be switched off by the user in Options.
 @immutable
 final class ModuleAvailability {
   /// Core functionality that is always on.

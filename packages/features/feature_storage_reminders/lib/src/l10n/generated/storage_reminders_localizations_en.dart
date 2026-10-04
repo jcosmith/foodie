@@ -12,31 +12,31 @@ class StorageRemindersLocalizationsEn extends StorageRemindersLocalizations {
   String get configSectionTitle => 'Reminders';
 
   @override
-  String get eatSoonTitle => 'Eat soon';
+  String get eatSoonTitle => 'Use soon';
 
   @override
   String get eatSoonEmpty => 'Nothing urgent. Well done!';
 
   @override
-  String get eatSoonScreenEmptyTitle => 'Nothing to eat soon';
+  String get eatSoonScreenEmptyTitle => 'Nothing to use soon';
 
   @override
-  String get eatSoonScreenEmptyMessage => 'Everything in your freezer keeps for a while yet.';
+  String get eatSoonScreenEmptyMessage => 'Everything at home keeps for a while yet.';
 
   @override
   String get eatSoonScreenExplanation =>
       'Food shows up here once 60 % of its storage time has passed. Tap an item to take some out.';
 
   @override
-  String get digestTitle => 'Eat soon';
+  String get digestTitle => 'Use soon';
 
   @override
   String digestBodyWithCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items in your freezer should be eaten soon.',
-      one: '1 item in your freezer should be eaten soon.',
+      other: '$count items should be used soon.',
+      one: '1 item should be used soon.',
     );
     return '$_temp0';
   }
@@ -53,7 +53,7 @@ class StorageRemindersLocalizationsEn extends StorageRemindersLocalizations {
   String get dailyDigestSwitch => 'Daily reminder';
 
   @override
-  String get dailyDigestDetail => 'One notification on the days something should be eaten soon';
+  String get dailyDigestDetail => 'One notification on the days something should be used soon';
 
   @override
   String get digestTimeLabel => 'Time';
@@ -75,31 +75,15 @@ class StorageRemindersLocalizationsEn extends StorageRemindersLocalizations {
   String get storageLimitsRow => 'Storage limits';
 
   @override
-  String get storageLimitsDetail => 'How long each category keeps in the freezer';
+  String get storageLimitsDetail => 'How long each category keeps';
 
   @override
   String get storageLimitsTitle => 'Storage limits';
 
   @override
   String get storageLimitsExplanation =>
-      'Food is marked “eat soon” once 85 % of its storage time has passed. A product can have its own time in the product editor.';
+      'Things are marked “use soon” once 60 % of their storage time has passed and “use now” at 85 %. A product can have its own time in the product editor.';
 
   @override
-  String storageMonths(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count months',
-      one: '1 month',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get storageMonthsLabel => 'Keep for at most, in months';
-
-  @override
-  String storageMonthsInvalid(int maximum) {
-    return 'Enter a number from 1 to $maximum.';
-  }
+  String get shelfLifeLabel => 'Keeps for';
 }

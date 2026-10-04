@@ -2,28 +2,33 @@ import 'package:core_foundation/core_foundation.dart';
 
 import '../domain/compartment.dart';
 import '../domain/compartment_contents_port.dart';
+import '../domain/storage_kind.dart';
 import '../domain/storage_layout.dart';
 import '../domain/storage_layout_repository.dart';
 
-/// Read-only access to the freezer layout for other features (inventory,
+/// Read-only access to the storage place layout for other features (inventory,
 /// onboarding, statistics).
 final class StorageLayoutQueryService {
   const StorageLayoutQueryService({
     required StorageLayoutRepository repository,
     required CompartmentContentsPort compartmentContents,
+    Map<StorageKind, StorageDomainIdentifier> domainOfStorageKind = const {},
   }) : _repository = repository,
-       _compartmentContents = compartmentContents;
+       _compartmentContents = compartmentContents,
+       _domainOfStorageKind = domainOfStorageKind;
 
   final StorageLayoutRepository _repository;
   final CompartmentContentsPort _compartmentContents;
+  final Map<StorageKind, StorageDomainIdentifier> _domainOfStorageKind;
 
-  /// The layout, updated whenever a freezer or compartment changes.
+  /// The layout, updated whenever a storage place or compartment changes.
   Stream<StorageLayout> watchStorageLayout() => combineLatestOfTwo(
-    _repository.watchFreezersIncludingArchived(),
+    _repository.watchStoragePlacesIncludingArchived(),
     _repository.watchCompartmentsIncludingArchived(),
-    (freezers, compartments) => StorageLayout.fromEntities(
-      freezersIncludingArchived: freezers,
+    (storagePlaces, compartments) => StorageLayout.fromEntities(
+      storagePlacesIncludingArchived: storagePlaces,
       compartmentsIncludingArchived: compartments,
+      domainOfStorageKind: _domainOfStorageKind,
     ),
   );
 

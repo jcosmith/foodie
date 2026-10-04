@@ -2,7 +2,7 @@
 //
 // Usage: dart run tool/generate_app_icon.dart
 //
-// Reads apps/freezer_app/app_icon/app_icon_source.jpg and writes:
+// Reads apps/foodie_app/app_icon/app_icon_source.jpg and writes:
 // - Android: mipmap-*/ic_launcher.png (legacy square icons, 48 to 192 px)
 //   and, for Android 8 and later, an adaptive icon whose foreground is the
 //   picture, its subject inside the circle every launcher mask leaves
@@ -22,7 +22,7 @@ import 'dart:math';
 import 'package:image/image.dart' as image_codec;
 import 'package:path/path.dart' as path;
 
-const String _applicationDirectory = 'apps/freezer_app';
+const String _applicationDirectory = 'apps/foodie_app';
 const String _sourcePath = '$_applicationDirectory/app_icon/app_icon_source.jpg';
 const String _androidResourceDirectory = '$_applicationDirectory/android/app/src/main/res';
 const String _iosIconSetDirectory =

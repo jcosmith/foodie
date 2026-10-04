@@ -203,17 +203,23 @@ abstract class ProductCatalogLocalizations {
   /// **'Pre-fills the amount when you add it.'**
   String get packageSizeHelper;
 
-  /// No description provided for @storageMonthsLabel.
+  /// No description provided for @shelfLifeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Keep for at most, in months (optional)'**
-  String get storageMonthsLabel;
+  /// **'Keeps for (optional)'**
+  String get shelfLifeLabel;
 
-  /// No description provided for @storageMonthsHelper.
+  /// No description provided for @shelfLifeHelper.
   ///
   /// In en, this message translates to:
-  /// **'{months, plural, =1{Leave empty to follow the category: about 1 month.} other{Leave empty to follow the category: about {months} months.}}'**
-  String storageMonthsHelper(int months);
+  /// **'Leave empty to follow the category: {shelfLife}.'**
+  String shelfLifeHelper(String shelfLife);
+
+  /// No description provided for @shelfLifeHelperNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to keep no shelf life, as the category does.'**
+  String get shelfLifeHelperNone;
 
   /// No description provided for @storageRecommendationNote.
   ///
@@ -254,19 +260,19 @@ abstract class ProductCatalogLocalizations {
   /// No description provided for @defaultCompartmentLabel.
   ///
   /// In en, this message translates to:
-  /// **'Default drawer'**
+  /// **'Default compartment'**
   String get defaultCompartmentLabel;
 
   /// No description provided for @defaultCompartmentNone.
   ///
   /// In en, this message translates to:
-  /// **'The drawer used last time'**
+  /// **'The compartment used last time'**
   String get defaultCompartmentNone;
 
   /// No description provided for @defaultCompartmentHelper.
   ///
   /// In en, this message translates to:
-  /// **'Chosen for you when you add this product to the freezer.'**
+  /// **'Chosen for you when you add this product.'**
   String get defaultCompartmentHelper;
 
   /// No description provided for @archiveProductAction.
@@ -284,7 +290,7 @@ abstract class ProductCatalogLocalizations {
   /// No description provided for @archiveProductDialogText.
   ///
   /// In en, this message translates to:
-  /// **'It disappears from the product list. Items already in the freezer and your statistics keep it.'**
+  /// **'It disappears from the product list. Items already at home and your statistics keep it.'**
   String get archiveProductDialogText;
 
   /// No description provided for @nameMissing.
@@ -316,192 +322,6 @@ abstract class ProductCatalogLocalizations {
   /// In en, this message translates to:
   /// **'That did not work. Please try again.'**
   String get genericFailure;
-
-  /// No description provided for @categoryVegetables.
-  ///
-  /// In en, this message translates to:
-  /// **'Vegetables'**
-  String get categoryVegetables;
-
-  /// No description provided for @categoryFruit.
-  ///
-  /// In en, this message translates to:
-  /// **'Fruit'**
-  String get categoryFruit;
-
-  /// No description provided for @categoryMeatAndFish.
-  ///
-  /// In en, this message translates to:
-  /// **'Meat & fish'**
-  String get categoryMeatAndFish;
-
-  /// No description provided for @categoryMeals.
-  ///
-  /// In en, this message translates to:
-  /// **'Meals'**
-  String get categoryMeals;
-
-  /// No description provided for @categoryBakery.
-  ///
-  /// In en, this message translates to:
-  /// **'Bakery'**
-  String get categoryBakery;
-
-  /// No description provided for @categoryDesserts.
-  ///
-  /// In en, this message translates to:
-  /// **'Desserts'**
-  String get categoryDesserts;
-
-  /// No description provided for @categoryOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Other'**
-  String get categoryOther;
-
-  /// No description provided for @productLeafSpinach.
-  ///
-  /// In en, this message translates to:
-  /// **'Leaf spinach'**
-  String get productLeafSpinach;
-
-  /// No description provided for @productGardenPeas.
-  ///
-  /// In en, this message translates to:
-  /// **'Garden peas'**
-  String get productGardenPeas;
-
-  /// No description provided for @productBroccoli.
-  ///
-  /// In en, this message translates to:
-  /// **'Broccoli'**
-  String get productBroccoli;
-
-  /// No description provided for @productMixedVegetables.
-  ///
-  /// In en, this message translates to:
-  /// **'Mixed vegetables'**
-  String get productMixedVegetables;
-
-  /// No description provided for @productHerbs.
-  ///
-  /// In en, this message translates to:
-  /// **'Herbs'**
-  String get productHerbs;
-
-  /// No description provided for @productFrenchFries.
-  ///
-  /// In en, this message translates to:
-  /// **'French fries'**
-  String get productFrenchFries;
-
-  /// No description provided for @productMixedBerries.
-  ///
-  /// In en, this message translates to:
-  /// **'Mixed berries'**
-  String get productMixedBerries;
-
-  /// No description provided for @productStrawberries.
-  ///
-  /// In en, this message translates to:
-  /// **'Strawberries'**
-  String get productStrawberries;
-
-  /// No description provided for @productMango.
-  ///
-  /// In en, this message translates to:
-  /// **'Mango'**
-  String get productMango;
-
-  /// No description provided for @productChickenBreast.
-  ///
-  /// In en, this message translates to:
-  /// **'Chicken breast'**
-  String get productChickenBreast;
-
-  /// No description provided for @productMincedMeat.
-  ///
-  /// In en, this message translates to:
-  /// **'Minced meat'**
-  String get productMincedMeat;
-
-  /// No description provided for @productSalmonFillet.
-  ///
-  /// In en, this message translates to:
-  /// **'Salmon fillet'**
-  String get productSalmonFillet;
-
-  /// No description provided for @productFishFingers.
-  ///
-  /// In en, this message translates to:
-  /// **'Fish fingers'**
-  String get productFishFingers;
-
-  /// No description provided for @productPrawns.
-  ///
-  /// In en, this message translates to:
-  /// **'Prawns'**
-  String get productPrawns;
-
-  /// No description provided for @productBologneseHomemade.
-  ///
-  /// In en, this message translates to:
-  /// **'Bolognese (homemade)'**
-  String get productBologneseHomemade;
-
-  /// No description provided for @productSoupHomemade.
-  ///
-  /// In en, this message translates to:
-  /// **'Soup (homemade)'**
-  String get productSoupHomemade;
-
-  /// No description provided for @productLasagne.
-  ///
-  /// In en, this message translates to:
-  /// **'Lasagne'**
-  String get productLasagne;
-
-  /// No description provided for @productPizzaMargherita.
-  ///
-  /// In en, this message translates to:
-  /// **'Pizza Margherita'**
-  String get productPizzaMargherita;
-
-  /// No description provided for @productWholegrainBread.
-  ///
-  /// In en, this message translates to:
-  /// **'Wholegrain bread'**
-  String get productWholegrainBread;
-
-  /// No description provided for @productBreadRolls.
-  ///
-  /// In en, this message translates to:
-  /// **'Bread rolls'**
-  String get productBreadRolls;
-
-  /// No description provided for @productCroissants.
-  ///
-  /// In en, this message translates to:
-  /// **'Croissants'**
-  String get productCroissants;
-
-  /// No description provided for @productVanillaIceCream.
-  ///
-  /// In en, this message translates to:
-  /// **'Vanilla ice cream'**
-  String get productVanillaIceCream;
-
-  /// No description provided for @productCake.
-  ///
-  /// In en, this message translates to:
-  /// **'Cake'**
-  String get productCake;
-
-  /// No description provided for @productButter.
-  ///
-  /// In en, this message translates to:
-  /// **'Butter'**
-  String get productButter;
 }
 
 class _ProductCatalogLocalizationsDelegate

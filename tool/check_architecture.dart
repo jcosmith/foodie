@@ -31,11 +31,14 @@ const Map<String, Set<String>> _pluginConfinement = {
   'flutter_local_notifications': {'core_notifications'},
   'flutter_timezone': {'core_notifications'},
   'timezone': {'core_notifications'},
-  'image_picker': {'core_media_storage', 'feature_item_pictures'},
+  'image_picker': {'core_media_storage', 'feature_item_pictures', 'feature_receipt_scanning'},
   'image': {'core_media_storage'},
   'cryptography': {'core_media_storage', 'feature_data_portability'},
   'cryptography_flutter': {'core_media_storage', 'feature_data_portability'},
   'mobile_scanner': {'feature_barcode_scanning'},
+  // On-device text recognition with the bundled Latin model (decision D16).
+  'google_mlkit_text_recognition': {'feature_receipt_scanning'},
+  'google_mlkit_commons': {'feature_receipt_scanning'},
   'file_picker': {'feature_data_portability', 'feature_product_catalog'},
   'fl_chart': {'core_design_system'},
 };
@@ -49,7 +52,9 @@ final List<RegExp> _forbiddenRuntimePackages = [
   RegExp(r'crashlytics'),
   RegExp(r'^sqlite3_flutter_libs$'),
   RegExp(r'^sqlcipher_flutter_libs$'),
-  RegExp(r'^google_mlkit'),
+  // Every other ML Kit plugin, among them ones that download models; text
+  // recognition is confined to receipt scanning above.
+  RegExp(r'^google_mlkit_(?!text_recognition$|commons$)'),
   RegExp(r'^webview'),
 ];
 
@@ -277,10 +282,10 @@ void _checkRuntimeDependencies(
   };
   final workspacePackageNames = workspacePackages.map((package) => package.name).toSet();
 
-  // Collect everything the app ships: dependencies of freezer_app, recursively,
+  // Collect everything the app ships: dependencies of foodie_app, recursively,
   // ignoring dev dependencies.
   final runtimePackages = <String>{};
-  final pending = ['freezer_app'];
+  final pending = ['foodie_app'];
   while (pending.isNotEmpty) {
     final packageName = pending.removeLast();
     if (!runtimePackages.add(packageName)) continue;
@@ -340,7 +345,7 @@ void _checkAndroidReleaseManifest(Directory workspaceRoot, List<String> violatio
     path.join(
       workspaceRoot.path,
       'apps',
-      'freezer_app',
+      'foodie_app',
       'android',
       'app',
       'src',

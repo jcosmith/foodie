@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:core_events/core_events.dart';
 import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/foundation_providers.dart';
@@ -6,6 +8,7 @@ import 'package:core_notifications/core_notifications.dart';
 import 'package:core_preferences/core_preferences.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
+import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/storage_reminder_settings.dart';
@@ -27,11 +30,12 @@ final storageReminderSettingsProvider = StreamProvider<StorageReminderSettings>(
 final storageReminderNotificationTextsLoaderProvider =
     Provider<Future<StorageReminderNotificationTexts> Function()>((ref) {
       final readApplicationLocale = ref.watch(applicationLocaleReaderProvider);
+      final catalogContributions = ref.watch(registeredCatalogContributionsProvider);
       return () async {
         final locale = await readApplicationLocale();
         return LocalizedStorageReminderNotificationTexts(
           lookupStorageRemindersLocalizations(locale),
-          lookupProductCatalogLocalizations(locale),
+          ContributedCatalogNames(catalogContributions, locale),
         );
       };
     });
@@ -40,6 +44,8 @@ final replanStorageRemindersUseCaseProvider = Provider<ReplanStorageRemindersUse
   (ref) => ReplanStorageRemindersUseCase(
     inventory: ref.watch(inventoryQueryServiceProvider),
     productCatalog: ref.watch(productCatalogQueryServiceProvider),
+    storageLayout: ref.watch(storageLayoutQueryServiceProvider),
+    readPausedDomains: () => ref.read(pausedStorageDomainIdentifiersProvider),
     settingsStore: ref.watch(storageReminderSettingsStoreProvider),
     reconciler: ref.watch(scheduledNotificationReconcilerProvider),
     loadNotificationTexts: ref.watch(storageReminderNotificationTextsLoaderProvider),
@@ -67,23 +73,24 @@ final storageReminderReplanningCoordinatorProvider = Provider<RecomputationCoord
     recompute: ref.watch(replanStorageRemindersUseCaseProvider).execute,
     logger: ref.watch(localLoggerProvider),
   );
+  // Switching a domain off or on again replans; listening keeps the
+  // switches loaded for the use case.
+  ref.listen(pausedStorageDomainIdentifiersProvider, (previous, next) {
+    if (previous != null && !(previous.length == next.length && previous.containsAll(next))) {
+      unawaited(coordinator.requestRecomputation());
+    }
+  });
   ref.onDispose(coordinator.stop);
   return coordinator;
 });
 
-/// What the "Eat soon" card and screen list: batches past 60 % of their
-/// storage time, most urgent first; `null` while loading.
+/// What the "Use soon" card and screen list: batches that are no longer
+/// fresh, the earliest last good day first; `null` while loading.
 final eatSoonItemsProvider = Provider<List<InventoryItem>?>((ref) {
   final overview = ref.watch(inventoryOverviewProvider).value;
   if (overview == null) return null;
-  double storageShareOf(InventoryItem item) => StorageAgePolicy.storageShare(
-    frozenOn: item.batch.frozenOn,
-    today: overview.today,
-    recommendedMaximumStorageDays:
-        overview.catalog.recommendedMaximumStorageDaysOf(item.product) ?? 0,
-  );
-  return [
+  return sortedByUseBy([
     for (final item in overview.items)
-      if (item.storageAgeStatus != StorageAgeStatus.fresh) item,
-  ]..sort((first, second) => storageShareOf(second).compareTo(storageShareOf(first)));
+      if (item.useByStatus != UseByStatus.fresh) item,
+  ]);
 });

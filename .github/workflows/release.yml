@@ -33,9 +33,9 @@ jobs:
 
       - name: Tag matches the app version
         run: |
-          app_version=$(sed -n 's/^version: *\([^+]*\).*/\1/p' apps/freezer_app/pubspec.yaml)
+          app_version=$(sed -n 's/^version: *\([^+]*\).*/\1/p' apps/foodie_app/pubspec.yaml)
           if [ "v${app_version}" != "$RELEASE_TAG" ]; then
-            echo "::error::Tag $RELEASE_TAG does not match version ${app_version} in apps/freezer_app/pubspec.yaml."
+            echo "::error::Tag $RELEASE_TAG does not match version ${app_version} in apps/foodie_app/pubspec.yaml."
             exit 1
           fi
 
@@ -54,11 +54,11 @@ jobs:
         run: flutter pub get
 
       - name: Build release APK
-        working-directory: apps/freezer_app
+        working-directory: apps/foodie_app
         run: flutter build apk --release
 
       - name: Check the packaged manifest
-        working-directory: apps/freezer_app
+        working-directory: apps/foodie_app
         run: |
           apk=build/app/outputs/flutter-apk/app-release.apk
           aapt2=$(find "$ANDROID_HOME/build-tools" -name aapt2 | sort | tail -n 1)
@@ -84,10 +84,10 @@ jobs:
               notes_options=(--generate-notes)
             fi
             gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
-              --title "Freezer ${version}" "${notes_options[@]}" --verify-tag
+              --title "Foodie ${version}" "${notes_options[@]}" --verify-tag
           fi
-          apk_name="freezer-${version}.apk"
-          cp apps/freezer_app/build/app/outputs/flutter-apk/app-release.apk "$apk_name"
+          apk_name="foodie-${version}.apk"
+          cp apps/foodie_app/build/app/outputs/flutter-apk/app-release.apk "$apk_name"
           sha256sum "$apk_name" > "$apk_name.sha256"
           gh release upload "$RELEASE_TAG" "$apk_name" "$apk_name.sha256" \
             --repo "$GITHUB_REPOSITORY" --clobber

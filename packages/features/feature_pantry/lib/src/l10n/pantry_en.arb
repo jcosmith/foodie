@@ -1,0 +1,87 @@
+{
+  "@@locale": "en",
+  "domainLabel": "Pantry",
+  "domainDescription": "Dry goods, tins, bread and drinks",
+  "storedOnLabel": "Bought on",
+  "addTitle": "Add to the pantry",
+  "bestBeforeLabel": "Best before",
+  "pantryName": "Pantry",
+  "pantryDescription": "pantry",
+  "kitchenCupboardName": "Kitchen cupboard",
+  "kitchenCupboardDescription": "kitchen cupboard",
+  "cellarName": "Cellar",
+  "cellarDescription": "cellar",
+  "drinksCrateName": "Drinks crates",
+  "drinksCrateDescription": "drinks crates",
+  "shelfName": "Shelf {number}",
+  "@shelfName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfCount": "{count, plural, =1{1 shelf} other{{count} shelves}}",
+  "@shelfCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addShelf": "Add shelf",
+  "crateName": "Crate {number}",
+  "@crateName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "crateCount": "{count, plural, =1{1 crate} other{{count} crates}}",
+  "@crateCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addCrate": "Add crate",
+  "templatePantryShelves": "Pantry with 4 shelves",
+  "templateKitchenCupboard": "Kitchen cupboard with 2 shelves",
+  "templateCellar": "Cellar with 3 shelves",
+  "templateDrinksCrate": "One drinks crate",
+  "categoryBreadAndBakery": "Bread and bakery",
+  "categoryDryGoods": "Pasta, rice and grains",
+  "categoryTinsAndJars": "Tins and jars",
+  "categorySpicesAndCondiments": "Spices and sauces",
+  "categoryOilsAndVinegar": "Oil and vinegar",
+  "categoryBaking": "Baking",
+  "categoryBreakfastAndSpreads": "Breakfast and spreads",
+  "categorySnacks": "Snacks and sweets",
+  "categoryDrinks": "Drinks",
+  "productFreshBread": "Bread",
+  "productToastBread": "Toast bread",
+  "productPasta": "Pasta",
+  "productRice": "Rice",
+  "productOats": "Oats",
+  "productCannedTomatoes": "Chopped tomatoes",
+  "productChickpeas": "Chickpeas",
+  "productTuna": "Tuna",
+  "productSalt": "Salt",
+  "productPepper": "Pepper",
+  "productKetchup": "Ketchup",
+  "productMustard": "Mustard",
+  "productOliveOil": "Olive oil",
+  "productVinegar": "Vinegar",
+  "productFlour": "Flour",
+  "productSugar": "Sugar",
+  "productCornflakes": "Cornflakes",
+  "productJam": "Jam",
+  "productHoney": "Honey",
+  "productChocolateSpread": "Chocolate spread",
+  "productCrisps": "Crisps",
+  "productBiscuits": "Biscuits",
+  "productMineralWater": "Mineral water",
+  "productOrangeJuice": "Orange juice"
+}

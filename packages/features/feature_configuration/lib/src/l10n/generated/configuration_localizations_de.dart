@@ -9,10 +9,17 @@ class ConfigurationLocalizationsDe extends ConfigurationLocalizations {
   ConfigurationLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get navigationLabel => 'Konfig.';
+  String get screenTitle => 'Optionen';
 
   @override
-  String get screenTitle => 'Konfiguration';
+  String get moreEntrySubtitle =>
+      'Tabs, optionale Funktionen, Sprache, Darstellung, Erinnerungen, Sicherung';
+
+  @override
+  String get tabsSectionTitle => 'Tabs';
+
+  @override
+  String get lastTabHint => 'Mindestens ein Tab bleibt eingeschaltet.';
 
   @override
   String get languageSectionTitle => 'Sprache';

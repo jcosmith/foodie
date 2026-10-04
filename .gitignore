@@ -34,9 +34,9 @@ app.*.symbols
 app.*.map.json
 
 # Android Studio build artifacts
-apps/freezer_app/android/app/debug
-apps/freezer_app/android/app/profile
-apps/freezer_app/android/app/release
+apps/foodie_app/android/app/debug
+apps/foodie_app/android/app/profile
+apps/foodie_app/android/app/release
 
 # Widget previews
 .widget_preview/

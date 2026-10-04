@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:core_design_system/testing.dart';
+import 'package:core_foundation/core_foundation.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_inventory/src/presentation/add_stock_batch_screen.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
@@ -6,8 +10,10 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'support/inventory_test_harness.dart';
+import 'support/shelves_module.dart';
 
 void main() {
   late InventoryTestHarness harness;
@@ -19,7 +25,7 @@ void main() {
   /// default drawer.
   Future<void> showAddFormForMincedMeat(WidgetTester tester, {int? defaultDrawerIndex}) async {
     final mincedMeat = await tester.runAsync(() async {
-      final drawers = await harness.setUpCatalogAndFreezer();
+      final drawers = await harness.setUpCatalogAndStoragePlace();
       final mincedMeat = await harness.seededProduct('mincedMeat');
       await harness.addBatch(product: mincedMeat, compartment: drawers[0], amountInBaseUnits: 500);
       if (defaultDrawerIndex != null) {
@@ -64,5 +70,148 @@ void main() {
 
     expect(isDrawerSelected(tester, 'Drawer 1'), isTrue);
     expect(isDrawerSelected(tester, 'Drawer 3'), isFalse);
+  });
+
+  group('adding inside a domain tab', () {
+    late InventoryTestHarness twoDomains;
+
+    setUp(() async {
+      twoDomains = InventoryTestHarness(
+        registeredModules: const [FreezerFeatureModule(), ShelvesModule()],
+      );
+    });
+    tearDown(() => twoDomains.dispose());
+
+    Future<void> showAddForm(
+      WidgetTester tester, {
+      StorageDomainIdentifier? domain,
+      String? productKey,
+    }) async {
+      final product = await tester.runAsync(() async {
+        await twoDomains.setUpCatalogAndStoragePlace();
+        await twoDomains.addStoragePlace(ShelvesModule.cupboard);
+        return productKey == null ? null : twoDomains.seededProduct(productKey);
+      });
+      // A router underneath, so saving can close the form.
+      final router = GoRouter(
+        initialLocation: '/start',
+        routes: [
+          GoRoute(path: '/start', builder: (context, state) => const Scaffold()),
+          GoRoute(
+            path: '/add',
+            builder: (context, state) => AddStockBatchScreen(
+              domainIdentifier: domain,
+              initialProductIdentifier: product?.identifier,
+            ),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: twoDomains.container,
+          child: buildLocalizedTestRouterApplication(
+            routerConfig: router,
+            featureLocalizationDelegates: [
+              ...const InventoryFeatureModule().localizationDelegates,
+              ...const ProductCatalogFeatureModule().localizationDelegates,
+              ...const StorageLayoutFeatureModule().localizationDelegates,
+            ],
+          ),
+        ),
+      );
+      unawaited(router.push('/add'));
+      for (var round = 0; round < 3; round++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pumpAndSettle();
+      }
+    }
+
+    testWidgets('offers only the domain\'s compartments, with its words', (tester) async {
+      await showAddForm(tester, domain: StorageDomainIdentifier.pantry);
+
+      expect(find.text('Add to the cupboard'), findsOneWidget);
+      expect(find.widgetWithText(ChoiceChip, 'Shelf 1'), findsOneWidget);
+      expect(find.widgetWithText(ChoiceChip, 'Drawer 1'), findsNothing);
+      expect(find.text('Bought on'), findsOneWidget);
+    });
+
+    testWidgets('the freezer tab adds frozen food', (tester) async {
+      await showAddForm(tester, domain: StorageDomainIdentifier.freezer);
+
+      expect(find.text('Add to the freezer'), findsOneWidget);
+      expect(find.widgetWithText(ChoiceChip, 'Shelf 1'), findsNothing);
+      expect(find.text('Frozen on'), findsOneWidget);
+      expect(find.text('Best before'), findsNothing, reason: 'frozen food keeps its own time');
+    });
+
+    testWidgets('a best-before date is pre-filled from the shelf life and quick to change', (
+      tester,
+    ) async {
+      // Wholegrain bread keeps 90 days; added on 2 October 2026.
+      await showAddForm(
+        tester,
+        domain: StorageDomainIdentifier.pantry,
+        productKey: 'wholegrainBread',
+      );
+
+      expect(find.text('Best before'), findsOneWidget);
+      expect(find.text('Dec 30, 2026'), findsOneWidget);
+      expect(find.text('Usually keeps about 3 months'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('+3 days'));
+      await tester.tap(find.text('+3 days'));
+      await tester.pumpAndSettle();
+      expect(find.text('Oct 5, 2026'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Save'));
+      await tester.tap(find.text('Save'));
+      for (var round = 0; round < 3; round++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pumpAndSettle();
+      }
+      final batches = (await tester.runAsync(twoDomains.repository.readActiveBatches))!;
+      expect(batches.single.bestBeforeOn, CalendarDate(2026, 10, 5));
+    });
+
+    testWidgets('a best-before date can be left out', (tester) async {
+      await showAddForm(
+        tester,
+        domain: StorageDomainIdentifier.pantry,
+        productKey: 'wholegrainBread',
+      );
+
+      await tester.ensureVisible(find.text('None'));
+      await tester.tap(find.text('None'));
+      await tester.pumpAndSettle();
+      expect(find.text('Dec 30, 2026'), findsNothing);
+      expect(find.text('No date'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Save'));
+      await tester.tap(find.text('Save'));
+      for (var round = 0; round < 3; round++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pumpAndSettle();
+      }
+      final batches = (await tester.runAsync(twoDomains.repository.readActiveBatches))!;
+      expect(batches.single.bestBeforeOn, isNull);
+    });
+
+    testWidgets('from Home, every place is offered and the date follows the choice', (
+      tester,
+    ) async {
+      Finder chip(String compartmentName) => find.ancestor(
+        of: find.textContaining(compartmentName),
+        matching: find.byType(ChoiceChip),
+      );
+      await showAddForm(tester);
+      expect(find.text('Add'), findsOneWidget);
+      expect(chip('Drawer 1'), findsOneWidget, reason: 'named with its place, as there are two');
+
+      await tester.ensureVisible(chip('Shelf 2'));
+      await tester.tap(chip('Shelf 2'));
+      await tester.pumpAndSettle();
+      expect(find.text('Bought on'), findsOneWidget);
+    });
   });
 }

@@ -28,7 +28,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
       buildCharts: (context, analysis) => [
         InsightFullWidth(
           child: Padding(
-            padding: const EdgeInsets.only(bottom: FreezerSpacing.medium),
+            padding: const EdgeInsets.only(bottom: FoodieSpacing.medium),
             child: KeyFigureGrid(analysis: analysis, onActivityChosen: _showCategoryChart),
           ),
         ),

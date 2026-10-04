@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 
 /// A key figure with its change against the comparison period and a small
 /// chart (UI examples document, phone 7: Eaten, Added, Thrown away, Avg.
@@ -27,7 +27,7 @@ class KpiTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final mutedColor = context.freezerColors.textMuted;
+    final mutedColor = context.foodieColors.textMuted;
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
@@ -39,10 +39,10 @@ class KpiTile extends StatelessWidget {
           excludeSemantics: true,
           child: Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(
-              FreezerSpacing.medium,
-              FreezerSpacing.small,
-              FreezerSpacing.medium,
-              FreezerSpacing.small,
+              FoodieSpacing.medium,
+              FoodieSpacing.small,
+              FoodieSpacing.medium,
+              FoodieSpacing.small,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +55,7 @@ class KpiTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(deltaText, style: theme.textTheme.labelSmall?.copyWith(color: mutedColor)),
-                if (chart != null) ...[const SizedBox(height: FreezerSpacing.extraSmall), chart!],
+                if (chart != null) ...[const SizedBox(height: FoodieSpacing.extraSmall), chart!],
               ],
             ),
           ),

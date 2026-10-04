@@ -29,7 +29,7 @@ class ProductListScreen extends ConsumerWidget {
         padding: const EdgeInsets.only(bottom: 96),
         children: [
           Padding(
-            padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+            padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
             child: Text(
               localizations.productListHint,
               style: Theme.of(context).textTheme.bodySmall,
@@ -65,7 +65,7 @@ class ProductsConfigSection extends ConsumerWidget {
     final localizations = ProductCatalogLocalizations.of(context);
     final catalog = ref.watch(productCatalogProvider).value ?? ProductCatalog.empty;
     return ListTile(
-      contentPadding: const EdgeInsetsDirectional.only(start: FreezerSpacing.small),
+      contentPadding: const EdgeInsetsDirectional.only(start: FoodieSpacing.small),
       leading: const Icon(Icons.category_outlined),
       title: Text(localizations.productCount(catalog.activeProducts.length)),
       trailing: const Icon(Icons.chevron_right),

@@ -9,9 +9,6 @@ class RestockLocalizationsDe extends RestockLocalizations {
   RestockLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get navigationLabel => 'Liste';
-
-  @override
   String get shoppingListTitle => 'Einkaufsliste';
 
   @override
@@ -24,12 +21,12 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get originManual => 'Von dir ergänzt';
 
   @override
-  String putTickedInFreezer(int count) {
+  String putTickedInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count abgehakte Einträge einfrieren',
-      one: '1 abgehakten Eintrag einfrieren',
+      other: '$count abgehakte Einträge einräumen',
+      one: '1 abgehakten Eintrag einräumen',
     );
     return '$_temp0';
   }
@@ -38,12 +35,12 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get nothingTicked => 'Hake ab, was du gekauft hast';
 
   @override
-  String itemsPutInFreezer(int count) {
+  String itemsPutInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Produkte sind jetzt im Gefrierschrank',
-      one: '1 Produkt ist jetzt im Gefrierschrank',
+      other: '$count Produkte sind jetzt eingeräumt',
+      one: '1 Produkt ist jetzt eingeräumt',
       zero: 'Abgehakte Einträge von der Liste entfernt',
     );
     return '$_temp0';
@@ -76,7 +73,7 @@ class RestockLocalizationsDe extends RestockLocalizations {
 
   @override
   String get configSectionExplanation =>
-      'Lege eine Mindestmenge für Lebensmittel fest, die du immer zu Hause haben möchtest. Ist weniger im Gefrierschrank, kommen sie auf die Einkaufsliste.';
+      'Lege eine Mindestmenge für Dinge fest, die du immer zu Hause haben möchtest. Ist weniger da, kommen sie auf die Einkaufsliste.';
 
   @override
   String get minimumQuantitiesRow => 'Mindestmengen';
@@ -97,19 +94,19 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get rulesEmptyTitle => 'Noch keine Mindestmengen';
 
   @override
-  String get rulesEmptyMessage => 'Füge ein Produkt hinzu, das immer im Gefrierschrank sein soll.';
+  String get rulesEmptyMessage => 'Füge ein Produkt hinzu, das immer zu Hause sein soll.';
 
   @override
   String get addRuleButton => 'Produkt hinzufügen';
 
   @override
   String ruleSummary(String minimum, String stock) {
-    return 'Mindestens $minimum · $stock im Gefrierschrank';
+    return 'Mindestens $minimum · $stock zu Hause';
   }
 
   @override
   String ruleSummaryWithTarget(String minimum, String target, String stock) {
-    return 'Mindestens $minimum, auffüllen auf $target · $stock im Gefrierschrank';
+    return 'Mindestens $minimum, auffüllen auf $target · $stock zu Hause';
   }
 
   @override
@@ -125,8 +122,8 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get targetBelowMinimum => 'Das muss mindestens die Mindestmenge sein.';
 
   @override
-  String get noFreezerForBoughtItems =>
-      'Richte zuerst deinen Gefrierschrank ein, dann kannst du die Einkäufe einräumen.';
+  String get noStoragePlaceForBoughtItems =>
+      'Richte zuerst einen Lagerort ein, dann kannst du die Einkäufe einräumen.';
 
   @override
   String get automaticEntryCannotBeRemoved =>
@@ -166,7 +163,7 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get forecastTableProduct => 'Produkt';
 
   @override
-  String get forecastTableStock => 'Im Gefrierschrank';
+  String get forecastTableStock => 'Zu Hause';
 
   @override
   String get forecastTableDays => 'Tage übrig';

@@ -219,7 +219,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <a href="#extensibility">7. Extension points</a>
       <a href="#interactions">8. Module interactions</a>
       <a href="#data-model">9. Data model</a>
-      <a href="#planned-features">10. Planned features</a>
+      <a href="#planned-features">10. Features beyond the core</a>
       <a href="#statistics-design">10.6 Statistics in depth</a>
       <a href="#household-scope">10.7 From freezer to household</a>
       <a href="#pantry-management">10.8 Fridge and pantry</a>
@@ -246,7 +246,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <h2>1. Summary</h2>
       <p><strong>Mission.</strong> Foodie helps a private household know what it has at home, what to use first and what to buy. It started with the freezer; the goal is every place a household keeps things it regularly stocks up on: freezer, fridge, pantry, kitchen cupboards and household supplies such as cleaning products or toiletries. Three principles hold for all of it: no data ever leaves the app, the code is modular and readable Flutter for phones, and the UI is clean, simple and self-explanatory.</p>
       <div class="callout">
-        <strong>Built versus planned.</strong> The code (release 0.1.1) implements everything below for freezers. Products, quantities, the movement log, restock, the shopping list, statistics, pictures and scanning are not freezer specific. The storage layout, the dates on a batch, the reminders, the seeded catalog and the wording are, and section 10.7 describes how they generalise. Sections 10.8 to 10.10 design the optional modules on top: fridge and pantry, household supplies and receipt scanning. Names in code such as <code>Freezer</code> and <code>frozenOn</code> describe what exists today.
+        <strong>Built versus planned.</strong> Release 0.1.1 implemented everything below for freezers. The code since then (not yet released) is Foodie: storage domains with a tab each (10.7), fridge and pantry (10.8), household basics (10.9) and receipt scanning (10.10) are built, and names in code are neutral (<code>StoragePlace</code>, <code>storedOn</code>). Only the full household supplies module (10.9) is still planned. Where this document says "today" or "planned" about those parts, it describes the state before they were built.
       </div>
       <div class="callout">
         <strong>Priorities.</strong> Food comes first: the freezer, then the fridge and pantry, then receipt scanning, until all of it is set up for regular use. Household supplies (cleaning, bathroom, garden and more) get their bare bones early, off by default so the user can switch them on, and their full feature set afterwards. Every design decision for the food features must keep that expansion open; section 10.7 lists the rules that make sure it does.
@@ -275,8 +275,8 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <div class="table-wrapper"><table>
         <thead><tr><th>Goal</th><th>Architectural consequence</th></tr></thead>
         <tbody>
-          <tr><td>Track what the household has, where, and since when</td><td>Inventory is modelled as <em>stock batches</em> (one physical package or box with its own date) placed in <em>compartments</em> (drawers, baskets, shelves) of <em>storage places</em>, not as a single counter per product. Built for freezers; fridge, pantry, cupboard and supply storage are planned (10.7).</td></tr>
-          <tr><td>Remind the user of goods to use first</td><td>Every batch carries the date it was stored (<code>frozenOn</code> today) and an optional <code>bestBeforeOn</code>; every product or category carries a recommended maximum storage duration; a reminder planner turns these into scheduled digests. Best-before dates as a reminder trigger are planned (10.7).</td></tr>
+          <tr><td>Track what the household has, where, and since when</td><td>Inventory is modelled as <em>stock batches</em> (one physical package or box with its own date) placed in <em>compartments</em> (drawers, baskets, shelves) of <em>storage places</em>, not as a single counter per product. Built for freezers, fridges, pantries, cupboards and supply storage (10.7).</td></tr>
+          <tr><td>Remind the user of goods to use first</td><td>Every batch carries the date it was stored (<code>storedOn</code>), an optional <code>bestBeforeOn</code> and an optional <code>openedOn</code>; every product or category carries a recommended maximum storage duration; a reminder planner turns these into scheduled digests. Best-before and opened-on dates are reminder triggers (10.7).</td></tr>
           <tr><td>Track needs and advise restocking when running low</td><td>Per-product restock rules (minimum and target quantity), a shopping list, and later consumption-rate forecasts from the movement log.</td></tr>
           <tr><td>Support the user intuitively</td><td>Fast paths (one-tap consume, quick add from shopping list, recently used products), sensible seeded catalog, onboarding, accessible design system.</td></tr>
           <tr><td>Statistics on preferences and habits with graphical tools</td><td>Append-only movement log as the analytic fact table; a read-only statistics module with SQL aggregations and chart widgets.</td></tr>
@@ -374,7 +374,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <details class="decision">
         <summary><span>D8 · Navigation: go_router with module-contributed routes</span><span class="badge is-ok">Feasible</span></summary>
         <div class="decision-body">
-          <h5>Choice</h5><p>The shell builds one <code>GoRouter</code> from routes contributed by modules, with a <code>StatefulShellRoute</code> for the bottom navigation (today: Home, Freezer, Shopping list, Insights, Config; planned: Home, one tab per enabled storage domain, Lists, More, see 10.7). Notification taps deep-link into routes.</p>
+          <h5>Choice</h5><p>The shell builds one <code>GoRouter</code> from routes contributed by modules, with a <code>StatefulShellRoute</code> for the bottom navigation (Home, one tab per enabled storage domain, Lists, More, see 10.7; release 0.1.1 had Home, Freezer, Shopping list, Insights, Config). Notification taps deep-link into routes.</p>
           <h5>Risk</h5><p>Route path collisions between modules. Mitigation: each module prefixes its paths with its identifier, and the registry asserts uniqueness at start-up in debug builds.</p>
         </div>
       </details>
@@ -447,7 +447,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       </details>
 
       <details class="decision">
-        <summary><span>D16 · Receipt text recognition: on-device OCR behind an interface (planned)</span><span class="badge is-warning">Feasible, verify configuration</span></summary>
+        <summary><span>D16 · Receipt text recognition: on-device OCR behind an interface</span><span class="badge is-ok">Built</span></summary>
         <div class="decision-body">
           <h5>Choice</h5><p>A <code>ReceiptTextRecognizer</code> interface returning text lines with their position on the image. On Android it is implemented with ML Kit text recognition using the <em>bundled</em> Latin model (shipped inside the app, works offline), through <code>google_mlkit_text_recognition</code>; on iOS with the same plugin or Apple's on-device Vision text recognition. Everything after recognition (finding item lines, prices, quantities, the date and the total) is pure Dart in the domain layer.</p>
           <h5>Alternatives</h5><ul><li><strong>Tesseract</strong> (open source, for example through <code>flutter_tesseract_ocr</code>): no Google code, but noticeably weaker on faded thermal paper and curved receipts, and its language data adds 10 to 20 MB.</li><li><strong>Cloud receipt APIs</strong> (Google Document AI, AWS Textract, Veryfi and similar): very accurate and already structured, but every receipt would leave the phone. Rejected.</li><li><strong>An on-device language model</strong> for parsing: flexible, but large, slow on older phones and hard to test. The rule-based parser plus learned mappings is predictable and testable.</li></ul>
@@ -543,7 +543,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li>Core packages never depend on feature packages.</li>
         <li>A feature may depend on another feature's <em>public API</em> only, and the feature graph must stay acyclic (checked in CI with a small script over the pubspecs).</li>
         <li>The app shell is the only package that knows the complete list of modules.</li>
-        <li>No package except <code>core_notifications</code> may import a platform plugin for notifications; no package except <code>core_database</code> may import Drift; only <code>core_media_storage</code> may import image plugins; only <code>feature_barcode_scanning</code> may import the scanner; only <code>feature_receipt_scanning</code> (planned) may import the text recognizer. Plugins stay at the edges.</li>
+        <li>No package except <code>core_notifications</code> may import a platform plugin for notifications; no package except <code>core_database</code> may import Drift; only <code>core_media_storage</code> may import image plugins; only <code>feature_barcode_scanning</code> may import the scanner; only <code>feature_receipt_scanning</code> may import the text recognizer. Plugins stay at the edges.</li>
       </ol>
     </section>
 
@@ -609,11 +609,11 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Config sections</td><td>Default portion sizes for meal planning; the freezer layout editor is itself a contributed section.</td></tr>
           <tr><td>Insight charts</td><td>Restock contributes a "runs out in" forecast chart; a meal planner could add "planned vs eaten".</td></tr>
           <tr><td>Event subscriptions</td><td>Meal planner reserves stock batches when <code>StockBatchAdded</code> arrives.</td></tr>
-          <tr><td>Quick actions</td><td>Barcode scanning adds "Scan to add" and "Scan to remove" to the floating add menu; receipt scanning (planned) adds "Scan receipt". Later: a home-screen shortcut.</td></tr>
+          <tr><td>Quick actions</td><td>Barcode scanning adds "Scan to add" and "Scan to remove" to the floating add menu; receipt scanning adds "Scan receipt". Later: a home-screen shortcut.</td></tr>
           <tr><td>Item visual provider</td><td>Item pictures supplies photos to inventory lists; without the module, lists fall back to the category icon.</td></tr>
           <tr><td>Module availability</td><td>Optional modules (barcode scanning) can be switched off in the Config tab; their contributions disappear without a restart.</td></tr>
-          <tr><td>Storage kinds (planned)</td><td>Fridge contributes fridge kinds, pantry contributes pantry and cupboard kinds; household supplies contributes cleaning cupboard, bathroom cabinet and garden shed (10.7).</td></tr>
-          <tr><td>Seeded catalog (planned)</td><td>Each domain module brings its own categories and products, translated like the freezer catalog.</td></tr>
+          <tr><td>Storage kinds</td><td>Fridge contributes fridge kinds, pantry contributes pantry and cupboard kinds; household supplies contributes cleaning cupboard, bathroom cabinet and garden shed (10.7).</td></tr>
+          <tr><td>Seeded catalog</td><td>Each domain module brings its own categories and products, translated like the freezer catalog.</td></tr>
           <tr><td>Schema (via core_database)</td><td>New tables in a new feature folder plus one numbered migration.</td></tr>
           <tr><td>Backup participation</td><td>Automatic: the backup copies the whole database, so new tables are included without extra code.</td></tr>
         </tbody>
@@ -621,7 +621,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <h3>Ideas this design should not block</h3>
       <ul>
         <li><strong>QR labels for homemade meals</strong>: print a label whose QR code holds the batch id, so leftovers can be scanned out like bought goods.</li>
-        <li><strong>A fridge, pantry or supply cupboard next to the freezer</strong>: now part of the product scope, planned in section 10.7. The storage layout already stores a <code>storageKind</code> per storage place.</li>
+        <li><strong>A fridge, pantry or supply cupboard next to the freezer</strong>: now part of the product scope and built, section 10.7. The storage layout already stores a <code>storageKind</code> per storage place.</li>
         <li><strong>Consumption forecasts</strong>: the movement log already contains the time series needed.</li>
         <li><strong>Sharing between the phones of one household</strong> without a server, for example by exchanging encrypted export files. This is the one idea that pulls against "data never leaves the app" and needs a product decision first.</li>
       </ul>
@@ -672,7 +672,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
 
     <!-- planned features -->
     <section id="planned-features">
-      <h2>10. Planned features</h2>
+      <h2>10. Features beyond the core</h2>
       <p>Partial removal, pictures, barcode scanning (added in draft 2), and freezer layout editing, the Config tab and in-depth statistics (added in version 2) are designed so that the foundation does not have to change later. All of them are built. Section 10.7 plans the next step, from the freezer to the whole household. Partial removal is part of the inventory itself. Pictures and barcode scanning are separate packages that the inventory never imports; they plug in through the extension points in section 7.</p>
 
       <h3>10.1 Partial removal</h3>
@@ -733,7 +733,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Appearance</td><td>System, light or dark theme; text size follows the system</td><td>configuration</td></tr>
           <tr><td>Reminders</td><td>Digest time, lock-screen privacy, storage limits per category</td><td>storage_reminders</td></tr>
           <tr><td>Restock</td><td>Minimum quantities per product</td><td>restock</td></tr>
-          <tr><td>Optional features</td><td>Barcode scanning on or off; item pictures on or off; planned: Freezer, Fridge and Pantry tabs (on by default), Household tab and receipt scanning (both off by default); planned home of this whole table: Options in the More tab</td><td>configuration (reads <code>ModuleAvailability</code>)</td></tr>
+          <tr><td>Optional features</td><td>Barcode scanning on or off; item pictures on or off; Freezer, Fridge and Pantry tabs (on by default), Household tab and receipt scanning (both off by default); this whole table lives in Options in the More tab</td><td>configuration (reads <code>ModuleAvailability</code>)</td></tr>
           <tr><td>Backup and export</td><td>Encrypted backup, restore, CSV export, last backup date</td><td>data_portability</td></tr>
           <tr><td>About and privacy</td><td>"Your data never leaves this phone", licences, version</td><td>configuration</td></tr>
         </tbody>
@@ -828,7 +828,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li>On phones charts stack in one scrolling column; tablets show two columns. The filter row stays pinned at the top.</li>
       </ul>
 
-      <h3 id="household-scope">10.7 From freezer to household (planned)</h3>
+      <h3 id="household-scope">10.7 From freezer to household (built)</h3>
       <p>The household scope reuses the existing architecture. No new layer is needed; the work is generalising names, dates and seeded data that were written for freezers, adding two optional feature modules (10.8 and 10.9), and two new contributions to the module contract. Nothing in 10.7 to 10.9 is built yet.</p>
 
       <h4>Storage domains</h4>
@@ -858,7 +858,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
 
       <h4>Shared changes that both modules build on</h4>
       <div class="table-wrapper"><table>
-        <thead><tr><th>Area</th><th>Today (freezer)</th><th>Planned (household)</th><th>Where</th></tr></thead>
+        <thead><tr><th>Area</th><th>Release 0.1.1 (freezer)</th><th>Now (household)</th><th>Where</th></tr></thead>
         <tbody>
           <tr><td>Storage kinds</td><td><code>StorageKind</code> enum: upright, chest, fridge freezer compartment</td><td>A <code>StorageKindDefinition</code> (identifier, domain, templates, default compartment names, icon) that modules contribute through a new <code>storageKindContributions</code> getter on <code>FeatureModule</code>. The freezer kinds stay in storage_layout.</td><td>core_module_contract, storage_layout</td></tr>
           <tr><td>Storage places</td><td><code>Freezer</code> entity and <code>freezers</code> table</td><td>Renamed to a neutral <code>StoragePlace</code> in one migration; the table already has <code>storageKind</code>, so no data changes shape.</td><td>storage_layout, core_database</td></tr>
@@ -889,7 +889,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Simplicity:</strong> a household that only wants the freezer switches the pantry off and sees one stock tab, as today. Five bottom-navigation tabs stay the ceiling.</li>
       </ul>
 
-      <h3 id="pantry-management">10.8 Fridge and pantry (planned, optional, both on by default)</h3>
+      <h3 id="pantry-management">10.8 Fridge and pantry (built, optional, both on by default)</h3>
       <p>New packages: <code>feature_fridge</code> (the Fridge tab) and <code>feature_pantry</code> (the Pantry tab). Together they cover food kept outside the freezer. Both are thin domain modules: the best-before, opened-on and shelf-life machinery lives in inventory and product_catalog (10.7), so the two only add storage kinds, catalogs and wording, and a household can switch each one on or off on its own. What sets them apart from the freezer is time. Frozen food lasts months; milk lasts days, bread two or three, fresh herbs one. Best-before dates and opened packages matter more than storage age.</p>
       <ul>
         <li><strong>Storage kinds and templates:</strong> Fridge tab: fridge (shelves, door, vegetable drawer), drinks fridge, wine fridge. Pantry tab: pantry (shelves), kitchen cupboard (shelves), cellar, drinks crate. Contributed through <code>storageKindContributions</code>; the layout editor, the move flow and archiving work unchanged.</li>
@@ -930,7 +930,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Out of scope:</strong> things a household keeps but does not use up (tools, furniture, electronics). That is an inventory of possessions, not of stock, and would need warranties, values and locations of single objects.</li>
       </ul>
 
-      <h3 id="receipt-scanning">10.10 Receipt scanning (planned, optional, off by default)</h3>
+      <h3 id="receipt-scanning">10.10 Receipt scanning (built, optional, off by default)</h3>
       <p>New package: <code>feature_receipt_scanning</code>. After shopping, the user photographs the receipt. Text recognition on the phone reads it, the app suggests the purchases to add to the household, and the user confirms them in one step. Every receipt is archived, and its text is searchable. Off by default like barcode scanning, because it uses the camera; it is one switch in Config → Optional features.</p>
       <div class="table-wrapper"><table>
         <thead><tr><th>Step</th><th>What happens</th><th>Where</th></tr></thead>
@@ -975,8 +975,8 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Picture files outside the database</td><td>Not covered by SQLCipher</td><td>AES-GCM file encryption with a device-only key (D11); files excluded from OS backups like the database.</td></tr>
           <tr><td>Camera access</td><td>Permission prompt at install or first launch</td><td>Requested only when the user first takes a photo or scans; clear iOS usage descriptions in every supported language.</td></tr>
           <tr><td>Product lookup databases (Open Food Facts)</td><td>Would send barcodes to a server</td><td>Out of scope; contradicts the privacy goal. Seeded offline catalog instead.</td></tr>
-          <tr><td>Receipt recognition (planned)</td><td>Most receipt apps upload the photo to a cloud OCR service</td><td>On-device OCR with a bundled model only (D16); no <code>INTERNET</code> permission.</td></tr>
-          <tr><td>Receipt contents (planned)</td><td>Card digits, loyalty numbers and shop locations are printed on receipts</td><td>Card and loyalty numbers are masked in stored and indexed text; receipt images are encrypted files (D11), excluded from OS backups, and optional in exports.</td></tr>
+          <tr><td>Receipt recognition</td><td>Most receipt apps upload the photo to a cloud OCR service</td><td>On-device OCR with a bundled model only (D16); no <code>INTERNET</code> permission.</td></tr>
+          <tr><td>Receipt contents</td><td>Card digits, loyalty numbers and shop locations are printed on receipts</td><td>Card and loyalty numbers are masked in stored and indexed text; receipt images are encrypted files (D11), excluded from OS backups, and optional in exports.</td></tr>
           <tr><td>Notifications on the lock screen</td><td>Content visible</td><td>Digest text avoids item names by default; option to show names.</td></tr>
         </tbody>
       </table></div>
@@ -1009,16 +1009,16 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>Scan to remove a specific bag</td><td>Retail barcodes identify a product, not a package.</td><td><span class="badge is-warning">Changed</span> suggest the oldest batch; QR labels for exact bags are a later idea.</td></tr>
           <tr><td>Pictures in backups</td><td>About 300 KB per photo; 200 photos is about 60 MB, fine for a file the user saves themselves.</td><td><span class="badge is-ok">Fine</span> with an "export without pictures" option.</td></tr>
           <tr><td>Encrypting picture files</td><td>AES-GCM on a 300 KB file takes milliseconds with native crypto (for example <code>cryptography_flutter</code>).</td><td><span class="badge is-ok">Fine</span> decrypt thumbnails lazily and cache them in memory.</td></tr>
-          <tr><td>Receipt OCR offline (planned)</td><td>ML Kit text recognition has a bundled Latin model for Android; iOS has on-device Vision text recognition. Both run without network.</td><td><span class="badge is-ok">Fine</span> verify the bundled variant at implementation (D16).</td></tr>
-          <tr><td>Parsing any store's receipt (planned)</td><td>Layouts, abbreviations and quantity formats differ by store and country; thermal paper fades.</td><td><span class="badge is-warning">Changed</span> rule-based parser plus per-store learned mappings, user review before adding, unrecognised lines flagged instead of guessed.</td></tr>
-          <tr><td>Full-text search in the encrypted database (planned)</td><td>Searching receipts needs an index; SQLite's FTS5 works inside SQLCipher because encryption is below the page level.</td><td><span class="badge is-ok">Fine</span> verify that the bundled SQLCipher build has FTS5 enabled.</td></tr>
-          <tr><td>Receipt image size (planned)</td><td>Greyscale JPEG at about 1600 px height per page is roughly 150 to 300 KB; a weekly shop for a year is 15 to 30 MB.</td><td><span class="badge is-ok">Fine</span> with "keep text only after N months" and "export without pictures".</td></tr>
+          <tr><td>Receipt OCR offline</td><td>ML Kit text recognition has a bundled Latin model for Android; iOS has on-device Vision text recognition. Both run without network.</td><td><span class="badge is-ok">Fine</span> verified: only the bundled Latin model is included; the other scripts are left out and the release build tells R8 so (D16).</td></tr>
+          <tr><td>Parsing any store's receipt</td><td>Layouts, abbreviations and quantity formats differ by store and country; thermal paper fades.</td><td><span class="badge is-warning">Changed</span> rule-based parser plus per-store learned mappings, user review before adding, unrecognised lines flagged instead of guessed.</td></tr>
+          <tr><td>Full-text search in the encrypted database</td><td>Searching receipts needs an index; SQLite's FTS5 works inside SQLCipher because encryption is below the page level.</td><td><span class="badge is-ok">Fine</span> verified: the receipt search index is an FTS5 table in the SQLCipher database.</td></tr>
+          <tr><td>Receipt image size</td><td>Greyscale JPEG at about 1600 px height per page is roughly 150 to 300 KB; a weekly shop for a year is 15 to 30 MB.</td><td><span class="badge is-ok">Fine</span> with "keep text only after N months" and "export without pictures".</td></tr>
           <tr><td>Heatmap and freezer map charts</td><td>fl_chart has line, bar, pie, scatter and radar charts, but no calendar heatmap or treemap-style map.</td><td><span class="badge is-warning">Changed</span> two custom painters in the chart kit (D7).</td></tr>
           <tr><td>About ten charts re-querying on every filter change</td><td>Each is one indexed aggregate over at most tens of thousands of movements, so milliseconds each on Drift's background isolate.</td><td><span class="badge is-ok">Fine</span> debounce 150 ms; lazy-load charts below the fold.</td></tr>
           <tr><td>Summing amounts across products</td><td>Grams, millilitres and pieces cannot be added up meaningfully.</td><td><span class="badge is-warning">Changed</span> a measure selector; never mix units in one chart.</td></tr>
           <tr><td>Language picker in the app</td><td><code>MaterialApp.locale</code> switches instantly. Android 13+ and iOS also have per-app language screens in system settings.</td><td><span class="badge is-ok">Fine</span> declare supported locales to the OS; a platform channel keeps Android 13+ in sync (D14).</td></tr>
           <tr><td>Removing a drawer that holds items</td><td>Batches and past movements reference the drawer.</td><td><span class="badge is-warning">Changed</span> move contents, then archive; never hard-delete (D13).</td></tr>
-          <tr><td>Five bottom-navigation tabs</td><td>Material guidelines allow 3 to 5 destinations.</td><td><span class="badge is-ok">Fine</span> at the ceiling today. <span class="badge is-warning">Changed</span> for storage domains (planned): Home, up to four domain tabs, Lists and More, so six by default and seven at most; accepted for one-word labels with icons, and fewer when domains are switched off.</td></tr>
+          <tr><td>Five bottom-navigation tabs</td><td>Material guidelines allow 3 to 5 destinations.</td><td><span class="badge is-warning">Changed</span> for storage domains: Home, up to four domain tabs, Lists and More, so six by default and seven at most; accepted for one-word labels with icons, and fewer when domains are switched off. With seven tabs on a narrow phone the labels shrink slightly to stay on one line.</td></tr>
           <tr><td>Recommended storage durations</td><td>Values like "beef 6 to 12 months" vary by source and are guidance, not safety guarantees.</td><td><span class="badge is-ok">Fine</span> seeded defaults, editable, labelled as recommendations.</td></tr>
         </tbody>
       </table></div>
@@ -1027,12 +1027,12 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
     <!-- 12 -->
     <section id="structure">
       <h2>13. Repository layout</h2>
-<pre class="folder-tree"><code>freezer_app/
+<pre class="folder-tree"><code>foodie/
 ├── pubspec.yaml                      # workspace root: lists all packages below
 ├── analysis_options.yaml             # shared strict lints
 ├── tool/                             # dependency-rule check, package template, ARB merge
 ├── apps/
-│   └── freezer_app/                  # app shell (composition root)
+│   └── foodie_app/                   # app shell (composition root)
 │       ├── lib/main.dart
 │       ├── lib/src/module_registry.dart
 │       ├── lib/src/application_router.dart
@@ -1080,10 +1080,15 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         ├── feature_statistics/
         ├── feature_data_portability/
         ├── feature_storage_layout/
-        ├── feature_configuration/            # the Config tab
+        ├── feature_configuration/            # Options in the More tab
         ├── feature_onboarding/
         ├── feature_item_pictures/
-        └── feature_barcode_scanning/         # optional</code></pre>
+        ├── feature_barcode_scanning/         # optional
+        ├── feature_freezer/                  # Freezer domain: kinds, catalog, wording
+        ├── feature_fridge/                   # Fridge domain
+        ├── feature_pantry/                   # Pantry domain
+        ├── feature_household_supplies/       # Household domain, off by default
+        └── feature_receipt_scanning/         # optional, off by default</code></pre>
       <h3>Naming conventions</h3>
       <ul>
         <li>Packages: <code>core_*</code> and <code>feature_*</code>. Files: <code>snake_case</code> matching the main class.</li>
@@ -1123,10 +1128,10 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
           <tr><td>5 · Insights</td><td>Shared filter, saved views, KPI tiles, trend, category, calendar, weekday, duration, freezer map, top products and waste charts, chart kit painters</td><td>statistics, design_system chart kit</td></tr>
           <tr><td>6 · Pictures</td><td>Product and batch photos, thumbnails in lists, pictures in backups</td><td>core_media_storage, item_pictures</td></tr>
           <tr><td>7 · Barcode scanning</td><td>Optional scanner, code learning, scan to add, scan to remove, continuous mode</td><td>barcode_scanning</td></tr>
-          <tr><td>8 · Household foundation (planned)</td><td>Neutral wording and names, storage domains with one tab each (Freezer as a domain module), Lists tab (shopping list, receipts) and More tab (Statistics, Options), storage kind and catalog contributions, shelf life in days, weeks or months, best-before and opened-on dates in reminders, domain filter in statistics (10.7)</td><td>app shell, core_module_contract, freezer, storage_layout, inventory, product_catalog, configuration, storage_reminders, statistics</td></tr>
-          <tr><td>9 · Fridge and pantry (planned)</td><td>Fridge and Pantry tabs, fridge, pantry and cupboard kinds, best-before entry, "mark as opened", fridge and pantry catalogs, both on by default (10.8)</td><td>fridge, pantry</td></tr>
-          <tr><td>9b · Household basics (planned)</td><td>Household tab, supply storage kinds, small seeded catalog, plain restock rules; off by default (10.9)</td><td>household_supplies</td></tr>
-          <tr><td>10 · Receipt scanning (planned)</td><td>Capture, on-device OCR, parser, matching with learned mappings, review with flagged unknowns, bulk add, receipt archive with full-text search, off by default (10.10)</td><td>receipt_scanning, core_media_storage, core_database</td></tr>
+          <tr><td>8 · Household foundation (built)</td><td>Neutral wording and names, storage domains with one tab each (Freezer as a domain module), Lists tab (shopping list, receipts) and More tab (Statistics, Options), storage kind and catalog contributions, shelf life in days, weeks or months, best-before and opened-on dates in reminders, domain filter in statistics (10.7)</td><td>app shell, core_module_contract, freezer, storage_layout, inventory, product_catalog, configuration, storage_reminders, statistics</td></tr>
+          <tr><td>9 · Fridge and pantry (built)</td><td>Fridge and Pantry tabs, fridge, pantry and cupboard kinds, best-before entry, "mark as opened", fridge and pantry catalogs, both on by default (10.8)</td><td>fridge, pantry</td></tr>
+          <tr><td>9b · Household basics (built)</td><td>Household tab, supply storage kinds, small seeded catalog, plain restock rules; off by default (10.9)</td><td>household_supplies</td></tr>
+          <tr><td>10 · Receipt scanning (built)</td><td>Capture, on-device OCR, parser, matching with learned mappings, review with flagged unknowns, bulk add, receipt archive with full-text search, off by default (10.10)</td><td>receipt_scanning, core_media_storage, core_database</td></tr>
           <tr><td>11 · Household supplies, full (later)</td><td>Full supplies catalog, named pieces, restock-first add flow, expiry for medicine and similar, statistics views (10.9). Starts once the food features are in regular use.</td><td>household_supplies</td></tr>
           <tr><td>Later</td><td>Consumption forecasts, QR labels for homemade meals, home-screen widgets, meal planning</td><td>new feature packages</td></tr>
         </tbody>
@@ -1141,7 +1146,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Target platforms:</strong> this plan assumes Android and iOS. Desktop or web would change the encryption and notification choices.</li>
         <li><strong>Initial languages:</strong> the plan assumes English and German first; any right-to-left language planned early?</li>
         <li><strong>OS backups:</strong> the plan excludes the database from Google Drive and iCloud backups. Some users might prefer the convenience; should it become an opt-in setting?</li>
-        <li><strong>Prices:</strong> the planned receipt archive keeps the price of every receipt line. Should that feed "money spent" or "money wasted" statistics, or should prices stay inside the archive?</li>
+        <li><strong>Prices:</strong> the receipt archive keeps the price of every receipt line. Should that feed "money spent" or "money wasted" statistics, or should prices stay inside the archive?</li>
         <li><strong>Household sharing:</strong> is shared stock between the phones of one household a future goal? It shapes whether ids should be globally unique now (the plan uses UUIDs anyway, so this stays open cheaply).</li>
         <li><strong>App name:</strong> the repository and project are called Foodie, the installed app is still called Freezer. Is Foodie the name for the household app?</li>
       </ol>
@@ -1206,7 +1211,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       dependencies: ["feature_onboarding", "feature_inventory", "feature_product_catalog", "feature_storage_reminders", "feature_restock", "feature_statistics", "feature_data_portability", "feature_storage_layout", "feature_configuration", "feature_item_pictures", "feature_barcode_scanning", "feature_freezer", "feature_fridge", "feature_pantry", "feature_household_supplies", "feature_receipt_scanning"] },
 
     { identifier: "feature_storage_layout", label: "Storage layout", kind: "feature", phase: "1",
-      responsibility: "Storage places and compartments, built for freezers and their drawers: add from templates, rename, reorder, colour tags, archive. Removing a drawer moves its contents first. Default names stay translatable until renamed. Contributes the 'Freezer layout' Config section. Planned: storage kinds contributed by other modules, grouped into freezer, pantry and supplies domains (10.7).",
+      responsibility: "Storage places and compartments of every storage kind: add from templates, rename, reorder, colour tags, archive. Removing a drawer moves its contents first. Default names stay translatable until renamed. Contributes the 'Freezer layout' Config section. Planned: storage kinds contributed by other modules, grouped into freezer, pantry and supplies domains (10.7).",
       publicApi: ["StorageLayoutFeatureModule", "Freezer, Compartment entities", "StorageLayoutQueryService", "CompartmentDisplayNameResolver"],
       events: "Publishes CompartmentCreated, CompartmentRenamed, CompartmentReordered, CompartmentArchived",
       dependencies: ["core_database", "core_events", "core_module_contract", "core_design_system", "core_localization", "core_foundation"] },
@@ -1250,28 +1255,28 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       publicApi: ["ConfigurationFeatureModule", "SelectedLocaleProvider"],
       events: "None",
       dependencies: ["core_preferences", "core_localization", "core_module_contract", "core_design_system"] },
-    { identifier: "feature_freezer", label: "Freezer (planned)", kind: "feature", phase: "8",
-      responsibility: "Planned, optional, on by default. The freezer as a storage domain: the Freezer tab, freezer storage kinds and templates (moved from storage_layout) and the frozen-food catalog (moved from product_catalog). Behaviour unchanged.",
+    { identifier: "feature_freezer", label: "Freezer", kind: "feature", phase: "8",
+      responsibility: "Optional, on by default. The freezer as a storage domain: the Freezer tab, freezer storage kinds and templates (moved from storage_layout) and the frozen-food catalog (moved from product_catalog). Behaviour unchanged.",
       publicApi: ["FreezerFeatureModule"],
       events: "None of its own",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "core_module_contract", "core_design_system", "core_localization"] },
-    { identifier: "feature_fridge", label: "Fridge (planned)", kind: "feature", phase: "9",
-      responsibility: "Planned, optional, on by default. The Fridge tab: fridge, drinks fridge and wine fridge storage kinds, fridge catalog (dairy, fresh produce, meat and fish, leftovers) with short shelf lives and shelf lives after opening.",
+    { identifier: "feature_fridge", label: "Fridge", kind: "feature", phase: "9",
+      responsibility: "Optional, on by default. The Fridge tab: fridge, drinks fridge and wine fridge storage kinds, fridge catalog (dairy, fresh produce, meat and fish, leftovers) with short shelf lives and shelf lives after opening.",
       publicApi: ["FridgeFeatureModule"],
       events: "None of its own; uses inventory use cases, which publish StockBatch* events",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "core_module_contract", "core_design_system", "core_localization"] },
-    { identifier: "feature_pantry", label: "Pantry (planned)", kind: "feature", phase: "9",
-      responsibility: "Planned, optional, on by default. The Pantry tab: pantry, cupboard and cellar storage kinds, best-before entry with quick chips, 'mark as opened' with shelf life after opening, shelf lives down to one day, pantry catalog.",
+    { identifier: "feature_pantry", label: "Pantry", kind: "feature", phase: "9",
+      responsibility: "Optional, on by default. The Pantry tab: pantry, cupboard and cellar storage kinds, best-before entry with quick chips, 'mark as opened' with shelf life after opening, shelf lives down to one day, pantry catalog.",
       publicApi: ["PantryFeatureModule"],
       events: "None of its own; uses inventory use cases, which publish StockBatch* events",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "core_module_contract", "core_design_system", "core_localization"] },
-    { identifier: "feature_household_supplies", label: "Household (planned)", kind: "feature", phase: "9b, 11",
+    { identifier: "feature_household_supplies", label: "Household", kind: "feature", phase: "9b, 11",
       responsibility: "Optional, off by default; the Household tab. Bare bones early (tab, storage kinds, small catalog, plain restock), full features after the food features. Non-food articles: cleaning, laundry, bathroom, garden, pets, first aid, technical supplies. Supply storage kinds, supplies catalog, restock-first add flow, expiry dates where they exist.",
       publicApi: ["HouseholdSuppliesFeatureModule"],
       events: "None of its own; uses inventory and restock use cases",
       dependencies: ["feature_storage_layout", "feature_inventory", "feature_product_catalog", "feature_restock", "core_module_contract", "core_design_system", "core_localization"] },
-    { identifier: "feature_receipt_scanning", label: "Receipts (planned)", kind: "feature", phase: "10",
-      responsibility: "Planned, optional, off by default. Photograph a receipt, recognise its text on the device, parse item lines, match them to products (learned per store), flag unknown lines for the user, add confirmed items in one step. Keeps an encrypted receipt archive with full-text search.",
+    { identifier: "feature_receipt_scanning", label: "Receipts", kind: "feature", phase: "10",
+      responsibility: "Optional, off by default. Photograph a receipt, recognise its text on the device, parse item lines, match them to products (learned per store), flag unknown lines for the user, add confirmed items in one step. Keeps an encrypted receipt archive with full-text search.",
       publicApi: ["ReceiptScanningFeatureModule"],
       events: "Publishes ReceiptArchived; adds stock through inventory use cases, which publish StockBatch* events",
       dependencies: ["feature_inventory", "feature_product_catalog", "core_media_storage", "core_database", "core_events", "core_preferences", "core_module_contract", "core_design_system", "core_localization"] },

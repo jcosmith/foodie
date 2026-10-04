@@ -6,8 +6,8 @@ import 'insight_detail_chart_cards.dart';
 import 'insight_screen_layout.dart';
 import 'statistics_formatting.dart';
 
-/// "Insights · details" (UI examples document, phone 9): when and where the
-/// freezer is used, and charts other modules contribute, under the same filter.
+/// "Statistics · details" (UI examples document, phone 9): when and where the
+/// storage is used, and charts other modules contribute, under the same filter.
 class InsightDetailsScreen extends ConsumerWidget {
   const InsightDetailsScreen({super.key});
 
@@ -22,7 +22,7 @@ class InsightDetailsScreen extends ConsumerWidget {
         ActivityCalendarChartCard(analysis: analysis),
         WeekdayPatternChartCard(analysis: analysis),
         StorageDurationChartCard(analysis: analysis),
-        FreezerMapChartCard(filter: analysis.filter),
+        StorageMapChartCard(filter: analysis.filter),
         ...buildContributedInsightCharts(ref),
       ],
     );

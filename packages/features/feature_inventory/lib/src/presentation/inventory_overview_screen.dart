@@ -1,4 +1,6 @@
 import 'package:core_design_system/core_design_system.dart';
+import 'package:core_foundation/core_foundation.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +17,14 @@ import 'stock_item_tile.dart';
 /// How the overview lists the batches.
 enum InventoryListOrder { byCompartment, eatFirst }
 
-/// The "Freezer" tab (UI example phone 2): everything in the freezer, grouped
-/// by drawer or with the least freshness time left first, with a search over
-/// product names. Drawer groups collapse with a tap on their header.
+/// The stock screen every domain tab mounts with its own domain (UI example
+/// phones 2 and 12): everything in the domain's storage places, grouped by
+/// compartment or with the least time left first, with a search over product
+/// names. Compartment groups collapse with a tap on their header.
 class InventoryOverviewScreen extends ConsumerStatefulWidget {
-  const InventoryOverviewScreen({super.key});
+  const InventoryOverviewScreen({required this.domainIdentifier, super.key});
+
+  final StorageDomainIdentifier domainIdentifier;
 
   @override
   ConsumerState<InventoryOverviewScreen> createState() => _InventoryOverviewScreenState();
@@ -39,50 +44,65 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
   @override
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
-    final overview = ref.watch(inventoryOverviewProvider).value;
+    final overview = ref.watch(inventoryOverviewProvider).value?.ofDomain(widget.domainIdentifier);
+    final domain = ref
+        .watch(registeredStorageDomainsProvider)
+        .where((domain) => domain.identifier == widget.domainIdentifier)
+        .firstOrNull;
+    final addRoute = InventoryRoutes.addStockBatch(domainIdentifier: widget.domainIdentifier);
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(localizations.overviewTitle),
-            if (overview != null && overview.hasFreezer)
+            Text(domain?.labelBuilder(context) ?? localizations.overviewTitle),
+            if (overview != null && overview.hasStoragePlace)
               Text(
                 localizations.itemsInDrawers(
                   localizations.itemCount(overview.items.length),
-                  localizations.drawerCount(overview.layout.activeCompartments.length),
+                  _compartmentCountText(context, overview.layout),
                 ),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
           ],
         ),
       ),
-      floatingActionButton: overview != null && overview.hasFreezer
+      floatingActionButton: overview != null && overview.hasStoragePlace
           ? FloatingActionButton.extended(
-              onPressed: () => context.push(InventoryRoutes.addStockBatch()),
+              onPressed: () => context.push(addRoute),
               icon: const Icon(Icons.add),
               label: Text(localizations.addButton),
             )
           : null,
       body: switch (overview) {
         null => const Center(child: CircularProgressIndicator()),
-        final overview when !overview.hasFreezer => EmptyStateView(
+        final overview when !overview.hasStoragePlace => EmptyStateView(
           icon: Icons.kitchen_outlined,
-          title: localizations.noFreezerTitle,
-          message: localizations.noFreezerMessage,
-          actionLabel: localizations.setUpFreezerButton,
-          onActionPressed: () => context.push(StorageLayoutRoutes.newFreezer),
+          title: localizations.noStoragePlaceTitle,
+          message: localizations.noStoragePlaceMessage,
+          actionLabel: localizations.setUpStoragePlaceButton,
+          onActionPressed: () =>
+              context.push(StorageLayoutRoutes.newStoragePlaceIn(widget.domainIdentifier)),
         ),
         final overview when overview.items.isEmpty => EmptyStateView(
           icon: Icons.ac_unit,
           title: localizations.emptyTitle,
           message: localizations.emptyMessage,
           actionLabel: localizations.addButton,
-          onActionPressed: () => context.push(InventoryRoutes.addStockBatch()),
+          onActionPressed: () => context.push(addRoute),
         ),
         final overview => _buildContents(context, overview),
       },
     );
+  }
+
+  /// "3 drawers" when every place is of one kind, else "5 compartments".
+  String _compartmentCountText(BuildContext context, StorageLayout layout) {
+    final count = layout.activeCompartments.length;
+    final kinds = {for (final place in layout.storagePlaces) place.storagePlace.storageKind};
+    return kinds.length == 1
+        ? context.compartmentCountOf(kinds.single, count)
+        : InventoryLocalizations.of(context).drawerCount(count);
   }
 
   Widget _buildContents(BuildContext context, InventoryOverview overview) {
@@ -99,9 +119,9 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
       slivers: [
         SliverPadding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-            FreezerSpacing.screenGutter,
-            FreezerSpacing.small,
-            FreezerSpacing.screenGutter,
+            FoodieSpacing.screenGutter,
+            FoodieSpacing.small,
+            FoodieSpacing.screenGutter,
             0,
           ),
           sliver: SliverList.list(
@@ -121,25 +141,22 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                     ),
                 ],
               ),
-              const SizedBox(height: FreezerSpacing.small),
-              Row(
+              const SizedBox(height: FoodieSpacing.small),
+              // The orders stay together; "Collapse all" moves to the next
+              // line when the row is too narrow, as in German.
+              Wrap(
+                spacing: FoodieSpacing.small,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: FreezerSpacing.small,
-                      children: [
-                        for (final (listOrder, label) in [
-                          (InventoryListOrder.byCompartment, localizations.sortByDrawer),
-                          (InventoryListOrder.eatFirst, localizations.sortByEatBefore),
-                        ])
-                          ChoiceChip(
-                            label: Text(label),
-                            selected: _listOrder == listOrder,
-                            onSelected: (_) => setState(() => _listOrder = listOrder),
-                          ),
-                      ],
+                  for (final (listOrder, label) in [
+                    (InventoryListOrder.byCompartment, localizations.sortByDrawer),
+                    (InventoryListOrder.eatFirst, localizations.sortByEatBefore),
+                  ])
+                    ChoiceChip(
+                      label: Text(label),
+                      selected: _listOrder == listOrder,
+                      onSelected: (_) => setState(() => _listOrder = listOrder),
                     ),
-                  ),
                   if (_listOrder == InventoryListOrder.byCompartment && searchQuery.isEmpty)
                     _buildExpandAllButton(localizations, overview),
                 ],
@@ -175,13 +192,11 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
 
     if (_listOrder == InventoryListOrder.eatFirst) {
       return [
-        SliverList.list(
-          children: [for (final item in sortedByEatBefore(matchingItems)) tileFor(item)],
-        ),
+        SliverList.list(children: [for (final item in sortedByUseBy(matchingItems)) tileFor(item)]),
       ];
     }
     final nameResolver = context.compartmentDisplayNameResolver(overview.layout);
-    // While searching, every drawer with a match is open, so no match hides.
+    // While searching, every compartment with a match is open, so no match hides.
     final isSearching = _searchController.text.trim().isNotEmpty;
     final itemCount = InventoryLocalizations.of(context).itemCount;
     final slivers = <Widget>[];
@@ -196,7 +211,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
         SliverList.list(
           children: [
             _CompartmentHeader(
-              name: nameResolver.compartmentNameWithFreezer(compartment),
+              name: nameResolver.compartmentNameWithStoragePlace(compartment),
               color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
               itemCountText: itemCount(itemsInCompartment.length),
               isExpanded: isExpanded,
@@ -209,7 +224,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                     }),
             ),
             if (isExpanded)
-              for (final item in sortedByEatBefore(itemsInCompartment)) tileFor(item),
+              for (final item in sortedByUseBy(itemsInCompartment)) tileFor(item),
           ],
         ),
       );
@@ -217,7 +232,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
     return slivers;
   }
 
-  /// "Expand all" while any drawer is collapsed, otherwise "Collapse all".
+  /// "Expand all" while any compartment is collapsed, otherwise "Collapse all".
   Widget _buildExpandAllButton(InventoryLocalizations localizations, InventoryOverview overview) {
     final compartmentsWithItems = {
       for (final item in overview.items) item.batch.compartmentIdentifier,
@@ -239,8 +254,8 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
   }
 }
 
-/// A drawer's name and item count; tapping it collapses or expands the
-/// drawer's items when [onTap] is set.
+/// A compartment's name and item count; tapping it collapses or expands the
+/// compartment's items when [onTap] is set.
 class _CompartmentHeader extends StatelessWidget {
   const _CompartmentHeader({
     required this.name,
@@ -266,15 +281,15 @@ class _CompartmentHeader extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-            FreezerSpacing.screenGutter,
-            FreezerSpacing.large,
-            FreezerSpacing.screenGutter,
-            FreezerSpacing.extraSmall,
+            FoodieSpacing.screenGutter,
+            FoodieSpacing.large,
+            FoodieSpacing.screenGutter,
+            FoodieSpacing.extraSmall,
           ),
           child: Row(
             children: [
               Icon(Icons.circle, size: 12, color: color),
-              const SizedBox(width: FreezerSpacing.small),
+              const SizedBox(width: FoodieSpacing.small),
               Expanded(
                 child: Text(
                   name,
@@ -283,7 +298,7 @@ class _CompartmentHeader extends StatelessWidget {
               ),
               Text(itemCountText, style: textTheme.bodySmall),
               if (onTap != null) ...[
-                const SizedBox(width: FreezerSpacing.extraSmall),
+                const SizedBox(width: FoodieSpacing.extraSmall),
                 Icon(isExpanded ? Icons.expand_less : Icons.expand_more, size: 20),
               ],
             ],

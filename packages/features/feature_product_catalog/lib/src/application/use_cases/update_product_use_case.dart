@@ -58,6 +58,7 @@ final class UpdateProductUseCase {
         customName: () => customName,
         defaultPackageQuantity: () => packageQuantity,
         recommendedMaximumStorageDays: () => settings.recommendedMaximumStorageDays,
+        shelfLifeAfterOpeningDays: () => settings.shelfLifeAfterOpeningDays,
         iconEmoji: () => settings.trimmedIconEmoji,
         iconImage: () => settings.iconImage,
         defaultCompartmentIdentifier: () => settings.defaultCompartmentIdentifier,

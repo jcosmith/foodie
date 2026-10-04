@@ -46,24 +46,25 @@
   "unitLockedHint": "The unit stays fixed, because stock of this product is stored in it.",
   "packageSizeLabel": "Usual package size (optional)",
   "packageSizeHelper": "Pre-fills the amount when you add it.",
-  "storageMonthsLabel": "Keep for at most, in months (optional)",
-  "storageMonthsHelper": "{months, plural, =1{Leave empty to follow the category: about 1 month.} other{Leave empty to follow the category: about {months} months.}}",
-  "@storageMonthsHelper": {
+  "shelfLifeLabel": "Keeps for (optional)",
+  "shelfLifeHelper": "Leave empty to follow the category: {shelfLife}.",
+  "@shelfLifeHelper": {
     "placeholders": {
-      "months": {
-        "type": "int"
+      "shelfLife": {
+        "type": "String"
       }
     }
   },
+  "shelfLifeHelperNone": "Leave empty to keep no shelf life, as the category does.",
   "storageRecommendationNote": "Storage times are guidance, not a safety guarantee.",
   "iconLabel": "Icon (an emoji, optional)",
   "iconImageChoose": "Choose a picture",
   "iconImageRemove": "Remove picture",
   "iconImageHint": "A picture is shown instead of the emoji. Any picture file works; it is scaled to fit.",
   "iconImageUnreadable": "This file is no picture the app can read.",
-  "defaultCompartmentLabel": "Default drawer",
-  "defaultCompartmentNone": "The drawer used last time",
-  "defaultCompartmentHelper": "Chosen for you when you add this product to the freezer.",
+  "defaultCompartmentLabel": "Default compartment",
+  "defaultCompartmentNone": "The compartment used last time",
+  "defaultCompartmentHelper": "Chosen for you when you add this product.",
   "archiveProductAction": "Hide product",
   "archiveProductDialogTitle": "Hide {name}?",
   "@archiveProductDialogTitle": {
@@ -73,41 +74,10 @@
       }
     }
   },
-  "archiveProductDialogText": "It disappears from the product list. Items already in the freezer and your statistics keep it.",
+  "archiveProductDialogText": "It disappears from the product list. Items already at home and your statistics keep it.",
   "nameMissing": "Please enter a name.",
   "nameTooLong": "At most 40 characters.",
   "invalidSetting": "Amounts must be more than zero.",
   "invalidNumber": "Please enter a number.",
-  "genericFailure": "That did not work. Please try again.",
-  "categoryVegetables": "Vegetables",
-  "categoryFruit": "Fruit",
-  "categoryMeatAndFish": "Meat & fish",
-  "categoryMeals": "Meals",
-  "categoryBakery": "Bakery",
-  "categoryDesserts": "Desserts",
-  "categoryOther": "Other",
-  "productLeafSpinach": "Leaf spinach",
-  "productGardenPeas": "Garden peas",
-  "productBroccoli": "Broccoli",
-  "productMixedVegetables": "Mixed vegetables",
-  "productHerbs": "Herbs",
-  "productFrenchFries": "French fries",
-  "productMixedBerries": "Mixed berries",
-  "productStrawberries": "Strawberries",
-  "productMango": "Mango",
-  "productChickenBreast": "Chicken breast",
-  "productMincedMeat": "Minced meat",
-  "productSalmonFillet": "Salmon fillet",
-  "productFishFingers": "Fish fingers",
-  "productPrawns": "Prawns",
-  "productBologneseHomemade": "Bolognese (homemade)",
-  "productSoupHomemade": "Soup (homemade)",
-  "productLasagne": "Lasagne",
-  "productPizzaMargherita": "Pizza Margherita",
-  "productWholegrainBread": "Wholegrain bread",
-  "productBreadRolls": "Bread rolls",
-  "productCroissants": "Croissants",
-  "productVanillaIceCream": "Vanilla ice cream",
-  "productCake": "Cake",
-  "productButter": "Butter"
+  "genericFailure": "That did not work. Please try again."
 }

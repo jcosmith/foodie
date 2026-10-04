@@ -38,7 +38,7 @@ final class ProductCatalogFeatureModule extends FeatureModuleBase {
   @override
   List<RouteBase> buildRoutes() => buildProductCatalogRoutes();
 
-  /// Placed right after the freezer layout; the Config table of the
+  /// Placed right after the storage layout; the Options table of the
   /// architecture document has no row for products yet.
   @override
   List<ConfigSectionContribution> get configSections => [

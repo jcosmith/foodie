@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_spacing.dart';
 
 /// One entry of a [ChartLegend].
 @immutable
@@ -25,10 +25,10 @@ class ChartLegend extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodySmall;
     return Padding(
-      padding: const EdgeInsets.only(top: FreezerSpacing.small),
+      padding: const EdgeInsets.only(top: FoodieSpacing.small),
       child: Wrap(
-        spacing: FreezerSpacing.medium,
-        runSpacing: FreezerSpacing.extraSmall,
+        spacing: FoodieSpacing.medium,
+        runSpacing: FoodieSpacing.extraSmall,
         children: [
           for (final (index, entry) in entries.indexed)
             _LegendItem(
@@ -57,7 +57,7 @@ class _LegendItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ChartColorSwatch(color: entry.color),
-          const SizedBox(width: FreezerSpacing.extraSmall),
+          const SizedBox(width: FoodieSpacing.extraSmall),
           Text(
             entry.label,
             style: entry.isDimmed
@@ -73,9 +73,9 @@ class _LegendItem extends StatelessWidget {
       selected: !entry.isDimmed,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(FreezerSpacing.extraSmall),
+        borderRadius: BorderRadius.circular(FoodieSpacing.extraSmall),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: FreezerSpacing.extraSmall),
+          padding: const EdgeInsets.symmetric(vertical: FoodieSpacing.extraSmall),
           child: content,
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:core_database/core_database.dart';
 
 import '../domain/compartment.dart';
-import '../domain/freezer.dart';
 import '../domain/storage_kind.dart';
 import '../domain/storage_layout_repository.dart';
+import '../domain/storage_place.dart';
 
 /// [StorageLayoutRepository] on top of the storage layout DAO.
 final class DriftStorageLayoutRepository implements StorageLayoutRepository {
@@ -12,9 +12,9 @@ final class DriftStorageLayoutRepository implements StorageLayoutRepository {
   final StorageLayoutDao _storageLayoutDao;
 
   @override
-  Stream<List<Freezer>> watchFreezersIncludingArchived() => _storageLayoutDao
-      .watchFreezers(includeArchived: true)
-      .map((rows) => rows.map(_freezerFromRow).toList());
+  Stream<List<StoragePlace>> watchStoragePlacesIncludingArchived() => _storageLayoutDao
+      .watchStoragePlaces(includeArchived: true)
+      .map((rows) => rows.map(_storagePlaceFromRow).toList());
 
   @override
   Stream<List<Compartment>> watchCompartmentsIncludingArchived() => _storageLayoutDao
@@ -22,13 +22,13 @@ final class DriftStorageLayoutRepository implements StorageLayoutRepository {
       .map((rows) => rows.map(_compartmentFromRow).toList());
 
   @override
-  Future<List<Freezer>> readActiveFreezers() async =>
-      (await _storageLayoutDao.readFreezers()).map(_freezerFromRow).toList();
+  Future<List<StoragePlace>> readActiveStoragePlaces() async =>
+      (await _storageLayoutDao.readStoragePlaces()).map(_storagePlaceFromRow).toList();
 
   @override
-  Future<Freezer?> readFreezer(FreezerIdentifier freezerIdentifier) async {
-    final row = await _storageLayoutDao.readFreezer(freezerIdentifier.value);
-    return row == null ? null : _freezerFromRow(row);
+  Future<StoragePlace?> readStoragePlace(StoragePlaceIdentifier storagePlaceIdentifier) async {
+    final row = await _storageLayoutDao.readStoragePlace(storagePlaceIdentifier.value);
+    return row == null ? null : _storagePlaceFromRow(row);
   }
 
   @override
@@ -38,36 +38,37 @@ final class DriftStorageLayoutRepository implements StorageLayoutRepository {
   }
 
   @override
-  Future<List<Compartment>> readActiveCompartmentsOfFreezer(
-    FreezerIdentifier freezerIdentifier,
-  ) async => (await _storageLayoutDao.readCompartmentsOfFreezer(
-    freezerIdentifier.value,
+  Future<List<Compartment>> readActiveCompartmentsOfStoragePlace(
+    StoragePlaceIdentifier storagePlaceIdentifier,
+  ) async => (await _storageLayoutDao.readCompartmentsOfStoragePlace(
+    storagePlaceIdentifier.value,
   )).map(_compartmentFromRow).toList();
 
   @override
-  Future<int> readNextCompartmentDefaultNumber(FreezerIdentifier freezerIdentifier) =>
-      _storageLayoutDao.nextCompartmentDefaultNumber(freezerIdentifier.value);
+  Future<int> readNextCompartmentDefaultNumber(StoragePlaceIdentifier storagePlaceIdentifier) =>
+      _storageLayoutDao.nextCompartmentDefaultNumber(storagePlaceIdentifier.value);
 
   @override
-  Future<void> insertFreezer(Freezer freezer) => _storageLayoutDao.insertFreezer(
-    FreezerRow(
-      freezerIdentifier: freezer.identifier.value,
-      // The default name follows the storage kind; the key is kept so a
-      // later version can offer other default names without a migration.
-      defaultNameKey: freezer.storageKind.storageName,
-      customName: freezer.customName,
-      storageKind: freezer.storageKind.storageName,
-      sortOrder: freezer.sortOrder,
-      isArchived: freezer.isArchived,
-      createdAt: freezer.createdAt,
-    ),
-  );
+  Future<void> insertStoragePlace(StoragePlace storagePlace) =>
+      _storageLayoutDao.insertStoragePlace(
+        StoragePlaceRow(
+          storagePlaceIdentifier: storagePlace.identifier.value,
+          // The default name follows the storage kind; the key is kept so a
+          // later version can offer other default names without a migration.
+          defaultNameKey: storagePlace.storageKind.storageName,
+          customName: storagePlace.customName,
+          storageKind: storagePlace.storageKind.storageName,
+          sortOrder: storagePlace.sortOrder,
+          isArchived: storagePlace.isArchived,
+          createdAt: storagePlace.createdAt,
+        ),
+      );
 
   @override
   Future<void> insertCompartment(Compartment compartment) => _storageLayoutDao.insertCompartment(
     CompartmentRow(
       compartmentIdentifier: compartment.identifier.value,
-      freezerIdentifier: compartment.freezerIdentifier.value,
+      storagePlaceIdentifier: compartment.storagePlaceIdentifier.value,
       defaultNumber: compartment.defaultNumber,
       customName: compartment.customName,
       colorTagIndex: compartment.colorTagIndex,
@@ -78,19 +79,23 @@ final class DriftStorageLayoutRepository implements StorageLayoutRepository {
   );
 
   @override
-  Future<void> updateFreezerCustomName(FreezerIdentifier freezerIdentifier, String? customName) =>
-      _storageLayoutDao.updateFreezerCustomName(freezerIdentifier.value, customName);
+  Future<void> updateStoragePlaceCustomName(
+    StoragePlaceIdentifier storagePlaceIdentifier,
+    String? customName,
+  ) => _storageLayoutDao.updateStoragePlaceCustomName(storagePlaceIdentifier.value, customName);
 
   @override
-  Future<void> updateFreezerSortOrders(Map<FreezerIdentifier, int> sortOrderByFreezer) =>
-      _storageLayoutDao.updateFreezerSortOrders({
-        for (final MapEntry(key: freezerIdentifier, value: sortOrder) in sortOrderByFreezer.entries)
-          freezerIdentifier.value: sortOrder,
-      });
+  Future<void> updateStoragePlaceSortOrders(
+    Map<StoragePlaceIdentifier, int> sortOrderByStoragePlace,
+  ) => _storageLayoutDao.updateStoragePlaceSortOrders({
+    for (final MapEntry(key: storagePlaceIdentifier, value: sortOrder)
+        in sortOrderByStoragePlace.entries)
+      storagePlaceIdentifier.value: sortOrder,
+  });
 
   @override
-  Future<void> archiveFreezer(FreezerIdentifier freezerIdentifier) =>
-      _storageLayoutDao.archiveFreezer(freezerIdentifier.value);
+  Future<void> archiveStoragePlace(StoragePlaceIdentifier storagePlaceIdentifier) =>
+      _storageLayoutDao.archiveStoragePlace(storagePlaceIdentifier.value);
 
   @override
   Future<void> updateCompartmentCustomName(
@@ -117,9 +122,9 @@ final class DriftStorageLayoutRepository implements StorageLayoutRepository {
   Future<void> archiveCompartment(CompartmentIdentifier compartmentIdentifier) =>
       _storageLayoutDao.archiveCompartment(compartmentIdentifier.value);
 
-  static Freezer _freezerFromRow(FreezerRow row) => Freezer(
-    identifier: FreezerIdentifier(row.freezerIdentifier),
-    storageKind: StorageKind.fromStorageName(row.storageKind),
+  static StoragePlace _storagePlaceFromRow(StoragePlaceRow row) => StoragePlace(
+    identifier: StoragePlaceIdentifier(row.storagePlaceIdentifier),
+    storageKind: StorageKind(row.storageKind),
     customName: row.customName,
     sortOrder: row.sortOrder,
     isArchived: row.isArchived,
@@ -128,7 +133,7 @@ final class DriftStorageLayoutRepository implements StorageLayoutRepository {
 
   static Compartment _compartmentFromRow(CompartmentRow row) => Compartment(
     identifier: CompartmentIdentifier(row.compartmentIdentifier),
-    freezerIdentifier: FreezerIdentifier(row.freezerIdentifier),
+    storagePlaceIdentifier: StoragePlaceIdentifier(row.storagePlaceIdentifier),
     defaultNumber: row.defaultNumber,
     customName: row.customName,
     colorTagIndex: row.colorTagIndex,

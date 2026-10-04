@@ -6,6 +6,7 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:core_notifications/core_notifications.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -16,7 +17,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -27,8 +28,14 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
 
 /// A provider container over an in-memory database with the catalog seeded,
 /// one freezer and fake notifications. 2 October 2026, 09:00 UTC.
+///
+/// Every one of [registeredModules] is on, unless [enabledModules] names
+/// the ones that are.
 final class StorageRemindersTestHarness {
-  StorageRemindersTestHarness() {
+  StorageRemindersTestHarness({
+    List<FeatureModule> registeredModules = const [FreezerFeatureModule()],
+    List<FeatureModule>? enabledModules,
+  }) {
     final dependencies = ModuleDependencies(
       clock: clock,
       identifierGenerator: SequentialIdentifierGenerator(),
@@ -38,6 +45,10 @@ final class StorageRemindersTestHarness {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
+        registeredFeatureModulesProvider.overrideWithValue(registeredModules),
+        enabledFeatureModulesProvider.overrideWith(
+          (ref) => Stream.value(enabledModules ?? registeredModules),
+        ),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -67,12 +78,12 @@ final class StorageRemindersTestHarness {
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
 
-  Future<void> seedCatalogAndFreezer() async {
+  Future<void> seedCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(initializationContext);
     await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
   }
@@ -87,7 +98,7 @@ final class StorageRemindersTestHarness {
     return catalog.recommendedMaximumStorageDaysOf(product)!;
   }
 
-  Future<StockBatchIdentifier> addBatch(Product product, {required CalendarDate frozenOn}) async {
+  Future<StockBatchIdentifier> addBatch(Product product, {required CalendarDate storedOn}) async {
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
     final result = await container
         .read(addStockBatchUseCaseProvider)
@@ -98,7 +109,7 @@ final class StorageRemindersTestHarness {
             quantity:
                 product.defaultPackageQuantity ??
                 Quantity(amountInBaseUnits: 1, unit: product.canonicalUnit),
-            frozenOn: frozenOn,
+            storedOn: storedOn,
           ),
         );
     return result.valueOrNull!;

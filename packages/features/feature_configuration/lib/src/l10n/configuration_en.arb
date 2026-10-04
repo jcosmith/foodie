@@ -1,7 +1,9 @@
 {
   "@@locale": "en",
-  "navigationLabel": "Config",
-  "screenTitle": "Config",
+  "screenTitle": "Options",
+  "moreEntrySubtitle": "Tabs, optional features, language, appearance, reminders, backup",
+  "tabsSectionTitle": "Tabs",
+  "lastTabHint": "At least one tab stays on.",
   "languageSectionTitle": "Language",
   "systemLanguage": "System language",
   "systemLanguageDetail": "Follows your phone: {languageName}",

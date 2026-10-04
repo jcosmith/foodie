@@ -1,3 +1,4 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:meta/meta.dart';
 
 import 'category.dart';
@@ -49,6 +50,14 @@ final class ProductCatalog {
     final category = categoryOfProduct(product);
     return product.iconEmoji ?? category?.iconEmoji ?? '❄️';
   }
+
+  /// The domain of the product's category; `null` for an unknown category.
+  StorageDomainIdentifier? storageDomainOf(Product product) =>
+      categoryOfProduct(product)?.storageDomain;
+
+  /// The product's own shelf life after opening or its category's.
+  int? shelfLifeAfterOpeningDaysOf(Product product) =>
+      product.shelfLifeAfterOpeningDays ?? categoryOfProduct(product)?.shelfLifeAfterOpeningDays;
 
   /// The product's own recommendation or its category's.
   int? recommendedMaximumStorageDaysOf(Product product) {

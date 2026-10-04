@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_chart_colors.dart';
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_chart_colors.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 import 'chart_data.dart';
 
 /// A dashed vertical marker between columns, such as a recommended
@@ -49,7 +49,7 @@ class ColumnBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = context.freezerColors;
+    final tokens = context.foodieColors;
     final barColor = context.chartColors.singleSeries;
     final maximum = ChartScale.niceMaximum(
       values.fold(0, (largest, value) {
@@ -80,7 +80,7 @@ class ColumnBarChart extends StatelessWidget {
                         excludeSemantics: true,
                         child: InkWell(
                           onTap: onColumnTapped == null ? null : () => onColumnTapped!(index),
-                          borderRadius: BorderRadius.circular(FreezerSpacing.extraSmall),
+                          borderRadius: BorderRadius.circular(FoodieSpacing.extraSmall),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

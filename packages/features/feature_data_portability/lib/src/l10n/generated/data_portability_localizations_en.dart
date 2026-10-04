@@ -103,7 +103,7 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
 
   @override
   String get reminderCardMessage =>
-      'Your freezer data is only on this phone. Save a backup so that a lost or broken phone does not take it with it.';
+      'Your Foodie data is only on this phone. Save a backup so that a lost or broken phone does not take it with it.';
 
   @override
   String get csvColumnProduct => 'Product';
@@ -118,10 +118,10 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
   String get csvColumnUnit => 'Unit';
 
   @override
-  String get csvColumnFrozenOn => 'Frozen on';
+  String get csvColumnStoredOn => 'Stored on';
 
   @override
-  String get csvColumnDrawer => 'Drawer';
+  String get csvColumnDrawer => 'Compartment';
 
   @override
   String get csvColumnNote => 'Note';
@@ -157,6 +157,12 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
   String get reasonFreezerBurn => 'Freezer burn';
 
   @override
+  String get reasonExpired => 'Past its date';
+
+  @override
+  String get reasonSpoiled => 'Gone off';
+
+  @override
   String get reasonUnwanted => 'Nobody wanted it';
 
   @override
@@ -167,7 +173,7 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
 
   @override
   String get backupNotificationBody =>
-      'Everything in this app exists only on this phone. Save a backup so that a lost phone does not take your freezer list with it.';
+      'Everything in this app exists only on this phone. Save a backup so that a lost phone does not take your lists with it.';
 
   @override
   String get includePicturesLabel => 'Include photos';

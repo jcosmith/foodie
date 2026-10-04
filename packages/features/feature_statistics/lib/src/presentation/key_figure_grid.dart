@@ -7,7 +7,7 @@ import '../domain/statistics_analysis.dart';
 import '../domain/statistics_filter.dart';
 import 'statistics_formatting.dart';
 
-/// Eaten, added, thrown away and average days stored, each with its change
+/// Used, added, thrown away and average days stored, each with its change
 /// against the comparison period and a small chart (UI examples document,
 /// phone 7). Tapping one of the first three shows that activity in the
 /// category charts.
@@ -69,7 +69,7 @@ class KeyFigureGrid extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final columnCount = constraints.maxWidth >= 720 ? 4 : 2;
-        const gap = FreezerSpacing.small;
+        const gap = FoodieSpacing.small;
         final tileWidth = (constraints.maxWidth - gap * (columnCount - 1)) / columnCount;
         return Wrap(
           spacing: gap,

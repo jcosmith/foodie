@@ -17,7 +17,7 @@ void main() {
 
   setUp(() async {
     harness = ItemPicturesTestHarness();
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     await harness.startPictureModule();
   });
   tearDown(() => harness.dispose());

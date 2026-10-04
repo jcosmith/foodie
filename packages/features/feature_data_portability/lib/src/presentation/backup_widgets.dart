@@ -31,25 +31,25 @@ class BackupConfigSection extends ConsumerWidget {
                 ),
           style: textTheme.titleSmall,
         ),
-        const SizedBox(height: FreezerSpacing.extraSmall),
+        const SizedBox(height: FoodieSpacing.extraSmall),
         Text(localizations.backupExplanation, style: textTheme.bodySmall),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         FilledButton.icon(
           onPressed: () => showCreateBackupFlow(context, ref),
           icon: const Icon(Icons.save_alt_outlined),
           label: Text(localizations.saveBackupButton),
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         OutlinedButton.icon(
           onPressed: () => showRestoreBackupFlow(context, ref),
           icon: const Icon(Icons.restore_outlined),
           label: Text(localizations.restoreBackupButton),
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         Wrap(
           children: [
             TextButton(
-              onPressed: () => showCsvExportFlow(context, ref, CsvExportKind.freezerContents),
+              onPressed: () => showCsvExportFlow(context, ref, CsvExportKind.stockContents),
               child: Text(localizations.exportContentsButton),
             ),
             TextButton(
@@ -63,8 +63,8 @@ class BackupConfigSection extends ConsumerWidget {
   }
 }
 
-/// Shown on Home while [isBackupDueProvider] is true: there is food in the
-/// freezer but no recent backup.
+/// Shown on Home while [isBackupDueProvider] is true: something is stored
+/// but there is no recent backup.
 class BackupReminderCard extends ConsumerWidget {
   const BackupReminderCard({super.key});
 
@@ -77,7 +77,7 @@ class BackupReminderCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(localizations.reminderCardMessage),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           FilledButton.tonal(
             onPressed: () => showCreateBackupFlow(context, ref),
             child: Text(localizations.saveBackupButton),
@@ -96,7 +96,7 @@ class BackupScreen extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(DataPortabilityLocalizations.of(context).configSectionTitle)),
     body: const SingleChildScrollView(
-      padding: EdgeInsets.all(FreezerSpacing.screenGutter),
+      padding: EdgeInsets.all(FoodieSpacing.screenGutter),
       child: BackupConfigSection(),
     ),
   );

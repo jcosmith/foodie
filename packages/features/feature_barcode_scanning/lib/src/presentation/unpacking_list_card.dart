@@ -10,8 +10,8 @@ import '../application/barcode_use_cases.dart';
 import '../l10n/generated/barcode_scanning_localizations.dart';
 
 /// The review list of the continuous mode (unpacking groceries, section
-/// 10.3): every scanned item with its amount and drawer, to correct or
-/// remove before everything goes into the freezer at once.
+/// 10.3): every scanned item with its amount and compartment, to correct or
+/// remove before everything goes into storage at once.
 class UnpackingListCard extends ConsumerWidget {
   const UnpackingListCard({
     required this.entries,
@@ -49,12 +49,12 @@ class UnpackingListCard extends ConsumerWidget {
         entries.isNotEmpty && entries.every((entry) => entry.canAddWithOneTap) && !isPuttingAway;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: FreezerSpacing.small),
+        padding: const EdgeInsets.symmetric(vertical: FoodieSpacing.small),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.medium),
+              padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.medium),
               child: Text(
                 localizations.unpackingListTitle(entries.length),
                 style: Theme.of(context).textTheme.titleSmall,
@@ -68,11 +68,11 @@ class UnpackingListCard extends ConsumerWidget {
                     : ProductVisual(product: entry.product, catalog: catalog, size: 32),
                 title: Text(context.productDisplayNameResolver.productName(entry.product)),
                 subtitle: Text(switch ((entry.quantity, entry.compartment)) {
-                  (_, null) => localizations.noFreezerYet,
+                  (_, null) => localizations.noStoragePlaceYet,
                   (null, _) => localizations.amountNeeded,
                   (final quantity?, final compartment?) =>
                     '${quantityFormatter.format(quantity)} · '
-                        '${nameResolver?.compartmentNameWithFreezer(compartment) ?? ''}',
+                        '${nameResolver?.compartmentNameWithStoragePlace(compartment) ?? ''}',
                 }),
                 trailing: IconButton(
                   tooltip: localizations.removeFromList,
@@ -83,10 +83,10 @@ class UnpackingListCard extends ConsumerWidget {
             if (entries.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  FreezerSpacing.medium,
-                  FreezerSpacing.small,
-                  FreezerSpacing.medium,
-                  FreezerSpacing.small,
+                  FoodieSpacing.medium,
+                  FoodieSpacing.small,
+                  FoodieSpacing.medium,
+                  FoodieSpacing.small,
                 ),
                 child: FilledButton(
                   onPressed: canPutAway ? onPutAway : null,

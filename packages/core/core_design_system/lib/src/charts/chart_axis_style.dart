@@ -1,17 +1,17 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_color_tokens.dart';
+import '../theme/foodie_color_tokens.dart';
 import 'chart_data.dart';
 
 /// Grid, axis labels and tooltip styling shared by the axis charts, so
 /// every chart in the app looks the same.
 final class ChartAxisStyle {
   ChartAxisStyle.of(BuildContext context)
-    : _tokens = context.freezerColors,
+    : _tokens = context.foodieColors,
       _theme = Theme.of(context);
 
-  final FreezerColorTokens _tokens;
+  final FoodieColorTokens _tokens;
   final ThemeData _theme;
 
   TextStyle get axisLabelStyle =>

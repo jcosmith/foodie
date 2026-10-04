@@ -9,7 +9,7 @@ import 'presentation/reminders_config_section.dart';
 import 'presentation/storage_limits_screen.dart';
 import 'storage_reminders_routes.dart';
 
-/// Storage age reminders (build order phase 3): the "Eat soon" card and
+/// Storage age reminders (build order phase 3): the "Use soon" card and
 /// screen, the rolling daily digest (decision D9) and the Reminders section
 /// in Config. The age badges themselves belong to the inventory.
 final class StorageRemindersFeatureModule extends FeatureModuleBase {

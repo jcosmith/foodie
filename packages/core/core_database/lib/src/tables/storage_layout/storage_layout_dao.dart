@@ -6,29 +6,32 @@ import 'storage_layout_tables.dart';
 part 'storage_layout_dao.g.dart';
 
 /// Data access for feature_storage_layout.
-@DriftAccessor(tables: [Freezers, Compartments])
+@DriftAccessor(tables: [StoragePlaces, Compartments])
 class StorageLayoutDao extends DatabaseAccessor<ApplicationDatabase> with _$StorageLayoutDaoMixin {
   StorageLayoutDao(super.attachedDatabase);
 
-  Stream<List<FreezerRow>> watchFreezers({bool includeArchived = false}) =>
-      _freezersQuery(includeArchived: includeArchived).watch();
+  Stream<List<StoragePlaceRow>> watchStoragePlaces({bool includeArchived = false}) =>
+      _storagePlacesQuery(includeArchived: includeArchived).watch();
 
-  Future<List<FreezerRow>> readFreezers({bool includeArchived = false}) =>
-      _freezersQuery(includeArchived: includeArchived).get();
+  Future<List<StoragePlaceRow>> readStoragePlaces({bool includeArchived = false}) =>
+      _storagePlacesQuery(includeArchived: includeArchived).get();
 
-  SimpleSelectStatement<$FreezersTable, FreezerRow> _freezersQuery({
+  SimpleSelectStatement<$StoragePlacesTable, StoragePlaceRow> _storagePlacesQuery({
     required bool includeArchived,
   }) {
-    final query = select(freezers)..orderBy([(freezer) => OrderingTerm.asc(freezer.sortOrder)]);
-    if (!includeArchived) query.where((freezer) => freezer.isArchived.equals(false));
+    final query = select(storagePlaces)
+      ..orderBy([(storagePlace) => OrderingTerm.asc(storagePlace.sortOrder)]);
+    if (!includeArchived) query.where((storagePlace) => storagePlace.isArchived.equals(false));
     return query;
   }
 
-  Future<FreezerRow?> readFreezer(String freezerIdentifier) => (select(
-    freezers,
-  )..where((freezer) => freezer.freezerIdentifier.equals(freezerIdentifier))).getSingleOrNull();
+  Future<StoragePlaceRow?> readStoragePlace(String storagePlaceIdentifier) =>
+      (select(storagePlaces)..where(
+            (storagePlace) => storagePlace.storagePlaceIdentifier.equals(storagePlaceIdentifier),
+          ))
+          .getSingleOrNull();
 
-  /// Compartments ordered by freezer order, then by compartment order.
+  /// Compartments ordered by storage place order, then by compartment order.
   Stream<List<CompartmentRow>> watchCompartments({bool includeArchived = false}) =>
       _compartmentsQuery(includeArchived: includeArchived).watch();
 
@@ -36,9 +39,16 @@ class StorageLayoutDao extends DatabaseAccessor<ApplicationDatabase> with _$Stor
       _compartmentsQuery(includeArchived: includeArchived).get();
 
   Selectable<CompartmentRow> _compartmentsQuery({required bool includeArchived}) {
-    final query = select(compartments).join([
-      innerJoin(freezers, freezers.freezerIdentifier.equalsExp(compartments.freezerIdentifier)),
-    ])..orderBy([OrderingTerm.asc(freezers.sortOrder), OrderingTerm.asc(compartments.sortOrder)]);
+    final query =
+        select(compartments).join([
+          innerJoin(
+            storagePlaces,
+            storagePlaces.storagePlaceIdentifier.equalsExp(compartments.storagePlaceIdentifier),
+          ),
+        ])..orderBy([
+          OrderingTerm.asc(storagePlaces.sortOrder),
+          OrderingTerm.asc(compartments.sortOrder),
+        ]);
     if (!includeArchived) query.where(compartments.isArchived.equals(false));
     return query.map((row) => row.readTable(compartments));
   }
@@ -49,12 +59,12 @@ class StorageLayoutDao extends DatabaseAccessor<ApplicationDatabase> with _$Stor
           ))
           .getSingleOrNull();
 
-  Future<List<CompartmentRow>> readCompartmentsOfFreezer(
-    String freezerIdentifier, {
+  Future<List<CompartmentRow>> readCompartmentsOfStoragePlace(
+    String storagePlaceIdentifier, {
     bool includeArchived = false,
   }) {
     final query = select(compartments)
-      ..where((compartment) => compartment.freezerIdentifier.equals(freezerIdentifier))
+      ..where((compartment) => compartment.storagePlaceIdentifier.equals(storagePlaceIdentifier))
       ..orderBy([(compartment) => OrderingTerm.asc(compartment.sortOrder)]);
     if (!includeArchived) query.where((compartment) => compartment.isArchived.equals(false));
     return query.get();
@@ -62,39 +72,45 @@ class StorageLayoutDao extends DatabaseAccessor<ApplicationDatabase> with _$Stor
 
   /// The next number for a default name; archived compartments count too, so
   /// "Drawer 3" is never reused for a different drawer.
-  Future<int> nextCompartmentDefaultNumber(String freezerIdentifier) async {
+  Future<int> nextCompartmentDefaultNumber(String storagePlaceIdentifier) async {
     final highestNumber = compartments.defaultNumber.max();
     final row =
         await (selectOnly(compartments)
               ..addColumns([highestNumber])
-              ..where(compartments.freezerIdentifier.equals(freezerIdentifier)))
+              ..where(compartments.storagePlaceIdentifier.equals(storagePlaceIdentifier)))
             .getSingle();
     return (row.read(highestNumber) ?? 0) + 1;
   }
 
-  Future<void> insertFreezer(FreezerRow freezer) => into(freezers).insert(freezer);
+  Future<void> insertStoragePlace(StoragePlaceRow storagePlace) =>
+      into(storagePlaces).insert(storagePlace);
 
   Future<void> insertCompartment(CompartmentRow compartment) =>
       into(compartments).insert(compartment);
 
-  Future<void> updateFreezerCustomName(String freezerIdentifier, String? customName) =>
-      (update(freezers)..where((freezer) => freezer.freezerIdentifier.equals(freezerIdentifier)))
-          .write(FreezersCompanion(customName: Value(customName)));
+  Future<void> updateStoragePlaceCustomName(String storagePlaceIdentifier, String? customName) =>
+      (update(storagePlaces)..where(
+            (storagePlace) => storagePlace.storagePlaceIdentifier.equals(storagePlaceIdentifier),
+          ))
+          .write(StoragePlacesCompanion(customName: Value(customName)));
 
-  Future<void> updateFreezerSortOrders(Map<String, int> sortOrderByFreezerIdentifier) =>
+  Future<void> updateStoragePlaceSortOrders(Map<String, int> sortOrderByStoragePlaceIdentifier) =>
       batch((batchBuilder) {
-        sortOrderByFreezerIdentifier.forEach((freezerIdentifier, sortOrder) {
+        sortOrderByStoragePlaceIdentifier.forEach((storagePlaceIdentifier, sortOrder) {
           batchBuilder.update(
-            freezers,
-            FreezersCompanion(sortOrder: Value(sortOrder)),
-            where: (freezer) => freezer.freezerIdentifier.equals(freezerIdentifier),
+            storagePlaces,
+            StoragePlacesCompanion(sortOrder: Value(sortOrder)),
+            where: (storagePlace) =>
+                storagePlace.storagePlaceIdentifier.equals(storagePlaceIdentifier),
           );
         });
       });
 
-  Future<void> archiveFreezer(String freezerIdentifier) =>
-      (update(freezers)..where((freezer) => freezer.freezerIdentifier.equals(freezerIdentifier)))
-          .write(const FreezersCompanion(isArchived: Value(true)));
+  Future<void> archiveStoragePlace(String storagePlaceIdentifier) =>
+      (update(storagePlaces)..where(
+            (storagePlace) => storagePlace.storagePlaceIdentifier.equals(storagePlaceIdentifier),
+          ))
+          .write(const StoragePlacesCompanion(isArchived: Value(true)));
 
   Future<void> updateCompartmentCustomName(String compartmentIdentifier, String? customName) =>
       (update(compartments)..where(

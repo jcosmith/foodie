@@ -30,10 +30,10 @@ Future<void> _showSheet(BuildContext context, WidgetBuilder builder) => showModa
     padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(sheetContext).bottom),
     child: SingleChildScrollView(
       padding: const EdgeInsetsDirectional.fromSTEB(
-        FreezerSpacing.screenGutter,
+        FoodieSpacing.screenGutter,
         0,
-        FreezerSpacing.screenGutter,
-        FreezerSpacing.large,
+        FoodieSpacing.screenGutter,
+        FoodieSpacing.large,
       ),
       child: builder(sheetContext),
     ),
@@ -57,7 +57,7 @@ class _SheetHeader extends ConsumerWidget {
         quantityFormatter.format(batch.quantityRemaining),
         quantityFormatter.format(batch.initialQuantity),
       ),
-      context.dateDisplayFormatter.formatMediumDate(batch.frozenOn),
+      context.dateDisplayFormatter.formatMediumDate(batch.storedOn),
       context.compartmentDisplayNameResolver(layout).compartmentNameOf(batch.compartmentIdentifier),
     ].where((detail) => detail.isNotEmpty);
     final itemVisualProvider = ref.watch(enabledItemVisualProvider);
@@ -86,7 +86,7 @@ class _SheetHeader extends ConsumerWidget {
               child: StockItemVisual(item: item, size: 48),
             ),
           ),
-        const SizedBox(width: FreezerSpacing.medium),
+        const SizedBox(width: FoodieSpacing.medium),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,6 +165,37 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     }
   }
 
+  /// "Mark as opened" (or not opened again): one tap, with undo.
+  Future<void> _toggleOpened() async {
+    final localizations = InventoryLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final markOpened = ref.read(markStockBatchOpenedUseCaseProvider);
+    final batch = widget.item.batch;
+    final productName = context.productDisplayNameResolver.productName(widget.item.product);
+    final undoLabel = context.commonLocalizations.actionUndo;
+    final isOpening = !batch.isOpened;
+    final result = await markOpened.execute(batch.identifier, isOpened: isOpening);
+    if (!mounted) return;
+    switch (result) {
+      case SuccessfulResult():
+        navigator.pop();
+        if (isOpening) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(localizations.markedOpenedSnackbar(productName)),
+              action: SnackBarAction(
+                label: undoLabel,
+                onPressed: () => markOpened.execute(batch.identifier, isOpened: false),
+              ),
+            ),
+          );
+        }
+      case FailedResult(:final failure):
+        messenger.showSnackBar(SnackBar(content: Text(localizations.describeFailure(failure))));
+    }
+  }
+
   void _switchTo(Future<void> Function(BuildContext context, InventoryItem item) openOtherSheet) {
     final parentContext = Navigator.of(context).context;
     Navigator.of(context).pop();
@@ -180,23 +211,23 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SheetHeader(item: widget.item),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         Text(
           widget.isDiscarding ? localizations.discardTitle : localizations.takeTitle,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         RemovalAmountPicker(
           batch: widget.item.batch,
           amount: _amount,
           onAmountChanged: (amount) => setState(() => _amount = amount),
         ),
         if (widget.isDiscarding) ...[
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           Text(localizations.discardReasonLabel, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           Wrap(
-            spacing: FreezerSpacing.small,
+            spacing: FoodieSpacing.small,
             children: [
               for (final discardReason in DiscardReason.values)
                 ChoiceChip(
@@ -207,7 +238,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
             ],
           ),
         ],
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         FilledButton(
           style: widget.isDiscarding
               ? FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error)
@@ -220,7 +251,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
           ),
         ),
         if (!widget.isDiscarding) ...[
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           Wrap(
             alignment: WrapAlignment.center,
             children: [
@@ -249,6 +280,19 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
                 icon: const Icon(Icons.edit_outlined),
                 label: Text(localizations.correctAction),
               ),
+              TextButton.icon(
+                onPressed: _toggleOpened,
+                icon: Icon(
+                  widget.item.batch.isOpened
+                      ? Icons.inventory_2_outlined
+                      : Icons.lock_open_outlined,
+                ),
+                label: Text(
+                  widget.item.batch.isOpened
+                      ? localizations.markNotOpenedAction
+                      : localizations.markOpenedAction,
+                ),
+              ),
             ],
           ),
         ],
@@ -269,9 +313,14 @@ class _MoveSheet extends ConsumerStatefulWidget {
 class _MoveSheetState extends ConsumerState<_MoveSheet> {
   late Quantity _amount = widget.item.batch.quantityRemaining;
   CompartmentIdentifier? _destination;
+  bool _startsFreshToday = true;
   bool _isSaving = false;
 
-  Future<void> _confirm(CompartmentIdentifier destination, String destinationName) async {
+  Future<void> _confirm(
+    CompartmentIdentifier destination,
+    String destinationName, {
+    required bool startsFreshToday,
+  }) async {
     setState(() => _isSaving = true);
     final localizations = InventoryLocalizations.of(context);
     final amountText = context.quantityFormatter.format(_amount);
@@ -284,6 +333,7 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
           stockBatchIdentifier: widget.item.batch.identifier,
           destinationCompartmentIdentifier: destination,
           quantity: _amount,
+          startsFreshToday: startsFreshToday,
         );
     if (!mounted) return;
     switch (result) {
@@ -303,27 +353,50 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
   @override
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
-    final layout = ref.watch(storageLayoutProvider).value ?? StorageLayout.empty;
+    // Places of switched-off domains are no destination.
+    final layout = ref.watch(storageLayoutOfEnabledDomainsProvider).value ?? StorageLayout.empty;
     final nameResolver = context.compartmentDisplayNameResolver(layout);
-    final destinations = [
+    // The batch's own domain first, so a move to the next shelf is one tap.
+    final sourceDomain = layout.domainOfCompartment(widget.item.batch.compartmentIdentifier);
+    final otherCompartments = [
       for (final compartment in layout.activeCompartments)
         if (compartment.identifier != widget.item.batch.compartmentIdentifier) compartment,
     ];
+    final destinations = [
+      ...otherCompartments.where(
+        (compartment) => layout.domainOfCompartment(compartment.identifier) == sourceDomain,
+      ),
+      ...otherCompartments.where(
+        (compartment) => layout.domainOfCompartment(compartment.identifier) != sourceDomain,
+      ),
+    ];
     final selectedDestination = _destination ?? destinations.firstOrNull?.identifier;
+    // Into another domain that resets the clock, such as the freezer.
+    final destinationDomain = selectedDestination == null
+        ? null
+        : layout.domainOfCompartment(selectedDestination);
+    final storedTodayLabel = destinationDomain == null || destinationDomain == sourceDomain
+        ? null
+        : ref
+              .watch(registeredStorageDomainsProvider)
+              .where((domain) => domain.identifier == destinationDomain)
+              .firstOrNull
+              ?.storedTodayLabelBuilder
+              ?.call(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SheetHeader(item: widget.item),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         Text(localizations.moveTitle, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         if (destinations.isEmpty)
           Text(localizations.noOtherCompartment)
         else ...[
           Wrap(
-            spacing: FreezerSpacing.small,
-            runSpacing: FreezerSpacing.small,
+            spacing: FoodieSpacing.small,
+            runSpacing: FoodieSpacing.small,
             children: [
               for (final compartment in destinations)
                 ChoiceChip(
@@ -332,27 +405,35 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
                     size: 12,
                     color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
                   ),
-                  label: Text(nameResolver.compartmentNameWithFreezer(compartment)),
+                  label: Text(nameResolver.compartmentNameWithStoragePlace(compartment)),
                   selected: compartment.identifier == selectedDestination,
                   onSelected: (_) => setState(() => _destination = compartment.identifier),
                 ),
             ],
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           Text(localizations.moveAmountLabel, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           RemovalAmountPicker(
             batch: widget.item.batch,
             amount: _amount,
             onAmountChanged: (amount) => setState(() => _amount = amount),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          if (storedTodayLabel != null)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(storedTodayLabel),
+              value: _startsFreshToday,
+              onChanged: (value) => setState(() => _startsFreshToday = value),
+            ),
+          const SizedBox(height: FoodieSpacing.large),
           FilledButton(
             onPressed: _isSaving || selectedDestination == null
                 ? null
                 : () => _confirm(
                     selectedDestination,
                     nameResolver.compartmentNameOf(selectedDestination),
+                    startsFreshToday: storedTodayLabel != null && _startsFreshToday,
                   ),
             child: Text(localizations.moveAmountButton(context.quantityFormatter.format(_amount))),
           ),
@@ -440,10 +521,10 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SheetHeader(item: widget.item),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         Text(localizations.correctTitle, style: Theme.of(context).textTheme.titleSmall),
         Text(localizations.correctHint, style: Theme.of(context).textTheme.bodySmall),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         TextField(
           controller: _amountController,
           autofocus: true,
@@ -455,7 +536,7 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
           ),
           onSubmitted: (_) => _save(),
         ),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         FilledButton(
           onPressed: _isSaving ? null : _save,
           child: Text(context.commonLocalizations.actionSave),

@@ -1,10 +1,10 @@
 import 'compartment.dart';
-import 'freezer.dart';
 import 'layout_default_names.dart';
 import 'storage_kind.dart';
 import 'storage_layout.dart';
+import 'storage_place.dart';
 
-/// Turns freezers and compartments into the names users see: their own name
+/// Turns storage places and compartments into the names users see: their own name
 /// if they typed one, otherwise the translated default, with "(removed)" for
 /// archived compartments.
 final class CompartmentDisplayNameResolver {
@@ -13,8 +13,8 @@ final class CompartmentDisplayNameResolver {
   final StorageLayout layout;
   final LayoutDefaultNames defaultNames;
 
-  String freezerName(Freezer freezer) =>
-      freezer.customName ?? defaultNames.freezerName(freezer.storageKind);
+  String storagePlaceName(StoragePlace storagePlace) =>
+      storagePlace.customName ?? defaultNames.storagePlaceName(storagePlace.storageKind);
 
   /// The name without the "(removed)" suffix, as the layout editor shows it.
   String plainCompartmentName(Compartment compartment) =>
@@ -27,21 +27,21 @@ final class CompartmentDisplayNameResolver {
     return compartment.isArchived ? defaultNames.removedName(plainName) : plainName;
   }
 
-  /// Like [compartmentName], prefixed with the freezer name when there is more
-  /// than one freezer: "Cellar freezer · Basket 2".
-  String compartmentNameWithFreezer(Compartment compartment) {
+  /// Like [compartmentName], prefixed with the storage place name when there is more
+  /// than one storage place: "Cellar storage place · Basket 2".
+  String compartmentNameWithStoragePlace(Compartment compartment) {
     final name = compartmentName(compartment);
-    if (layout.freezers.length < 2) return name;
-    final freezer = layout.freezerOf(compartment.freezerIdentifier);
-    return freezer == null ? name : '${freezerName(freezer)} · $name';
+    if (layout.storagePlaces.length < 2) return name;
+    final storagePlace = layout.storagePlaceOf(compartment.storagePlaceIdentifier);
+    return storagePlace == null ? name : '${storagePlaceName(storagePlace)} · $name';
   }
 
   /// Looks the compartment up by identifier; unknown ones get an empty name.
   String compartmentNameOf(CompartmentIdentifier compartmentIdentifier) {
     final compartment = layout.compartmentOf(compartmentIdentifier);
-    return compartment == null ? '' : compartmentNameWithFreezer(compartment);
+    return compartment == null ? '' : compartmentNameWithStoragePlace(compartment);
   }
 
   StorageKind _storageKindOf(Compartment compartment) =>
-      layout.freezerOf(compartment.freezerIdentifier)?.storageKind ?? StorageKind.upright;
+      layout.storagePlaceOf(compartment.storagePlaceIdentifier)?.storageKind ?? StorageKind.unknown;
 }

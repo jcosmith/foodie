@@ -1,3 +1,4 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
@@ -9,34 +10,104 @@ typedef LocalizedTextBuilder = String Function(BuildContext context);
 abstract final class ShellRoutePaths {
   /// The Home tab with the dashboard.
   static const String home = '/home';
+
+  /// The Lists tab: the shopping list and, later, the receipts.
+  static const String lists = '/lists';
+
+  /// The More tab: Statistics, Options and future entries.
+  static const String more = '/more';
+
+  /// The tab of a storage domain; its module is named after the domain.
+  static String domainTab(StorageDomainIdentifier domainIdentifier) => '/${domainIdentifier.value}';
 }
 
-/// A tab in the bottom navigation bar.
-///
-/// Material allows three to five destinations; with Home, Freezer, List,
-/// Insights and Config the app is at the ceiling, so new modules add Config
-/// sections instead of tabs. Sort orders in use: Freezer 10, List 20,
-/// Insights 30, Config 40 (Home is the shell's own tab at 0).
+/// A tab in the bottom navigation bar. Only storage domains contribute tabs
+/// (architecture 10.7): Home · Freezer · Fridge · Pantry · Household · Lists
+/// · More, each domain tab only while it is switched on. Everything else adds
+/// a Lists segment, a More entry or an Options section instead. The sort
+/// order is the domain's.
 @immutable
 final class NavigationDestinationContribution {
   const NavigationDestinationContribution({
     required this.sortOrder,
-    required this.icon,
-    required this.selectedIcon,
+    required this.iconEmoji,
     required this.labelBuilder,
     required this.initialLocation,
     required this.routes,
   });
 
   final int sortOrder;
-  final IconData icon;
-  final IconData selectedIcon;
+
+  /// Every tab has a colour icon in the same style, such as "❄️".
+  final String iconEmoji;
+
+  /// One short word: "Freezer".
   final LocalizedTextBuilder labelBuilder;
 
   /// The path the tab opens, for example `/inventory`.
   final String initialLocation;
 
   /// The tab's routes; they keep their own navigation stack.
+  final List<RouteBase> routes;
+}
+
+/// One of the lists in the Lists tab, such as the shopping list. With more
+/// than one, the tab shows them as segments at the top.
+@immutable
+final class ListsSegmentContribution {
+  const ListsSegmentContribution({
+    required this.identifier,
+    required this.sortOrder,
+    required this.labelBuilder,
+    required this.builder,
+    this.subtitleBuilder,
+  });
+
+  final String identifier;
+
+  /// Shopping list 10, receipts 20.
+  final int sortOrder;
+
+  /// The segment's name: "Shopping list".
+  final LocalizedTextBuilder labelBuilder;
+
+  /// One line under the tab's title while the segment is shown.
+  final LocalizedTextBuilder? subtitleBuilder;
+
+  /// The list below the tab's title bar; a [Scaffold] without an app bar
+  /// when it needs a floating button or snack bars.
+  final WidgetBuilder builder;
+}
+
+/// An entry in the More tab, such as Statistics or Options. Its screens are
+/// pushed inside the tab, so the bottom bar stays.
+@immutable
+final class MoreEntryContribution {
+  const MoreEntryContribution({
+    required this.identifier,
+    required this.sortOrder,
+    required this.iconEmoji,
+    required this.titleBuilder,
+    required this.subtitleBuilder,
+    required this.location,
+    required this.routes,
+  });
+
+  final String identifier;
+
+  /// Statistics 10, Options 20.
+  final int sortOrder;
+
+  final String iconEmoji;
+  final LocalizedTextBuilder titleBuilder;
+
+  /// What the entry holds: "Tabs, optional features, language, …".
+  final LocalizedTextBuilder subtitleBuilder;
+
+  /// The path the entry opens, one of [routes].
+  final String location;
+
+  /// The entry's screens. Paths start with `/<moduleIdentifier>`.
   final List<RouteBase> routes;
 }
 
@@ -78,9 +149,9 @@ final class DashboardCardContribution {
   final ProviderListenable<bool>? isVisible;
 }
 
-/// A section of the Config tab, such as "Freezer layout" or "Reminders".
+/// A section of Options in the More tab, such as "Freezer layout" or "Reminders".
 ///
-/// Sort orders follow the Config tab table of the architecture document:
+/// Sort orders follow the Options table of the architecture document:
 /// Language 10, Freezer layout 20, Appearance 30, Reminders 40, Restock 50,
 /// Optional features 60, Backup and export 70, About and privacy 80.
 @immutable
@@ -122,7 +193,7 @@ final class InsightFilterSnapshot {
   final Set<String> compartmentIdentifiers;
 }
 
-/// An extra chart on the Insights tab, such as restock's "Runs out in".
+/// An extra chart on the Statistics screens, such as restock's "Runs out in".
 @immutable
 final class InsightChartContribution {
   const InsightChartContribution({

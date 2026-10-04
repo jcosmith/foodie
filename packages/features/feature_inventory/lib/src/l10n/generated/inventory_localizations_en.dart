@@ -9,10 +9,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   InventoryLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get navigationLabel => 'Freezer';
-
-  @override
-  String get overviewTitle => 'My freezer';
+  String get overviewTitle => 'At home';
 
   @override
   String itemCount(int count) {
@@ -30,8 +27,8 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count drawers',
-      one: '1 drawer',
+      other: '$count compartments',
+      one: '1 compartment',
     );
     return '$_temp0';
   }
@@ -45,10 +42,10 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   String get searchHint => 'Search products';
 
   @override
-  String get sortByDrawer => 'By drawer';
+  String get sortByDrawer => 'By place';
 
   @override
-  String get sortByEatBefore => 'Eat first';
+  String get sortByEatBefore => 'Use first';
 
   @override
   String get expandAllDrawers => 'Expand all';
@@ -58,8 +55,64 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
 
   @override
   String frozenAgo(String age) {
-    return 'frozen $age';
+    return 'added $age';
   }
+
+  @override
+  String openedAgo(String age) {
+    return 'opened $age';
+  }
+
+  @override
+  String bestBeforeHint(String shelfLife) {
+    return 'Usually keeps $shelfLife';
+  }
+
+  @override
+  String get bestBeforeToday => 'Today';
+
+  @override
+  String get bestBeforePlusOneDay => '+1 day';
+
+  @override
+  String get bestBeforePlusThreeDays => '+3 days';
+
+  @override
+  String get bestBeforePlusOneWeek => '+1 week';
+
+  @override
+  String get bestBeforeNone => 'None';
+
+  @override
+  String get bestBeforePickDate => 'Date';
+
+  @override
+  String get noBestBefore => 'No date';
+
+  @override
+  String get markOpenedAction => 'Mark as opened';
+
+  @override
+  String get markNotOpenedAction => 'Mark as not opened';
+
+  @override
+  String markedOpenedSnackbar(String product) {
+    return '$product marked as opened';
+  }
+
+  @override
+  String get useToday => 'Use today';
+
+  @override
+  String get useByTomorrow => 'Use by tomorrow';
+
+  @override
+  String useByWeekday(String weekday) {
+    return 'Use by $weekday';
+  }
+
+  @override
+  String get pastBestBefore => 'Past best before';
 
   @override
   String ofInitial(String remaining, String initial) {
@@ -72,21 +125,21 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
-  String get noFreezerTitle => 'Set up your freezer first';
+  String get noStoragePlaceTitle => 'Set up a storage place first';
 
   @override
-  String get noFreezerMessage =>
-      'Tell the app which drawers your freezer has, then add what is inside.';
+  String get noStoragePlaceMessage =>
+      'Tell the app where you keep things and how it is divided, then add what is inside.';
 
   @override
-  String get setUpFreezerButton => 'Set up freezer';
+  String get setUpStoragePlaceButton => 'Add storage place';
 
   @override
-  String get emptyTitle => 'Your freezer is empty';
+  String get emptyTitle => 'Nothing in here yet';
 
   @override
   String get emptyMessage =>
-      'Add what you freeze, and the app keeps track of how long it has been in there.';
+      'Add what you put away, and the app keeps track of how long it has been there.';
 
   @override
   String noSearchResults(String query) {
@@ -97,7 +150,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   String get addButton => 'Add';
 
   @override
-  String get quickActionAdd => 'Add to freezer';
+  String get quickActionAdd => 'Add item';
 
   @override
   String get takeTitle => 'How much are you taking?';
@@ -107,7 +160,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
 
   @override
   String leftAfter(String amount) {
-    return '$amount stays in the freezer';
+    return '$amount stays';
   }
 
   @override
@@ -151,6 +204,12 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   String get reasonFreezerBurn => 'Freezer burn';
 
   @override
+  String get reasonExpired => 'Past its date';
+
+  @override
+  String get reasonSpoiled => 'Gone off';
+
+  @override
   String get reasonUnwanted => 'Nobody wanted it';
 
   @override
@@ -167,7 +226,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
-  String get moveTitle => 'Move to another drawer';
+  String get moveTitle => 'Move to another compartment';
 
   @override
   String get moveDestinationLabel => 'Move to';
@@ -186,7 +245,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
-  String get noOtherCompartment => 'Add another drawer in the freezer layout to move things.';
+  String get noOtherCompartment => 'Add another compartment to move things.';
 
   @override
   String get correctTitle => 'How much is really left?';
@@ -200,7 +259,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
-  String get addTitle => 'Add to freezer';
+  String get addTitle => 'Add';
 
   @override
   String get productLabel => 'Product';
@@ -217,10 +276,10 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
-  String get frozenOnLabel => 'Frozen on';
+  String get storedOnLabel => 'Stored on';
 
   @override
-  String get compartmentLabel => 'Drawer';
+  String get compartmentLabel => 'Where';
 
   @override
   String get noteLabel => 'Note (optional)';
@@ -243,10 +302,10 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   String get productMissing => 'Choose a product first.';
 
   @override
-  String get compartmentMissing => 'Choose a drawer.';
+  String get compartmentMissing => 'Choose where it goes.';
 
   @override
-  String get frozenOnInFuture => 'The freezing date cannot be in the future.';
+  String get storedOnInFuture => 'The date cannot be in the future.';
 
   @override
   String get genericFailure => 'That did not work. Please try again.';

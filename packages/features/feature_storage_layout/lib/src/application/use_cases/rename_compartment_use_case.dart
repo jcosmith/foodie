@@ -10,7 +10,7 @@ import '../../domain/storage_layout_failure.dart';
 import '../../domain/storage_layout_repository.dart';
 
 /// Gives a compartment the user's own name; an empty name restores the
-/// translated default. Names are unique within a freezer, ignoring case.
+/// translated default. Names are unique within a storage place, ignoring case.
 final class RenameCompartmentUseCase {
   const RenameCompartmentUseCase({
     required StorageLayoutRepository repository,
@@ -33,10 +33,10 @@ final class RenameCompartmentUseCase {
     if (compartment == null || compartment.isArchived) {
       return const Result.failure(CompartmentNotFound());
     }
-    final freezer = await _repository.readFreezer(compartment.freezerIdentifier);
-    final storageKind = freezer?.storageKind ?? StorageKind.upright;
-    final siblings = await _repository.readActiveCompartmentsOfFreezer(
-      compartment.freezerIdentifier,
+    final storagePlace = await _repository.readStoragePlace(compartment.storagePlaceIdentifier);
+    final storageKind = storagePlace?.storageKind ?? StorageKind.unknown;
+    final siblings = await _repository.readActiveCompartmentsOfStoragePlace(
+      compartment.storagePlaceIdentifier,
     );
     final nameValidation = LayoutNamePolicy.validate(
       enteredName: enteredName,

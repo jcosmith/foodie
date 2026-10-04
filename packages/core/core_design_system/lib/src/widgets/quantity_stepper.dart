@@ -2,7 +2,7 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_localization/core_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_spacing.dart';
 
 /// Minus and plus buttons around a formatted quantity.
 ///
@@ -40,7 +40,7 @@ class QuantityStepper extends StatelessWidget {
           icon: const Icon(Icons.remove),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.medium),
+          padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.medium),
           child: Text(
             formatter.format(value),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),

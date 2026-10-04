@@ -28,8 +28,59 @@ class AppearanceConfigSection extends ConsumerWidget {
           onSelectionChanged: (selection) =>
               ref.read(applicationSettingsProvider).chooseTheme(selection.single),
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         Text(localizations.textSizeHint, style: Theme.of(context).textTheme.bodySmall),
+      ],
+    );
+  }
+}
+
+/// A switch per storage domain that adds or removes its tab at once (UI
+/// example phone 17). Nothing is deleted, and the last tab that is on cannot
+/// be switched off.
+class TabsConfigSection extends ConsumerWidget {
+  const TabsConfigSection({required this.domainModules, super.key});
+
+  /// In tab order.
+  final List<FeatureModule> domainModules;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final localizations = ConfigurationLocalizations.of(context);
+    final enabledModules = ref.watch(enabledFeatureModulesProvider).value ?? const [];
+    return Column(
+      children: [
+        for (final module in domainModules)
+          if (module.storageDomain case final domain?)
+            Builder(
+              builder: (context) {
+                final isEnabled = enabledModules.contains(module);
+                final isLocked =
+                    isEnabled && !canSwitchModuleOff(module, enabledModules: enabledModules);
+                return SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  secondary: ColourTabIcon(emoji: domain.iconEmoji, size: 28),
+                  title: Text(domain.labelBuilder(context)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(domain.descriptionBuilder(context)),
+                      if (isLocked)
+                        Text(
+                          localizations.lastTabHint,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                    ],
+                  ),
+                  value: isEnabled,
+                  onChanged: isLocked
+                      ? null
+                      : (isEnabled) => ref
+                            .read(applicationSettingsProvider)
+                            .switchOptionalFeature(module, isEnabled: isEnabled),
+                );
+              },
+            ),
       ],
     );
   }
@@ -83,20 +134,20 @@ class AboutConfigSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.lock_outline, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: FreezerSpacing.medium),
+            const SizedBox(width: FoodieSpacing.medium),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(localizations.privacyStatementTitle, style: textTheme.titleSmall),
-                  const SizedBox(height: FreezerSpacing.extraSmall),
+                  const SizedBox(height: FoodieSpacing.extraSmall),
                   Text(localizations.privacyStatementMessage, style: textTheme.bodyMedium),
                 ],
               ),
             ),
           ],
         ),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         Text(localizations.versionLabel(applicationVersion), style: textTheme.bodySmall),
         TextButton(
           style: TextButton.styleFrom(padding: EdgeInsets.zero),

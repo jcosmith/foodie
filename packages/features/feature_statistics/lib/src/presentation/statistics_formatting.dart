@@ -89,7 +89,7 @@ final class StatisticsFormatting {
     StatisticsActivity.moved => localizations.activityMoved,
   };
 
-  /// "items eaten", for "Number of items eaten per day".
+  /// "items used", for "Number of items used per day".
   String activityItemsName(StatisticsActivity activity) => switch (activity) {
     StatisticsActivity.consumed => localizations.activityItemsConsumed,
     StatisticsActivity.added => localizations.activityItemsAdded,
@@ -98,14 +98,24 @@ final class StatisticsFormatting {
   };
 
   /// Labels of [StatisticsAnalysis.eatenItemsByStorageDuration]'s columns.
-  List<String> get storageDurationLabels => [
-    localizations.durationUnderOneMonth,
-    localizations.durationOneToThreeMonths,
-    localizations.durationThreeToSixMonths,
-    localizations.durationSixToNineMonths,
-    localizations.durationNineToTwelveMonths,
-    localizations.durationOverTwelveMonths,
-  ];
+  List<String> storageDurationLabels(StatisticsDurationScale scale) => switch (scale) {
+    StatisticsDurationScale.days => [
+      localizations.durationUnderTwoDays,
+      localizations.durationTwoToThreeDays,
+      localizations.durationFourToSevenDays,
+      localizations.durationOneToTwoWeeks,
+      localizations.durationTwoToFourWeeks,
+      localizations.durationOverOneMonth,
+    ],
+    StatisticsDurationScale.months => [
+      localizations.durationUnderOneMonth,
+      localizations.durationOneToThreeMonths,
+      localizations.durationThreeToSixMonths,
+      localizations.durationSixToNineMonths,
+      localizations.durationNineToTwelveMonths,
+      localizations.durationOverTwelveMonths,
+    ],
+  };
 
   /// "M" for Monday to "S" for Sunday.
   String weekdayNarrow(int weekday) =>
@@ -146,6 +156,8 @@ final class StatisticsFormatting {
   String discardReasonName(StatisticsDiscardReason reason) => switch (reason) {
     StatisticsDiscardReason.tooOld => localizations.reasonTooOld,
     StatisticsDiscardReason.freezerBurn => localizations.reasonFreezerBurn,
+    StatisticsDiscardReason.expired => localizations.reasonExpired,
+    StatisticsDiscardReason.spoiled => localizations.reasonSpoiled,
     StatisticsDiscardReason.unwanted => localizations.reasonUnwanted,
     StatisticsDiscardReason.other => localizations.reasonOther,
     StatisticsDiscardReason.notGiven => localizations.reasonNotGiven,

@@ -1,14 +1,24 @@
-/// What kind of cold storage a freezer is. Decides the default names of the
-/// freezer and of its compartments ("Drawer", "Basket", "Compartment").
-enum StorageKind {
-  upright,
-  chest,
-  fridgeFreezerCompartment;
+import 'package:meta/meta.dart';
 
-  String get storageName => name;
+/// What kind of storage a storage place is, such as an upright freezer or a
+/// kitchen cupboard. The kinds come from the domain modules; this value only
+/// carries the name stored with every place, so places of a kind whose module
+/// is missing still load.
+@immutable
+final class StorageKind {
+  const StorageKind(this.storageName);
 
-  static StorageKind fromStorageName(String storageName) => StorageKind.values.firstWhere(
-    (kind) => kind.storageName == storageName,
-    orElse: () => throw ArgumentError.value(storageName, 'storageName', 'Unknown storage kind'),
-  );
+  /// For places whose kind is not known; shown with neutral default names.
+  static const StorageKind unknown = StorageKind('');
+
+  final String storageName;
+
+  @override
+  bool operator ==(Object other) => other is StorageKind && other.storageName == storageName;
+
+  @override
+  int get hashCode => storageName.hashCode;
+
+  @override
+  String toString() => storageName;
 }

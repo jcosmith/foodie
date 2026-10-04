@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_chart_colors.dart';
+import '../theme/foodie_chart_colors.dart';
 
 /// A tiny line without axes for KPI tiles; decorative, so screen readers skip it.
 class Sparkline extends StatelessWidget {

@@ -26,6 +26,7 @@ dependencies:
   meta: ^1.16.0
 
 dev_dependencies:
+  feature_freezer: any
   feature_storage_layout: any
   flutter_localizations:
     sdk: flutter

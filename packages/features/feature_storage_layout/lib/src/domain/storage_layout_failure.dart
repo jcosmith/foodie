@@ -1,6 +1,6 @@
 import 'package:core_foundation/core_foundation.dart';
 
-/// Why a change to the freezer layout was refused.
+/// Why a change to the storage place layout was refused.
 sealed class StorageLayoutFailure extends Failure {
   const StorageLayoutFailure();
 }
@@ -13,7 +13,7 @@ final class LayoutNameTooLong extends StorageLayoutFailure {
   String get debugDescription => 'The name is too long';
 }
 
-/// Another drawer of the same freezer, or another freezer, already shows this name.
+/// Another compartment of the same storage place, or another storage place, already shows this name.
 final class LayoutNameAlreadyTaken extends StorageLayoutFailure {
   const LayoutNameAlreadyTaken();
 
@@ -21,8 +21,8 @@ final class LayoutNameAlreadyTaken extends StorageLayoutFailure {
   String get debugDescription => 'The name is already taken';
 }
 
-final class FreezerNotFound extends StorageLayoutFailure {
-  const FreezerNotFound();
+final class StoragePlaceNotFound extends StorageLayoutFailure {
+  const StoragePlaceNotFound();
 
   @override
   String get debugDescription => 'The freezer does not exist or was removed';
@@ -35,7 +35,7 @@ final class CompartmentNotFound extends StorageLayoutFailure {
   String get debugDescription => 'The compartment does not exist or was removed';
 }
 
-/// A freezer always keeps at least one compartment.
+/// A storage place always keeps at least one compartment.
 final class LastCompartmentCannotBeRemoved extends StorageLayoutFailure {
   const LastCompartmentCannotBeRemoved();
 
@@ -61,17 +61,17 @@ final class InvalidMoveDestination extends StorageLayoutFailure {
   String get debugDescription => 'The destination compartment is not available';
 }
 
-/// The app always keeps at least one freezer.
-final class LastFreezerCannotBeRemoved extends StorageLayoutFailure {
-  const LastFreezerCannotBeRemoved();
+/// The app always keeps at least one storage place.
+final class LastStoragePlaceCannotBeRemoved extends StorageLayoutFailure {
+  const LastStoragePlaceCannotBeRemoved();
 
   @override
   String get debugDescription => 'At least one freezer is needed';
 }
 
-/// A freezer is only removed once all its compartments are empty.
-final class FreezerNotEmpty extends StorageLayoutFailure {
-  const FreezerNotEmpty({required this.itemCount});
+/// A storage place is only removed once all its compartments are empty.
+final class StoragePlaceNotEmpty extends StorageLayoutFailure {
+  const StoragePlaceNotEmpty({required this.itemCount});
 
   final int itemCount;
 

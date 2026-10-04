@@ -2,6 +2,7 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_notifications/core_notifications.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
+import 'package:feature_storage_layout/feature_storage_layout.dart';
 
 import '../domain/remindable_batch.dart';
 import '../domain/storage_reminder_planner.dart';
@@ -15,12 +16,16 @@ final class ReplanStorageRemindersUseCase {
   const ReplanStorageRemindersUseCase({
     required InventoryQueryService inventory,
     required ProductCatalogQueryService productCatalog,
+    required StorageLayoutQueryService storageLayout,
+    required Set<StorageDomainIdentifier> Function() readPausedDomains,
     required StorageReminderSettingsStore settingsStore,
     required ScheduledNotificationReconciler reconciler,
     required Future<StorageReminderNotificationTexts> Function() loadNotificationTexts,
     required Clock clock,
   }) : _inventory = inventory,
        _productCatalog = productCatalog,
+       _storageLayout = storageLayout,
+       _readPausedDomains = readPausedDomains,
        _settingsStore = settingsStore,
        _reconciler = reconciler,
        _loadNotificationTexts = loadNotificationTexts,
@@ -31,6 +36,10 @@ final class ReplanStorageRemindersUseCase {
 
   final InventoryQueryService _inventory;
   final ProductCatalogQueryService _productCatalog;
+  final StorageLayoutQueryService _storageLayout;
+
+  /// Switched-off domains, whose food gets no reminders while they are off.
+  final Set<StorageDomainIdentifier> Function() _readPausedDomains;
   final StorageReminderSettingsStore _settingsStore;
   final ScheduledNotificationReconciler _reconciler;
   final Future<StorageReminderNotificationTexts> Function() _loadNotificationTexts;
@@ -40,17 +49,23 @@ final class ReplanStorageRemindersUseCase {
     final settings = await _settingsStore.read();
     final activeBatches = await _inventory.readActiveBatches();
     final catalog = await _productCatalog.readCatalog();
+    final pausedDomains = _readPausedDomains();
+    final layout = pausedDomains.isEmpty ? null : await _storageLayout.readStorageLayout();
     final remindableBatches = [
       for (final batch in activeBatches)
-        if (catalog.productOf(batch.productIdentifier) case final product?)
-          if (catalog.recommendedMaximumStorageDaysOf(product) case final storageDays?
-              when storageDays > 0)
+        if (catalog.productOf(batch.productIdentifier) case final product?
+            when !pausedDomains.contains(layout?.domainOfCompartment(batch.compartmentIdentifier)))
+          if (UseByPolicy.deadlineOfBatch(
+                batch,
+                shelfLifeDays: catalog.recommendedMaximumStorageDaysOf(product),
+                shelfLifeAfterOpeningDays: catalog.shelfLifeAfterOpeningDaysOf(product),
+              )
+              case final deadline?)
             RemindableBatch(
               stockBatchIdentifier: batch.identifier,
               productIdentifier: batch.productIdentifier,
-              frozenOn: batch.frozenOn,
               storedSince: CalendarDate.fromDateTime(batch.createdAt.toLocal()),
-              recommendedMaximumStorageDays: storageDays,
+              deadline: deadline,
             ),
     ];
     final plannedDigests = StorageReminderPlanner.plan(

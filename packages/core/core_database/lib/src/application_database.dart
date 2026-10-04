@@ -15,6 +15,8 @@ import 'tables/preferences/preference_entries_table.dart';
 import 'tables/preferences/preferences_dao.dart';
 import 'tables/product_catalog/product_catalog_dao.dart';
 import 'tables/product_catalog/product_catalog_tables.dart';
+import 'tables/receipt_scanning/receipt_scanning_dao.dart';
+import 'tables/receipt_scanning/receipt_scanning_tables.dart';
 import 'tables/restock/restock_dao.dart';
 import 'tables/restock/restock_tables.dart';
 import 'tables/schema_metadata/schema_metadata_dao.dart';
@@ -38,7 +40,7 @@ part 'application_database.g.dart';
   tables: [
     PreferenceEntries,
     SchemaMetadataEntries,
-    Freezers,
+    StoragePlaces,
     Compartments,
     Categories,
     Products,
@@ -49,7 +51,12 @@ part 'application_database.g.dart';
     ShoppingListEntries,
     ItemPictures,
     ProductBarcodes,
+    Receipts,
+    ReceiptPages,
+    ReceiptLines,
+    ReceiptTextMappings,
   ],
+  include: {'tables/receipt_scanning/receipt_search_index.drift'},
   daos: [
     PreferencesDao,
     SchemaMetadataDao,
@@ -61,6 +68,7 @@ part 'application_database.g.dart';
     ItemPicturesDao,
     ProductBarcodesDao,
     StatisticsDao,
+    ReceiptScanningDao,
   ],
 )
 class ApplicationDatabase extends _$ApplicationDatabase {
@@ -75,7 +83,7 @@ class ApplicationDatabase extends _$ApplicationDatabase {
   final String _applicationVersion;
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -119,6 +127,34 @@ class ApplicationDatabase extends _$ApplicationDatabase {
       from7To8: (migrator, schema) async {
         // Issue #21: a picture as a product's icon.
         await migrator.addColumn(schema.products, schema.products.iconImage);
+      },
+      from8To9: (migrator, schema) async {
+        // Household scope (architecture 10.7 to 10.9): neutral names, the
+        // storage domain of categories, opened packages, shelf life after
+        // opening, and categories without a shelf life. No data changes shape.
+        await customStatement('ALTER TABLE freezers RENAME TO storage_places');
+        await customStatement(
+          'ALTER TABLE storage_places RENAME COLUMN freezer_identifier TO storage_place_identifier',
+        );
+        await customStatement(
+          'ALTER TABLE compartments RENAME COLUMN freezer_identifier TO storage_place_identifier',
+        );
+        await customStatement('ALTER TABLE stock_batches RENAME COLUMN frozen_on TO stored_on');
+        await migrator.addColumn(schema.stockBatches, schema.stockBatches.openedOn);
+        await migrator.addColumn(schema.categories, schema.categories.storageDomain);
+        await migrator.addColumn(schema.categories, schema.categories.shelfLifeAfterOpeningDays);
+        await migrator.addColumn(schema.products, schema.products.shelfLifeAfterOpeningDays);
+        // Supplies keep no time: a category's shelf life may be empty.
+        // SQLite cannot drop NOT NULL, so the table is copied.
+        await migrator.alterTable(TableMigration(schema.categories));
+        // Receipt scanning (architecture 10.10).
+        await migrator.createTable(schema.receipts);
+        await migrator.createIndex(schema.receiptsByCreation);
+        await migrator.createTable(schema.receiptPages);
+        await migrator.createTable(schema.receiptLines);
+        await migrator.createIndex(schema.receiptLinesByReceipt);
+        await migrator.createTable(schema.receiptTextMappings);
+        await migrator.create(schema.receiptSearchIndex);
       },
     ),
     beforeOpen: (openingDetails) async {

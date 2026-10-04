@@ -1,12 +1,11 @@
 {
   "@@locale": "en",
-  "navigationLabel": "List",
   "shoppingListTitle": "Shopping list",
   "shoppingListSubtitle": "Running-low items are added automatically",
   "originRestock": "Running low",
   "originManual": "Added by you",
-  "putTickedInFreezer": "{count, plural, =1{Put 1 ticked item in the freezer} other{Put {count} ticked items in the freezer}}",
-  "@putTickedInFreezer": {
+  "putTickedInStoragePlace": "{count, plural, =1{Put 1 ticked item away} other{Put {count} ticked items away}}",
+  "@putTickedInStoragePlace": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -14,8 +13,8 @@
     }
   },
   "nothingTicked": "Tick what you bought",
-  "itemsPutInFreezer": "{count, plural, =0{Ticked items removed from the list} =1{1 item is in the freezer now} other{{count} items are in the freezer now}}",
-  "@itemsPutInFreezer": {
+  "itemsPutInStoragePlace": "{count, plural, =0{Ticked items removed from the list} =1{1 item is put away now} other{{count} items are put away now}}",
+  "@itemsPutInStoragePlace": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -30,7 +29,7 @@
   "shoppingListLink": "Shopping list",
   "runningLowEmpty": "Everything is stocked.",
   "configSectionTitle": "Restock",
-  "configSectionExplanation": "Set a minimum for food you always want at home. When the freezer holds less, it goes on the shopping list.",
+  "configSectionExplanation": "Set a minimum for things you always want at home. When there is less, they go on the shopping list.",
   "minimumQuantitiesRow": "Minimum quantities",
   "ruleCount": "{count, plural, =0{None yet} =1{1 product} other{{count} products}}",
   "@ruleCount": {
@@ -41,9 +40,9 @@
     }
   },
   "rulesEmptyTitle": "No minimum quantities yet",
-  "rulesEmptyMessage": "Add a product you always want in the freezer.",
+  "rulesEmptyMessage": "Add a product you always want at home.",
   "addRuleButton": "Add product",
-  "ruleSummary": "Keep at least {minimum} · {stock} in the freezer",
+  "ruleSummary": "Keep at least {minimum} · {stock} at home",
   "@ruleSummary": {
     "placeholders": {
       "minimum": {
@@ -54,7 +53,7 @@
       }
     }
   },
-  "ruleSummaryWithTarget": "Keep at least {minimum}, buy up to {target} · {stock} in the freezer",
+  "ruleSummaryWithTarget": "Keep at least {minimum}, buy up to {target} · {stock} at home",
   "@ruleSummaryWithTarget": {
     "placeholders": {
       "minimum": {
@@ -72,11 +71,11 @@
   "targetLabel": "Buy up to (optional)",
   "minimumNotPositive": "Enter an amount above zero.",
   "targetBelowMinimum": "This must be at least the minimum.",
-  "noFreezerForBoughtItems": "Set up your freezer first, then put the items in.",
+  "noStoragePlaceForBoughtItems": "Set up a storage place first, then put the items away.",
   "automaticEntryCannotBeRemoved": "This item follows its minimum quantity. Change the minimum to take it off the list.",
   "genericFailure": "That did not work. Please try again.",
   "forecastTitle": "Runs out in",
-  "forecastSubtitle": "From the last 60 days of eating",
+  "forecastSubtitle": "From the last 60 days of use",
   "forecastDays": "{count, plural, =1{≈ 1 day} other{≈ {count} days}}",
   "@forecastDays": {
     "placeholders": {
@@ -89,7 +88,7 @@
   "forecastEmpty": "Set a minimum quantity for a product to see when it runs out.",
   "forecastNoMatch": "No product with a minimum quantity matches these filters.",
   "forecastTableProduct": "Product",
-  "forecastTableStock": "In freezer",
+  "forecastTableStock": "At home",
   "forecastTableDays": "Days left",
   "forecastAddedToList": "{productName} is on the shopping list",
   "@forecastAddedToList": {

@@ -5,6 +5,7 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_inventory/src/application/inventory_providers.dart';
 import 'package:feature_inventory/src/domain/inventory_repository.dart';
@@ -18,7 +19,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -30,7 +31,13 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
 /// The catalog, the layout and the inventory on an in-memory database, wired
 /// as the app wires them.
 final class InventoryTestHarness {
-  InventoryTestHarness() : database = createInMemoryApplicationDatabase(clock: clock) {
+  /// Storage kinds and catalogs come from [registeredModules]. With
+  /// [enabledModules] set, the domains of the other modules are switched off;
+  /// without it the switches stay unknown and nothing is paused.
+  InventoryTestHarness({
+    this.registeredModules = const [FreezerFeatureModule()],
+    this.enabledModules = const [],
+  }) : database = createInMemoryApplicationDatabase(clock: clock) {
     final eventBus = InProcessDomainEventBus(logger: RecordingLogger());
     eventBus.subscribe<DomainEvent>(publishedEvents.add);
     final dependencies = ModuleDependencies(
@@ -45,19 +52,22 @@ final class InventoryTestHarness {
   static final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 2, 12));
   static final CalendarDate today = CalendarDate(2026, 10, 2);
 
+  final List<FeatureModule> registeredModules;
+  final List<FeatureModule> enabledModules;
   final ApplicationDatabase database;
   final List<DomainEvent> publishedEvents = [];
   late final ProviderContainer container;
 
   List<Override> buildOverrides(ModuleDependencies dependencies) => [
     applicationDatabaseProvider.overrideWithValue(database),
+    registeredFeatureModulesProvider.overrideWithValue(registeredModules),
     clockProvider.overrideWithValue(dependencies.clock),
     identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
     domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
     ...const ProductCatalogFeatureModule().buildProviderOverrides(dependencies),
     ...const StorageLayoutFeatureModule().buildProviderOverrides(dependencies),
     ...const InventoryFeatureModule().buildProviderOverrides(dependencies),
-    enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(const [])),
+    enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(enabledModules)),
   ];
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
@@ -65,14 +75,28 @@ final class InventoryTestHarness {
   InventoryRepository get repository => read(inventoryRepositoryProvider);
 
   /// Seeds the catalog and creates a freezer with three drawers.
-  Future<List<Compartment>> setUpCatalogAndFreezer() async {
+  Future<List<Compartment>> setUpCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(_ModuleInitializationContext(this));
-    await read(createFreezerFromTemplateUseCaseProvider).execute(
-      template: FreezerTemplate.uprightWithThreeDrawers,
+    await read(createStoragePlaceFromTemplateUseCaseProvider).execute(
+      template: FreezerStorageTemplates.uprightWithThreeDrawers,
       enteredName: '',
       defaultNames: const _EnglishLayoutDefaultNames(),
     );
     return (await read(storageLayoutQueryServiceProvider).readStorageLayout()).activeCompartments;
+  }
+
+  /// Adds a storage place from any registered template and returns its
+  /// compartments.
+  Future<List<Compartment>> addStoragePlace(StorageTemplate template) async {
+    final storagePlaceIdentifier =
+        (await read(createStoragePlaceFromTemplateUseCaseProvider).execute(
+          template: template,
+          enteredName: template.identifier,
+          defaultNames: const _EnglishLayoutDefaultNames(),
+        )).valueOrNull!;
+    return (await read(
+      storageLayoutQueryServiceProvider,
+    ).readStorageLayout()).storagePlaceLayoutOf(storagePlaceIdentifier)!.compartments;
   }
 
   Future<Product> seededProduct(String catalogKey) async {
@@ -84,14 +108,16 @@ final class InventoryTestHarness {
     required Product product,
     required Compartment compartment,
     required int amountInBaseUnits,
-    CalendarDate? frozenOn,
+    CalendarDate? storedOn,
+    CalendarDate? bestBeforeOn,
   }) async {
     final result = await read(addStockBatchUseCaseProvider).execute(
       AddStockBatchCommand(
         productIdentifier: product.identifier,
         compartmentIdentifier: compartment.identifier,
         quantity: Quantity(amountInBaseUnits: amountInBaseUnits, unit: product.canonicalUnit),
-        frozenOn: frozenOn ?? today,
+        storedOn: storedOn ?? today,
+        bestBeforeOn: bestBeforeOn,
       ),
     );
     return result.valueOrNull!;

@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'date_display_formatter.dart';
 import 'l10n/generated/common_localizations.dart';
 import 'quantity_formatter.dart';
+import 'shelf_life_formatter.dart';
 import 'storage_age_formatter.dart';
 
 /// Shortcuts for widgets: `context.commonLocalizations`, `context.quantityFormatter`.
@@ -12,6 +13,8 @@ extension LocalizationContextExtensions on BuildContext {
   QuantityFormatter get quantityFormatter => QuantityFormatter(CommonLocalizations.of(this));
 
   StorageAgeFormatter get storageAgeFormatter => StorageAgeFormatter(CommonLocalizations.of(this));
+
+  ShelfLifeFormatter get shelfLifeFormatter => ShelfLifeFormatter(CommonLocalizations.of(this));
 
   DateDisplayFormatter get dateDisplayFormatter =>
       DateDisplayFormatter(CommonLocalizations.of(this).localeName);

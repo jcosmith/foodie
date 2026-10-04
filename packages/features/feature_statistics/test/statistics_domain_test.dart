@@ -20,6 +20,7 @@ Category _category(CategoryIdentifier identifier, String? catalogKey, int sortOr
   recommendedMaximumStorageDays: 180,
   iconEmoji: '❄️',
   sortOrder: sortOrder,
+  storageDomain: StorageDomainIdentifier.freezer,
 );
 
 StatisticsMovementFact _fact({
@@ -33,6 +34,7 @@ StatisticsMovementFact _fact({
   int count = 1,
   int storedDays = 30,
   StatisticsDiscardReason reason = StatisticsDiscardReason.notGiven,
+  StorageDomainIdentifier? domain = StorageDomainIdentifier.freezer,
 }) => StatisticsMovementFact(
   day: _today.addDays(-daysAgo),
   activity: activity,
@@ -43,12 +45,14 @@ StatisticsMovementFact _fact({
   movementCount: count,
   storedDays: storedDays,
   discardReason: reason,
+  domainIdentifier: domain,
 );
 
 StatisticsAnalysis _analyse(
   List<StatisticsMovementFact> facts, {
   StatisticsFilter filter = StatisticsFilter.initial,
   CalendarDate? firstActivityDay,
+  Set<StorageDomainIdentifier> domainsWithoutWaste = const {},
 }) {
   final periods = StatisticsPeriods.resolve(
     filter: filter,
@@ -71,6 +75,7 @@ StatisticsAnalysis _analyse(
       _category(_vegetables, 'vegetables', 0),
       _category(_meals, 'meals', 1),
     ]),
+    domainsWithoutWaste: domainsWithoutWaste,
   );
 }
 
@@ -279,6 +284,8 @@ void main() {
       expect(analysis.discardedItemsByReason, [
         (StatisticsDiscardReason.tooOld, 0),
         (StatisticsDiscardReason.freezerBurn, 1),
+        (StatisticsDiscardReason.expired, 0),
+        (StatisticsDiscardReason.spoiled, 0),
         (StatisticsDiscardReason.unwanted, 0),
         (StatisticsDiscardReason.other, 0),
       ]);
@@ -314,5 +321,74 @@ void main() {
       StatisticsFilter.initial.withCategoryGroupToggled(group).withCategoryGroupToggled(group),
       StatisticsFilter.initial,
     );
+  });
+
+  group('storage domains', () {
+    const fridge = StorageDomainIdentifier.fridge;
+    const household = StorageDomainIdentifier.household;
+
+    test('the domain filter narrows every figure and counts as a choice', () {
+      final facts = [
+        _fact(daysAgo: 3, activity: StatisticsActivity.consumed, grams: 400),
+        _fact(daysAgo: 2, activity: StatisticsActivity.consumed, grams: 100, domain: fridge),
+      ];
+      final filter = StatisticsFilter.initial.withDomainToggled(fridge);
+
+      expect(
+        _analyse(facts).totalOf(StatisticsActivity.consumed).current,
+        0.5,
+        reason: 'kilograms',
+      );
+      expect(_analyse(facts, filter: filter).totalOf(StatisticsActivity.consumed).current, 0.1);
+      expect(filter.activeFilterCount, 1);
+      expect(filter.withDomainToggled(fridge), StatisticsFilter.initial);
+      expect(
+        SavedStatisticsViewCodec.decodeFilter(SavedStatisticsViewCodec.encodeFilter(filter)),
+        filter,
+      );
+    });
+
+    test('discarding from a domain that is not food is never waste', () {
+      final facts = [
+        _fact(daysAgo: 3, activity: StatisticsActivity.consumed, grams: 300),
+        _fact(daysAgo: 3, activity: StatisticsActivity.discarded, grams: 100),
+        _fact(
+          daysAgo: 2,
+          activity: StatisticsActivity.discarded,
+          grams: 600,
+          domain: household,
+          reason: StatisticsDiscardReason.expired,
+        ),
+      ];
+      final analysis = _analyse(facts, domainsWithoutWaste: {household});
+
+      expect(analysis.wasteShare.current, 0.25);
+      expect(analysis.totalOf(StatisticsActivity.discarded).current, 0.1);
+      expect(
+        analysis.discardedItemsByReason
+            .where((entry) => entry.$1 == StatisticsDiscardReason.expired)
+            .single
+            .$2,
+        0,
+      );
+    });
+
+    test('storage time columns follow the data: days and weeks for short-lived food', () {
+      final shortLived = [
+        for (final storedDays in [0, 1, 3, 6, 10, 20, 40])
+          _fact(daysAgo: 2, activity: StatisticsActivity.consumed, storedDays: storedDays),
+      ];
+      final shortAnalysis = _analyse(shortLived.take(6).toList());
+      expect(shortAnalysis.storageDurationScale, StatisticsDurationScale.days);
+      expect(shortAnalysis.storageDurationLimitsInDays, [2, 4, 8, 15, 31]);
+      expect(shortAnalysis.eatenItemsByStorageDuration, [2, 1, 1, 1, 1, 0]);
+      expect(shortAnalysis.storedDaysHistogram.reduce((a, b) => a + b), 6);
+      expect(shortAnalysis.storedDaysHistogram.first, 3, reason: 'bins of four days');
+
+      final longAnalysis = _analyse(shortLived);
+      expect(longAnalysis.storageDurationScale, StatisticsDurationScale.months);
+      expect(longAnalysis.storageDurationLimitsInDays, [30, 91, 182, 273, 365]);
+      expect(longAnalysis.eatenItemsByStorageDuration, [6, 1, 0, 0, 0, 0]);
+    });
   });
 }
