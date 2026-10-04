@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'contributions.dart';
 import 'module_availability.dart';
 import 'module_dependencies.dart';
+import 'storage_contributions.dart';
 
 /// The contract every feature package implements to plug into the app.
 ///
@@ -49,6 +50,16 @@ abstract interface class FeatureModule {
 
   /// Extra charts for the Insights tab, filtered by the shared statistics filter.
   List<InsightChartContribution> get insightCharts;
+
+  /// The storage domain this module switches on and off, with its tab as
+  /// [navigationDestination]; `null` for modules that are no domain.
+  StorageDomainContribution? get storageDomain;
+
+  /// Kinds of storage places this module brings, with their templates.
+  List<StorageKindContribution> get storageKinds;
+
+  /// Categories and products seeded offline from this module.
+  CatalogContribution? get catalog;
 
   /// Subscribe to events and run start-up reconciliation.
   Future<void> initializeModule(ModuleInitializationContext context);
@@ -100,6 +111,15 @@ abstract base class FeatureModuleBase implements FeatureModule {
 
   @override
   List<InsightChartContribution> get insightCharts => const [];
+
+  @override
+  StorageDomainContribution? get storageDomain => null;
+
+  @override
+  List<StorageKindContribution> get storageKinds => const [];
+
+  @override
+  CatalogContribution? get catalog => null;
 
   @override
   Future<void> initializeModule(ModuleInitializationContext context) async {}

@@ -46,7 +46,7 @@ class _ChartCardState extends State<ChartCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final commonLocalizations = context.commonLocalizations;
-    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.freezerColors.textMuted);
+    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.foodieColors.textMuted);
     return Card(
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(
@@ -121,7 +121,7 @@ class ChartDataTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final headerStyle = theme.textTheme.labelMedium?.copyWith(
-      color: context.freezerColors.textMuted,
+      color: context.foodieColors.textMuted,
     );
     final cellStyle = theme.textTheme.bodySmall;
     Widget cell(String text, TextStyle? style, {required bool isFirstColumn}) => Padding(
@@ -135,7 +135,7 @@ class ChartDataTable extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Table(
         defaultColumnWidth: const IntrinsicColumnWidth(),
-        border: TableBorder(horizontalInside: BorderSide(color: context.freezerColors.border)),
+        border: TableBorder(horizontalInside: BorderSide(color: context.foodieColors.border)),
         children: [
           TableRow(
             children: [

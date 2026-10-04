@@ -116,7 +116,7 @@ class _CategoryHeader extends StatelessWidget {
         title,
         style: Theme.of(
           context,
-        ).textTheme.labelLarge?.copyWith(color: context.freezerColors.textMuted),
+        ).textTheme.labelLarge?.copyWith(color: context.foodieColors.textMuted),
       ),
     ),
   );

@@ -81,7 +81,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
     final quantityFormatter = context.quantityFormatter;
-    final colors = context.freezerColors;
+    final colors = context.foodieColors;
     final theme = Theme.of(context);
     final step = RemovalAmountPolicy.stepFor(_remaining.unit);
     final remainingAfter = _remaining - widget.amount;
@@ -173,7 +173,7 @@ class _PackageBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.freezerColors;
+    final colors = context.foodieColors;
     final initialAmount = batch.initialQuantity.amountInBaseUnits;
     if (initialAmount <= 0) return const SizedBox.shrink();
     final takenAmount = amount.amountInBaseUnits.clamp(0, initialAmount);

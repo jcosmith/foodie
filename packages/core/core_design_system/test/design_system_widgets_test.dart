@@ -72,7 +72,7 @@ void main() {
       _wrapInApp(
         Builder(
           builder: (context) {
-            resolvedTokens = context.freezerColors;
+            resolvedTokens = context.foodieColors;
             return const SizedBox();
           },
         ),

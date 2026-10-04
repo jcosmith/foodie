@@ -27,7 +27,7 @@ class KpiTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final mutedColor = context.freezerColors.textMuted;
+    final mutedColor = context.foodieColors.textMuted;
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,

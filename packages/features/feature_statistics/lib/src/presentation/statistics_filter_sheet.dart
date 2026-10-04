@@ -55,7 +55,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
     final chartColors = context.chartColors;
     final productNames = context.productDisplayNameResolver;
     final theme = Theme.of(context);
-    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.freezerColors.textMuted);
+    final mutedStyle = theme.textTheme.bodySmall?.copyWith(color: context.foodieColors.textMuted);
 
     void change(StatisticsFilter Function(StatisticsFilter current) change) =>
         filterNotifier.change(change);

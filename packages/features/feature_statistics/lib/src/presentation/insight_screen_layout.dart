@@ -42,7 +42,7 @@ class InsightScreenScaffold extends ConsumerWidget {
                 [formatting.periodLabel(period), ?subtitleSuffix].join(' · '),
                 style: Theme.of(
                   context,
-                ).textTheme.bodySmall?.copyWith(color: context.freezerColors.textMuted),
+                ).textTheme.bodySmall?.copyWith(color: context.foodieColors.textMuted),
               ),
           ],
         ),

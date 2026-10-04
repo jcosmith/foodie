@@ -29,7 +29,7 @@ class RunsOutInChartCard extends ConsumerWidget {
 
     final productNames = context.productDisplayNameResolver;
     final quantityFormatter = context.quantityFormatter;
-    final urgentColor = context.freezerColors.statusUrgent;
+    final urgentColor = context.foodieColors.statusUrgent;
     final shownForecasts = [
       for (final forecast in forecasts)
         if (catalog.productOf(forecast.productIdentifier) case final product?

@@ -45,7 +45,7 @@ class CalendarHeatmap extends StatelessWidget {
     final chartColors = context.chartColors;
     final theme = Theme.of(context);
     final labelStyle = theme.textTheme.labelSmall!.copyWith(
-      color: context.freezerColors.textMuted,
+      color: context.foodieColors.textMuted,
       fontSize: 9.5,
     );
     final maximumCount = countsByDay.values.fold(0, math.max);

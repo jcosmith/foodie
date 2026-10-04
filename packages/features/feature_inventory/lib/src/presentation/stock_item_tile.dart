@@ -61,7 +61,7 @@ class StockItemTile extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: batch.remainingShare,
                   minHeight: 4,
-                  backgroundColor: context.freezerColors.border,
+                  backgroundColor: context.foodieColors.border,
                 ),
               ),
             ],

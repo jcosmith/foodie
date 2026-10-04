@@ -40,7 +40,7 @@ class FreezerMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = context.freezerColors;
+    final tokens = context.foodieColors;
     final ageLevelNames = {
       StorageAgeLevel.fresh: context.commonLocalizations.storageAgeFresh,
       StorageAgeLevel.aging: context.commonLocalizations.storageAgeAging,

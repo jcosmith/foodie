@@ -22,7 +22,7 @@ class EmptyStateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.freezerColors;
+    final colors = context.foodieColors;
     final textTheme = Theme.of(context).textTheme;
     return Center(
       child: Padding(

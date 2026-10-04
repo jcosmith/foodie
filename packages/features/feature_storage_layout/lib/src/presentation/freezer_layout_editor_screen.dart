@@ -520,9 +520,7 @@ class _HintText extends StatelessWidget {
     padding: const EdgeInsets.only(top: FoodieSpacing.medium),
     child: Text(
       text,
-      style: Theme.of(
-        context,
-      ).textTheme.bodySmall?.copyWith(color: context.freezerColors.textMuted),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: context.foodieColors.textMuted),
     ),
   );
 }

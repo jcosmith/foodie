@@ -49,7 +49,7 @@ class ColumnBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = context.freezerColors;
+    final tokens = context.foodieColors;
     final barColor = context.chartColors.singleSeries;
     final maximum = ChartScale.niceMaximum(
       values.fold(0, (largest, value) {

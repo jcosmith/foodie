@@ -150,23 +150,20 @@ void main() {
 
   test('registered domains are every domain module in sort order, switched on or not', () {
     final container = _containerWith({'freezer'});
-    expect(
-      container.read(registeredStorageDomainsProvider).map((domain) => domain.identifier),
-      [
-        StorageDomainIdentifier.freezer,
-        StorageDomainIdentifier.fridge,
-        StorageDomainIdentifier.household,
-      ],
-    );
+    expect(container.read(registeredStorageDomainsProvider).map((domain) => domain.identifier), [
+      StorageDomainIdentifier.freezer,
+      StorageDomainIdentifier.fridge,
+      StorageDomainIdentifier.household,
+    ]);
   });
 
   test('enabled domains follow the switches, in sort order', () async {
     final container = _containerWith({'household_supplies', 'freezer'});
     await container.read(enabledFeatureModulesProvider.future);
-    expect(
-      container.read(enabledStorageDomainsProvider).map((domain) => domain.identifier),
-      [StorageDomainIdentifier.freezer, StorageDomainIdentifier.household],
-    );
+    expect(container.read(enabledStorageDomainsProvider).map((domain) => domain.identifier), [
+      StorageDomainIdentifier.freezer,
+      StorageDomainIdentifier.household,
+    ]);
     expect(container.read(enabledStorageDomainIdentifiersProvider), {
       StorageDomainIdentifier.freezer,
       StorageDomainIdentifier.household,
@@ -177,10 +174,9 @@ void main() {
     final container = _containerWith(const {});
     final enabledModules = await container.read(enabledFeatureModulesProvider.future);
     expect(enabledModules.map((module) => module.moduleIdentifier), contains('freezer'));
-    expect(
-      container.read(enabledStorageDomainsProvider).map((domain) => domain.identifier),
-      [StorageDomainIdentifier.freezer],
-    );
+    expect(container.read(enabledStorageDomainsProvider).map((domain) => domain.identifier), [
+      StorageDomainIdentifier.freezer,
+    ]);
   });
 
   test('the last enabled domain cannot be switched off; other modules can', () {

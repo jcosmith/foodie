@@ -75,7 +75,7 @@ class DonutChart extends StatelessWidget {
                     Text(
                       centerLabel,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: context.freezerColors.textMuted,
+                        color: context.foodieColors.textMuted,
                       ),
                     ),
                     Text(

@@ -83,7 +83,7 @@ class _ItemPictureSlotState extends ConsumerState<ItemPictureSlot> {
   Widget build(BuildContext context) {
     final localizations = ItemPicturesLocalizations.of(context);
     final theme = Theme.of(context);
-    final tokens = context.freezerColors;
+    final tokens = context.foodieColors;
     final stagedPicture = _stagedPicture;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

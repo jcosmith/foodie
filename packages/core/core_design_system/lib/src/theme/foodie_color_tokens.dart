@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// the storage age statuses and muted surfaces.
 ///
 /// Read them with `Theme.of(context).extension<FoodieColorTokens>()!` or the
-/// `context.freezerColors` shortcut.
+/// `context.foodieColors` shortcut.
 @immutable
 final class FoodieColorTokens extends ThemeExtension<FoodieColorTokens> {
   const FoodieColorTokens({
@@ -108,6 +108,6 @@ final class FoodieColorTokens extends ThemeExtension<FoodieColorTokens> {
 }
 
 extension FoodieColorTokensContext on BuildContext {
-  FoodieColorTokens get freezerColors =>
+  FoodieColorTokens get foodieColors =>
       Theme.of(this).extension<FoodieColorTokens>() ?? FoodieColorTokens.light;
 }

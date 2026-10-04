@@ -8,7 +8,7 @@ import 'chart_data.dart';
 /// every chart in the app looks the same.
 final class ChartAxisStyle {
   ChartAxisStyle.of(BuildContext context)
-    : _tokens = context.freezerColors,
+    : _tokens = context.foodieColors,
       _theme = Theme.of(context);
 
   final FoodieColorTokens _tokens;

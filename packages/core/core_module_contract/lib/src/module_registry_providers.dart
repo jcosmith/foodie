@@ -50,16 +50,47 @@ final enabledFeatureModulesProvider = StreamProvider<List<FeatureModule>>((ref) 
   return ref
       .watch(moduleEnablementStoreProvider)
       .watchEnabledOptionalModuleIdentifiers(optionalModules)
-      .map(
-        (enabledOptionalIdentifiers) => registeredModules
+      .map((enabledOptionalIdentifiers) {
+        final enabledModules = registeredModules
             .where(
               (module) =>
                   !module.availability.isOptional ||
                   enabledOptionalIdentifiers.contains(module.moduleIdentifier),
             )
-            .toList(),
-      );
+            .toList();
+        return _withAtLeastOneStorageDomain(enabledModules, registeredModules);
+      });
 });
+
+/// The app always shows at least one domain tab (architecture 10.7). Options
+/// never lets the last one be switched off, but stored switches can still
+/// say otherwise, for example after a module was removed; then the first
+/// domain in tab order stays on.
+List<FeatureModule> _withAtLeastOneStorageDomain(
+  List<FeatureModule> enabledModules,
+  List<FeatureModule> registeredModules,
+) {
+  if (enabledModules.any((module) => module.storageDomain != null)) return enabledModules;
+  final domainModules = registeredModules.where((module) => module.storageDomain != null).toList()
+    ..sort(
+      (first, second) => first.storageDomain!.sortOrder.compareTo(second.storageDomain!.sortOrder),
+    );
+  if (domainModules.isEmpty) return enabledModules;
+  final keptModule = domainModules.first;
+  return [
+    for (final module in registeredModules)
+      if (identical(module, keptModule) || enabledModules.contains(module)) module,
+  ];
+}
+
+/// Whether the user may switch [module] off now: every optional module may,
+/// except the last storage domain that is still on.
+bool canSwitchModuleOff(FeatureModule module, {required List<FeatureModule> enabledModules}) {
+  if (module.storageDomain == null) return true;
+  return enabledModules.any(
+    (enabledModule) => enabledModule != module && enabledModule.storageDomain != null,
+  );
+}
 
 /// The item visual provider of the first enabled module that has one (item
 /// pictures), or `null` when none is on.

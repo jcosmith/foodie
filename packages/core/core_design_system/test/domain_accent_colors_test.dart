@@ -18,25 +18,23 @@ double _contrastRatio(Color first, Color second) {
 }
 
 void main() {
-  test('each domain has its own accent: freezer blue, fridge teal, pantry amber, household green', () {
-    for (final accents in [DomainAccentColors.light, DomainAccentColors.dark]) {
-      final colors = {
-        accents.freezer,
-        accents.fridge,
-        accents.pantry,
-        accents.household,
-      };
-      expect(colors, hasLength(4));
-      final freezerHue = HSLColor.fromColor(accents.freezer).hue;
-      final fridgeHue = HSLColor.fromColor(accents.fridge).hue;
-      final pantryHue = HSLColor.fromColor(accents.pantry).hue;
-      final householdHue = HSLColor.fromColor(accents.household).hue;
-      expect(freezerHue, inInclusiveRange(200, 230), reason: 'blue');
-      expect(fridgeHue, inInclusiveRange(170, 190), reason: 'teal');
-      expect(pantryHue, inInclusiveRange(30, 45), reason: 'amber');
-      expect(householdHue, inInclusiveRange(100, 140), reason: 'green');
-    }
-  });
+  test(
+    'each domain has its own accent: freezer blue, fridge teal, pantry amber, household green',
+    () {
+      for (final accents in [DomainAccentColors.light, DomainAccentColors.dark]) {
+        final colors = {accents.freezer, accents.fridge, accents.pantry, accents.household};
+        expect(colors, hasLength(4));
+        final freezerHue = HSLColor.fromColor(accents.freezer).hue;
+        final fridgeHue = HSLColor.fromColor(accents.fridge).hue;
+        final pantryHue = HSLColor.fromColor(accents.pantry).hue;
+        final householdHue = HSLColor.fromColor(accents.household).hue;
+        expect(freezerHue, inInclusiveRange(200, 230), reason: 'blue');
+        expect(fridgeHue, inInclusiveRange(170, 190), reason: 'teal');
+        expect(pantryHue, inInclusiveRange(30, 45), reason: 'amber');
+        expect(householdHue, inInclusiveRange(100, 140), reason: 'green');
+      }
+    },
+  );
 
   test('accents are readable as text on the surfaces of both themes', () {
     for (final (theme, accents) in [
@@ -77,7 +75,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: ColourTabIcon(emoji: '🧊', size: 24))),
+      const MaterialApp(
+        home: Scaffold(body: ColourTabIcon(emoji: '🧊', size: 24)),
+      ),
     );
     final text = tester.widget<Text>(find.text('🧊'));
     expect(text.style?.fontSize, 24);

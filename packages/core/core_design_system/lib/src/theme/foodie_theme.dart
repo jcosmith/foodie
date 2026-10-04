@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'domain_accent_colors.dart';
 import 'foodie_chart_colors.dart';
 import 'foodie_color_tokens.dart';
 import 'foodie_spacing.dart';
@@ -11,6 +12,7 @@ abstract final class FoodieTheme {
     brightness: Brightness.light,
     tokens: FoodieColorTokens.light,
     chartColors: FoodieChartColors.light,
+    domainAccents: DomainAccentColors.light,
     primary: const Color(0xFF1769C2),
     onPrimary: const Color(0xFFFFFFFF),
     background: const Color(0xFFF6F8FB),
@@ -22,6 +24,7 @@ abstract final class FoodieTheme {
     brightness: Brightness.dark,
     tokens: FoodieColorTokens.dark,
     chartColors: FoodieChartColors.dark,
+    domainAccents: DomainAccentColors.dark,
     primary: const Color(0xFF7DB3F0),
     onPrimary: const Color(0xFF0B1422),
     background: const Color(0xFF10151D),
@@ -33,6 +36,7 @@ abstract final class FoodieTheme {
     required Brightness brightness,
     required FoodieColorTokens tokens,
     required FoodieChartColors chartColors,
+    required DomainAccentColors domainAccents,
     required Color primary,
     required Color onPrimary,
     required Color background,
@@ -61,7 +65,7 @@ abstract final class FoodieTheme {
       brightness: brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: background,
-      extensions: [tokens, chartColors],
+      extensions: [tokens, chartColors, domainAccents],
       appBarTheme: AppBarTheme(
         backgroundColor: background,
         foregroundColor: onSurface,

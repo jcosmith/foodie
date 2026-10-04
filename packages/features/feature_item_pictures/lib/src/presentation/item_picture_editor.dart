@@ -70,7 +70,7 @@ class _ItemPictureEditorState extends ConsumerState<ItemPictureEditor> {
   Widget build(BuildContext context) {
     final localizations = ItemPicturesLocalizations.of(context);
     final theme = Theme.of(context);
-    final tokens = context.freezerColors;
+    final tokens = context.foodieColors;
     final catalog = ref.watch(itemPictureCatalogProvider).value;
     if (catalog == null) return const SizedBox(height: 150);
     final picture = catalog.pictureOf(_owner);

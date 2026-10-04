@@ -7,5 +7,6 @@ export 'src/clock.dart';
 export 'src/local_logger.dart';
 export 'src/quantity.dart';
 export 'src/result.dart';
+export 'src/storage_domain_identifier.dart';
 export 'src/stream_combination.dart';
 export 'src/typed_identifier.dart';

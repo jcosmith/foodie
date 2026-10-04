@@ -16,7 +16,7 @@ class StorageAgeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.freezerColors;
+    final colors = context.foodieColors;
     final localizations = context.commonLocalizations;
     final (symbol, label, foreground, background) = switch (level) {
       StorageAgeLevel.fresh => (
