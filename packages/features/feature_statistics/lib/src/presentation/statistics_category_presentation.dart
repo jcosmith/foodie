@@ -13,7 +13,7 @@ final class StatisticsCategoryPresentation {
       _otherLabel = StatisticsLocalizations.of(context).otherCategories;
 
   final ProductCatalog catalog;
-  final FreezerChartColors _chartColors;
+  final FoodieChartColors _chartColors;
   final ProductDisplayNameResolver _nameResolver;
   final String _otherLabel;
 

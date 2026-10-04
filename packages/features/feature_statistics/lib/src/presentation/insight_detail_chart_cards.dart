@@ -57,7 +57,7 @@ class _ActivityCalendarChartCardState extends State<ActivityCalendarChartCard> {
           ),
           if (selectedDay != null)
             Padding(
-              padding: const EdgeInsets.only(top: FreezerSpacing.small),
+              padding: const EdgeInsets.only(top: FoodieSpacing.small),
               child: Text(
                 localizations.calendarSelectedDay(
                   formatting.date(selectedDay),

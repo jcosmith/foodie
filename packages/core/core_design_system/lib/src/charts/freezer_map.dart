@@ -1,8 +1,8 @@
 import 'package:core_localization/core_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_color_tokens.dart';
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_color_tokens.dart';
+import '../theme/foodie_spacing.dart';
 import '../widgets/storage_age_badge.dart';
 
 /// One drawer of a [FreezerMap].
@@ -52,7 +52,7 @@ class FreezerMap extends StatelessWidget {
       children: [
         for (final (index, drawer) in drawers.indexed)
           Padding(
-            padding: const EdgeInsets.only(bottom: FreezerSpacing.small),
+            padding: const EdgeInsets.only(bottom: FoodieSpacing.small),
             child: Semantics(
               button: onDrawerTapped != null,
               selected: drawer.isSelected,
@@ -67,12 +67,12 @@ class FreezerMap extends StatelessWidget {
               excludeSemantics: true,
               child: Material(
                 color: drawer.isSelected ? tokens.primarySoft : tokens.surfaceMuted,
-                borderRadius: BorderRadius.circular(FreezerSpacing.tileRadius),
+                borderRadius: BorderRadius.circular(FoodieSpacing.tileRadius),
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(FreezerSpacing.tileRadius),
+                  borderRadius: BorderRadius.circular(FoodieSpacing.tileRadius),
                   onTap: onDrawerTapped == null ? null : () => onDrawerTapped!(index),
                   child: Padding(
-                    padding: const EdgeInsets.all(FreezerSpacing.small),
+                    padding: const EdgeInsets.all(FoodieSpacing.small),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -86,7 +86,7 @@ class FreezerMap extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: FreezerSpacing.extraSmall),
+                        const SizedBox(height: FoodieSpacing.extraSmall),
                         _AgeSymbolRow(levels: drawer.itemAgeLevels, tokens: tokens),
                       ],
                     ),
@@ -96,8 +96,8 @@ class FreezerMap extends StatelessWidget {
             ),
           ),
         Wrap(
-          spacing: FreezerSpacing.small,
-          runSpacing: FreezerSpacing.extraSmall,
+          spacing: FoodieSpacing.small,
+          runSpacing: FoodieSpacing.extraSmall,
           children: [for (final level in StorageAgeLevel.values) StorageAgeBadge(level: level)],
         ),
       ],
@@ -109,7 +109,7 @@ class _AgeSymbolRow extends StatelessWidget {
   const _AgeSymbolRow({required this.levels, required this.tokens});
 
   final List<StorageAgeLevel> levels;
-  final FreezerColorTokens tokens;
+  final FoodieColorTokens tokens;
 
   static const double _symbolSize = 16;
 

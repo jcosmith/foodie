@@ -49,12 +49,12 @@ class UnpackingListCard extends ConsumerWidget {
         entries.isNotEmpty && entries.every((entry) => entry.canAddWithOneTap) && !isPuttingAway;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: FreezerSpacing.small),
+        padding: const EdgeInsets.symmetric(vertical: FoodieSpacing.small),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.medium),
+              padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.medium),
               child: Text(
                 localizations.unpackingListTitle(entries.length),
                 style: Theme.of(context).textTheme.titleSmall,
@@ -83,10 +83,10 @@ class UnpackingListCard extends ConsumerWidget {
             if (entries.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  FreezerSpacing.medium,
-                  FreezerSpacing.small,
-                  FreezerSpacing.medium,
-                  FreezerSpacing.small,
+                  FoodieSpacing.medium,
+                  FoodieSpacing.small,
+                  FoodieSpacing.medium,
+                  FoodieSpacing.small,
                 ),
                 child: FilledButton(
                   onPressed: canPutAway ? onPutAway : null,

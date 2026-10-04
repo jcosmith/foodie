@@ -1,5 +1,5 @@
 # Third-party packages the app ships with (runtime dependencies of
-# apps/freezer_app, transitively). Each entry was reviewed for network access.
+# apps/foodie_app, transitively). Each entry was reviewed for network access.
 # The architecture check fails when a package appears that is not listed here,
 # so adding a dependency is always a deliberate, reviewed step.
 #

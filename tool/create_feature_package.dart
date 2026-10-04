@@ -6,7 +6,7 @@
 // Creates packages/features/feature_meal_planning with the four layers,
 // localization files, a FeatureModule and a test folder, and adds the package
 // to the workspace. Register the module in
-// apps/freezer_app/lib/src/modules/module_registry.dart afterwards.
+// apps/foodie_app/lib/src/modules/module_registry.dart afterwards.
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
@@ -125,6 +125,6 @@ final class ${pascalCaseName}FeatureModule extends FeatureModuleBase {
     ..writeln('Created ${packageDirectory.path}.')
     ..writeln('Next: flutter pub get, flutter gen-l10n in the package, and register')
     ..writeln(
-      '${pascalCaseName}FeatureModule in apps/freezer_app/lib/src/modules/module_registry.dart.',
+      '${pascalCaseName}FeatureModule in apps/foodie_app/lib/src/modules/module_registry.dart.',
     );
 }

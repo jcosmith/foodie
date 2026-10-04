@@ -110,7 +110,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
             ),
           ],
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         _PackageBar(batch: widget.batch, amount: widget.amount),
         if (sliderDivisions > 0)
           Slider(
@@ -136,7 +136,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
             ])
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.extraSmall),
+                  padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.extraSmall),
                   child: OutlinedButton(
                     onPressed: () =>
                         _selectAmount(RemovalAmountPolicy.fractionOf(_remaining, fraction)),
@@ -146,7 +146,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
               ),
           ],
         ),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         TextField(
           controller: _exactAmountController,
           focusNode: _exactAmountFocusNode,

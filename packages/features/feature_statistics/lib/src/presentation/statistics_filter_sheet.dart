@@ -98,10 +98,10 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
     return ListView(
       controller: widget.scrollController,
       padding: const EdgeInsets.fromLTRB(
-        FreezerSpacing.large,
+        FoodieSpacing.large,
         0,
-        FreezerSpacing.large,
-        FreezerSpacing.extraLarge,
+        FoodieSpacing.large,
+        FoodieSpacing.extraLarge,
       ),
       children: [
         Text(
@@ -273,7 +273,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
                 ),
             ],
           ),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         OutlinedButton(onPressed: filterNotifier.reset, child: Text(localizations.resetFilters)),
       ],
     );
@@ -376,7 +376,7 @@ class _FilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: FreezerSpacing.large),
+    padding: const EdgeInsets.only(top: FoodieSpacing.large),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -387,14 +387,10 @@ class _FilterSection extends StatelessWidget {
             style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
-        const SizedBox(height: FreezerSpacing.small),
-        if (header != null) ...[header!, const SizedBox(height: FreezerSpacing.small)],
-        Wrap(
-          spacing: FreezerSpacing.small,
-          runSpacing: FreezerSpacing.extraSmall,
-          children: choices,
-        ),
-        if (footer != null) ...[const SizedBox(height: FreezerSpacing.extraSmall), footer!],
+        const SizedBox(height: FoodieSpacing.small),
+        if (header != null) ...[header!, const SizedBox(height: FoodieSpacing.small)],
+        Wrap(spacing: FoodieSpacing.small, runSpacing: FoodieSpacing.extraSmall, children: choices),
+        if (footer != null) ...[const SizedBox(height: FoodieSpacing.extraSmall), footer!],
       ],
     ),
   );

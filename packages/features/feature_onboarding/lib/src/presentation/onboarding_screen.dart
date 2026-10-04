@@ -58,7 +58,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         localizations.welcomeTitle,
         <Widget>[
           Text(localizations.welcomeMessage, style: textTheme.bodyLarge),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           Text(localizations.chooseLanguagePrompt, style: textTheme.titleSmall),
           const LanguageChoiceList(),
         ],
@@ -67,7 +67,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         localizations.freezerTitle,
         <Widget>[
           Text(localizations.freezerPrompt, style: textTheme.bodyLarge),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           FreezerTemplateChoiceList(
             selectedTemplate: _freezerTemplate,
             onTemplateSelected: (template) => setState(() => _freezerTemplate = template),
@@ -79,9 +79,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         <Widget>[
           _ExplanationRow(icon: Icons.lock_outline, text: localizations.privacyMessage),
           _ExplanationRow(icon: Icons.save_alt_outlined, text: localizations.backupHint),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           Text(localizations.remindersTitle, style: textTheme.titleMedium),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           _ExplanationRow(icon: Icons.notifications_outlined, text: localizations.remindersMessage),
         ],
       ),
@@ -95,21 +95,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+                padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
                 children: [
                   Text(
                     localizations.stepOfSteps(_stepIndex + 1, _steps.length),
                     style: textTheme.labelMedium,
                   ),
-                  const SizedBox(height: FreezerSpacing.small),
+                  const SizedBox(height: FoodieSpacing.small),
                   Semantics(header: true, child: Text(title, style: textTheme.headlineSmall)),
-                  const SizedBox(height: FreezerSpacing.medium),
+                  const SizedBox(height: FoodieSpacing.medium),
                   ...content,
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+              padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
               child: Row(
                 children: [
                   if (_stepIndex > 0)
@@ -125,7 +125,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           : () => _finish(requestNotificationPermission: false),
                       child: Text(localizations.notNowButton),
                     ),
-                    const SizedBox(width: FreezerSpacing.small),
+                    const SizedBox(width: FoodieSpacing.small),
                     FilledButton(
                       onPressed: _isFinishing
                           ? null
@@ -155,12 +155,12 @@ class _ExplanationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: FreezerSpacing.medium),
+    padding: const EdgeInsets.only(bottom: FoodieSpacing.medium),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, color: Theme.of(context).colorScheme.primary),
-        const SizedBox(width: FreezerSpacing.medium),
+        const SizedBox(width: FoodieSpacing.medium),
         Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyLarge)),
       ],
     ),

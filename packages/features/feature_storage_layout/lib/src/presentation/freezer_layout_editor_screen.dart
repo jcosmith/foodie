@@ -79,11 +79,11 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+        padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
           Card(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: FreezerSpacing.extraSmall),
+              padding: const EdgeInsets.symmetric(vertical: FoodieSpacing.extraSmall),
               child: Column(
                 children: [
                   for (final (index, compartment) in compartments.indexed)
@@ -112,7 +112,7 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           OutlinedButton.icon(
             onPressed: () => ref.read(addCompartmentUseCaseProvider).execute(freezerIdentifier),
             icon: const Icon(Icons.add),
@@ -307,10 +307,10 @@ class _CompartmentEditorRowState extends ConsumerState<CompartmentEditorRow> {
     final colorTagIndex = widget.compartment.colorTagIndex;
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(
-        FreezerSpacing.small,
-        FreezerSpacing.extraSmall,
-        FreezerSpacing.extraSmall,
-        FreezerSpacing.extraSmall,
+        FoodieSpacing.small,
+        FoodieSpacing.extraSmall,
+        FoodieSpacing.extraSmall,
+        FoodieSpacing.extraSmall,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,7 +413,7 @@ class _MoveContentsDialogState extends State<_MoveContentsDialog> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(localizations.removeCompartmentDialogText(widget.itemCount)),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           DropdownButtonFormField<CompartmentIdentifier>(
             initialValue: _selectedDestination,
             decoration: InputDecoration(labelText: localizations.moveDestinationLabel),
@@ -517,7 +517,7 @@ class _HintText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: FreezerSpacing.medium),
+    padding: const EdgeInsets.only(top: FoodieSpacing.medium),
     child: Text(
       text,
       style: Theme.of(

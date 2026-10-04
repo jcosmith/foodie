@@ -106,7 +106,7 @@ class StatisticsFilterBar extends ConsumerWidget {
     return Material(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: FreezerSpacing.extraSmall),
+        padding: const EdgeInsets.only(bottom: FoodieSpacing.extraSmall),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -140,7 +140,7 @@ class StatisticsFilterBar extends ConsumerWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsetsDirectional.only(end: FreezerSpacing.screenGutter),
+                  padding: const EdgeInsetsDirectional.only(end: FoodieSpacing.screenGutter),
                   child: ActionChip(
                     avatar: const Icon(Icons.tune, size: 18),
                     label: Text(localizations.filtersButton(filter.activeFilterCount)),
@@ -175,13 +175,13 @@ class _ChipRow extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
     scrollDirection: Axis.horizontal,
     padding: const EdgeInsets.symmetric(
-      horizontal: FreezerSpacing.screenGutter,
-      vertical: FreezerSpacing.extraSmall,
+      horizontal: FoodieSpacing.screenGutter,
+      vertical: FoodieSpacing.extraSmall,
     ),
     child: Row(
       children: [
         for (final (index, child) in children.indexed) ...[
-          if (index > 0) const SizedBox(width: FreezerSpacing.small),
+          if (index > 0) const SizedBox(width: FoodieSpacing.small),
           child,
         ],
       ],

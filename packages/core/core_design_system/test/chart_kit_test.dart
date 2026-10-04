@@ -180,7 +180,7 @@ void main() {
   testWidgets('KPI tiles read as one sentence and render in the dark theme', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        theme: FreezerTheme.dark(),
+        theme: FoodieTheme.dark(),
         home: const Scaffold(
           body: SizedBox(
             width: 180,
@@ -197,8 +197,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('Eaten: 12 kg, ▲ 8 % vs before'), findsOneWidget);
     expect(
-      Theme.of(tester.element(find.byType(KpiTile))).extension<FreezerChartColors>(),
-      FreezerChartColors.dark,
+      Theme.of(tester.element(find.byType(KpiTile))).extension<FoodieChartColors>(),
+      FoodieChartColors.dark,
     );
   });
 

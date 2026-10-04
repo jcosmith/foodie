@@ -57,7 +57,7 @@ class UnknownCodePanel extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(localizations.unknownCode(unrecognizedBarcode.barcode.scannedValue)),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         FilledButton.icon(
           onPressed: () => _chooseProductAndLearn(
             context,
@@ -98,13 +98,13 @@ class _RecognizedProductHeader extends ConsumerWidget {
       children: [
         if (isCodeJustLearned) ...[
           Text(localizations.learnedCode, style: textTheme.bodySmall),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
         ],
         Row(
           children: [
             if (catalog != null) ...[
               ProductVisual(product: product, catalog: catalog),
-              const SizedBox(width: FreezerSpacing.medium),
+              const SizedBox(width: FoodieSpacing.medium),
             ],
             Expanded(
               child: Column(
@@ -243,7 +243,7 @@ class _ScanToAddPanelState extends ConsumerState<ScanToAddPanel> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(localizations.recognized, style: Theme.of(context).textTheme.labelMedium),
-            const SizedBox(height: FreezerSpacing.small),
+            const SizedBox(height: FoodieSpacing.small),
             _RecognizedProductHeader(
               recognizedBarcode: widget.recognizedBarcode,
               isCodeJustLearned: widget.isCodeJustLearned,
@@ -252,10 +252,10 @@ class _ScanToAddPanelState extends ConsumerState<ScanToAddPanel> {
                   : localizations.amountInFreezer(quantityFormatter.format(stock)),
             ),
             if (embeddedWeight != null) ...[
-              const SizedBox(height: FreezerSpacing.small),
+              const SizedBox(height: FoodieSpacing.small),
               Text(localizations.weightInCode(quantityFormatter.format(embeddedWeight))),
             ],
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             if (suggestion == null)
               const Center(child: CircularProgressIndicator())
             else ...[
@@ -325,7 +325,7 @@ class ScanToRemovePanel extends ConsumerWidget {
         if (items.isEmpty)
           TextButton(onPressed: onDone, child: Text(localizations.scanNext))
         else ...[
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           Text(localizations.bagsInFreezer(items.length)),
           StockItemTile(item: items.first, today: overview.today),
           FilledButton(
@@ -333,7 +333,7 @@ class ScanToRemovePanel extends ConsumerWidget {
             child: Text(localizations.chooseAmount),
           ),
           if (items.length > 1) ...[
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             Text(localizations.otherBags, style: Theme.of(context).textTheme.labelLarge),
             for (final item in items.skip(1))
               StockItemTile(item: item, today: overview.today, onTap: () => _take(context, item)),

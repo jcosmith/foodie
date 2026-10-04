@@ -49,7 +49,7 @@ class ShoppingListScreen extends ConsumerWidget {
           children: [
             for (final entry in entries) _ShoppingListEntryTile(entry: entry, catalog: catalog),
             Padding(
-              padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+              padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
               child: FilledButton.icon(
                 onPressed: tickedCount == 0 ? null : () => _putTickedItemsInFreezer(context, ref),
                 icon: const Icon(Icons.kitchen_outlined),
@@ -135,7 +135,7 @@ class _ShoppingListEntryTile extends ConsumerWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: AlignmentDirectional.centerEnd,
-        padding: const EdgeInsetsDirectional.only(end: FreezerSpacing.screenGutter),
+        padding: const EdgeInsetsDirectional.only(end: FoodieSpacing.screenGutter),
         color: Theme.of(context).colorScheme.errorContainer,
         child: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onErrorContainer),
       ),

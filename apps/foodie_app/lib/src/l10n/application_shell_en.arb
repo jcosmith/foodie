@@ -1,0 +1,20 @@
+{
+  "@@locale": "en",
+  "applicationTitle": "Foodie",
+  "navigationHome": "Home",
+  "homeGreetingMorning": "Good morning",
+  "homeGreetingAfternoon": "Good afternoon",
+  "homeGreetingEvening": "Good evening",
+  "homeDashboardEmptyTitle": "Your household at a glance",
+  "homeDashboardEmptyMessage": "What to use first and what is running low will appear here.",
+  "quickActionsMenuTitle": "Add",
+  "startupLoadingLabel": "Opening Foodie",
+  "startupFailureTitle": "The app could not start",
+  "startupFailureMessage": "Something went wrong while opening your data. Your data has not been changed.",
+  "startupKeyLostTitle": "Your data cannot be unlocked",
+  "startupKeyLostMessage": "The key that protects your Foodie data on this phone is gone, for example after the phone's secure storage was reset. Restoring a backup will be possible from here.",
+  "notificationChannelStorageRemindersName": "Storage reminders",
+  "notificationChannelStorageRemindersDescription": "A daily summary of items to use soon",
+  "notificationChannelBackupRemindersName": "Backup reminders",
+  "notificationChannelBackupRemindersDescription": "An occasional reminder to save a backup of your data"
+}

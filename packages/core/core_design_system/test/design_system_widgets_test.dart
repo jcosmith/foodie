@@ -15,7 +15,7 @@ Widget _wrapInApp(Widget child, {Locale locale = SupportedLocales.english, Theme
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      theme: theme ?? FreezerTheme.light(),
+      theme: theme ?? FoodieTheme.light(),
       home: Scaffold(body: Center(child: child)),
     );
 
@@ -67,7 +67,7 @@ void main() {
   });
 
   testWidgets('dark theme carries the dark colour tokens', (tester) async {
-    late FreezerColorTokens resolvedTokens;
+    late FoodieColorTokens resolvedTokens;
     await tester.pumpWidget(
       _wrapInApp(
         Builder(
@@ -76,9 +76,9 @@ void main() {
             return const SizedBox();
           },
         ),
-        theme: FreezerTheme.dark(),
+        theme: FoodieTheme.dark(),
       ),
     );
-    expect(resolvedTokens, FreezerColorTokens.dark);
+    expect(resolvedTokens, FoodieColorTokens.dark);
   });
 }

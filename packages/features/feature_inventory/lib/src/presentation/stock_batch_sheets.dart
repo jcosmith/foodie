@@ -30,10 +30,10 @@ Future<void> _showSheet(BuildContext context, WidgetBuilder builder) => showModa
     padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(sheetContext).bottom),
     child: SingleChildScrollView(
       padding: const EdgeInsetsDirectional.fromSTEB(
-        FreezerSpacing.screenGutter,
+        FoodieSpacing.screenGutter,
         0,
-        FreezerSpacing.screenGutter,
-        FreezerSpacing.large,
+        FoodieSpacing.screenGutter,
+        FoodieSpacing.large,
       ),
       child: builder(sheetContext),
     ),
@@ -86,7 +86,7 @@ class _SheetHeader extends ConsumerWidget {
               child: StockItemVisual(item: item, size: 48),
             ),
           ),
-        const SizedBox(width: FreezerSpacing.medium),
+        const SizedBox(width: FoodieSpacing.medium),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,23 +180,23 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SheetHeader(item: widget.item),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         Text(
           widget.isDiscarding ? localizations.discardTitle : localizations.takeTitle,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         RemovalAmountPicker(
           batch: widget.item.batch,
           amount: _amount,
           onAmountChanged: (amount) => setState(() => _amount = amount),
         ),
         if (widget.isDiscarding) ...[
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           Text(localizations.discardReasonLabel, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           Wrap(
-            spacing: FreezerSpacing.small,
+            spacing: FoodieSpacing.small,
             children: [
               for (final discardReason in DiscardReason.values)
                 ChoiceChip(
@@ -207,7 +207,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
             ],
           ),
         ],
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         FilledButton(
           style: widget.isDiscarding
               ? FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error)
@@ -220,7 +220,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
           ),
         ),
         if (!widget.isDiscarding) ...[
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           Wrap(
             alignment: WrapAlignment.center,
             children: [
@@ -315,15 +315,15 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SheetHeader(item: widget.item),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         Text(localizations.moveTitle, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         if (destinations.isEmpty)
           Text(localizations.noOtherCompartment)
         else ...[
           Wrap(
-            spacing: FreezerSpacing.small,
-            runSpacing: FreezerSpacing.small,
+            spacing: FoodieSpacing.small,
+            runSpacing: FoodieSpacing.small,
             children: [
               for (final compartment in destinations)
                 ChoiceChip(
@@ -338,15 +338,15 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
                 ),
             ],
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           Text(localizations.moveAmountLabel, style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           RemovalAmountPicker(
             batch: widget.item.batch,
             amount: _amount,
             onAmountChanged: (amount) => setState(() => _amount = amount),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           FilledButton(
             onPressed: _isSaving || selectedDestination == null
                 ? null
@@ -440,10 +440,10 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SheetHeader(item: widget.item),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         Text(localizations.correctTitle, style: Theme.of(context).textTheme.titleSmall),
         Text(localizations.correctHint, style: Theme.of(context).textTheme.bodySmall),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         TextField(
           controller: _amountController,
           autofocus: true,
@@ -455,7 +455,7 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
           ),
           onSubmitted: (_) => _save(),
         ),
-        const SizedBox(height: FreezerSpacing.large),
+        const SizedBox(height: FoodieSpacing.large),
         FilledButton(
           onPressed: _isSaving ? null : _save,
           child: Text(context.commonLocalizations.actionSave),

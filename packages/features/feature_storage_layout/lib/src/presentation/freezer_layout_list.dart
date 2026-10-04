@@ -39,7 +39,7 @@ class FreezerLayoutList extends ConsumerWidget {
       children: [
         for (final (index, freezerLayout) in freezers.indexed)
           ListTile(
-            contentPadding: const EdgeInsetsDirectional.only(start: FreezerSpacing.small),
+            contentPadding: const EdgeInsetsDirectional.only(start: FoodieSpacing.small),
             leading: const Icon(Icons.kitchen_outlined),
             title: Text(nameResolver.freezerName(freezerLayout.freezer)),
             subtitle: Text(localizations.freezerSummaryOf(freezerLayout)),

@@ -243,9 +243,9 @@ class _TopProductsChartCardState extends ConsumerState<TopProductsChartCard> {
     return ChartCard(
       title: localizations.topProductsTitle,
       headerControl: Padding(
-        padding: const EdgeInsets.only(bottom: FreezerSpacing.small),
+        padding: const EdgeInsets.only(bottom: FoodieSpacing.small),
         child: Wrap(
-          spacing: FreezerSpacing.small,
+          spacing: FoodieSpacing.small,
           children: [
             for (final activity in [StatisticsActivity.consumed, StatisticsActivity.discarded])
               ChoiceChip(

@@ -182,7 +182,7 @@ Future<TResult> _whileShowingProgress<TResult>(BuildContext context, Future<TRes
         content: Row(
           children: [
             const CircularProgressIndicator(),
-            const SizedBox(width: FreezerSpacing.large),
+            const SizedBox(width: FoodieSpacing.large),
             Expanded(child: Text(message)),
           ],
         ),
@@ -258,7 +258,7 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(localizations.passwordDialogMessage(BackupPasswordPolicy.minimumLength)),
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -271,7 +271,7 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
                     : null,
               ),
             ),
-            const SizedBox(height: FreezerSpacing.small),
+            const SizedBox(height: FoodieSpacing.small),
             TextField(
               controller: _repeatedPasswordController,
               obscureText: true,
@@ -284,7 +284,7 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
               onSubmitted: (_) => _submit(),
             ),
             if (widget.pictureCount > 0) ...[
-              const SizedBox(height: FreezerSpacing.small),
+              const SizedBox(height: FoodieSpacing.small),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(localizations.includePicturesLabel),
@@ -336,7 +336,7 @@ class _BackupPasswordDialogState extends State<_BackupPasswordDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(localizations.restorePasswordMessage),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           TextField(
             controller: _passwordController,
             obscureText: true,

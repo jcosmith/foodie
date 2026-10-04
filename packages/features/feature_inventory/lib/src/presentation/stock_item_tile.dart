@@ -32,7 +32,7 @@ class StockItemTile extends StatelessWidget {
       leading: StockItemVisual(item: item),
       title: Text(context.productDisplayNameResolver.productName(item.product)),
       subtitle: Wrap(
-        spacing: FreezerSpacing.small,
+        spacing: FoodieSpacing.small,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           StorageAgeBadge(level: item.storageAgeStatus.level),
@@ -55,7 +55,7 @@ class StockItemTile extends StatelessWidget {
                 quantityFormatter.format(batch.quantityRemaining),
                 style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
               ),
-              const SizedBox(height: FreezerSpacing.extraSmall),
+              const SizedBox(height: FoodieSpacing.extraSmall),
               ClipRRect(
                 borderRadius: BorderRadius.circular(2),
                 child: LinearProgressIndicator(

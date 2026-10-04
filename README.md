@@ -10,13 +10,13 @@ A multilingual Flutter app for managing a household's inventory: what is in the 
 pubspec.yaml              workspace root: lists every package, selects the SQLCipher build of SQLite
 analysis_options.yaml     shared strict lints
 tool/                     architecture check, workspace tasks, feature package template
-apps/freezer_app/         app shell: start-up, module registry, router, home dashboard
+apps/foodie_app/         app shell: start-up, module registry, router, home dashboard
 packages/core/            shared infrastructure (foundation, events, database, preferences,
                           localization, design system, notifications, module contract)
 packages/features/        one package per user-facing capability
 ```
 
-Every feature plugs into the shell through the `FeatureModule` contract in `core_module_contract` and is registered in `apps/freezer_app/lib/src/modules/module_registry.dart`.
+Every feature plugs into the shell through the `FeatureModule` contract in `core_module_contract` and is registered in `apps/foodie_app/lib/src/modules/module_registry.dart`.
 
 ## Working on the code
 
@@ -53,6 +53,6 @@ and add the migration step. The generated tests check every upgrade path.
 
 ## Releases
 
-The app version lives in `apps/freezer_app/pubspec.yaml`. To release it, write `docs/release-notes/<version>.md` and push the tag `v<version>` (or create the release with that tag on github.com). The Release workflow checks that the tag matches the app version, builds the Android release APK, applies the same privacy checks as CI, publishes the release with those notes and attaches `freezer-<version>.apk` with its SHA-256 checksum.
+The app version lives in `apps/foodie_app/pubspec.yaml`. To release it, write `docs/release-notes/<version>.md` and push the tag `v<version>` (or create the release with that tag on github.com). The Release workflow checks that the tag matches the app version, builds the Android release APK, applies the same privacy checks as CI, publishes the release with those notes and attaches `freezer-<version>.apk` with its SHA-256 checksum.
 
 The release APK is still signed with the Android debug key. Android only installs an update over an app signed with the same key, so switching to a real release key later means uninstalling, which deletes the data on the phone; export a backup first.

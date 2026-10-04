@@ -69,7 +69,7 @@ class KeyFigureGrid extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final columnCount = constraints.maxWidth >= 720 ? 4 : 2;
-        const gap = FreezerSpacing.small;
+        const gap = FoodieSpacing.small;
         final tileWidth = (constraints.maxWidth - gap * (columnCount - 1)) / columnCount;
         return Wrap(
           spacing: gap,

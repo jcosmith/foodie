@@ -60,15 +60,15 @@ class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePic
     return Scaffold(
       appBar: AppBar(title: Text(localizations.newFreezerTitle)),
       body: ListView(
-        padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+        padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
           Text(localizations.templatePrompt, style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           FreezerTemplateChoiceList(
             selectedTemplate: _selectedTemplate,
             onTemplateSelected: (template) => setState(() => _selectedTemplate = template),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           TextField(
             controller: _nameController,
             maxLength: LayoutNamePolicy.maximumNameLength,
@@ -84,7 +84,7 @@ class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePic
               if (_nameError != null) setState(() => _nameError = null);
             },
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           FilledButton(
             onPressed: _isSaving ? null : _createFreezer,
             child: Text(localizations.addFreezerButton),

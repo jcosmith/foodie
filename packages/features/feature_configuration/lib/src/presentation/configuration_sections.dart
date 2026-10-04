@@ -28,7 +28,7 @@ class AppearanceConfigSection extends ConsumerWidget {
           onSelectionChanged: (selection) =>
               ref.read(applicationSettingsProvider).chooseTheme(selection.single),
         ),
-        const SizedBox(height: FreezerSpacing.small),
+        const SizedBox(height: FoodieSpacing.small),
         Text(localizations.textSizeHint, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
@@ -83,20 +83,20 @@ class AboutConfigSection extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(Icons.lock_outline, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: FreezerSpacing.medium),
+            const SizedBox(width: FoodieSpacing.medium),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(localizations.privacyStatementTitle, style: textTheme.titleSmall),
-                  const SizedBox(height: FreezerSpacing.extraSmall),
+                  const SizedBox(height: FoodieSpacing.extraSmall),
                   Text(localizations.privacyStatementMessage, style: textTheme.bodyMedium),
                 ],
               ),
             ),
           ],
         ),
-        const SizedBox(height: FreezerSpacing.medium),
+        const SizedBox(height: FoodieSpacing.medium),
         Text(localizations.versionLabel(applicationVersion), style: textTheme.bodySmall),
         TextButton(
           style: TextButton.styleFrom(padding: EdgeInsets.zero),

@@ -49,7 +49,7 @@ void main() {
         container: harness.container,
         child: MaterialApp.router(
           routerConfig: router,
-          theme: FreezerTheme.light(),
+          theme: FoodieTheme.light(),
           supportedLocales: SupportedLocales.all,
           localizationsDelegates: [
             ...GlobalMaterialLocalizations.delegates,

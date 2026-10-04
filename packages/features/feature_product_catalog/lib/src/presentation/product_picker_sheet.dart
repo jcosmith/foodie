@@ -48,11 +48,11 @@ class _ProductPickerSheetState extends ConsumerState<ProductPickerSheet> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.screenGutter),
+          padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.screenGutter),
           child: Text(localizations.pickerTitle, style: Theme.of(context).textTheme.titleLarge),
         ),
         Padding(
-          padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+          padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
           child: TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.search),
@@ -67,7 +67,7 @@ class _ProductPickerSheetState extends ConsumerState<ProductPickerSheet> {
             children: [
               if (groups.isEmpty && _searchText.trim().isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+                  padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
                   child: Text(localizations.noProductsFound(_searchText.trim())),
                 ),
               for (final (categoryName, products) in groups) ...[
@@ -88,7 +88,7 @@ class _ProductPickerSheetState extends ConsumerState<ProductPickerSheet> {
                 ),
                 onTap: _createProduct,
               ),
-              const SizedBox(height: FreezerSpacing.large),
+              const SizedBox(height: FoodieSpacing.large),
             ],
           ),
         ),
@@ -105,10 +105,10 @@ class _CategoryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsetsDirectional.fromSTEB(
-      FreezerSpacing.screenGutter,
-      FreezerSpacing.medium,
-      FreezerSpacing.screenGutter,
-      FreezerSpacing.extraSmall,
+      FoodieSpacing.screenGutter,
+      FoodieSpacing.medium,
+      FoodieSpacing.screenGutter,
+      FoodieSpacing.extraSmall,
     ),
     child: Semantics(
       header: true,

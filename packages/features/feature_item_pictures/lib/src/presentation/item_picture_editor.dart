@@ -86,7 +86,7 @@ class _ItemPictureEditorState extends ConsumerState<ItemPictureEditor> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const CircularProgressIndicator(),
-            const SizedBox(height: FreezerSpacing.small),
+            const SizedBox(height: FoodieSpacing.small),
             Text(localizations.photoProcessing, style: theme.textTheme.bodySmall),
           ],
         ),
@@ -127,7 +127,7 @@ class _ItemPictureEditorState extends ConsumerState<ItemPictureEditor> {
             child: SizedBox(height: 150, child: frameContent),
           ),
         ),
-        const SizedBox(height: FreezerSpacing.extraSmall),
+        const SizedBox(height: FoodieSpacing.extraSmall),
         if (picture == null)
           Text(
             widget.subject is StockBatchItemVisualSubject
@@ -137,7 +137,7 @@ class _ItemPictureEditorState extends ConsumerState<ItemPictureEditor> {
           )
         else
           Wrap(
-            spacing: FreezerSpacing.small,
+            spacing: FoodieSpacing.small,
             children: [
               TextButton.icon(
                 icon: const Icon(Icons.fullscreen),

@@ -1,7 +1,7 @@
 import 'package:core_localization/core_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_color_tokens.dart';
+import '../theme/foodie_color_tokens.dart';
 
 /// How urgently an item should be eaten, relative to its recommended
 /// maximum storage time; [overdue] once that time is used up.

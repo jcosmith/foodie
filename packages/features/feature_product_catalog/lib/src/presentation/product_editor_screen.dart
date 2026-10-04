@@ -248,11 +248,11 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+        padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
           if (pictureSection != null) ...[
             pictureSection,
-            const SizedBox(height: FreezerSpacing.large),
+            const SizedBox(height: FoodieSpacing.large),
           ],
           TextField(
             controller: _nameController,
@@ -272,7 +272,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
               if (_nameError != null) setState(() => _nameError = null);
             },
           ),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           DropdownButtonFormField<CategoryIdentifier>(
             initialValue: _categoryIdentifier,
             decoration: InputDecoration(labelText: localizations.categoryLabel),
@@ -286,9 +286,9 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
             onChanged: (categoryIdentifier) =>
                 setState(() => _categoryIdentifier = categoryIdentifier),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           Text(localizations.unitLabel, style: Theme.of(context).textTheme.labelLarge),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           SegmentedButton<QuantityUnit>(
             segments: [
               for (final unit in QuantityUnit.values)
@@ -302,13 +302,13 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
           ),
           if (!_isNewProduct)
             Padding(
-              padding: const EdgeInsets.only(top: FreezerSpacing.extraSmall),
+              padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),
               child: Text(
                 localizations.unitLockedHint,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           TextField(
             controller: _packageSizeController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -319,7 +319,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
               errorText: _packageSizeError,
             ),
           ),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           TextField(
             controller: _storageMonthsController,
             keyboardType: TextInputType.number,
@@ -336,14 +336,14 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: FreezerSpacing.extraSmall),
+            padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),
             child: Text(
               localizations.storageRecommendationNote,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           if (layout != null && layout.hasFreezer) ...[
-            const SizedBox(height: FreezerSpacing.medium),
+            const SizedBox(height: FoodieSpacing.medium),
             _DefaultCompartmentField(
               layout: layout,
               selectedCompartmentIdentifier: _activeDefaultCompartmentIdentifier(layout),
@@ -351,7 +351,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
                   setState(() => _defaultCompartmentIdentifier = compartmentIdentifier),
             ),
           ],
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           _ProductIconField(
             emojiController: _iconController,
             categoryEmoji: selectedCategory?.iconEmoji,
@@ -360,7 +360,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
             onChooseImage: _chooseIconImage,
             onRemoveImage: () => setState(() => _iconImage = null),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           FilledButton(
             onPressed: _isSaving ? null : _save,
             child: Text(context.commonLocalizations.actionSave),
@@ -409,7 +409,7 @@ class _DefaultCompartmentField extends StatelessWidget {
                   size: 12,
                   color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
                 ),
-                const SizedBox(width: FreezerSpacing.small),
+                const SizedBox(width: FoodieSpacing.small),
                 Expanded(
                   child: Text(
                     nameResolver.compartmentNameWithFreezer(compartment),
@@ -466,7 +466,7 @@ class _ProductIconField extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(width: FreezerSpacing.medium),
+            const SizedBox(width: FoodieSpacing.medium),
             Expanded(
               child: TextField(
                 controller: emojiController,
@@ -480,7 +480,7 @@ class _ProductIconField extends StatelessWidget {
           ],
         ),
         Wrap(
-          spacing: FreezerSpacing.small,
+          spacing: FoodieSpacing.small,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             OutlinedButton.icon(
@@ -493,7 +493,7 @@ class _ProductIconField extends StatelessWidget {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(top: FreezerSpacing.extraSmall),
+          padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),
           child: Text(localizations.iconImageHint, style: Theme.of(context).textTheme.bodySmall),
         ),
       ],

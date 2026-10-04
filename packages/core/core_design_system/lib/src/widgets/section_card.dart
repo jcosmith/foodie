@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/freezer_spacing.dart';
+import '../theme/foodie_spacing.dart';
 
 /// A card with a title row and an optional trailing action, such as the
 /// "Eat soon · See all" card on the home dashboard.
@@ -24,10 +24,10 @@ class SectionCard extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(
-          FreezerSpacing.large,
-          FreezerSpacing.medium,
-          FreezerSpacing.large,
-          FreezerSpacing.medium,
+          FoodieSpacing.large,
+          FoodieSpacing.medium,
+          FoodieSpacing.large,
+          FoodieSpacing.medium,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,13 +48,13 @@ class SectionCard extends StatelessWidget {
                     onPressed: onTrailingActionPressed,
                     style: TextButton.styleFrom(
                       visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.symmetric(horizontal: FreezerSpacing.small),
+                      padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.small),
                     ),
                     child: Text(trailingActionLabel!),
                   ),
               ],
             ),
-            const SizedBox(height: FreezerSpacing.small),
+            const SizedBox(height: FoodieSpacing.small),
             child,
           ],
         ),

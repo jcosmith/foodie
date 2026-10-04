@@ -1,12 +1,12 @@
-name: freezer_workspace
-description: Workspace root of the freezer app. Lists every package and holds the workspace tooling in tool/.
+name: foodie_workspace
+description: Workspace root of the Foodie app. Lists every package and holds the workspace tooling in tool/.
 publish_to: none
 
 environment:
   sdk: ^3.10.0
 
 workspace:
-  - apps/freezer_app
+  - apps/foodie_app
   - packages/core/core_foundation
   - packages/core/core_events
   - packages/core/core_database

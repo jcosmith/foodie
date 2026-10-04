@@ -39,7 +39,7 @@ Future<StagedItemPicture?> takeOrChooseAndStagePicture(
             title: Text(localizations.chooseFromPhotos),
             onTap: () => Navigator.of(sheetContext).pop(PictureSourceKind.gallery),
           ),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
         ],
       ),
     ),

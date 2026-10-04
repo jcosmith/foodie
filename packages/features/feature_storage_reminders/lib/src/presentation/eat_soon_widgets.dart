@@ -64,10 +64,10 @@ class EatSoonScreen extends ConsumerWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                FreezerSpacing.screenGutter,
-                FreezerSpacing.small,
-                FreezerSpacing.screenGutter,
-                FreezerSpacing.small,
+                FoodieSpacing.screenGutter,
+                FoodieSpacing.small,
+                FoodieSpacing.screenGutter,
+                FoodieSpacing.small,
               ),
               child: Text(
                 localizations.eatSoonScreenExplanation,

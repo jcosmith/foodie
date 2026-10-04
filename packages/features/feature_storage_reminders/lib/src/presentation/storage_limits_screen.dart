@@ -37,7 +37,7 @@ class StorageLimitsScreen extends ConsumerWidget {
           : ListView(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+                  padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
                   child: Text(
                     localizations.storageLimitsExplanation,
                     style: Theme.of(context).textTheme.bodySmall,

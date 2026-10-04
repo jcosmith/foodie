@@ -38,12 +38,12 @@ class ConfigurationScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(localizations.screenTitle)),
       body: ListView(
-        padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+        padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
           for (final configSection in configSections)
             Padding(
               key: ValueKey(configSection.identifier),
-              padding: const EdgeInsets.only(bottom: FreezerSpacing.medium),
+              padding: const EdgeInsets.only(bottom: FoodieSpacing.medium),
               child: SectionCard(
                 title: configSection.titleBuilder(context),
                 child: configSection.builder(context),

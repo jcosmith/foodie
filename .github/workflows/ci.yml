@@ -78,11 +78,11 @@ jobs:
         run: flutter pub get
 
       - name: Build release APK
-        working-directory: apps/freezer_app
+        working-directory: apps/foodie_app
         run: flutter build apk --release
 
       - name: Check the packaged manifest
-        working-directory: apps/freezer_app
+        working-directory: apps/foodie_app
         run: |
           apk=build/app/outputs/flutter-apk/app-release.apk
           aapt2=$(find "$ANDROID_HOME/build-tools" -name aapt2 | sort | tail -n 1)

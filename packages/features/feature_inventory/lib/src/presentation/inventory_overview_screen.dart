@@ -99,9 +99,9 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
       slivers: [
         SliverPadding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-            FreezerSpacing.screenGutter,
-            FreezerSpacing.small,
-            FreezerSpacing.screenGutter,
+            FoodieSpacing.screenGutter,
+            FoodieSpacing.small,
+            FoodieSpacing.screenGutter,
             0,
           ),
           sliver: SliverList.list(
@@ -121,12 +121,12 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                     ),
                 ],
               ),
-              const SizedBox(height: FreezerSpacing.small),
+              const SizedBox(height: FoodieSpacing.small),
               Row(
                 children: [
                   Expanded(
                     child: Wrap(
-                      spacing: FreezerSpacing.small,
+                      spacing: FoodieSpacing.small,
                       children: [
                         for (final (listOrder, label) in [
                           (InventoryListOrder.byCompartment, localizations.sortByDrawer),
@@ -266,15 +266,15 @@ class _CompartmentHeader extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-            FreezerSpacing.screenGutter,
-            FreezerSpacing.large,
-            FreezerSpacing.screenGutter,
-            FreezerSpacing.extraSmall,
+            FoodieSpacing.screenGutter,
+            FoodieSpacing.large,
+            FoodieSpacing.screenGutter,
+            FoodieSpacing.extraSmall,
           ),
           child: Row(
             children: [
               Icon(Icons.circle, size: 12, color: color),
-              const SizedBox(width: FreezerSpacing.small),
+              const SizedBox(width: FoodieSpacing.small),
               Expanded(
                 child: Text(
                   name,
@@ -283,7 +283,7 @@ class _CompartmentHeader extends StatelessWidget {
               ),
               Text(itemCountText, style: textTheme.bodySmall),
               if (onTap != null) ...[
-                const SizedBox(width: FreezerSpacing.extraSmall),
+                const SizedBox(width: FoodieSpacing.extraSmall),
                 Icon(isExpanded ? Icons.expand_less : Icons.expand_more, size: 20),
               ],
             ],

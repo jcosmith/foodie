@@ -220,7 +220,7 @@ class _RestockRuleDialogState extends ConsumerState<_RestockRuleDialog> {
               errorText: _minimumError,
             ),
           ),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           TextField(
             controller: _targetController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),

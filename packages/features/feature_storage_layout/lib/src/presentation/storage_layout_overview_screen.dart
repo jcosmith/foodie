@@ -28,11 +28,11 @@ class StorageLayoutOverviewScreen extends ConsumerWidget {
           onActionPressed: () => context.push(StorageLayoutRoutes.newFreezer),
         ),
         final layout => ListView(
-          padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+          padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
           children: [
             Card(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: FreezerSpacing.small),
+                padding: const EdgeInsets.symmetric(vertical: FoodieSpacing.small),
                 child: FreezerLayoutList(layout: layout, allowsReordering: true),
               ),
             ),

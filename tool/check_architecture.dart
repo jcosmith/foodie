@@ -277,10 +277,10 @@ void _checkRuntimeDependencies(
   };
   final workspacePackageNames = workspacePackages.map((package) => package.name).toSet();
 
-  // Collect everything the app ships: dependencies of freezer_app, recursively,
+  // Collect everything the app ships: dependencies of foodie_app, recursively,
   // ignoring dev dependencies.
   final runtimePackages = <String>{};
-  final pending = ['freezer_app'];
+  final pending = ['foodie_app'];
   while (pending.isNotEmpty) {
     final packageName = pending.removeLast();
     if (!runtimePackages.add(packageName)) continue;
@@ -340,7 +340,7 @@ void _checkAndroidReleaseManifest(Directory workspaceRoot, List<String> violatio
     path.join(
       workspaceRoot.path,
       'apps',
-      'freezer_app',
+      'foodie_app',
       'android',
       'app',
       'src',

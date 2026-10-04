@@ -237,9 +237,9 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(localizations.addTitle)),
       body: ListView(
-        padding: const EdgeInsets.all(FreezerSpacing.screenGutter),
+        padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
-          if (pictureSlot != null) ...[pictureSlot, const SizedBox(height: FreezerSpacing.large)],
+          if (pictureSlot != null) ...[pictureSlot, const SizedBox(height: FoodieSpacing.large)],
           InkWell(
             onTap: _chooseProduct,
             borderRadius: BorderRadius.circular(8),
@@ -254,7 +254,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
                   : Row(
                       children: [
                         ProductVisual(product: product, catalog: catalog, size: 24),
-                        const SizedBox(width: FreezerSpacing.small),
+                        const SizedBox(width: FoodieSpacing.small),
                         Expanded(
                           child: Text(context.productDisplayNameResolver.productName(product)),
                         ),
@@ -262,7 +262,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
                     ),
             ),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           TextField(
             controller: _amountController,
             enabled: product != null,
@@ -284,7 +284,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
               errorText: _amountError,
             ),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           InkWell(
             onTap: _chooseFrozenOn,
             borderRadius: BorderRadius.circular(8),
@@ -296,12 +296,12 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
               child: Text(context.dateDisplayFormatter.formatMediumDate(_frozenOn)),
             ),
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           Text(localizations.compartmentLabel, style: textTheme.titleSmall),
-          const SizedBox(height: FreezerSpacing.small),
+          const SizedBox(height: FoodieSpacing.small),
           Wrap(
-            spacing: FreezerSpacing.small,
-            runSpacing: FreezerSpacing.small,
+            spacing: FoodieSpacing.small,
+            runSpacing: FoodieSpacing.small,
             children: [
               for (final compartment in compartments)
                 ChoiceChip(
@@ -317,14 +317,14 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
                 ),
             ],
           ),
-          const SizedBox(height: FreezerSpacing.large),
+          const SizedBox(height: FoodieSpacing.large),
           TextField(
             controller: _noteController,
             maxLength: 200,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(labelText: localizations.noteLabel),
           ),
-          const SizedBox(height: FreezerSpacing.medium),
+          const SizedBox(height: FoodieSpacing.medium),
           FilledButton(
             onPressed: _isSaving
                 ? null

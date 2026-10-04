@@ -20,8 +20,8 @@ analyzer:
     - "**/*.g.dart"
     - "**/generated/**"
     - "**/build/**"
-    - "apps/freezer_app/android/**"
-    - "apps/freezer_app/ios/**"
+    - "apps/foodie_app/android/**"
+    - "apps/foodie_app/ios/**"
 
 linter:
   rules:
