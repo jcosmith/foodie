@@ -317,4 +317,21 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   String usualAmountHint(String amount) {
     return 'Usually $amount';
   }
+
+  @override
+  String get undoSectionTitle => 'Undo';
+
+  @override
+  String undoForSeconds(int seconds) {
+    return 'Undo stays available for $seconds s';
+  }
+
+  @override
+  String get undoOff => 'No undo';
+
+  @override
+  String get undoUntilDismissed => 'Undo stays until you close the message';
+
+  @override
+  String get undoTimeLimitHint => 'After taking out, throwing away or opening something.';
 }

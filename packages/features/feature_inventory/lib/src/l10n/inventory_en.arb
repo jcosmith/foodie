@@ -264,5 +264,17 @@
         "type": "String"
       }
     }
-  }
+  },
+  "undoSectionTitle": "Undo",
+  "undoForSeconds": "Undo stays available for {seconds} s",
+  "@undoForSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "undoOff": "No undo",
+  "undoUntilDismissed": "Undo stays until you close the message",
+  "undoTimeLimitHint": "After taking out, throwing away or opening something."
 }

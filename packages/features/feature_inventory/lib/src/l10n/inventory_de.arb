@@ -83,5 +83,10 @@
   "storedOnInFuture": "Das Datum kann nicht in der Zukunft liegen.",
   "genericFailure": "Das hat nicht geklappt. Bitte versuche es noch einmal.",
   "batchPhotoButton": "Foto dieser Packung",
-  "usualAmountHint": "Üblich: {amount}"
+  "usualAmountHint": "Üblich: {amount}",
+  "undoSectionTitle": "Rückgängig",
+  "undoForSeconds": "Rückgängig bleibt {seconds} s verfügbar",
+  "undoOff": "Kein Rückgängig",
+  "undoUntilDismissed": "Rückgängig bleibt, bis du die Meldung schließt",
+  "undoTimeLimitHint": "Nach dem Entnehmen, Wegwerfen oder Öffnen."
 }

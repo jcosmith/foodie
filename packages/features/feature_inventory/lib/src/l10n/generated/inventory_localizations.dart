@@ -598,6 +598,36 @@ abstract class InventoryLocalizations {
   /// In en, this message translates to:
   /// **'Usually {amount}'**
   String usualAmountHint(String amount);
+
+  /// No description provided for @undoSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoSectionTitle;
+
+  /// No description provided for @undoForSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo stays available for {seconds} s'**
+  String undoForSeconds(int seconds);
+
+  /// No description provided for @undoOff.
+  ///
+  /// In en, this message translates to:
+  /// **'No undo'**
+  String get undoOff;
+
+  /// No description provided for @undoUntilDismissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo stays until you close the message'**
+  String get undoUntilDismissed;
+
+  /// No description provided for @undoTimeLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'After taking out, throwing away or opening something.'**
+  String get undoTimeLimitHint;
 }
 
 class _InventoryLocalizationsDelegate extends LocalizationsDelegate<InventoryLocalizations> {

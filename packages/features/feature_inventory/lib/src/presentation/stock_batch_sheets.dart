@@ -9,12 +9,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/inventory_overview.dart';
 import '../application/inventory_providers.dart';
+import '../application/undo_time_limit.dart';
 import '../domain/inventory_movement.dart';
 import '../domain/removal_amount_policy.dart';
 import '../l10n/generated/inventory_localizations.dart';
 import 'inventory_texts.dart';
 import 'removal_amount_picker.dart';
 import 'stock_item_tile.dart';
+import 'undo_config_section.dart';
 
 /// Opens the sheet for taking food out of [item]'s batch, with links to
 /// throwing away, moving and correcting it.
@@ -142,6 +144,9 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     }, fireImmediately: true);
   }
 
+  int get _undoSeconds =>
+      ref.read(undoTimeLimitSecondsProvider).value ?? UndoTimeLimit.defaultSeconds;
+
   Quantity _suggestedAmount({required Quantity? usualAmount}) =>
       RemovalAmountPolicy.suggestedAmount(
         widget.item.batch.quantityRemaining,
@@ -156,6 +161,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final undoStockRemoval = ref.read(undoStockRemovalUseCaseProvider);
+    final undoSeconds = _undoSeconds;
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
     final batchIdentifier = widget.item.batch.identifier;
     final result = widget.isDiscarding
@@ -175,16 +181,13 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
         navigator.pop();
         final amountText = quantityFormatter.format(recordedRemoval.quantity);
         messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.isDiscarding
-                  ? localizations.discardedSnackbar(amountText, productName)
-                  : localizations.tookSnackbar(amountText, productName),
-            ),
-            action: SnackBarAction(
-              label: context.commonLocalizations.actionUndo,
-              onPressed: () => undoStockRemoval.execute(recordedRemoval.movementIdentifier),
-            ),
+          buildUndoableSnackBar(
+            undoSeconds: undoSeconds,
+            message: widget.isDiscarding
+                ? localizations.discardedSnackbar(amountText, productName)
+                : localizations.tookSnackbar(amountText, productName),
+            undoLabel: context.commonLocalizations.actionUndo,
+            onUndo: () => undoStockRemoval.execute(recordedRemoval.movementIdentifier),
           ),
         );
       case FailedResult(:final failure):
@@ -202,6 +205,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     final batch = widget.item.batch;
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
     final undoLabel = context.commonLocalizations.actionUndo;
+    final undoSeconds = _undoSeconds;
     final isOpening = !batch.isOpened;
     final result = await markOpened.execute(batch.identifier, isOpened: isOpening);
     if (!mounted) return;
@@ -210,12 +214,11 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
         navigator.pop();
         if (isOpening) {
           messenger.showSnackBar(
-            SnackBar(
-              content: Text(localizations.markedOpenedSnackbar(productName)),
-              action: SnackBarAction(
-                label: undoLabel,
-                onPressed: () => markOpened.execute(batch.identifier, isOpened: false),
-              ),
+            buildUndoableSnackBar(
+              undoSeconds: undoSeconds,
+              message: localizations.markedOpenedSnackbar(productName),
+              undoLabel: undoLabel,
+              onUndo: () => markOpened.execute(batch.identifier, isOpened: false),
             ),
           );
         }
@@ -232,6 +235,8 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // Kept loaded, so the snackbar knows the undo time straight away.
+    ref.watch(undoTimeLimitSecondsProvider);
     final localizations = InventoryLocalizations.of(context);
     final amountText = context.quantityFormatter.format(_amount);
     return Column(

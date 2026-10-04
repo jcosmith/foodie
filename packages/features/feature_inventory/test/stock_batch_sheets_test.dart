@@ -1,7 +1,9 @@
 import 'package:core_design_system/testing.dart';
 import 'package:core_foundation/core_foundation.dart';
+import 'package:core_preferences/core_preferences.dart';
 import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
+import 'package:feature_inventory/src/application/undo_time_limit.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
@@ -109,6 +111,41 @@ void main() {
 
     expect(find.textContaining('Usually'), findsNothing);
     expect(find.text('Take 2 pcs'), findsOneWidget);
+  });
+
+  group('undo time from Options', () {
+    Future<void> takeAllAfterChoosing(WidgetTester tester, int undoSeconds) async {
+      await showShelvesTab(
+        tester,
+        beforeShowing: (_) =>
+            harness.read(preferencesStoreProvider).write(UndoTimeLimit.seconds, undoSeconds),
+      );
+      await tester.tap(find.text('All'));
+      await tester.pump();
+      await tester.tap(find.text('Take 1 pcs'));
+      await settle(tester);
+      expect(find.text('Took 1 pcs of Wholegrain bread'), findsOneWidget);
+    }
+
+    testWidgets('0 seconds shows the message without undo', (tester) async {
+      await takeAllAfterChoosing(tester, 0);
+      expect(find.text('Undo'), findsNothing);
+    });
+
+    testWidgets('a few seconds offers undo for that long', (tester) async {
+      await takeAllAfterChoosing(tester, 2);
+      expect(find.text('Undo'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      expect(find.text('Undo'), findsNothing);
+    });
+
+    testWidgets('"until dismissed" keeps undo offered', (tester) async {
+      await takeAllAfterChoosing(tester, UndoTimeLimit.untilDismissed);
+      await tester.pump(const Duration(seconds: 30));
+      await tester.pumpAndSettle();
+      expect(find.text('Undo'), findsOneWidget);
+    });
   });
 
   testWidgets('moving into the freezer offers "Frozen today", switched on', (tester) async {

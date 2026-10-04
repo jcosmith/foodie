@@ -318,4 +318,21 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String usualAmountHint(String amount) {
     return 'Üblich: $amount';
   }
+
+  @override
+  String get undoSectionTitle => 'Rückgängig';
+
+  @override
+  String undoForSeconds(int seconds) {
+    return 'Rückgängig bleibt $seconds s verfügbar';
+  }
+
+  @override
+  String get undoOff => 'Kein Rückgängig';
+
+  @override
+  String get undoUntilDismissed => 'Rückgängig bleibt, bis du die Meldung schließt';
+
+  @override
+  String get undoTimeLimitHint => 'Nach dem Entnehmen, Wegwerfen oder Öffnen.';
 }

@@ -10,6 +10,7 @@ import 'application/inventory_providers.dart';
 import 'data/drift_inventory_repository.dart';
 import 'l10n/generated/inventory_localizations.dart';
 import 'presentation/inventory_routes.dart';
+import 'presentation/undo_config_section.dart';
 
 /// What is stored: the domain tabs, the add form and the sheets for
 /// taking, throwing away, moving and correcting. Also tells the storage
@@ -42,6 +43,17 @@ final class InventoryFeatureModule extends FeatureModuleBase {
 
   @override
   List<RouteBase> buildRoutes() => buildInventoryRoutes();
+
+  /// After Appearance (30) and before Reminders (40).
+  @override
+  List<ConfigSectionContribution> get configSections => [
+    ConfigSectionContribution(
+      identifier: '$identifier.undo',
+      sortOrder: 35,
+      titleBuilder: (context) => InventoryLocalizations.of(context).undoSectionTitle,
+      builder: (context) => const UndoConfigSection(),
+    ),
+  ];
 
   @override
   List<QuickActionContribution> get quickActions => [
