@@ -52,6 +52,7 @@ final class CreateProductUseCase {
       iconEmoji: settings.trimmedIconEmoji,
       iconImage: settings.iconImage,
       defaultCompartmentIdentifier: settings.defaultCompartmentIdentifier,
+      pieceLabel: settings.pieceLabelFor(canonicalUnit),
       createdAt: _clock.nowUtc(),
     );
     await _repository.insertProduct(product);

@@ -30,7 +30,7 @@ class StockItemTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: StockItemVisual(item: item),
-      title: Text(context.productDisplayNameResolver.productName(item.product)),
+      title: StockItemTitle(item: item),
       subtitle: Wrap(
         spacing: FoodieSpacing.small,
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -57,9 +57,18 @@ class StockItemTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                quantityFormatter.format(batch.quantityRemaining),
-                style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              // Shrinks a long name for one piece ("12 quarters") to one line.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  quantityFormatter.format(
+                    batch.quantityRemaining,
+                    pieceLabel: item.product.displayPieceLabel,
+                  ),
+                  maxLines: 1,
+                  style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
               ),
               const SizedBox(height: FoodieSpacing.extraSmall),
               ClipRRect(
@@ -74,6 +83,37 @@ class StockItemTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// The product name, followed by the batch's note in brackets and muted,
+/// on one line: "Spinach (from the garden)".
+class StockItemTitle extends StatelessWidget {
+  const StockItemTitle({required this.item, this.style, this.maxLines = 1, super.key});
+
+  final InventoryItem item;
+  final TextStyle? style;
+  final int? maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    final productName = context.productDisplayNameResolver.productName(item.product);
+    final note = item.batch.note?.trim() ?? '';
+    if (note.isEmpty) return Text(productName, style: style);
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: productName),
+          TextSpan(
+            text: ' ($note)',
+            style: TextStyle(color: context.foodieColors.textMuted),
+          ),
+        ],
+      ),
+      style: style,
+      maxLines: maxLines,
+      overflow: maxLines == null ? null : TextOverflow.ellipsis,
     );
   }
 }

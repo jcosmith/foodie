@@ -48,11 +48,16 @@ final class _DownloadsFolderFileStore implements BackupFileStore {
   Future<Directory> createScratchDirectory() => downloadsDirectory.createTemp('scratch');
 }
 
-final class _RecordingApplicationRestarter implements ApplicationRestarter {
-  int restartCount = 0;
+/// Stands in for the app's start-up gate: a restart replaces the whole app,
+/// so the screen that asked for it goes away in the middle of its flow.
+final class _ReplacingApplicationRestarter implements ApplicationRestarter {
+  final ValueNotifier<int> restartCount = ValueNotifier(0);
 
   @override
-  Future<void> restart() async => restartCount++;
+  Future<void> restart() async {
+    restartCount.value++;
+    await WidgetsBinding.instance.endOfFrame;
+  }
 }
 
 /// The Config tab sits in a tab of the bottom navigation, so it has its own
@@ -82,7 +87,7 @@ void main() {
   late ApplicationDatabase database;
   late ProviderContainer container;
   late _DownloadsFolderFileStore fileStore;
-  late _RecordingApplicationRestarter applicationRestarter;
+  late _ReplacingApplicationRestarter applicationRestarter;
   final clock = FixedClock(DateTime.utc(2026, 10, 2, 12));
   const password = 'freezer password';
 
@@ -98,7 +103,7 @@ void main() {
       privateDirectoryProvider: () async => phoneDirectory,
     ).open();
     fileStore = _DownloadsFolderFileStore(downloadsDirectory);
-    applicationRestarter = _RecordingApplicationRestarter();
+    applicationRestarter = _ReplacingApplicationRestarter();
     final dependencies = ModuleDependencies(
       clock: clock,
       identifierGenerator: SequentialIdentifierGenerator(),
@@ -129,48 +134,112 @@ void main() {
     await temporaryDirectory.delete(recursive: true);
   });
 
-  testWidgets('saves a backup from the Config tab and restores it again', (tester) async {
+  Future<void> startApplication(WidgetTester tester) async {
+    final router = _buildRouterWithConfigTab();
+    addTearDown(router.dispose);
     await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: buildLocalizedTestRouterApplication(
-          featureLocalizationDelegates: const DataPortabilityFeatureModule().localizationDelegates,
-          routerConfig: _buildRouterWithConfigTab(),
-        ),
+      ValueListenableBuilder<int>(
+        valueListenable: applicationRestarter.restartCount,
+        builder: (context, restartCount, child) => restartCount == 0
+            ? UncontrolledProviderScope(
+                container: container,
+                child: buildLocalizedTestRouterApplication(
+                  featureLocalizationDelegates:
+                      const DataPortabilityFeatureModule().localizationDelegates,
+                  routerConfig: router,
+                ),
+              )
+            : const MaterialApp(home: Text('Restarted app')),
       ),
     );
     await _settle(tester);
+  }
 
+  Future<void> saveBackup(WidgetTester tester, {bool isPasswordProtected = true}) async {
     await tester.tap(find.text('Save backup'));
     await _settleUntilFound(tester, find.text('Protect your backup'));
-    final passwordFields = find.byType(TextField);
-    await tester.enterText(passwordFields.at(0), password);
-    await tester.enterText(passwordFields.at(1), password);
+    if (isPasswordProtected) {
+      final passwordFields = find.byType(TextField);
+      await tester.enterText(passwordFields.at(0), password);
+      await tester.enterText(passwordFields.at(1), password);
+    } else {
+      await tester.tap(find.text('Protect with a password'));
+      await tester.pumpAndSettle();
+    }
     await tester.tap(find.widgetWithText(FilledButton, 'Save backup').last);
     await _settleUntilFound(tester, find.text('Backup saved'));
+  }
+
+  Future<void> openSavedBackup(WidgetTester tester) async {
+    await tester.tap(find.text('Restore backup'));
+    await _settleUntilFound(tester, find.text('Open backup'));
+    await tester.enterText(find.byType(TextField), password);
+    await tester.tap(find.widgetWithText(FilledButton, 'Open'));
+    await _settleUntilFound(tester, find.text('Replace everything?'));
+  }
+
+  testWidgets('saves a backup from the Config tab and restores it again', (tester) async {
+    await startApplication(tester);
+
+    await saveBackup(tester);
 
     // The progress dialog is gone and the Config tab is still there.
     expect(find.text('Working on your backup…'), findsNothing);
     expect(find.byType(BackupConfigSection), findsOneWidget);
     expect(fileStore.savedFilePath, isNotNull);
 
-    await tester.tap(find.text('Restore backup'));
-    await _settleUntilFound(tester, find.text('Open backup'));
-    await tester.enterText(find.byType(TextField), password);
-    await tester.tap(find.widgetWithText(FilledButton, 'Open'));
-    await _settleUntilFound(tester, find.text('Replace everything?'));
+    await openSavedBackup(tester);
     expect(find.text('Working on your backup…'), findsNothing);
     expect(find.byType(BackupConfigSection), findsOneWidget);
 
     await tester.tap(find.widgetWithText(FilledButton, 'Restore'));
-    await _settleUntil(tester, () => applicationRestarter.restartCount > 0);
-    expect(applicationRestarter.restartCount, 1);
+    await _settleUntilFound(tester, find.text('Restarted app'));
+    await tester.pumpAndSettle();
+
+    // The flow ends on the restarted app, without a spinner left behind.
+    expect(applicationRestarter.restartCount.value, 1);
+    expect(find.text('Working on your backup…'), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
     final databasePath = (await tester.runAsync(
       () => database
           .customSelect("SELECT file FROM pragma_database_list WHERE name = 'main'")
           .getSingle(),
     ))!.read<String>('file');
     expect(File(DatabaseBackupGateway.restoreStagingPathFor(databasePath)).existsSync(), isTrue);
+  });
+
+  testWidgets('restores a backup without a password, without asking for one', (tester) async {
+    await startApplication(tester);
+    await saveBackup(tester, isPasswordProtected: false);
+
+    await tester.tap(find.text('Restore backup'));
+    await _settleUntilFound(tester, find.text('Replace everything?'));
+    expect(find.text('Open backup'), findsNothing);
+    await tester.tap(find.widgetWithText(FilledButton, 'Restore'));
+    await _settleUntilFound(tester, find.text('Restarted app'));
+
+    expect(applicationRestarter.restartCount.value, 1);
+    final databasePath = (await tester.runAsync(
+      () => database
+          .customSelect("SELECT file FROM pragma_database_list WHERE name = 'main'")
+          .getSingle(),
+    ))!.read<String>('file');
+    expect(File(DatabaseBackupGateway.restoreStagingPathFor(databasePath)).existsSync(), isTrue);
+  });
+
+  testWidgets('says why a restore failed, and closes the progress dialog', (tester) async {
+    await startApplication(tester);
+    await saveBackup(tester);
+    await openSavedBackup(tester);
+
+    // The file goes away before the user confirms.
+    await tester.runAsync(() => File(fileStore.savedFilePath!).delete());
+    await tester.tap(find.widgetWithText(FilledButton, 'Restore'));
+    await _settleUntilFound(tester, find.text('This file is not a backup of this app.'));
+
+    expect(find.text('Working on your backup…'), findsNothing);
+    expect(applicationRestarter.restartCount.value, 0);
+    expect(find.byType(BackupConfigSection), findsOneWidget);
   });
 }
 

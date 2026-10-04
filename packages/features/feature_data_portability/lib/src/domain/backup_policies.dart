@@ -1,14 +1,16 @@
 import 'data_portability_failure.dart';
 
 /// The backup password protects the only copy of the data that leaves the
-/// phone, and it cannot be recovered.
+/// phone, and it cannot be recovered. It is optional (issue #12); these
+/// rules apply when there is one.
 abstract final class BackupPasswordPolicy {
   static const int minimumLength = 8;
 
   static DataPortabilityFailure? check({
-    required String password,
-    required String repeatedPassword,
+    required String? password,
+    required String? repeatedPassword,
   }) {
+    if (password == null) return null;
     if (password.runes.length < minimumLength) return const BackupPasswordTooShort();
     if (password != repeatedPassword) return const BackupPasswordsDoNotMatch();
     return null;

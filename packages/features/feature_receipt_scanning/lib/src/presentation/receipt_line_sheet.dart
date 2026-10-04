@@ -98,7 +98,10 @@ class _ReceiptLineSheetState extends ConsumerState<_ReceiptLineSheet> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
               labelText: localizations.amountLabel(
-                context.quantityFormatter.unitSymbol(widget.product.canonicalUnit),
+                context.quantityFormatter.unitSymbol(
+                  widget.product.canonicalUnit,
+                  pieceLabel: widget.product.displayPieceLabel,
+                ),
               ),
               errorText: _amountError,
             ),

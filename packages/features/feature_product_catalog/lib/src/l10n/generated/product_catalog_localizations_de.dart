@@ -143,4 +143,28 @@ class ProductCatalogLocalizationsDe extends ProductCatalogLocalizations {
 
   @override
   String get genericFailure => 'Das hat nicht geklappt. Bitte versuche es noch einmal.';
+
+  @override
+  String get pieceLabelLabel => 'Name für ein Stück (optional)';
+
+  @override
+  String get pieceLabelHint => 'Wird statt „Stück“ angezeigt, zum Beispiel Scheiben';
+
+  @override
+  String get pieceLabelSuggestions => 'Scheiben,Ganze,Hälften,Viertel,Portionen';
+
+  @override
+  String get changeUnitAction => 'Einheit ändern …';
+
+  @override
+  String get changeUnitDialogTitle => 'In anderer Einheit zählen';
+
+  @override
+  String get changeUnitDialogText =>
+      'Foodie behält dieses Produkt mit Vorrat und Verlauf unverändert, ausgeblendet aus den Listen, und legt dasselbe Produkt in der neuen Einheit an. Bereits Eingelagertes bleibt, bis es aufgebraucht ist. Packungsgröße und Nachkauf-Regel müssen neu eingegeben werden.';
+
+  @override
+  String unitChangedSnackbar(String unit) {
+    return 'Jetzt in $unit gezählt';
+  }
 }

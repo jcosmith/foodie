@@ -8,19 +8,24 @@ import '../domain/stock_batch.dart';
 import '../l10n/generated/inventory_localizations.dart';
 
 /// Chooses how much of a batch to take, throw away or move (UI example
-/// phone 3): quick fractions for estimates, a slider that snaps to 50 g or
-/// half a piece, and exact entry for people who weigh.
+/// phone 3): quick fractions for estimates, a slider that snaps to a step
+/// that suits the package (1, 10 or 50 g, or half a piece), and exact entry
+/// for people who weigh.
 class RemovalAmountPicker extends StatefulWidget {
   const RemovalAmountPicker({
     required this.batch,
     required this.amount,
     required this.onAmountChanged,
+    this.pieceLabel,
     super.key,
   });
 
   final StockBatch batch;
   final Quantity amount;
   final ValueChanged<Quantity> onAmountChanged;
+
+  /// The product's name for one piece, such as "slices".
+  final String? pieceLabel;
 
   @override
   State<RemovalAmountPicker> createState() => _RemovalAmountPickerState();
@@ -32,6 +37,8 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
   String? _exactAmountError;
 
   Quantity get _remaining => widget.batch.quantityRemaining;
+
+  Quantity get _packageSize => widget.batch.initialQuantity;
 
   @override
   void didChangeDependencies() {
@@ -83,7 +90,7 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
     final quantityFormatter = context.quantityFormatter;
     final colors = context.foodieColors;
     final theme = Theme.of(context);
-    final step = RemovalAmountPolicy.stepFor(_remaining.unit);
+    final step = RemovalAmountPolicy.stepFor(_packageSize);
     final remainingAfter = _remaining - widget.amount;
     final minimumAmount = _remaining.isGreaterThan(step) ? step : _remaining;
     final sliderDivisions =
@@ -95,14 +102,16 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
         Row(
           children: [
             Text(
-              quantityFormatter.format(widget.amount),
+              quantityFormatter.format(widget.amount, pieceLabel: widget.pieceLabel),
               style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
             ),
             const Spacer(),
             Flexible(
               child: Text(
                 remainingAfter.isPositive
-                    ? localizations.leftAfter(quantityFormatter.format(remainingAfter))
+                    ? localizations.leftAfter(
+                        quantityFormatter.format(remainingAfter, pieceLabel: widget.pieceLabel),
+                      )
                     : localizations.allTaken,
                 textAlign: TextAlign.end,
                 style: theme.textTheme.bodyMedium?.copyWith(color: colors.textMuted),
@@ -121,10 +130,12 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
             min: minimumAmount.amountInBaseUnits.toDouble(),
             max: _remaining.amountInBaseUnits.toDouble(),
             divisions: sliderDivisions,
-            semanticFormatterCallback: (_) => quantityFormatter.format(widget.amount),
-            label: quantityFormatter.format(widget.amount),
-            onChanged: (position) =>
-                _selectAmount(RemovalAmountPolicy.snap(_remaining, position.round())),
+            semanticFormatterCallback: (_) =>
+                quantityFormatter.format(widget.amount, pieceLabel: widget.pieceLabel),
+            label: quantityFormatter.format(widget.amount, pieceLabel: widget.pieceLabel),
+            onChanged: (position) => _selectAmount(
+              RemovalAmountPolicy.snap(_remaining, position.round(), packageSize: _packageSize),
+            ),
           ),
         Row(
           children: [
@@ -138,8 +149,13 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.extraSmall),
                   child: OutlinedButton(
-                    onPressed: () =>
-                        _selectAmount(RemovalAmountPolicy.fractionOf(_remaining, fraction)),
+                    onPressed: () => _selectAmount(
+                      RemovalAmountPolicy.fractionOf(
+                        _remaining,
+                        fraction,
+                        packageSize: _packageSize,
+                      ),
+                    ),
                     child: Text(label),
                   ),
                 ),
@@ -153,7 +169,10 @@ class _RemovalAmountPickerState extends State<RemovalAmountPicker> {
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: InputDecoration(
             labelText: localizations.exactAmount,
-            suffixText: quantityFormatter.unitSymbol(_remaining.unit),
+            suffixText: quantityFormatter.unitSymbol(
+              _remaining.unit,
+              pieceLabel: widget.pieceLabel,
+            ),
             errorText: _exactAmountError,
           ),
           onChanged: _onExactAmountChanged,

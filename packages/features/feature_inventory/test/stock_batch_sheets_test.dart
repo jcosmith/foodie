@@ -1,12 +1,16 @@
+import 'package:core_database/core_database.dart';
 import 'package:core_design_system/testing.dart';
 import 'package:core_foundation/core_foundation.dart';
+import 'package:core_preferences/core_preferences.dart';
 import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
+import 'package:feature_inventory/src/application/undo_time_limit.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'support/inventory_test_harness.dart';
 import 'support/shelves_module.dart';
@@ -31,18 +35,25 @@ void main() {
   }
 
   /// Bread bought five days ago on a cupboard shelf, shown in the shelves tab.
-  Future<void> showShelvesTab(WidgetTester tester) async {
+  Future<void> showShelvesTab(
+    WidgetTester tester, {
+    int amountInBaseUnits = 1000,
+    String? note,
+    Future<void> Function(StockBatchIdentifier batch)? beforeShowing,
+  }) async {
     breadIdentifier = (await tester.runAsync(() async {
       await harness.setUpCatalogAndStoragePlace();
       final shelves = await harness.addStoragePlace(ShelvesModule.cupboard);
       return harness.addBatch(
         product: await harness.seededProduct('wholegrainBread'),
         compartment: shelves.first,
-        amountInBaseUnits: 1000,
+        amountInBaseUnits: amountInBaseUnits,
         storedOn: today.addDays(-5),
         bestBeforeOn: today.addDays(3),
+        note: note,
       );
     }))!;
+    if (beforeShowing != null) await tester.runAsync(() => beforeShowing(breadIdentifier));
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: harness.container,
@@ -57,7 +68,7 @@ void main() {
       ),
     );
     await settle(tester);
-    await tester.tap(find.text('Wholegrain bread'));
+    await tester.tap(find.textContaining('Wholegrain bread'));
     await settle(tester);
   }
 
@@ -78,6 +89,169 @@ void main() {
     await tester.tap(find.text('Mark as not opened'));
     await settle(tester);
     expect((await tester.runAsync(() => harness.readBatch(breadIdentifier)))!.openedOn, isNull);
+  });
+
+  testWidgets('taking out starts with the usual amount of the product', (tester) async {
+    await showShelvesTab(
+      tester,
+      amountInBaseUnits: 8000,
+      beforeShowing: (batch) async {
+        final consume = harness.read(consumeStockUseCaseProvider);
+        for (final thousandths in [2000, 3000]) {
+          await consume.execute(
+            stockBatchIdentifier: batch,
+            quantity: Quantity(amountInBaseUnits: thousandths, unit: QuantityUnit.piece),
+          );
+        }
+      },
+    );
+
+    expect(find.text('Usually 2.5 pcs'), findsOneWidget);
+    expect(find.text('Take 2.5 pcs'), findsOneWidget);
+  });
+
+  testWidgets('without earlier removals the take sheet starts at about a fifth', (tester) async {
+    await showShelvesTab(tester, amountInBaseUnits: 10000);
+
+    expect(find.textContaining('Usually'), findsNothing);
+    expect(find.text('Take 2 pcs'), findsOneWidget);
+  });
+
+  testWidgets('removing the best-before date and fixing the stored-on date', (tester) async {
+    await showShelvesTab(tester);
+    await tester.tap(find.text('Edit dates'));
+    await settle(tester);
+
+    expect(find.text('Best before'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(ListTile, 'Best before'),
+        matching: find.byTooltip('Remove date'),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.text('Save'));
+    await settle(tester);
+
+    expect(find.text('Dates of Wholegrain bread changed'), findsOneWidget);
+    final batch = (await tester.runAsync(() => harness.readBatch(breadIdentifier)))!;
+    expect(batch.bestBeforeOn, isNull);
+    expect(batch.storedOn, today.addDays(-5));
+  });
+
+  testWidgets('the sheet shows the whole note after the name', (tester) async {
+    await showShelvesTab(tester, note: 'from the baker');
+    expect(find.text('Wholegrain bread (from the baker)', findRichText: true), findsWidgets);
+  });
+
+  testWidgets('"Edit product" opens the product editor over the tab', (tester) async {
+    final product = (await tester.runAsync(() async {
+      await harness.setUpCatalogAndStoragePlace();
+      final shelves = await harness.addStoragePlace(ShelvesModule.cupboard);
+      final bread = await harness.seededProduct('wholegrainBread');
+      await harness.addBatch(product: bread, compartment: shelves.first, amountInBaseUnits: 1000);
+      return bread;
+    }))!;
+    final router = GoRouter(
+      initialLocation: '/tab',
+      routes: [
+        GoRoute(
+          path: '/tab',
+          builder: (context, state) =>
+              const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.pantry),
+        ),
+        GoRoute(
+          path: '/product_catalog/products/:productIdentifier',
+          builder: (context, state) =>
+              Scaffold(body: Text('Editor of ${state.pathParameters['productIdentifier']}')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: harness.container,
+        child: buildLocalizedTestRouterApplication(
+          routerConfig: router,
+          featureLocalizationDelegates: [
+            ...const InventoryFeatureModule().localizationDelegates,
+            ...const ProductCatalogFeatureModule().localizationDelegates,
+            ...const StorageLayoutFeatureModule().localizationDelegates,
+          ],
+        ),
+      ),
+    );
+    await settle(tester);
+    await tester.tap(find.text('Wholegrain bread'));
+    await settle(tester);
+
+    await tester.ensureVisible(find.text('Edit product'));
+    await tester.tap(find.text('Edit product'));
+    await settle(tester);
+
+    expect(find.text('Editor of ${product.identifier.value}'), findsOneWidget);
+    expect(find.text('Edit product'), findsNothing, reason: 'the sheet is closed');
+  });
+
+  testWidgets('amounts use the product\'s name for one piece', (tester) async {
+    await showShelvesTab(
+      tester,
+      amountInBaseUnits: 6000,
+      beforeShowing: (_) async {
+        final bread = await harness.seededProduct('wholegrainBread');
+        final dao = harness.read(productCatalogDaoProvider);
+        final row = (await dao.readProduct(bread.identifier.value))!;
+        await dao.replaceProduct(
+          ProductRow(
+            productIdentifier: row.productIdentifier,
+            categoryIdentifier: row.categoryIdentifier,
+            catalogKey: row.catalogKey,
+            canonicalUnit: row.canonicalUnit,
+            isArchived: row.isArchived,
+            createdAt: row.createdAt,
+            pieceLabel: 'slices',
+          ),
+        );
+      },
+    );
+
+    expect(find.textContaining('6 slices'), findsWidgets);
+    expect(find.textContaining('pcs'), findsNothing);
+  });
+
+  group('undo time from Options', () {
+    Future<void> takeAllAfterChoosing(WidgetTester tester, int undoSeconds) async {
+      await showShelvesTab(
+        tester,
+        beforeShowing: (_) =>
+            harness.read(preferencesStoreProvider).write(UndoTimeLimit.seconds, undoSeconds),
+      );
+      await tester.tap(find.text('All'));
+      await tester.pump();
+      await tester.tap(find.text('Take 1 pcs'));
+      await settle(tester);
+      expect(find.text('Took 1 pcs of Wholegrain bread'), findsOneWidget);
+    }
+
+    testWidgets('0 seconds shows the message without undo', (tester) async {
+      await takeAllAfterChoosing(tester, 0);
+      expect(find.text('Undo'), findsNothing);
+    });
+
+    testWidgets('a few seconds offers undo for that long', (tester) async {
+      await takeAllAfterChoosing(tester, 2);
+      expect(find.text('Undo'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      expect(find.text('Undo'), findsNothing);
+    });
+
+    testWidgets('"until dismissed" keeps undo offered', (tester) async {
+      await takeAllAfterChoosing(tester, UndoTimeLimit.untilDismissed);
+      await tester.pump(const Duration(seconds: 30));
+      await tester.pumpAndSettle();
+      expect(find.text('Undo'), findsOneWidget);
+    });
   });
 
   testWidgets('moving into the freezer offers "Frozen today", switched on', (tester) async {

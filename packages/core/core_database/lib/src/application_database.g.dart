@@ -2766,6 +2766,17 @@ class $ProductsTable extends Products
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _pieceLabelMeta = const VerificationMeta(
+    'pieceLabel',
+  );
+  @override
+  late final GeneratedColumn<String> pieceLabel = GeneratedColumn<String>(
+    'piece_label',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     productIdentifier,
@@ -2781,6 +2792,7 @@ class $ProductsTable extends Products
     defaultCompartmentIdentifier,
     isArchived,
     createdAt,
+    pieceLabel,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2901,6 +2913,12 @@ class $ProductsTable extends Products
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('piece_label')) {
+      context.handle(
+        _pieceLabelMeta,
+        pieceLabel.isAcceptableOrUnknown(data['piece_label']!, _pieceLabelMeta),
+      );
+    }
     return context;
   }
 
@@ -2962,6 +2980,10 @@ class $ProductsTable extends Products
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      pieceLabel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}piece_label'],
+      ),
     );
   }
 
@@ -3001,6 +3023,11 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
   final String? defaultCompartmentIdentifier;
   final bool isArchived;
   final DateTime createdAt;
+
+  /// What one piece is called for this product, such as "slices", shown
+  /// instead of "pcs"; only for products counted in pieces (schema
+  /// version 10).
+  final String? pieceLabel;
   const ProductRow({
     required this.productIdentifier,
     required this.categoryIdentifier,
@@ -3015,6 +3042,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     this.defaultCompartmentIdentifier,
     required this.isArchived,
     required this.createdAt,
+    this.pieceLabel,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3054,6 +3082,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     }
     map['is_archived'] = Variable<bool>(isArchived);
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || pieceLabel != null) {
+      map['piece_label'] = Variable<String>(pieceLabel);
+    }
     return map;
   }
 
@@ -3091,6 +3122,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           : Value(defaultCompartmentIdentifier),
       isArchived: Value(isArchived),
       createdAt: Value(createdAt),
+      pieceLabel: pieceLabel == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pieceLabel),
     );
   }
 
@@ -3123,6 +3157,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       ),
       isArchived: serializer.fromJson<bool>(json['isArchived']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      pieceLabel: serializer.fromJson<String?>(json['pieceLabel']),
     );
   }
   @override
@@ -3148,6 +3183,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       ),
       'isArchived': serializer.toJson<bool>(isArchived),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'pieceLabel': serializer.toJson<String?>(pieceLabel),
     };
   }
 
@@ -3165,6 +3201,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     Value<String?> defaultCompartmentIdentifier = const Value.absent(),
     bool? isArchived,
     DateTime? createdAt,
+    Value<String?> pieceLabel = const Value.absent(),
   }) => ProductRow(
     productIdentifier: productIdentifier ?? this.productIdentifier,
     categoryIdentifier: categoryIdentifier ?? this.categoryIdentifier,
@@ -3187,6 +3224,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
         : this.defaultCompartmentIdentifier,
     isArchived: isArchived ?? this.isArchived,
     createdAt: createdAt ?? this.createdAt,
+    pieceLabel: pieceLabel.present ? pieceLabel.value : this.pieceLabel,
   );
   ProductRow copyWithCompanion(ProductsCompanion data) {
     return ProductRow(
@@ -3223,6 +3261,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           ? data.isArchived.value
           : this.isArchived,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      pieceLabel: data.pieceLabel.present
+          ? data.pieceLabel.value
+          : this.pieceLabel,
     );
   }
 
@@ -3245,7 +3286,8 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
             'defaultCompartmentIdentifier: $defaultCompartmentIdentifier, ',
           )
           ..write('isArchived: $isArchived, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('pieceLabel: $pieceLabel')
           ..write(')'))
         .toString();
   }
@@ -3265,6 +3307,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     defaultCompartmentIdentifier,
     isArchived,
     createdAt,
+    pieceLabel,
   );
   @override
   bool operator ==(Object other) =>
@@ -3284,7 +3327,8 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           other.defaultCompartmentIdentifier ==
               this.defaultCompartmentIdentifier &&
           other.isArchived == this.isArchived &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.pieceLabel == this.pieceLabel);
 }
 
 class ProductsCompanion extends UpdateCompanion<ProductRow> {
@@ -3301,6 +3345,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
   final Value<String?> defaultCompartmentIdentifier;
   final Value<bool> isArchived;
   final Value<DateTime> createdAt;
+  final Value<String?> pieceLabel;
   final Value<int> rowid;
   const ProductsCompanion({
     this.productIdentifier = const Value.absent(),
@@ -3316,6 +3361,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     this.defaultCompartmentIdentifier = const Value.absent(),
     this.isArchived = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.pieceLabel = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProductsCompanion.insert({
@@ -3332,6 +3378,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     this.defaultCompartmentIdentifier = const Value.absent(),
     this.isArchived = const Value.absent(),
     required DateTime createdAt,
+    this.pieceLabel = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : productIdentifier = Value(productIdentifier),
        categoryIdentifier = Value(categoryIdentifier),
@@ -3351,6 +3398,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Expression<String>? defaultCompartmentIdentifier,
     Expression<bool>? isArchived,
     Expression<DateTime>? createdAt,
+    Expression<String>? pieceLabel,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3371,6 +3419,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
         'default_compartment_identifier': defaultCompartmentIdentifier,
       if (isArchived != null) 'is_archived': isArchived,
       if (createdAt != null) 'created_at': createdAt,
+      if (pieceLabel != null) 'piece_label': pieceLabel,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3389,6 +3438,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Value<String?>? defaultCompartmentIdentifier,
     Value<bool>? isArchived,
     Value<DateTime>? createdAt,
+    Value<String?>? pieceLabel,
     Value<int>? rowid,
   }) {
     return ProductsCompanion(
@@ -3409,6 +3459,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
           defaultCompartmentIdentifier ?? this.defaultCompartmentIdentifier,
       isArchived: isArchived ?? this.isArchived,
       createdAt: createdAt ?? this.createdAt,
+      pieceLabel: pieceLabel ?? this.pieceLabel,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3463,6 +3514,9 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (pieceLabel.present) {
+      map['piece_label'] = Variable<String>(pieceLabel.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3489,6 +3543,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
           )
           ..write('isArchived: $isArchived, ')
           ..write('createdAt: $createdAt, ')
+          ..write('pieceLabel: $pieceLabel, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -11517,6 +11572,7 @@ typedef $$ProductsTableCreateCompanionBuilder =
       Value<String?> defaultCompartmentIdentifier,
       Value<bool> isArchived,
       required DateTime createdAt,
+      Value<String?> pieceLabel,
       Value<int> rowid,
     });
 typedef $$ProductsTableUpdateCompanionBuilder =
@@ -11534,6 +11590,7 @@ typedef $$ProductsTableUpdateCompanionBuilder =
       Value<String?> defaultCompartmentIdentifier,
       Value<bool> isArchived,
       Value<DateTime> createdAt,
+      Value<String?> pieceLabel,
       Value<int> rowid,
     });
 
@@ -11831,6 +11888,11 @@ class $$ProductsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get pieceLabel => $composableBuilder(
+    column: $table.pieceLabel,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$CategoriesTableFilterComposer get categoryIdentifier {
     final $$CategoriesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -12117,6 +12179,11 @@ class $$ProductsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get pieceLabel => $composableBuilder(
+    column: $table.pieceLabel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CategoriesTableOrderingComposer get categoryIdentifier {
     final $$CategoriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -12221,6 +12288,11 @@ class $$ProductsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get pieceLabel => $composableBuilder(
+    column: $table.pieceLabel,
+    builder: (column) => column,
+  );
 
   $$CategoriesTableAnnotationComposer get categoryIdentifier {
     final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
@@ -12500,6 +12572,7 @@ class $$ProductsTableTableManager
                     const Value.absent(),
                 Value<bool> isArchived = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<String?> pieceLabel = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProductsCompanion(
                 productIdentifier: productIdentifier,
@@ -12515,6 +12588,7 @@ class $$ProductsTableTableManager
                 defaultCompartmentIdentifier: defaultCompartmentIdentifier,
                 isArchived: isArchived,
                 createdAt: createdAt,
+                pieceLabel: pieceLabel,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -12534,6 +12608,7 @@ class $$ProductsTableTableManager
                     const Value.absent(),
                 Value<bool> isArchived = const Value.absent(),
                 required DateTime createdAt,
+                Value<String?> pieceLabel = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProductsCompanion.insert(
                 productIdentifier: productIdentifier,
@@ -12549,6 +12624,7 @@ class $$ProductsTableTableManager
                 defaultCompartmentIdentifier: defaultCompartmentIdentifier,
                 isArchived: isArchived,
                 createdAt: createdAt,
+                pieceLabel: pieceLabel,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

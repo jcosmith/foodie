@@ -312,4 +312,58 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
 
   @override
   String get batchPhotoButton => 'Photo of this bag';
+
+  @override
+  String usualAmountHint(String amount) {
+    return 'Usually $amount';
+  }
+
+  @override
+  String get undoSectionTitle => 'Undo';
+
+  @override
+  String undoForSeconds(int seconds) {
+    return 'Undo stays available for $seconds s';
+  }
+
+  @override
+  String get undoOff => 'No undo';
+
+  @override
+  String get undoUntilDismissed => 'Undo stays until you close the message';
+
+  @override
+  String get undoTimeLimitHint => 'After taking out, throwing away or opening something.';
+
+  @override
+  String get editDatesAction => 'Edit dates';
+
+  @override
+  String get editDatesTitle => 'Dates';
+
+  @override
+  String get bestBeforeLabel => 'Best before';
+
+  @override
+  String get openedOnLabel => 'Opened on';
+
+  @override
+  String get dateNotSet => 'Not set';
+
+  @override
+  String get removeDate => 'Remove date';
+
+  @override
+  String datesChangedSnackbar(String product) {
+    return 'Dates of $product changed';
+  }
+
+  @override
+  String get openedOnInFuture => 'The opened date cannot be in the future.';
+
+  @override
+  String get openedBeforeStored => 'It cannot be opened before it was stored.';
+
+  @override
+  String get editProductAction => 'Edit product';
 }

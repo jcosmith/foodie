@@ -38,7 +38,11 @@ class StatisticsFilterSheet extends ConsumerStatefulWidget {
 }
 
 class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
+  /// Products with history listed before "Show all".
+  static const int collapsedProductLimit = 10;
+
   String _productSearchText = '';
+  bool _showsAllProducts = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,21 +73,48 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
         : null;
 
     final searchText = _productSearchText.trim().toLowerCase();
-    final listedProducts = catalog == null
-        ? const <Product>[]
-        : ([
-            for (final product in catalog.activeProducts)
-              if (searchText.isEmpty ||
-                  productNames.productName(product).toLowerCase().contains(searchText))
-                product,
-            // Archived products stay removable once selected.
-            for (final productIdentifier in filter.productIdentifiers)
-              if (catalog.productOf(productIdentifier) case final product? when product.isArchived)
-                product,
-          ]..sort(
-            (first, second) =>
-                productNames.productName(first).compareTo(productNames.productName(second)),
-          ));
+    var hiddenProductCount = 0;
+    final listedProducts = <Product>[];
+    if (catalog != null) {
+      int byName(Product first, Product second) =>
+          productNames.productName(first).compareTo(productNames.productName(second));
+      // Selected products come first so the user sees what is filtered;
+      // archived ones stay removable once selected.
+      final selectedProducts = [
+        for (final productIdentifier in filter.productIdentifiers)
+          ?catalog.productOf(productIdentifier),
+      ]..sort(byName);
+      final List<Product> otherProducts;
+      if (searchText.isNotEmpty) {
+        // A search finds every active product.
+        otherProducts = [
+          for (final product in catalog.activeProducts)
+            if (!filter.productIdentifiers.contains(product.identifier) &&
+                productNames.productName(product).toLowerCase().contains(searchText))
+              product,
+        ]..sort(byName);
+      } else {
+        // Without one, only products with history in the period, most used first.
+        final movementCounts = analysis?.movementCountsByProduct ?? const {};
+        final productsWithHistory =
+            [
+              for (final product in catalog.activeProducts)
+                if (!filter.productIdentifiers.contains(product.identifier) &&
+                    movementCounts.containsKey(product.identifier))
+                  product,
+            ]..sort((first, second) {
+              final byCount = movementCounts[second.identifier]!.compareTo(
+                movementCounts[first.identifier]!,
+              );
+              return byCount != 0 ? byCount : byName(first, second);
+            });
+        otherProducts = _showsAllProducts
+            ? productsWithHistory
+            : productsWithHistory.take(collapsedProductLimit).toList();
+        hiddenProductCount = productsWithHistory.length - otherProducts.length;
+      }
+      listedProducts.addAll([...selectedProducts, ...otherProducts]);
+    }
 
     final compartmentNames = layout == null ? null : context.compartmentDisplayNameResolver(layout);
     final listedCompartments = layout == null
@@ -279,6 +310,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
             choices: [
               for (final product in listedProducts)
                 FilterChip(
+                  key: ValueKey(product.identifier),
                   label: Text(
                     '${catalog.iconEmojiOf(product)} ${productNames.productName(product)}',
                   ),
@@ -287,6 +319,15 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
                       change((current) => current.withProductToggled(product.identifier)),
                 ),
             ],
+            footer: hiddenProductCount == 0
+                ? null
+                : Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TextButton(
+                      onPressed: () => setState(() => _showsAllProducts = true),
+                      child: Text(localizations.showAllProducts),
+                    ),
+                  ),
           ),
         const SizedBox(height: FoodieSpacing.large),
         OutlinedButton(onPressed: filterNotifier.reset, child: Text(localizations.resetFilters)),

@@ -24,27 +24,59 @@ class ApplicationStartupGate extends StatefulWidget {
 
 class _ApplicationStartupGateState extends State<ApplicationStartupGate>
     implements ApplicationRestarter {
-  late Future<BootstrappedApplication> _bootstrapFuture = _startBootstrap();
   BootstrappedApplication? _bootstrappedApplication;
+  Object? _startupError;
 
-  Future<BootstrappedApplication> _startBootstrap() async =>
-      _bootstrappedApplication = await widget.bootstrapper.bootstrap(applicationRestarter: this);
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_startBootstrap());
+  }
 
-  /// Shows the loading screen, closes everything and starts again.
+  /// The loading screen shows until this completes. The state is kept here
+  /// rather than in a FutureBuilder, which keeps showing the previous app
+  /// while it waits for a new future (issue #4).
+  Future<void> _startBootstrap() async {
+    try {
+      final bootstrappedApplication = await widget.bootstrapper.bootstrap(
+        applicationRestarter: this,
+      );
+      if (!mounted) {
+        await bootstrappedApplication.dispose();
+        return;
+      }
+      setState(() {
+        _bootstrappedApplication = bootstrappedApplication;
+      });
+    } on Object catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _startupError = error;
+      });
+    }
+  }
+
+  /// Shows the loading screen, closes everything and starts again. Completes
+  /// when the new app shows, or the start failed.
   @override
   Future<void> restart() async {
     final runningApplication = _bootstrappedApplication;
-    _bootstrappedApplication = null;
-    final restartCompleter = Completer<BootstrappedApplication>();
-    setState(() => _bootstrapFuture = restartCompleter.future);
-    // Let the running app leave the tree before its container is disposed.
+    if (runningApplication == null || !mounted) return;
+    setState(() {
+      _bootstrappedApplication = null;
+    });
+    // Let the running app, with any dialog it shows, leave the tree before
+    // its container is disposed.
     await WidgetsBinding.instance.endOfFrame;
-    await runningApplication?.dispose();
-    try {
-      restartCompleter.complete(await _startBootstrap());
-    } on Object catch (error, stackTrace) {
-      restartCompleter.completeError(error, stackTrace);
-    }
+    await runningApplication.dispose();
+    await _startBootstrap();
+  }
+
+  void _retry() {
+    setState(() {
+      _startupError = null;
+    });
+    unawaited(_startBootstrap());
   }
 
   @override
@@ -54,27 +86,23 @@ class _ApplicationStartupGateState extends State<ApplicationStartupGate>
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<BootstrappedApplication>(
-    future: _bootstrapFuture,
-    builder: (context, snapshot) {
-      final bootstrappedApplication = snapshot.data;
-      if (bootstrappedApplication != null) {
-        return UncontrolledProviderScope(
-          container: bootstrappedApplication.providerContainer,
-          child: FoodieApplication(router: bootstrappedApplication.router),
-        );
-      }
-      final startupError = snapshot.error;
-      return _StartupStatusApplication(
-        child: startupError == null
-            ? const _StartupLoadingScreen()
-            : _StartupFailureScreen(
-                startupError: startupError,
-                onRetry: () => setState(() => _bootstrapFuture = _startBootstrap()),
-              ),
+  Widget build(BuildContext context) {
+    final bootstrappedApplication = _bootstrappedApplication;
+    if (bootstrappedApplication != null) {
+      // A restarted app never reuses the elements of the one before.
+      return UncontrolledProviderScope(
+        key: ObjectKey(bootstrappedApplication),
+        container: bootstrappedApplication.providerContainer,
+        child: FoodieApplication(router: bootstrappedApplication.router),
       );
-    },
-  );
+    }
+    final startupError = _startupError;
+    return _StartupStatusApplication(
+      child: startupError == null
+          ? const _StartupLoadingScreen()
+          : _StartupFailureScreen(startupError: startupError, onRetry: _retry),
+    );
+  }
 }
 
 class _StartupStatusApplication extends StatelessWidget {

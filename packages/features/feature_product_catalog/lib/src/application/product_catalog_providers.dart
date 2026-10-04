@@ -12,6 +12,7 @@ import 'product_catalog_query_service.dart';
 import 'product_icon_image_file_picker.dart';
 import 'use_cases/archive_product_use_case.dart';
 import 'use_cases/change_category_storage_limit_use_case.dart';
+import 'use_cases/change_product_unit_use_case.dart';
 import 'use_cases/choose_product_icon_image_use_case.dart';
 import 'use_cases/create_product_use_case.dart';
 import 'use_cases/seed_catalog_use_case.dart';
@@ -115,5 +116,15 @@ final archiveProductUseCaseProvider = Provider<ArchiveProductUseCase>(
     repository: ref.watch(productCatalogRepositoryProvider),
     domainEventBus: ref.watch(domainEventBusProvider),
     clock: ref.watch(clockProvider),
+  ),
+);
+
+final changeProductUnitUseCaseProvider = Provider<ChangeProductUnitUseCase>(
+  (ref) => ChangeProductUnitUseCase(
+    repository: ref.watch(productCatalogRepositoryProvider),
+    transactionRunner: ref.watch(transactionRunnerProvider),
+    domainEventBus: ref.watch(domainEventBusProvider),
+    clock: ref.watch(clockProvider),
+    identifierGenerator: ref.watch(identifierGeneratorProvider),
   ),
 );

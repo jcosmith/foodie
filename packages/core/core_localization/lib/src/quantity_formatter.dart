@@ -25,8 +25,13 @@ final class QuantityFormatter {
   final NumberFormat _twoDecimalsFormat;
   final NumberFormat _inputAmountFormat;
 
-  String format(Quantity quantity) {
+  /// [pieceLabel] (a product's name for one piece, such as "slices")
+  /// replaces "pcs" for quantities in pieces.
+  String format(Quantity quantity, {String? pieceLabel}) {
     final displayAmount = quantity.displayAmount;
+    if (quantity.unit == QuantityUnit.piece && _hasText(pieceLabel)) {
+      return '${_oneDecimalFormat.format(displayAmount)} ${pieceLabel!.trim()}';
+    }
     return switch (quantity.unit) {
       QuantityUnit.gram =>
         displayAmount.abs() >= _baseUnitsPerLargerUnit
@@ -63,8 +68,10 @@ final class QuantityFormatter {
     return Quantity.fromDisplayAmount(displayAmount, unit);
   }
 
-  /// The short unit shown next to an amount field, such as "g" or "pcs".
-  String unitSymbol(QuantityUnit unit) => switch (unit) {
+  /// The short unit shown next to an amount field, such as "g" or "pcs";
+  /// [pieceLabel] replaces "pcs".
+  String unitSymbol(QuantityUnit unit, {String? pieceLabel}) => switch (unit) {
+    QuantityUnit.piece when _hasText(pieceLabel) => pieceLabel!.trim(),
     QuantityUnit.gram => _localizations.unitSymbolGram,
     QuantityUnit.milliliter => _localizations.unitSymbolMilliliter,
     QuantityUnit.piece => _localizations.unitSymbolPiece,
@@ -78,4 +85,6 @@ final class QuantityFormatter {
     QuantityUnit.piece => _localizations.unitPiece,
     QuantityUnit.portion => _localizations.unitPortion,
   };
+
+  static bool _hasText(String? text) => text != null && text.trim().isNotEmpty;
 }

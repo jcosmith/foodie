@@ -15,6 +15,8 @@ extension InventoryTexts on InventoryLocalizations {
     ProductNotAvailable() => productMissing,
     CompartmentNotAvailable() => compartmentMissing,
     StoredOnInFuture() => storedOnInFuture,
+    OpenedOnInFuture() => openedOnInFuture,
+    OpenedBeforeStored() => openedBeforeStored,
     QuantityUnitMismatch() ||
     StockBatchNotFound() ||
     AlreadyInCompartment() ||

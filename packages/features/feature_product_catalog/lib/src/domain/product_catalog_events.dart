@@ -29,3 +29,18 @@ final class CategoryUpdated extends DomainEvent {
 
   final CategoryIdentifier categoryIdentifier;
 }
+
+/// A product's unit was changed: [productIdentifier] replaces
+/// [previousProductIdentifier], which was archived and keeps its stock and
+/// history (decision D10, one unit per product). Features that link to
+/// products, such as learned barcodes, move their links over.
+final class ProductUnitChanged extends DomainEvent {
+  const ProductUnitChanged({
+    required this.previousProductIdentifier,
+    required this.productIdentifier,
+    required super.occurredAt,
+  });
+
+  final ProductIdentifier previousProductIdentifier;
+  final ProductIdentifier productIdentifier;
+}

@@ -130,6 +130,16 @@ final class DriftInventoryRepository implements InventoryRepository {
   ];
 
   @override
+  Future<List<InventoryMovement>> readMovementsOfProduct(
+    ProductIdentifier productIdentifier,
+  ) async => [
+    for (final (row, unitStorageName) in await _inventoryDao.readMovementsWithUnitsOfProduct(
+      productIdentifier.value,
+    ))
+      _movementFromRow(row, QuantityUnit.fromStorageName(unitStorageName)),
+  ];
+
+  @override
   Stream<List<InventoryMovement>> watchMovementsSince(DateTime occurredFrom) => _inventoryDao
       .watchMovementsWithUnitsSince(occurredFrom)
       .map(

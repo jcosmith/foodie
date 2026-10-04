@@ -200,7 +200,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
     setState(() => _isSaving = true);
     final messenger = ScaffoldMessenger.of(context);
     final successMessage = localizations.addedSnackbar(
-      context.quantityFormatter.format(quantity),
+      context.quantityFormatter.format(quantity, pieceLabel: product.displayPieceLabel),
       context.productDisplayNameResolver.productName(product),
       compartmentName,
     );
@@ -342,10 +342,13 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
               labelText: localizations.quantityLabel,
               suffixText: product == null
                   ? null
-                  : quantityFormatter.unitSymbol(product.canonicalUnit),
+                  : quantityFormatter.unitSymbol(
+                      product.canonicalUnit,
+                      pieceLabel: product.displayPieceLabel,
+                    ),
               helperText: switch (product?.defaultPackageQuantity) {
                 final packageQuantity? => localizations.packageHint(
-                  quantityFormatter.format(packageQuantity),
+                  quantityFormatter.format(packageQuantity, pieceLabel: product?.displayPieceLabel),
                 ),
                 null => null,
               },

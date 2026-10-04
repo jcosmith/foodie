@@ -281,5 +281,7 @@ String describeSuggestion(BuildContext context, ReceiptReviewLine line) {
   if (product == null) return line.text;
   final name = context.productDisplayNameResolver.productName(product);
   final quantity = line.quantity;
-  return quantity == null ? name : '$name · ${context.quantityFormatter.format(quantity)}';
+  return quantity == null
+      ? name
+      : '$name · ${context.quantityFormatter.format(quantity, pieceLabel: product.displayPieceLabel)}';
 }

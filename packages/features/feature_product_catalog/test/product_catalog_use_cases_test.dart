@@ -272,6 +272,88 @@ void main() {
     expect(harness.publishedEvents.whereType<ProductUpdated>(), hasLength(2));
   });
 
+  test('a name for one piece is kept for products in pieces only', () async {
+    await harness.read(seedCatalogUseCaseProvider).execute();
+    final catalog = await harness.readCatalog();
+    final bread = seededProduct(catalog, 'wholegrainBread');
+    final spinach = seededProduct(catalog, 'leafSpinach');
+    final updateProduct = harness.read(updateProductUseCaseProvider);
+
+    for (final product in [bread, spinach]) {
+      await updateProduct.execute(
+        productIdentifier: product.identifier,
+        settings: ProductSettings(
+          enteredName: '',
+          categoryIdentifier: product.categoryIdentifier,
+          pieceLabel: ' slices ',
+        ),
+      );
+    }
+    final updated = await harness.readCatalog();
+    expect(updated.productOf(bread.identifier)!.pieceLabel, 'slices');
+    expect(updated.productOf(bread.identifier)!.displayPieceLabel, 'slices');
+    expect(updated.productOf(bread.identifier)!.canonicalUnit, QuantityUnit.piece);
+    expect(updated.productOf(spinach.identifier)!.pieceLabel, isNull);
+
+    await updateProduct.execute(
+      productIdentifier: bread.identifier,
+      settings: ProductSettings(enteredName: '', categoryIdentifier: bread.categoryIdentifier),
+    );
+    expect((await harness.readCatalog()).productOf(bread.identifier)!.pieceLabel, isNull);
+  });
+
+  group('changing the unit', () {
+    test('adds the product in the new unit and archives the old one', () async {
+      await harness.read(seedCatalogUseCaseProvider).execute();
+      final bread = seededProduct(await harness.readCatalog(), 'wholegrainBread');
+
+      final result = await harness
+          .read(changeProductUnitUseCaseProvider)
+          .execute(
+            productIdentifier: bread.identifier,
+            newUnit: QuantityUnit.gram,
+            displayName: 'Wholegrain bread',
+          );
+
+      final catalog = await harness.readCatalog();
+      final replacement = catalog.productOf(result.valueOrNull!)!;
+      final old = catalog.productOf(bread.identifier)!;
+      expect(replacement.canonicalUnit, QuantityUnit.gram);
+      expect(replacement.customName, 'Wholegrain bread');
+      expect(replacement.categoryIdentifier, bread.categoryIdentifier);
+      expect(replacement.iconEmoji, bread.iconEmoji);
+      expect(replacement.recommendedMaximumStorageDays, bread.recommendedMaximumStorageDays);
+      expect(replacement.defaultPackageQuantity, isNull, reason: 'it was in pieces');
+      expect(replacement.catalogKey, isNull);
+      expect(old.isArchived, isTrue);
+      expect(old.canonicalUnit, QuantityUnit.piece);
+      final event = harness.publishedEvents.whereType<ProductUnitChanged>().single;
+      expect(event.previousProductIdentifier, bread.identifier);
+      expect(event.productIdentifier, replacement.identifier);
+    });
+
+    test('refuses the same unit and an archived product', () async {
+      await harness.read(seedCatalogUseCaseProvider).execute();
+      final spinach = seededProduct(await harness.readCatalog(), 'leafSpinach');
+      final changeUnit = harness.read(changeProductUnitUseCaseProvider);
+
+      final sameUnit = await changeUnit.execute(
+        productIdentifier: spinach.identifier,
+        newUnit: QuantityUnit.gram,
+        displayName: 'Spinach',
+      );
+      await harness.read(archiveProductUseCaseProvider).execute(spinach.identifier);
+      final archived = await changeUnit.execute(
+        productIdentifier: spinach.identifier,
+        newUnit: QuantityUnit.piece,
+        displayName: 'Spinach',
+      );
+
+      expect(sameUnit.failureOrNull, isA<InvalidProductSetting>());
+      expect(archived.failureOrNull, isA<ProductNotFound>());
+    });
+  });
+
   test('remembers a default drawer until it is cleared', () async {
     await harness.read(seedCatalogUseCaseProvider).execute();
     final drawers = await harness.setUpStoragePlace();

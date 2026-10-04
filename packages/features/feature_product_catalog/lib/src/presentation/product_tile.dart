@@ -24,7 +24,12 @@ class ProductTile extends StatelessWidget {
       title: Text(context.productDisplayNameResolver.productName(product)),
       subtitle: packageQuantity == null
           ? null
-          : Text(context.quantityFormatter.format(packageQuantity)),
+          : Text(
+              context.quantityFormatter.format(
+                packageQuantity,
+                pieceLabel: product.displayPieceLabel,
+              ),
+            ),
       onTap: onTap,
     );
   }

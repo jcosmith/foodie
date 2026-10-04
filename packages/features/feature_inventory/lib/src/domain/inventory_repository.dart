@@ -54,6 +54,9 @@ abstract interface class InventoryRepository {
   /// The whole movement log, oldest first.
   Future<List<InventoryMovement>> readMovementHistory();
 
+  /// The movements of one product, oldest first.
+  Future<List<InventoryMovement>> readMovementsOfProduct(ProductIdentifier productIdentifier);
+
   /// Movements at or after [occurredFrom], oldest first, kept up to date.
   Stream<List<InventoryMovement>> watchMovementsSince(DateTime occurredFrom);
 

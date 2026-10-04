@@ -26,6 +26,7 @@ final class Product {
     this.iconEmoji,
     this.iconImage,
     this.defaultCompartmentIdentifier,
+    this.pieceLabel,
     this.isArchived = false,
   });
 
@@ -60,8 +61,19 @@ final class Product {
   /// one, the add form suggests the compartment used last time.
   final CompartmentIdentifier? defaultCompartmentIdentifier;
 
+  /// What one piece is called, such as "slices", shown instead of "pcs"
+  /// wherever the user sees an amount; statistics still count pieces. Only
+  /// used for products counted in pieces, see [displayPieceLabel].
+  final String? pieceLabel;
+
   final bool isArchived;
   final DateTime createdAt;
+
+  /// [pieceLabel] when this product is counted in pieces and has one.
+  String? get displayPieceLabel {
+    final label = pieceLabel?.trim();
+    return canonicalUnit == QuantityUnit.piece && label != null && label.isNotEmpty ? label : null;
+  }
 
   String effectiveIconEmoji(Category category) => iconEmoji ?? category.iconEmoji;
 
@@ -74,6 +86,7 @@ final class Product {
     String? Function()? iconEmoji,
     ProductIconImage? Function()? iconImage,
     CompartmentIdentifier? Function()? defaultCompartmentIdentifier,
+    String? Function()? pieceLabel,
     bool? isArchived,
   }) => Product(
     identifier: identifier,
@@ -95,6 +108,7 @@ final class Product {
     defaultCompartmentIdentifier: defaultCompartmentIdentifier == null
         ? this.defaultCompartmentIdentifier
         : defaultCompartmentIdentifier(),
+    pieceLabel: pieceLabel == null ? this.pieceLabel : pieceLabel(),
     isArchived: isArchived ?? this.isArchived,
     createdAt: createdAt,
   );
@@ -113,6 +127,7 @@ final class Product {
       other.iconEmoji == iconEmoji &&
       other.iconImage == iconImage &&
       other.defaultCompartmentIdentifier == defaultCompartmentIdentifier &&
+      other.pieceLabel == pieceLabel &&
       other.isArchived == isArchived &&
       other.createdAt == createdAt;
 
@@ -129,6 +144,7 @@ final class Product {
     iconEmoji,
     iconImage,
     defaultCompartmentIdentifier,
+    pieceLabel,
     isArchived,
     createdAt,
   );

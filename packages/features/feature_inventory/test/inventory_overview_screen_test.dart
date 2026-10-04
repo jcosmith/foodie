@@ -17,13 +17,14 @@ void main() {
   setUp(() => harness = InventoryTestHarness());
   tearDown(() => harness.dispose());
 
-  Future<void> showOverviewWithMincedMeat(WidgetTester tester) async {
+  Future<void> showOverviewWithMincedMeat(WidgetTester tester, {String? note}) async {
     await tester.runAsync(() async {
       final drawers = await harness.setUpCatalogAndStoragePlace();
       await harness.addBatch(
         product: await harness.seededProduct('mincedMeat'),
         compartment: drawers.first,
         amountInBaseUnits: 500,
+        note: note,
       );
     });
     await tester.pumpWidget(
@@ -325,6 +326,15 @@ void main() {
 
       expect(find.text('Minced meat'), findsOneWidget);
     });
+  });
+
+  testWidgets('shows the note in brackets and finds the batch by it', (tester) async {
+    await showOverviewWithMincedMeat(tester, note: 'for Sunday');
+    expect(find.text('Minced meat (for Sunday)', findRichText: true), findsOneWidget);
+
+    await tester.enterText(find.byType(SearchBar), 'sunday');
+    await tester.pump();
+    expect(find.text('Minced meat (for Sunday)', findRichText: true), findsOneWidget);
   });
 
   testWidgets('says when the search finds nothing', (tester) async {

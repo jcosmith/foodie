@@ -332,6 +332,72 @@ void main() {
     });
   });
 
+  group('changing dates', () {
+    final today = InventoryTestHarness.today;
+
+    test('sets all three dates, clears optional ones and announces it', () async {
+      final batchIdentifier = await addMincedMeat();
+      final change = harness.read(changeStockBatchDatesUseCaseProvider);
+
+      final result = await change.execute(
+        batchIdentifier,
+        storedOn: today.addDays(-10),
+        bestBeforeOn: today.addDays(20),
+        openedOn: today.addDays(-2),
+      );
+
+      expect(result.isSuccess, isTrue);
+      final batch = await harness.readBatch(batchIdentifier);
+      expect(batch.storedOn, today.addDays(-10));
+      expect(batch.bestBeforeOn, today.addDays(20));
+      expect(batch.openedOn, today.addDays(-2));
+      expect(batch.quantityRemaining, grams(500), reason: 'amounts stay');
+      expect(
+        harness.publishedEvents.whereType<StockBatchDatesChanged>().single.stockBatchIdentifier,
+        batchIdentifier,
+      );
+
+      await change.execute(batchIdentifier, storedOn: today, bestBeforeOn: null, openedOn: null);
+      final cleared = await harness.readBatch(batchIdentifier);
+      expect(cleared.bestBeforeOn, isNull);
+      expect(cleared.openedOn, isNull);
+    });
+
+    test('refuses dates in the future and opening before storing', () async {
+      final batchIdentifier = await addMincedMeat();
+      final change = harness.read(changeStockBatchDatesUseCaseProvider);
+
+      expect(
+        (await change.execute(
+          batchIdentifier,
+          storedOn: today.addDays(1),
+          bestBeforeOn: null,
+          openedOn: null,
+        )).failureOrNull,
+        isA<StoredOnInFuture>(),
+      );
+      expect(
+        (await change.execute(
+          batchIdentifier,
+          storedOn: today,
+          bestBeforeOn: null,
+          openedOn: today.addDays(1),
+        )).failureOrNull,
+        isA<OpenedOnInFuture>(),
+      );
+      expect(
+        (await change.execute(
+          batchIdentifier,
+          storedOn: today.addDays(-1),
+          bestBeforeOn: null,
+          openedOn: today.addDays(-3),
+        )).failureOrNull,
+        isA<OpenedBeforeStored>(),
+      );
+      expect((await harness.readBatch(batchIdentifier)).storedOn, today);
+    });
+  });
+
   group('correcting', () {
     test('sets what is really left', () async {
       final batchIdentifier = await addMincedMeat();

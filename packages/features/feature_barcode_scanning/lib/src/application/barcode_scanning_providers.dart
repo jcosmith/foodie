@@ -1,3 +1,5 @@
+import 'package:core_events/core_events.dart';
+import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_inventory/feature_inventory.dart';
@@ -43,3 +45,19 @@ final scanToAddUseCaseProvider = Provider<ScanToAddUseCase>(
     readPausedDomains: () => ref.read(pausedStorageDomainIdentifiersProvider),
   ),
 );
+
+/// Moves learned codes to the new product when a product's unit changes;
+/// listening from the start, so it works whether scanning is on or not.
+final barcodesFollowReplacedProductsProvider = Provider<DomainEventSubscription>((ref) {
+  final repository = ref.watch(productBarcodeRepositoryProvider);
+  final subscription = ref
+      .watch(domainEventBusProvider)
+      .subscribe<ProductUnitChanged>(
+        (event) => repository.moveBarcodes(
+          from: event.previousProductIdentifier,
+          to: event.productIdentifier,
+        ),
+      );
+  ref.onDispose(subscription.cancel);
+  return subscription;
+});

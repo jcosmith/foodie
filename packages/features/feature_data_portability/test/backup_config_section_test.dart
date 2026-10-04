@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:core_database/core_database.dart';
 import 'package:core_database/testing.dart';
@@ -18,6 +18,7 @@ import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,15 +29,30 @@ final class _RememberingFileStore implements BackupFileStore {
   String? savedFileName;
   Uint8List? savedBytes;
 
+  /// While set, the save dialog stays open until the test answers it:
+  /// `true` saves, `false` cancels.
+  Completer<bool>? openSaveDialog;
+  bool isSaveDialogOpen = false;
+
+  /// Thrown by the save dialog, as a platform error would be.
+  Exception? saveError;
+
   @override
   Future<bool> saveFile({
     required String fileName,
     required Uint8List bytes,
     required String mimeType,
   }) async {
-    savedFileName = fileName;
-    savedBytes = bytes;
-    return true;
+    final error = saveError;
+    if (error != null) throw error;
+    isSaveDialogOpen = true;
+    final isSaved = await (openSaveDialog?.future ?? Future.value(true));
+    isSaveDialogOpen = false;
+    if (isSaved) {
+      savedFileName = fileName;
+      savedBytes = bytes;
+    }
+    return isSaved;
   }
 
   @override
@@ -118,9 +134,91 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Save backup').last);
     await _settleUntilFound(tester, find.text('Backup saved'));
 
-    expect(fileStore.savedFileName, 'freezer-backup-2026-10-02.freezerbackup');
+    expect(fileStore.savedFileName, 'foodie-backup-2026-10-02.foodiebackup');
     expect(fileStore.savedBytes, isNotEmpty);
     expect(find.text('No backup yet'), findsNothing);
+    expect(find.text('Working on your backup…'), findsNothing);
+  });
+
+  testWidgets('the progress dialog never stays: not over the save dialog, nor after a cancel or '
+      'a failed save', (tester) async {
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: buildLocalizedTestApplication(
+          featureLocalizationDelegates: const DataPortabilityFeatureModule().localizationDelegates,
+          home: const Scaffold(body: SingleChildScrollView(child: BackupConfigSection())),
+        ),
+      ),
+    );
+    await _settle(tester);
+
+    Future<void> startBackup() async {
+      await tester.tap(find.text('Save backup'));
+      await _settle(tester);
+      final passwordFields = find.byType(TextField);
+      await tester.enterText(passwordFields.at(0), 'freezer password');
+      await tester.enterText(passwordFields.at(1), 'freezer password');
+      await tester.tap(find.widgetWithText(FilledButton, 'Save backup').last);
+    }
+
+    // The system's save dialog is open: the app shows no spinner behind it,
+    // so a dialog that never answers cannot leave one behind.
+    final saveDialog = fileStore.openSaveDialog = Completer<bool>();
+    await startBackup();
+    await _settleUntil(tester, () => fileStore.isSaveDialogOpen);
+    await tester.pumpAndSettle();
+    expect(find.text('Working on your backup…'), findsNothing);
+    expect(find.text('Protect your backup'), findsNothing);
+    saveDialog.complete(false);
+    await _settle(tester);
+    expect(find.text('Backup saved'), findsNothing);
+    expect(find.text('No backup yet'), findsOneWidget);
+
+    fileStore
+      ..openSaveDialog = null
+      ..saveError = PlatformException(code: 'explorer_not_found');
+    await startBackup();
+    await _settleUntilFound(tester, find.text('The backup could not be saved.'));
+    expect(find.text('Working on your backup…'), findsNothing);
+    expect(find.text('No backup yet'), findsOneWidget);
+  });
+
+  testWidgets('saves a backup without a password after a warning', (tester) async {
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: buildLocalizedTestApplication(
+          featureLocalizationDelegates: const DataPortabilityFeatureModule().localizationDelegates,
+          home: const Scaffold(body: SingleChildScrollView(child: BackupConfigSection())),
+        ),
+      ),
+    );
+    await _settle(tester);
+
+    await tester.tap(find.text('Save backup'));
+    await _settle(tester);
+    final protectionSwitch = find.widgetWithText(SwitchListTile, 'Protect with a password');
+    expect(tester.widget<SwitchListTile>(protectionSwitch).value, isTrue);
+    expect(find.byType(TextField), findsNWidgets(2));
+    expect(find.text('Anyone who gets this file can read your data.'), findsNothing);
+
+    await tester.tap(protectionSwitch);
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('Anyone who gets this file can read your data.'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Save backup').last);
+    await _settleUntilFound(tester, find.text('Backup saved'));
+
+    final manifest = await tester.runAsync(() async {
+      final backupFile = File('${temporaryDirectory.path}/saved.foodiebackup')
+        ..writeAsBytesSync(fileStore.savedBytes!);
+      final inspection = await DatabaseBackupGateway(
+        database,
+      ).inspectBackup(backupPath: backupFile.path);
+      return inspection.valueOrNull;
+    });
+    expect(manifest?.isPasswordProtected, isFalse);
   });
 
   testWidgets('offers to leave the photos out', (tester) async {
@@ -166,7 +264,7 @@ void main() {
     await _settleUntilFound(tester, find.text('Backup saved'));
 
     final manifest = await tester.runAsync(() async {
-      final backupFile = File('${temporaryDirectory.path}/saved.freezerbackup')
+      final backupFile = File('${temporaryDirectory.path}/saved.foodiebackup')
         ..writeAsBytesSync(fileStore.savedBytes!);
       final inspection = await DatabaseBackupGateway(
         database,
@@ -180,6 +278,14 @@ void main() {
 Future<void> _settle(WidgetTester tester) async {
   await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
   await tester.pumpAndSettle();
+}
+
+Future<void> _settleUntil(WidgetTester tester, bool Function() condition) async {
+  for (var attempt = 0; attempt < 40 && !condition(); attempt++) {
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  expect(condition(), isTrue);
 }
 
 /// The backup itself runs real database work, which needs a few rounds of

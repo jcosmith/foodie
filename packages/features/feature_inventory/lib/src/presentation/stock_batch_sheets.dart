@@ -1,20 +1,24 @@
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_foundation/core_foundation.dart';
+import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_localization/core_localization.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../application/inventory_overview.dart';
 import '../application/inventory_providers.dart';
+import '../application/undo_time_limit.dart';
 import '../domain/inventory_movement.dart';
 import '../domain/removal_amount_policy.dart';
 import '../l10n/generated/inventory_localizations.dart';
 import 'inventory_texts.dart';
 import 'removal_amount_picker.dart';
 import 'stock_item_tile.dart';
+import 'undo_config_section.dart';
 
 /// Opens the sheet for taking food out of [item]'s batch, with links to
 /// throwing away, moving and correcting it.
@@ -54,8 +58,11 @@ class _SheetHeader extends ConsumerWidget {
     final layout = ref.watch(storageLayoutProvider).value ?? StorageLayout.empty;
     final details = [
       localizations.ofInitial(
-        quantityFormatter.format(batch.quantityRemaining),
-        quantityFormatter.format(batch.initialQuantity),
+        quantityFormatter.format(
+          batch.quantityRemaining,
+          pieceLabel: item.product.displayPieceLabel,
+        ),
+        quantityFormatter.format(batch.initialQuantity, pieceLabel: item.product.displayPieceLabel),
       ),
       context.dateDisplayFormatter.formatMediumDate(batch.storedOn),
       context.compartmentDisplayNameResolver(layout).compartmentNameOf(batch.compartmentIdentifier),
@@ -91,9 +98,11 @@ class _SheetHeader extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                context.productDisplayNameResolver.productName(item.product),
+              // The whole note here; the list shortens it.
+              StockItemTitle(
+                item: item,
                 style: Theme.of(context).textTheme.titleMedium,
+                maxLines: null,
               ),
               Text(details.join(' · '), style: Theme.of(context).textTheme.bodySmall),
             ],
@@ -117,9 +126,40 @@ class _TakeOrDiscardSheet extends ConsumerStatefulWidget {
 class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
   late Quantity _amount = widget.isDiscarding
       ? widget.item.batch.quantityRemaining
-      : RemovalAmountPolicy.suggestedAmount(widget.item.batch.quantityRemaining);
+      : _suggestedAmount(usualAmount: null);
   DiscardReason _discardReason = DiscardReason.tooOld;
   bool _isSaving = false;
+
+  /// Set once the user picks an amount, so the usual amount arriving later
+  /// does not overwrite it.
+  bool _isAmountChosen = false;
+
+  /// How much of this product is usually taken out, once known.
+  Quantity? _usualAmount;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isDiscarding) return;
+    ref.listenManual(usualConsumedAmountProvider(widget.item.product.identifier), (_, next) {
+      final usualAmount = next.value;
+      if (usualAmount == null || !mounted) return;
+      setState(() {
+        _usualAmount = usualAmount;
+        if (!_isAmountChosen) _amount = _suggestedAmount(usualAmount: usualAmount);
+      });
+    }, fireImmediately: true);
+  }
+
+  int get _undoSeconds =>
+      ref.read(undoTimeLimitSecondsProvider).value ?? UndoTimeLimit.defaultSeconds;
+
+  Quantity _suggestedAmount({required Quantity? usualAmount}) =>
+      RemovalAmountPolicy.suggestedAmount(
+        widget.item.batch.quantityRemaining,
+        packageSize: widget.item.batch.initialQuantity,
+        usualAmount: usualAmount,
+      );
 
   Future<void> _confirm() async {
     setState(() => _isSaving = true);
@@ -128,6 +168,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final undoStockRemoval = ref.read(undoStockRemovalUseCaseProvider);
+    final undoSeconds = _undoSeconds;
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
     final batchIdentifier = widget.item.batch.identifier;
     final result = widget.isDiscarding
@@ -145,18 +186,18 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     switch (result) {
       case SuccessfulResult(value: final recordedRemoval):
         navigator.pop();
-        final amountText = quantityFormatter.format(recordedRemoval.quantity);
+        final amountText = quantityFormatter.format(
+          recordedRemoval.quantity,
+          pieceLabel: widget.item.product.displayPieceLabel,
+        );
         messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.isDiscarding
-                  ? localizations.discardedSnackbar(amountText, productName)
-                  : localizations.tookSnackbar(amountText, productName),
-            ),
-            action: SnackBarAction(
-              label: context.commonLocalizations.actionUndo,
-              onPressed: () => undoStockRemoval.execute(recordedRemoval.movementIdentifier),
-            ),
+          buildUndoableSnackBar(
+            undoSeconds: undoSeconds,
+            message: widget.isDiscarding
+                ? localizations.discardedSnackbar(amountText, productName)
+                : localizations.tookSnackbar(amountText, productName),
+            undoLabel: context.commonLocalizations.actionUndo,
+            onUndo: () => undoStockRemoval.execute(recordedRemoval.movementIdentifier),
           ),
         );
       case FailedResult(:final failure):
@@ -174,6 +215,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     final batch = widget.item.batch;
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
     final undoLabel = context.commonLocalizations.actionUndo;
+    final undoSeconds = _undoSeconds;
     final isOpening = !batch.isOpened;
     final result = await markOpened.execute(batch.identifier, isOpened: isOpening);
     if (!mounted) return;
@@ -182,18 +224,24 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
         navigator.pop();
         if (isOpening) {
           messenger.showSnackBar(
-            SnackBar(
-              content: Text(localizations.markedOpenedSnackbar(productName)),
-              action: SnackBarAction(
-                label: undoLabel,
-                onPressed: () => markOpened.execute(batch.identifier, isOpened: false),
-              ),
+            buildUndoableSnackBar(
+              undoSeconds: undoSeconds,
+              message: localizations.markedOpenedSnackbar(productName),
+              undoLabel: undoLabel,
+              onUndo: () => markOpened.execute(batch.identifier, isOpened: false),
             ),
           );
         }
       case FailedResult(:final failure):
         messenger.showSnackBar(SnackBar(content: Text(localizations.describeFailure(failure))));
     }
+  }
+
+  /// Opens the product editor of the catalog over the storage tab.
+  void _editProduct() {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.push(ProductCatalogRoutes.productEditor(widget.item.product.identifier));
   }
 
   void _switchTo(Future<void> Function(BuildContext context, InventoryItem item) openOtherSheet) {
@@ -204,8 +252,13 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // Kept loaded, so the snackbar knows the undo time straight away.
+    ref.watch(undoTimeLimitSecondsProvider);
     final localizations = InventoryLocalizations.of(context);
-    final amountText = context.quantityFormatter.format(_amount);
+    final amountText = context.quantityFormatter.format(
+      _amount,
+      pieceLabel: widget.item.product.displayPieceLabel,
+    );
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -219,9 +272,25 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
         const SizedBox(height: FoodieSpacing.small),
         RemovalAmountPicker(
           batch: widget.item.batch,
+          pieceLabel: widget.item.product.displayPieceLabel,
           amount: _amount,
-          onAmountChanged: (amount) => setState(() => _amount = amount),
+          onAmountChanged: (amount) => setState(() {
+            _amount = amount;
+            _isAmountChosen = true;
+          }),
         ),
+        if (_usualAmount case final usualAmount?) ...[
+          const SizedBox(height: FoodieSpacing.extraSmall),
+          Text(
+            localizations.usualAmountHint(
+              context.quantityFormatter.format(
+                usualAmount,
+                pieceLabel: widget.item.product.displayPieceLabel,
+              ),
+            ),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
         if (widget.isDiscarding) ...[
           const SizedBox(height: FoodieSpacing.medium),
           Text(localizations.discardReasonLabel, style: Theme.of(context).textTheme.titleSmall),
@@ -281,6 +350,18 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
                 label: Text(localizations.correctAction),
               ),
               TextButton.icon(
+                onPressed: () => _switchTo(
+                  (context, item) => _showSheet(context, (sheetContext) => _DatesSheet(item: item)),
+                ),
+                icon: const Icon(Icons.event_outlined),
+                label: Text(localizations.editDatesAction),
+              ),
+              TextButton.icon(
+                onPressed: _editProduct,
+                icon: const Icon(Icons.tune),
+                label: Text(localizations.editProductAction),
+              ),
+              TextButton.icon(
                 onPressed: _toggleOpened,
                 icon: Icon(
                   widget.item.batch.isOpened
@@ -323,7 +404,10 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
   }) async {
     setState(() => _isSaving = true);
     final localizations = InventoryLocalizations.of(context);
-    final amountText = context.quantityFormatter.format(_amount);
+    final amountText = context.quantityFormatter.format(
+      _amount,
+      pieceLabel: widget.item.product.displayPieceLabel,
+    );
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
@@ -416,6 +500,7 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
           const SizedBox(height: FoodieSpacing.small),
           RemovalAmountPicker(
             batch: widget.item.batch,
+            pieceLabel: widget.item.product.displayPieceLabel,
             amount: _amount,
             onAmountChanged: (amount) => setState(() => _amount = amount),
           ),
@@ -435,7 +520,14 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
                     nameResolver.compartmentNameOf(selectedDestination),
                     startsFreshToday: storedTodayLabel != null && _startsFreshToday,
                   ),
-            child: Text(localizations.moveAmountButton(context.quantityFormatter.format(_amount))),
+            child: Text(
+              localizations.moveAmountButton(
+                context.quantityFormatter.format(
+                  _amount,
+                  pieceLabel: widget.item.product.displayPieceLabel,
+                ),
+              ),
+            ),
           ),
         ],
       ],
@@ -491,7 +583,10 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
-    final amountText = context.quantityFormatter.format(actualRemaining);
+    final amountText = context.quantityFormatter.format(
+      actualRemaining,
+      pieceLabel: widget.item.product.displayPieceLabel,
+    );
     final result = await ref
         .read(correctRemainingQuantityUseCaseProvider)
         .execute(
@@ -531,11 +626,157 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: InputDecoration(
             labelText: localizations.quantityLabel,
-            suffixText: context.quantityFormatter.unitSymbol(widget.item.batch.unit),
+            suffixText: context.quantityFormatter.unitSymbol(
+              widget.item.batch.unit,
+              pieceLabel: widget.item.product.displayPieceLabel,
+            ),
             errorText: _amountError,
           ),
           onSubmitted: (_) => _save(),
         ),
+        const SizedBox(height: FoodieSpacing.large),
+        FilledButton(
+          onPressed: _isSaving ? null : _save,
+          child: Text(context.commonLocalizations.actionSave),
+        ),
+      ],
+    );
+  }
+}
+
+/// "Edit dates": the stored-on date, and the best-before and opened-on
+/// dates, which can also be removed.
+class _DatesSheet extends ConsumerStatefulWidget {
+  const _DatesSheet({required this.item});
+
+  final InventoryItem item;
+
+  @override
+  ConsumerState<_DatesSheet> createState() => _DatesSheetState();
+}
+
+class _DatesSheetState extends ConsumerState<_DatesSheet> {
+  late CalendarDate _storedOn = widget.item.batch.storedOn;
+  late CalendarDate? _bestBeforeOn = widget.item.batch.bestBeforeOn;
+  late CalendarDate? _openedOn = widget.item.batch.openedOn;
+  String? _error;
+  bool _isSaving = false;
+
+  Future<CalendarDate?> _pickDate(
+    CalendarDate? current, {
+    required int daysBack,
+    required int daysAhead,
+  }) async {
+    final today = ref.read(clockProvider).todayLocal();
+    final chosenDate = await showDatePicker(
+      context: context,
+      initialDate: (current ?? today).toLocalDateTime(),
+      firstDate: today.addDays(-daysBack).toLocalDateTime(),
+      lastDate: today.addDays(daysAhead).toLocalDateTime(),
+    );
+    return chosenDate == null ? null : CalendarDate.fromDateTime(chosenDate);
+  }
+
+  Future<void> _save() async {
+    final localizations = InventoryLocalizations.of(context);
+    final batch = widget.item.batch;
+    if (_storedOn == batch.storedOn &&
+        _bestBeforeOn == batch.bestBeforeOn &&
+        _openedOn == batch.openedOn) {
+      Navigator.of(context).pop();
+      return;
+    }
+    setState(() => _isSaving = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final productName = context.productDisplayNameResolver.productName(widget.item.product);
+    final result = await ref
+        .read(changeStockBatchDatesUseCaseProvider)
+        .execute(
+          batch.identifier,
+          storedOn: _storedOn,
+          bestBeforeOn: _bestBeforeOn,
+          openedOn: _openedOn,
+        );
+    if (!mounted) return;
+    switch (result) {
+      case SuccessfulResult():
+        navigator.pop();
+        messenger.showSnackBar(
+          SnackBar(content: Text(localizations.datesChangedSnackbar(productName))),
+        );
+      case FailedResult(:final failure):
+        setState(() {
+          _isSaving = false;
+          _error = localizations.describeFailure(failure);
+        });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = InventoryLocalizations.of(context);
+    final dateFormatter = context.dateDisplayFormatter;
+    String format(CalendarDate? date) =>
+        date == null ? localizations.dateNotSet : dateFormatter.formatMediumDate(date);
+    Widget dateTile({
+      required String label,
+      required CalendarDate? date,
+      required VoidCallback onTap,
+      VoidCallback? onRemove,
+    }) => ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.event_outlined),
+      title: Text(label),
+      subtitle: Text(format(date)),
+      onTap: onTap,
+      trailing: onRemove == null || date == null
+          ? null
+          : IconButton(
+              tooltip: localizations.removeDate,
+              icon: const Icon(Icons.clear),
+              onPressed: onRemove,
+            ),
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _SheetHeader(item: widget.item),
+        const SizedBox(height: FoodieSpacing.large),
+        Text(localizations.editDatesTitle, style: Theme.of(context).textTheme.titleSmall),
+        dateTile(
+          label: localizations.storedOnLabel,
+          date: _storedOn,
+          onTap: () async {
+            final chosen = await _pickDate(_storedOn, daysBack: 5 * 366, daysAhead: 0);
+            if (chosen != null) setState(() => _storedOn = chosen);
+          },
+        ),
+        dateTile(
+          label: localizations.bestBeforeLabel,
+          date: _bestBeforeOn,
+          onTap: () async {
+            final chosen = await _pickDate(_bestBeforeOn, daysBack: 5 * 366, daysAhead: 5 * 366);
+            if (chosen != null) setState(() => _bestBeforeOn = chosen);
+          },
+          onRemove: () => setState(() => _bestBeforeOn = null),
+        ),
+        dateTile(
+          label: localizations.openedOnLabel,
+          date: _openedOn,
+          onTap: () async {
+            final chosen = await _pickDate(_openedOn, daysBack: 5 * 366, daysAhead: 0);
+            if (chosen != null) setState(() => _openedOn = chosen);
+          },
+          onRemove: () => setState(() => _openedOn = null),
+        ),
+        if (_error case final error?)
+          Padding(
+            padding: const EdgeInsets.only(top: FoodieSpacing.small),
+            child: Text(error, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          ),
         const SizedBox(height: FoodieSpacing.large),
         FilledButton(
           onPressed: _isSaving ? null : _save,

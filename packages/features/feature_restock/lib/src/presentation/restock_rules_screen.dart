@@ -74,16 +74,27 @@ class RestockRulesScreen extends ConsumerWidget {
                   title: Text(nameResolver.productName(product)),
                   subtitle: Text(switch (rule.targetQuantity) {
                     final targetQuantity? => localizations.ruleSummaryWithTarget(
-                      quantityFormatter.format(rule.minimumQuantity),
-                      quantityFormatter.format(targetQuantity),
+                      quantityFormatter.format(
+                        rule.minimumQuantity,
+                        pieceLabel: product.displayPieceLabel,
+                      ),
+                      quantityFormatter.format(
+                        targetQuantity,
+                        pieceLabel: product.displayPieceLabel,
+                      ),
                       quantityFormatter.format(
                         stockByProduct[product.identifier] ?? Quantity.zero(product.canonicalUnit),
+                        pieceLabel: product.displayPieceLabel,
                       ),
                     ),
                     null => localizations.ruleSummary(
-                      quantityFormatter.format(rule.minimumQuantity),
+                      quantityFormatter.format(
+                        rule.minimumQuantity,
+                        pieceLabel: product.displayPieceLabel,
+                      ),
                       quantityFormatter.format(
                         stockByProduct[product.identifier] ?? Quantity.zero(product.canonicalUnit),
+                        pieceLabel: product.displayPieceLabel,
                       ),
                     ),
                   }),
@@ -204,7 +215,10 @@ class _RestockRuleDialogState extends ConsumerState<_RestockRuleDialog> {
   @override
   Widget build(BuildContext context) {
     final localizations = RestockLocalizations.of(context);
-    final unitSymbol = context.quantityFormatter.unitSymbol(widget.product.canonicalUnit);
+    final unitSymbol = context.quantityFormatter.unitSymbol(
+      widget.product.canonicalUnit,
+      pieceLabel: widget.product.displayPieceLabel,
+    );
     return AlertDialog(
       title: Text(context.productDisplayNameResolver.productName(widget.product)),
       content: Column(

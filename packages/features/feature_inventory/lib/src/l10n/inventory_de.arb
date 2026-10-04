@@ -82,5 +82,21 @@
   "compartmentMissing": "Wähle, wohin es kommt.",
   "storedOnInFuture": "Das Datum kann nicht in der Zukunft liegen.",
   "genericFailure": "Das hat nicht geklappt. Bitte versuche es noch einmal.",
-  "batchPhotoButton": "Foto dieser Packung"
+  "batchPhotoButton": "Foto dieser Packung",
+  "usualAmountHint": "Üblich: {amount}",
+  "undoSectionTitle": "Rückgängig",
+  "undoForSeconds": "Rückgängig bleibt {seconds} s verfügbar",
+  "undoOff": "Kein Rückgängig",
+  "undoUntilDismissed": "Rückgängig bleibt, bis du die Meldung schließt",
+  "undoTimeLimitHint": "Nach dem Entnehmen, Wegwerfen oder Öffnen.",
+  "editDatesAction": "Daten ändern",
+  "editDatesTitle": "Daten",
+  "bestBeforeLabel": "Mindestens haltbar bis",
+  "openedOnLabel": "Geöffnet am",
+  "dateNotSet": "Nicht gesetzt",
+  "removeDate": "Datum entfernen",
+  "datesChangedSnackbar": "Daten von {product} geändert",
+  "openedOnInFuture": "Das Öffnungsdatum kann nicht in der Zukunft liegen.",
+  "openedBeforeStored": "Es kann nicht vor dem Einlagern geöffnet worden sein.",
+  "editProductAction": "Produkt bearbeiten"
 }

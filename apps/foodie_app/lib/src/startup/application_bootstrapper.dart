@@ -51,8 +51,13 @@ final class BootstrappedApplication {
       await module.disposeModule();
     }
     router.dispose();
-    await providerContainer.read(applicationDatabaseProvider).close();
+    // The container goes first: it cancels every stream query. Drift's close
+    // waits until each query stream has told its listeners it is done, which
+    // never happens while Riverpod keeps a listener paused, for example one
+    // of a tab that is not shown (issue #4).
+    final database = providerContainer.read(applicationDatabaseProvider);
     providerContainer.dispose();
+    await database.close();
   }
 }
 

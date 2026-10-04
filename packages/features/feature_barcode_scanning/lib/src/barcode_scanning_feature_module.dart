@@ -56,6 +56,10 @@ final class BarcodeScanningFeatureModule extends FeatureModuleBase {
   @override
   List<RouteBase> buildRoutes() => buildBarcodeScanningRoutes();
 
+  @override
+  Future<void> initializeModule(ModuleInitializationContext context) async =>
+      context.read(barcodesFollowReplacedProductsProvider);
+
   /// "Scan to add" and "Scan to remove" in the floating add menu, after the
   /// inventory's own "Add item" (10).
   @override

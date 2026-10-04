@@ -57,7 +57,7 @@ Release 0.1.1 was the freezer app. The code since then (not yet released) is Foo
 - **Item pictures and barcode scanning** (both optional), on-device only.
 - **Backup, restore and CSV export**, onboarding, and Options with tabs, optional features, language (English, German) and appearance.
 
-The app package is `apps/foodie_app`. The Android application id stays `io.github.jcosmith.freezer_app`, so phones with 0.1.x update in place.
+The app package is `apps/foodie_app` and its Android application id and iOS bundle id are `io.github.jcosmith.foodie`. Foodie installs as its own app next to the former Freezer app; to take data over, make a backup in Freezer and restore it in Foodie.
 
 ## Planned
 

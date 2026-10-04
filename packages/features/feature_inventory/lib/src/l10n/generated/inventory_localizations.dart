@@ -592,6 +592,102 @@ abstract class InventoryLocalizations {
   /// In en, this message translates to:
   /// **'Photo of this bag'**
   String get batchPhotoButton;
+
+  /// No description provided for @usualAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually {amount}'**
+  String usualAmountHint(String amount);
+
+  /// No description provided for @undoSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoSectionTitle;
+
+  /// No description provided for @undoForSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo stays available for {seconds} s'**
+  String undoForSeconds(int seconds);
+
+  /// No description provided for @undoOff.
+  ///
+  /// In en, this message translates to:
+  /// **'No undo'**
+  String get undoOff;
+
+  /// No description provided for @undoUntilDismissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo stays until you close the message'**
+  String get undoUntilDismissed;
+
+  /// No description provided for @undoTimeLimitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'After taking out, throwing away or opening something.'**
+  String get undoTimeLimitHint;
+
+  /// No description provided for @editDatesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit dates'**
+  String get editDatesAction;
+
+  /// No description provided for @editDatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get editDatesTitle;
+
+  /// No description provided for @bestBeforeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best before'**
+  String get bestBeforeLabel;
+
+  /// No description provided for @openedOnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened on'**
+  String get openedOnLabel;
+
+  /// No description provided for @dateNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get dateNotSet;
+
+  /// No description provided for @removeDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove date'**
+  String get removeDate;
+
+  /// No description provided for @datesChangedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates of {product} changed'**
+  String datesChangedSnackbar(String product);
+
+  /// No description provided for @openedOnInFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'The opened date cannot be in the future.'**
+  String get openedOnInFuture;
+
+  /// No description provided for @openedBeforeStored.
+  ///
+  /// In en, this message translates to:
+  /// **'It cannot be opened before it was stored.'**
+  String get openedBeforeStored;
+
+  /// No description provided for @editProductAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit product'**
+  String get editProductAction;
 }
 
 class _InventoryLocalizationsDelegate extends LocalizationsDelegate<InventoryLocalizations> {

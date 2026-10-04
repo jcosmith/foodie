@@ -1,4 +1,4 @@
-package io.github.jcosmith.freezer_app
+package io.github.jcosmith.foodie
 
 import android.app.LocaleManager
 import android.os.Build
@@ -12,7 +12,7 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
-            "io.github.jcosmith.freezer/application_language",
+            "io.github.jcosmith.foodie/application_language",
         ).setMethodCallHandler { call, result ->
             // The per-app language setting exists from Android 13 (API 33).
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {

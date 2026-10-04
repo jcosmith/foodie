@@ -11,33 +11,128 @@ void main() {
     Quantity pieces(int thousandths) =>
         Quantity(amountInBaseUnits: thousandths, unit: QuantityUnit.piece);
 
-    test('steps are 50 g or half a piece', () {
-      expect(RemovalAmountPolicy.stepFor(QuantityUnit.gram), grams(50));
-      expect(RemovalAmountPolicy.stepFor(QuantityUnit.piece), pieces(500));
+    test('the step follows the package size: 1 g under 50, 10 up to 200, else 50', () {
+      expect(RemovalAmountPolicy.stepFor(grams(49)), grams(1));
+      expect(RemovalAmountPolicy.stepFor(grams(50)), grams(10));
+      expect(RemovalAmountPolicy.stepFor(grams(200)), grams(10));
+      expect(RemovalAmountPolicy.stepFor(grams(201)), grams(50));
+      expect(
+        RemovalAmountPolicy.stepFor(
+          const Quantity(amountInBaseUnits: 30, unit: QuantityUnit.milliliter),
+        ),
+        const Quantity(amountInBaseUnits: 1, unit: QuantityUnit.milliliter),
+      );
+      expect(RemovalAmountPolicy.stepFor(pieces(3000)), pieces(500));
+      expect(RemovalAmountPolicy.stepFor(pieces(100)), pieces(500));
     });
 
     test('fractions round to the step and stay within what is left', () {
-      expect(RemovalAmountPolicy.fractionOf(grams(500), 0.5), grams(250));
-      expect(RemovalAmountPolicy.fractionOf(grams(500), 0.25), grams(150));
-      expect(RemovalAmountPolicy.fractionOf(grams(500), 0.01), grams(50));
-      expect(RemovalAmountPolicy.fractionOf(grams(430), 1), grams(430));
-      expect(RemovalAmountPolicy.fractionOf(pieces(3000), 0.5), pieces(1500));
+      expect(RemovalAmountPolicy.fractionOf(grams(500), 0.5, packageSize: grams(500)), grams(250));
+      expect(RemovalAmountPolicy.fractionOf(grams(500), 0.25, packageSize: grams(500)), grams(150));
+      expect(RemovalAmountPolicy.fractionOf(grams(500), 0.01, packageSize: grams(500)), grams(50));
+      expect(RemovalAmountPolicy.fractionOf(grams(430), 1, packageSize: grams(500)), grams(430));
+      expect(
+        RemovalAmountPolicy.fractionOf(pieces(3000), 0.5, packageSize: pieces(3000)),
+        pieces(1500),
+      );
+    });
+
+    test('small packages get fine steps', () {
+      expect(RemovalAmountPolicy.fractionOf(grams(40), 0.25, packageSize: grams(40)), grams(10));
+      expect(RemovalAmountPolicy.snap(grams(40), 13, packageSize: grams(40)), grams(13));
+      expect(RemovalAmountPolicy.fractionOf(grams(150), 0.25, packageSize: grams(150)), grams(40));
+      expect(RemovalAmountPolicy.snap(grams(150), 73, packageSize: grams(150)), grams(70));
+    });
+
+    test('the step stays the one of the original package while it is used up', () {
+      expect(RemovalAmountPolicy.snap(grams(120), 73, packageSize: grams(500)), grams(50));
     });
 
     test('a bag holding one step or less is taken whole', () {
-      expect(RemovalAmountPolicy.suggestedAmount(grams(40)), grams(40));
-      expect(RemovalAmountPolicy.snap(grams(40), 10), grams(40));
+      expect(RemovalAmountPolicy.suggestedAmount(grams(40), packageSize: grams(500)), grams(40));
+      expect(RemovalAmountPolicy.snap(grams(40), 10, packageSize: grams(500)), grams(40));
     });
 
     test('the suggestion is about a fifth', () {
-      expect(RemovalAmountPolicy.suggestedAmount(grams(1000)), grams(200));
+      expect(
+        RemovalAmountPolicy.suggestedAmount(grams(1000), packageSize: grams(1000)),
+        grams(200),
+      );
+    });
+
+    test('the suggestion is the usual amount, rounded to the step and capped', () {
+      expect(
+        RemovalAmountPolicy.suggestedAmount(
+          grams(1000),
+          packageSize: grams(1000),
+          usualAmount: grams(230),
+        ),
+        grams(250),
+      );
+      expect(
+        RemovalAmountPolicy.suggestedAmount(
+          grams(180),
+          packageSize: grams(1000),
+          usualAmount: grams(400),
+        ),
+        grams(180),
+      );
+      expect(
+        RemovalAmountPolicy.suggestedAmount(
+          pieces(6000),
+          packageSize: pieces(6000),
+          usualAmount: pieces(2000),
+        ),
+        pieces(2000),
+      );
     });
 
     test('slider positions snap to the grid', () {
-      expect(RemovalAmountPolicy.snap(grams(500), 130), grams(150));
-      expect(RemovalAmountPolicy.snap(grams(500), 0), grams(50));
-      expect(RemovalAmountPolicy.snap(grams(480), 470), grams(450));
-      expect(RemovalAmountPolicy.snap(grams(480), 500), grams(480));
+      expect(RemovalAmountPolicy.snap(grams(500), 130, packageSize: grams(500)), grams(150));
+      expect(RemovalAmountPolicy.snap(grams(500), 0, packageSize: grams(500)), grams(50));
+      expect(RemovalAmountPolicy.snap(grams(480), 470, packageSize: grams(500)), grams(450));
+      expect(RemovalAmountPolicy.snap(grams(480), 500, packageSize: grams(500)), grams(480));
+    });
+
+    group('usual consumed amount', () {
+      const product = ProductIdentifier('spinach');
+      var counter = 0;
+      InventoryMovement movement(
+        MovementKind kind,
+        int delta, {
+        InventoryMovementIdentifier? reverses,
+      }) => InventoryMovement(
+        identifier: InventoryMovementIdentifier('m${counter++}'),
+        stockBatchIdentifier: const StockBatchIdentifier('batch'),
+        productIdentifier: product,
+        compartmentIdentifier: const CompartmentIdentifier('drawer'),
+        kind: kind,
+        quantityDelta: grams(delta),
+        reversesMovementIdentifier: reverses,
+        occurredAt: DateTime.utc(2026, 10, 1),
+      );
+
+      test('is null without removals', () {
+        expect(
+          RemovalAmountPolicy.usualConsumedAmount([movement(MovementKind.added, 1000)]),
+          isNull,
+        );
+      });
+
+      test('averages what was used, leaving out undone removals and discards', () {
+        final undone = movement(MovementKind.consumed, -900);
+        expect(
+          RemovalAmountPolicy.usualConsumedAmount([
+            movement(MovementKind.added, 2000),
+            movement(MovementKind.consumed, -200),
+            movement(MovementKind.consumed, -300),
+            undone,
+            movement(MovementKind.consumed, 900, reverses: undone.identifier),
+            movement(MovementKind.discarded, -500),
+          ]),
+          grams(250),
+        );
+      });
     });
   });
 

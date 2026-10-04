@@ -158,7 +158,7 @@ void main() {
   test('saves a backup and remembers when', () async {
     await saveBackup();
 
-    expect(fileStore.savedFileName, 'freezer-backup-2026-10-02.freezerbackup');
+    expect(fileStore.savedFileName, 'foodie-backup-2026-10-02.foodiebackup');
     expect(
       await container
           .read(preferencesStoreProvider)
@@ -181,6 +181,29 @@ void main() {
           .read(preferencesStoreProvider)
           .read(DataPortabilityPreferenceKeys.lastBackupAt),
       isNull,
+    );
+  });
+
+  test('a backup without a password needs none to restore', () async {
+    final result = await container
+        .read(createBackupUseCaseProvider)
+        .execute(password: null, repeatedPassword: null);
+    expect(result.valueOrNull, isTrue);
+    final backupPath = (File(
+      '${temporaryDirectory.path}/unprotected.foodiebackup',
+    )..writeAsBytesSync(fileStore.savedBytes!)).path;
+    final restoreBackup = container.read(restoreBackupUseCaseProvider);
+
+    final inspection = await restoreBackup.inspect(backupPath: backupPath);
+    expect(inspection.valueOrNull?.isPasswordProtected, isFalse);
+    await restoreBackup.restore(backupPath: backupPath);
+    expect(restarter.restartCount, 1);
+
+    // A protected one asks.
+    final protectedPath = await saveBackup();
+    expect(
+      (await restoreBackup.inspect(backupPath: protectedPath)).failureOrNull,
+      isA<BackupPasswordRequired>(),
     );
   });
 

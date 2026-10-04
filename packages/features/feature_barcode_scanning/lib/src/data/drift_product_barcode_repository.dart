@@ -38,6 +38,13 @@ final class DriftProductBarcodeRepository implements ProductBarcodeRepository {
   Future<void> deleteBarcode(String barcodeValue) =>
       _productBarcodesDao.deleteBarcode(barcodeValue);
 
+  @override
+  Future<void> moveBarcodes({required ProductIdentifier from, required ProductIdentifier to}) =>
+      _productBarcodesDao.moveBarcodes(
+        fromProductIdentifier: from.value,
+        toProductIdentifier: to.value,
+      );
+
   static ProductBarcode _barcodeFromRow(ProductBarcodeRow row) => ProductBarcode(
     barcodeValue: row.barcodeValue,
     productIdentifier: ProductIdentifier(row.productIdentifier),

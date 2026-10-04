@@ -48,7 +48,7 @@ and add the migration step. The generated tests check every upgrade path.
 
 - The Android release build has no `INTERNET` permission, so the operating system blocks all network access. CI builds the release APK and fails if the permission appears.
 - The database is encrypted with SQLCipher; its key stays in the Keychain or Keystore of this device only.
-- Android Auto Backup and iCloud device backups are switched off for app data. Data only leaves the phone through the app's own encrypted backup export.
+- Android Auto Backup and iCloud device backups are switched off for app data. Data only leaves the phone through the app's own backup export, encrypted with a password unless the user chooses none.
 - `tool/allowed_runtime_dependencies.txt` lists every third-party package the app ships; adding one fails CI until it has been reviewed and added.
 
 ## Releases

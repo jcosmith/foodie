@@ -21,7 +21,7 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
 
   @override
   String get backupExplanation =>
-      'Your data exists only on this phone. A backup is a password-protected file that you keep somewhere safe, for example on a computer or in your own cloud storage.';
+      'Your data exists only on this phone. A backup is a file, protected by a password if you like, that you keep somewhere safe, for example on a computer or in your own cloud storage.';
 
   @override
   String get saveBackupButton => 'Save backup';
@@ -37,6 +37,12 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
 
   @override
   String get passwordDialogTitle => 'Protect your backup';
+
+  @override
+  String get protectWithPasswordLabel => 'Protect with a password';
+
+  @override
+  String get unprotectedBackupWarning => 'Anyone who gets this file can read your data.';
 
   @override
   String passwordDialogMessage(int count) {
@@ -59,6 +65,9 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
 
   @override
   String get backupSaved => 'Backup saved';
+
+  @override
+  String get backupNotSaved => 'The backup could not be saved.';
 
   @override
   String get workingOnBackup => 'Working on your backup…';
