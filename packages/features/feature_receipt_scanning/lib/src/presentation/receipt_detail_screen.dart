@@ -172,71 +172,110 @@ class _ReceiptBody extends ConsumerWidget {
       for (final line in receipt.lines)
         if (!line.isOpen) line,
     ];
-    return ListView(
+    // Every line is built, so the one a search found can be scrolled to; a
+    // receipt has a few dozen lines at most.
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
-      children: [
-        if (summary.isNotEmpty) Text(summary, style: textTheme.titleMedium),
-        const SizedBox(height: FoodieSpacing.extraSmall),
-        Text(
-          localizations.openLines(openLines.length),
-          style: textTheme.bodyMedium?.copyWith(
-            color: openLines.isEmpty ? colors.textMuted : colors.statusAging,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (summary.isNotEmpty) Text(summary, style: textTheme.titleMedium),
+          const SizedBox(height: FoodieSpacing.extraSmall),
+          Text(
+            localizations.openLines(openLines.length),
+            style: textTheme.bodyMedium?.copyWith(
+              color: openLines.isEmpty ? colors.textMuted : colors.statusAging,
+            ),
           ),
-        ),
-        if (pictures.isNotEmpty) ...[
+          if (pictures.isNotEmpty) ...[
+            const SizedBox(height: FoodieSpacing.large),
+            SizedBox(
+              height: 160,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: pictures.length,
+                separatorBuilder: (context, index) => const SizedBox(width: FoodieSpacing.small),
+                itemBuilder: (context, index) =>
+                    _PageImage(reference: pictures[index], number: index + 1),
+              ),
+            ),
+          ],
+          for (final line in openLines) ...[
+            const SizedBox(height: FoodieSpacing.small),
+            _ScrolledIntoView(
+              isTarget: line.identifier == highlightedLine,
+              child: _OpenLineCard(
+                line: line,
+                product: switch (line.productIdentifier) {
+                  final identifier? => catalog?.productOf(identifier),
+                  null => null,
+                },
+                isHighlighted: line.identifier == highlightedLine,
+                onAdd: (product) => _add(context, ref, line, product),
+                onPickProduct: () => _pickAndAdd(context, ref, line),
+                onIgnore: () => _resolve(context, ref, const IgnoreReceiptLine(), line),
+                onCorrect: () => _correct(context, ref, line),
+              ),
+            ),
+          ],
           const SizedBox(height: FoodieSpacing.large),
-          SizedBox(
-            height: 160,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: pictures.length,
-              separatorBuilder: (context, index) => const SizedBox(width: FoodieSpacing.small),
-              itemBuilder: (context, index) =>
-                  _PageImage(reference: pictures[index], number: index + 1),
+          for (final line in otherLines)
+            _ScrolledIntoView(
+              isTarget: line.identifier == highlightedLine,
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.small),
+                tileColor: line.identifier == highlightedLine ? colors.primarySoft : null,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(FoodieSpacing.tileRadius),
+                ),
+                leading: Icon(
+                  line.stockBatchIdentifier != null
+                      ? Icons.check_circle
+                      : Icons.remove_circle_outline,
+                  color: line.stockBatchIdentifier != null ? colors.statusFresh : colors.textMuted,
+                ),
+                onTap: () => _correct(context, ref, line),
+                title: Text(line.text, style: receiptTextStyle(context)),
+                subtitle: Text(switch ((line.stockBatchIdentifier, line.productIdentifier)) {
+                  (_?, final productIdentifier?) => switch (catalog?.productOf(productIdentifier)) {
+                    final product? => '${localizations.lineAdded} · ${names.productName(product)}',
+                    null => localizations.lineAdded,
+                  },
+                  _ => line.kind == ReceiptLineKind.item ? localizations.lineNotAdded : '',
+                }),
+                trailing: Text(formatCents(context, line.lineTotalInCents)),
+              ),
             ),
-          ),
         ],
-        for (final line in openLines) ...[
-          const SizedBox(height: FoodieSpacing.small),
-          _OpenLineCard(
-            line: line,
-            product: switch (line.productIdentifier) {
-              final identifier? => catalog?.productOf(identifier),
-              null => null,
-            },
-            isHighlighted: line.identifier == highlightedLine,
-            onAdd: (product) => _add(context, ref, line, product),
-            onPickProduct: () => _pickAndAdd(context, ref, line),
-            onIgnore: () => _resolve(context, ref, const IgnoreReceiptLine(), line),
-            onCorrect: () => _correct(context, ref, line),
-          ),
-        ],
-        const SizedBox(height: FoodieSpacing.large),
-        for (final line in otherLines)
-          ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.small),
-            tileColor: line.identifier == highlightedLine ? colors.primarySoft : null,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(FoodieSpacing.tileRadius),
-            ),
-            leading: Icon(
-              line.stockBatchIdentifier != null ? Icons.check_circle : Icons.remove_circle_outline,
-              color: line.stockBatchIdentifier != null ? colors.statusFresh : colors.textMuted,
-            ),
-            onTap: () => _correct(context, ref, line),
-            title: Text(line.text, style: receiptTextStyle(context)),
-            subtitle: Text(switch ((line.stockBatchIdentifier, line.productIdentifier)) {
-              (_?, final productIdentifier?) => switch (catalog?.productOf(productIdentifier)) {
-                final product? => '${localizations.lineAdded} · ${names.productName(product)}',
-                null => localizations.lineAdded,
-              },
-              _ => line.kind == ReceiptLineKind.item ? localizations.lineNotAdded : '',
-            }),
-            trailing: Text(formatCents(context, line.lineTotalInCents)),
-          ),
-      ],
+      ),
     );
   }
+}
+
+/// Scrolls [child] into view once when it is the line a search found.
+class _ScrolledIntoView extends StatefulWidget {
+  const _ScrolledIntoView({required this.isTarget, required this.child});
+
+  final bool isTarget;
+  final Widget child;
+
+  @override
+  State<_ScrolledIntoView> createState() => _ScrolledIntoViewState();
+}
+
+class _ScrolledIntoViewState extends State<_ScrolledIntoView> {
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.isTarget) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Scrollable.ensureVisible(context, alignment: 0.3);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _OpenLineCard extends StatelessWidget {
