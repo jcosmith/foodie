@@ -9,12 +9,19 @@ environment:
   flutter: ">=3.38.0"
 
 dependencies:
+  core_database: any
   core_foundation: any
+  core_module_contract: any
+  feature_inventory: any
   feature_product_catalog: any
+  feature_storage_layout: any
   flutter:
     sdk: flutter
+  flutter_riverpod: ^3.4.0
   meta: ^1.16.0
 
 dev_dependencies:
+  core_events: any
+  feature_freezer: any
   flutter_test:
     sdk: flutter
