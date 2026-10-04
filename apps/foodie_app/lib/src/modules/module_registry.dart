@@ -3,6 +3,7 @@ import 'package:feature_barcode_scanning/feature_barcode_scanning.dart';
 import 'package:feature_configuration/feature_configuration.dart';
 import 'package:feature_data_portability/feature_data_portability.dart';
 import 'package:feature_freezer/feature_freezer.dart';
+import 'package:feature_fridge/feature_fridge.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_item_pictures/feature_item_pictures.dart';
 import 'package:feature_onboarding/feature_onboarding.dart';
@@ -20,6 +21,7 @@ import 'package:go_router/go_router.dart';
 List<FeatureModule> createRegisteredFeatureModules() => [
   const StorageLayoutFeatureModule(),
   const FreezerFeatureModule(),
+  const FridgeFeatureModule(),
   const ProductCatalogFeatureModule(),
   const InventoryFeatureModule(),
   const StorageRemindersFeatureModule(),

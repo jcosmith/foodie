@@ -28,6 +28,7 @@ workspace:
   - packages/features/feature_item_pictures
   - packages/features/feature_barcode_scanning
   - packages/features/feature_freezer
+  - packages/features/feature_fridge
 
 dev_dependencies:
   flutter_lints: ^6.0.0

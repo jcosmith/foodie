@@ -135,7 +135,12 @@ void main() {
 
     await _openOptions(tester);
     expect(find.text('Tabs'), findsOneWidget);
-    expect(find.text('At least one tab stays on.'), findsOneWidget);
+    expect(find.text('Fridge'), findsWidgets);
+    expect(
+      find.text('At least one tab stays on.'),
+      findsNothing,
+      reason: 'freezer and fridge are both on, so either can be switched off',
+    );
     final optionsList = find
         .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
         .first;

@@ -22,6 +22,7 @@ dependencies:
   feature_configuration: any
   feature_data_portability: any
   feature_freezer: any
+  feature_fridge: any
   feature_inventory: any
   feature_item_pictures: any
   feature_onboarding: any
