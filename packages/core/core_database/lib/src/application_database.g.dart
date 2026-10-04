@@ -3,6 +3,309 @@
 part of 'application_database.dart';
 
 // ignore_for_file: type=lint
+class ReceiptSearchIndex extends Table
+    with
+        TableInfo<ReceiptSearchIndex, ReceiptSearchIndexData>,
+        VirtualTableInfo<ReceiptSearchIndex, ReceiptSearchIndexData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ReceiptSearchIndex(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _receiptLineIdentifierMeta =
+      const VerificationMeta('receiptLineIdentifier');
+  late final GeneratedColumn<String> receiptLineIdentifier =
+      GeneratedColumn<String>(
+        'receipt_line_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: '',
+      );
+  static const VerificationMeta _bodyMeta = const VerificationMeta('body');
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    receiptLineIdentifier,
+    body,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_search_index';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptSearchIndexData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('receipt_line_identifier')) {
+      context.handle(
+        _receiptLineIdentifierMeta,
+        receiptLineIdentifier.isAcceptableOrUnknown(
+          data['receipt_line_identifier']!,
+          _receiptLineIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptLineIdentifierMeta);
+    }
+    if (data.containsKey('body')) {
+      context.handle(
+        _bodyMeta,
+        body.isAcceptableOrUnknown(data['body']!, _bodyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bodyMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  ReceiptSearchIndexData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptSearchIndexData(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      receiptLineIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_line_identifier'],
+      )!,
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      )!,
+    );
+  }
+
+  @override
+  ReceiptSearchIndex createAlias(String alias) {
+    return ReceiptSearchIndex(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(receipt_identifier UNINDEXED, receipt_line_identifier UNINDEXED, body, tokenize = \'unicode61 remove_diacritics 2\')';
+}
+
+class ReceiptSearchIndexData extends DataClass
+    implements Insertable<ReceiptSearchIndexData> {
+  final String receiptIdentifier;
+  final String receiptLineIdentifier;
+  final String body;
+  const ReceiptSearchIndexData({
+    required this.receiptIdentifier,
+    required this.receiptLineIdentifier,
+    required this.body,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['receipt_line_identifier'] = Variable<String>(receiptLineIdentifier);
+    map['body'] = Variable<String>(body);
+    return map;
+  }
+
+  ReceiptSearchIndexCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptSearchIndexCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      receiptLineIdentifier: Value(receiptLineIdentifier),
+      body: Value(body),
+    );
+  }
+
+  factory ReceiptSearchIndexData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptSearchIndexData(
+      receiptIdentifier: serializer.fromJson<String>(
+        json['receipt_identifier'],
+      ),
+      receiptLineIdentifier: serializer.fromJson<String>(
+        json['receipt_line_identifier'],
+      ),
+      body: serializer.fromJson<String>(json['body']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receipt_identifier': serializer.toJson<String>(receiptIdentifier),
+      'receipt_line_identifier': serializer.toJson<String>(
+        receiptLineIdentifier,
+      ),
+      'body': serializer.toJson<String>(body),
+    };
+  }
+
+  ReceiptSearchIndexData copyWith({
+    String? receiptIdentifier,
+    String? receiptLineIdentifier,
+    String? body,
+  }) => ReceiptSearchIndexData(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    receiptLineIdentifier: receiptLineIdentifier ?? this.receiptLineIdentifier,
+    body: body ?? this.body,
+  );
+  ReceiptSearchIndexData copyWithCompanion(ReceiptSearchIndexCompanion data) {
+    return ReceiptSearchIndexData(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      receiptLineIdentifier: data.receiptLineIdentifier.present
+          ? data.receiptLineIdentifier.value
+          : this.receiptLineIdentifier,
+      body: data.body.present ? data.body.value : this.body,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptSearchIndexData(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('body: $body')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(receiptIdentifier, receiptLineIdentifier, body);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptSearchIndexData &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.receiptLineIdentifier == this.receiptLineIdentifier &&
+          other.body == this.body);
+}
+
+class ReceiptSearchIndexCompanion
+    extends UpdateCompanion<ReceiptSearchIndexData> {
+  final Value<String> receiptIdentifier;
+  final Value<String> receiptLineIdentifier;
+  final Value<String> body;
+  final Value<int> rowid;
+  const ReceiptSearchIndexCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.receiptLineIdentifier = const Value.absent(),
+    this.body = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptSearchIndexCompanion.insert({
+    required String receiptIdentifier,
+    required String receiptLineIdentifier,
+    required String body,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       receiptLineIdentifier = Value(receiptLineIdentifier),
+       body = Value(body);
+  static Insertable<ReceiptSearchIndexData> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<String>? receiptLineIdentifier,
+    Expression<String>? body,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (receiptLineIdentifier != null)
+        'receipt_line_identifier': receiptLineIdentifier,
+      if (body != null) 'body': body,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptSearchIndexCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<String>? receiptLineIdentifier,
+    Value<String>? body,
+    Value<int>? rowid,
+  }) {
+    return ReceiptSearchIndexCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      receiptLineIdentifier:
+          receiptLineIdentifier ?? this.receiptLineIdentifier,
+      body: body ?? this.body,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (receiptLineIdentifier.present) {
+      map['receipt_line_identifier'] = Variable<String>(
+        receiptLineIdentifier.value,
+      );
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptSearchIndexCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('body: $body, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PreferenceEntriesTable extends PreferenceEntries
     with TableInfo<$PreferenceEntriesTable, PreferenceEntryRow> {
   @override
@@ -6977,9 +7280,2052 @@ class ProductBarcodesCompanion extends UpdateCompanion<ProductBarcodeRow> {
   }
 }
 
+class $ReceiptsTable extends Receipts
+    with TableInfo<$ReceiptsTable, ReceiptRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _storeNameMeta = const VerificationMeta(
+    'storeName',
+  );
+  @override
+  late final GeneratedColumn<String> storeName = GeneratedColumn<String>(
+    'store_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<CalendarDate?, String>
+  purchasedOn = GeneratedColumn<String>(
+    'purchased_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<CalendarDate?>($ReceiptsTable.$converterpurchasedOnn);
+  static const VerificationMeta _totalInCentsMeta = const VerificationMeta(
+    'totalInCents',
+  );
+  @override
+  late final GeneratedColumn<int> totalInCents = GeneratedColumn<int>(
+    'total_in_cents',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pageCountMeta = const VerificationMeta(
+    'pageCount',
+  );
+  @override
+  late final GeneratedColumn<int> pageCount = GeneratedColumn<int>(
+    'page_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recognizedTextMeta = const VerificationMeta(
+    'recognizedText',
+  );
+  @override
+  late final GeneratedColumn<String> recognizedText = GeneratedColumn<String>(
+    'recognized_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    storeName,
+    purchasedOn,
+    totalInCents,
+    pageCount,
+    recognizedText,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('store_name')) {
+      context.handle(
+        _storeNameMeta,
+        storeName.isAcceptableOrUnknown(data['store_name']!, _storeNameMeta),
+      );
+    }
+    if (data.containsKey('total_in_cents')) {
+      context.handle(
+        _totalInCentsMeta,
+        totalInCents.isAcceptableOrUnknown(
+          data['total_in_cents']!,
+          _totalInCentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('page_count')) {
+      context.handle(
+        _pageCountMeta,
+        pageCount.isAcceptableOrUnknown(data['page_count']!, _pageCountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pageCountMeta);
+    }
+    if (data.containsKey('recognized_text')) {
+      context.handle(
+        _recognizedTextMeta,
+        recognizedText.isAcceptableOrUnknown(
+          data['recognized_text']!,
+          _recognizedTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recognizedTextMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptIdentifier};
+  @override
+  ReceiptRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptRow(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      storeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}store_name'],
+      ),
+      purchasedOn: $ReceiptsTable.$converterpurchasedOnn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}purchased_on'],
+        ),
+      ),
+      totalInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_in_cents'],
+      ),
+      pageCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_count'],
+      )!,
+      recognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recognized_text'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReceiptsTable createAlias(String alias) {
+    return $ReceiptsTable(attachedDatabase, alias);
+  }
+
+  static TypeConverter<CalendarDate, String> $converterpurchasedOn =
+      const CalendarDateTextConverter();
+  static TypeConverter<CalendarDate?, String?> $converterpurchasedOnn =
+      NullAwareTypeConverter.wrap($converterpurchasedOn);
+}
+
+class ReceiptRow extends DataClass implements Insertable<ReceiptRow> {
+  final String receiptIdentifier;
+
+  /// As printed at the top of the receipt; `null` when none was found.
+  final String? storeName;
+  final CalendarDate? purchasedOn;
+  final int? totalInCents;
+  final int pageCount;
+
+  /// Every recognised row, top to bottom, with card and loyalty numbers
+  /// masked.
+  final String recognizedText;
+  final DateTime createdAt;
+  const ReceiptRow({
+    required this.receiptIdentifier,
+    this.storeName,
+    this.purchasedOn,
+    this.totalInCents,
+    required this.pageCount,
+    required this.recognizedText,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    if (!nullToAbsent || storeName != null) {
+      map['store_name'] = Variable<String>(storeName);
+    }
+    if (!nullToAbsent || purchasedOn != null) {
+      map['purchased_on'] = Variable<String>(
+        $ReceiptsTable.$converterpurchasedOnn.toSql(purchasedOn),
+      );
+    }
+    if (!nullToAbsent || totalInCents != null) {
+      map['total_in_cents'] = Variable<int>(totalInCents);
+    }
+    map['page_count'] = Variable<int>(pageCount);
+    map['recognized_text'] = Variable<String>(recognizedText);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ReceiptsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptsCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      storeName: storeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(storeName),
+      purchasedOn: purchasedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(purchasedOn),
+      totalInCents: totalInCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalInCents),
+      pageCount: Value(pageCount),
+      recognizedText: Value(recognizedText),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ReceiptRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptRow(
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      storeName: serializer.fromJson<String?>(json['storeName']),
+      purchasedOn: serializer.fromJson<CalendarDate?>(json['purchasedOn']),
+      totalInCents: serializer.fromJson<int?>(json['totalInCents']),
+      pageCount: serializer.fromJson<int>(json['pageCount']),
+      recognizedText: serializer.fromJson<String>(json['recognizedText']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'storeName': serializer.toJson<String?>(storeName),
+      'purchasedOn': serializer.toJson<CalendarDate?>(purchasedOn),
+      'totalInCents': serializer.toJson<int?>(totalInCents),
+      'pageCount': serializer.toJson<int>(pageCount),
+      'recognizedText': serializer.toJson<String>(recognizedText),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ReceiptRow copyWith({
+    String? receiptIdentifier,
+    Value<String?> storeName = const Value.absent(),
+    Value<CalendarDate?> purchasedOn = const Value.absent(),
+    Value<int?> totalInCents = const Value.absent(),
+    int? pageCount,
+    String? recognizedText,
+    DateTime? createdAt,
+  }) => ReceiptRow(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    storeName: storeName.present ? storeName.value : this.storeName,
+    purchasedOn: purchasedOn.present ? purchasedOn.value : this.purchasedOn,
+    totalInCents: totalInCents.present ? totalInCents.value : this.totalInCents,
+    pageCount: pageCount ?? this.pageCount,
+    recognizedText: recognizedText ?? this.recognizedText,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ReceiptRow copyWithCompanion(ReceiptsCompanion data) {
+    return ReceiptRow(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      storeName: data.storeName.present ? data.storeName.value : this.storeName,
+      purchasedOn: data.purchasedOn.present
+          ? data.purchasedOn.value
+          : this.purchasedOn,
+      totalInCents: data.totalInCents.present
+          ? data.totalInCents.value
+          : this.totalInCents,
+      pageCount: data.pageCount.present ? data.pageCount.value : this.pageCount,
+      recognizedText: data.recognizedText.present
+          ? data.recognizedText.value
+          : this.recognizedText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptRow(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('storeName: $storeName, ')
+          ..write('purchasedOn: $purchasedOn, ')
+          ..write('totalInCents: $totalInCents, ')
+          ..write('pageCount: $pageCount, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptIdentifier,
+    storeName,
+    purchasedOn,
+    totalInCents,
+    pageCount,
+    recognizedText,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptRow &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.storeName == this.storeName &&
+          other.purchasedOn == this.purchasedOn &&
+          other.totalInCents == this.totalInCents &&
+          other.pageCount == this.pageCount &&
+          other.recognizedText == this.recognizedText &&
+          other.createdAt == this.createdAt);
+}
+
+class ReceiptsCompanion extends UpdateCompanion<ReceiptRow> {
+  final Value<String> receiptIdentifier;
+  final Value<String?> storeName;
+  final Value<CalendarDate?> purchasedOn;
+  final Value<int?> totalInCents;
+  final Value<int> pageCount;
+  final Value<String> recognizedText;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ReceiptsCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.storeName = const Value.absent(),
+    this.purchasedOn = const Value.absent(),
+    this.totalInCents = const Value.absent(),
+    this.pageCount = const Value.absent(),
+    this.recognizedText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptsCompanion.insert({
+    required String receiptIdentifier,
+    this.storeName = const Value.absent(),
+    this.purchasedOn = const Value.absent(),
+    this.totalInCents = const Value.absent(),
+    required int pageCount,
+    required String recognizedText,
+    required DateTime createdAt,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       pageCount = Value(pageCount),
+       recognizedText = Value(recognizedText),
+       createdAt = Value(createdAt);
+  static Insertable<ReceiptRow> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<String>? storeName,
+    Expression<String>? purchasedOn,
+    Expression<int>? totalInCents,
+    Expression<int>? pageCount,
+    Expression<String>? recognizedText,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (storeName != null) 'store_name': storeName,
+      if (purchasedOn != null) 'purchased_on': purchasedOn,
+      if (totalInCents != null) 'total_in_cents': totalInCents,
+      if (pageCount != null) 'page_count': pageCount,
+      if (recognizedText != null) 'recognized_text': recognizedText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptsCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<String?>? storeName,
+    Value<CalendarDate?>? purchasedOn,
+    Value<int?>? totalInCents,
+    Value<int>? pageCount,
+    Value<String>? recognizedText,
+    Value<DateTime>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptsCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      storeName: storeName ?? this.storeName,
+      purchasedOn: purchasedOn ?? this.purchasedOn,
+      totalInCents: totalInCents ?? this.totalInCents,
+      pageCount: pageCount ?? this.pageCount,
+      recognizedText: recognizedText ?? this.recognizedText,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (storeName.present) {
+      map['store_name'] = Variable<String>(storeName.value);
+    }
+    if (purchasedOn.present) {
+      map['purchased_on'] = Variable<String>(
+        $ReceiptsTable.$converterpurchasedOnn.toSql(purchasedOn.value),
+      );
+    }
+    if (totalInCents.present) {
+      map['total_in_cents'] = Variable<int>(totalInCents.value);
+    }
+    if (pageCount.present) {
+      map['page_count'] = Variable<int>(pageCount.value);
+    }
+    if (recognizedText.present) {
+      map['recognized_text'] = Variable<String>(recognizedText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptsCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('storeName: $storeName, ')
+          ..write('purchasedOn: $purchasedOn, ')
+          ..write('totalInCents: $totalInCents, ')
+          ..write('pageCount: $pageCount, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ReceiptPagesTable extends ReceiptPages
+    with TableInfo<$ReceiptPagesTable, ReceiptPageRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptPagesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES receipts (receipt_identifier)',
+        ),
+      );
+  static const VerificationMeta _pageNumberMeta = const VerificationMeta(
+    'pageNumber',
+  );
+  @override
+  late final GeneratedColumn<int> pageNumber = GeneratedColumn<int>(
+    'page_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pictureReferenceMeta = const VerificationMeta(
+    'pictureReference',
+  );
+  @override
+  late final GeneratedColumn<String> pictureReference = GeneratedColumn<String>(
+    'picture_reference',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rawRecognizedTextMeta = const VerificationMeta(
+    'rawRecognizedText',
+  );
+  @override
+  late final GeneratedColumn<String> rawRecognizedText =
+      GeneratedColumn<String>(
+        'raw_recognized_text',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    pageNumber,
+    pictureReference,
+    rawRecognizedText,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_pages';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptPageRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('page_number')) {
+      context.handle(
+        _pageNumberMeta,
+        pageNumber.isAcceptableOrUnknown(data['page_number']!, _pageNumberMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pageNumberMeta);
+    }
+    if (data.containsKey('picture_reference')) {
+      context.handle(
+        _pictureReferenceMeta,
+        pictureReference.isAcceptableOrUnknown(
+          data['picture_reference']!,
+          _pictureReferenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('raw_recognized_text')) {
+      context.handle(
+        _rawRecognizedTextMeta,
+        rawRecognizedText.isAcceptableOrUnknown(
+          data['raw_recognized_text']!,
+          _rawRecognizedTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rawRecognizedTextMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptIdentifier, pageNumber};
+  @override
+  ReceiptPageRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptPageRow(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      pageNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_number'],
+      )!,
+      pictureReference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}picture_reference'],
+      ),
+      rawRecognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_recognized_text'],
+      )!,
+    );
+  }
+
+  @override
+  $ReceiptPagesTable createAlias(String alias) {
+    return $ReceiptPagesTable(attachedDatabase, alias);
+  }
+}
+
+class ReceiptPageRow extends DataClass implements Insertable<ReceiptPageRow> {
+  final String receiptIdentifier;
+
+  /// From 1.
+  final int pageNumber;
+
+  /// The encrypted page image (decision D11), or `null` once retention has
+  /// deleted it or when none was kept.
+  final String? pictureReference;
+
+  /// The page's text exactly as recognition returned it, for reference.
+  final String rawRecognizedText;
+  const ReceiptPageRow({
+    required this.receiptIdentifier,
+    required this.pageNumber,
+    this.pictureReference,
+    required this.rawRecognizedText,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['page_number'] = Variable<int>(pageNumber);
+    if (!nullToAbsent || pictureReference != null) {
+      map['picture_reference'] = Variable<String>(pictureReference);
+    }
+    map['raw_recognized_text'] = Variable<String>(rawRecognizedText);
+    return map;
+  }
+
+  ReceiptPagesCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptPagesCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      pageNumber: Value(pageNumber),
+      pictureReference: pictureReference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pictureReference),
+      rawRecognizedText: Value(rawRecognizedText),
+    );
+  }
+
+  factory ReceiptPageRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptPageRow(
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      pageNumber: serializer.fromJson<int>(json['pageNumber']),
+      pictureReference: serializer.fromJson<String?>(json['pictureReference']),
+      rawRecognizedText: serializer.fromJson<String>(json['rawRecognizedText']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'pageNumber': serializer.toJson<int>(pageNumber),
+      'pictureReference': serializer.toJson<String?>(pictureReference),
+      'rawRecognizedText': serializer.toJson<String>(rawRecognizedText),
+    };
+  }
+
+  ReceiptPageRow copyWith({
+    String? receiptIdentifier,
+    int? pageNumber,
+    Value<String?> pictureReference = const Value.absent(),
+    String? rawRecognizedText,
+  }) => ReceiptPageRow(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    pageNumber: pageNumber ?? this.pageNumber,
+    pictureReference: pictureReference.present
+        ? pictureReference.value
+        : this.pictureReference,
+    rawRecognizedText: rawRecognizedText ?? this.rawRecognizedText,
+  );
+  ReceiptPageRow copyWithCompanion(ReceiptPagesCompanion data) {
+    return ReceiptPageRow(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      pageNumber: data.pageNumber.present
+          ? data.pageNumber.value
+          : this.pageNumber,
+      pictureReference: data.pictureReference.present
+          ? data.pictureReference.value
+          : this.pictureReference,
+      rawRecognizedText: data.rawRecognizedText.present
+          ? data.rawRecognizedText.value
+          : this.rawRecognizedText,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptPageRow(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('pageNumber: $pageNumber, ')
+          ..write('pictureReference: $pictureReference, ')
+          ..write('rawRecognizedText: $rawRecognizedText')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptIdentifier,
+    pageNumber,
+    pictureReference,
+    rawRecognizedText,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptPageRow &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.pageNumber == this.pageNumber &&
+          other.pictureReference == this.pictureReference &&
+          other.rawRecognizedText == this.rawRecognizedText);
+}
+
+class ReceiptPagesCompanion extends UpdateCompanion<ReceiptPageRow> {
+  final Value<String> receiptIdentifier;
+  final Value<int> pageNumber;
+  final Value<String?> pictureReference;
+  final Value<String> rawRecognizedText;
+  final Value<int> rowid;
+  const ReceiptPagesCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.pageNumber = const Value.absent(),
+    this.pictureReference = const Value.absent(),
+    this.rawRecognizedText = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptPagesCompanion.insert({
+    required String receiptIdentifier,
+    required int pageNumber,
+    this.pictureReference = const Value.absent(),
+    required String rawRecognizedText,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       pageNumber = Value(pageNumber),
+       rawRecognizedText = Value(rawRecognizedText);
+  static Insertable<ReceiptPageRow> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<int>? pageNumber,
+    Expression<String>? pictureReference,
+    Expression<String>? rawRecognizedText,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (pageNumber != null) 'page_number': pageNumber,
+      if (pictureReference != null) 'picture_reference': pictureReference,
+      if (rawRecognizedText != null) 'raw_recognized_text': rawRecognizedText,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptPagesCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<int>? pageNumber,
+    Value<String?>? pictureReference,
+    Value<String>? rawRecognizedText,
+    Value<int>? rowid,
+  }) {
+    return ReceiptPagesCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      pageNumber: pageNumber ?? this.pageNumber,
+      pictureReference: pictureReference ?? this.pictureReference,
+      rawRecognizedText: rawRecognizedText ?? this.rawRecognizedText,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (pageNumber.present) {
+      map['page_number'] = Variable<int>(pageNumber.value);
+    }
+    if (pictureReference.present) {
+      map['picture_reference'] = Variable<String>(pictureReference.value);
+    }
+    if (rawRecognizedText.present) {
+      map['raw_recognized_text'] = Variable<String>(rawRecognizedText.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptPagesCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('pageNumber: $pageNumber, ')
+          ..write('pictureReference: $pictureReference, ')
+          ..write('rawRecognizedText: $rawRecognizedText, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ReceiptLinesTable extends ReceiptLines
+    with TableInfo<$ReceiptLinesTable, ReceiptLineRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptLinesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _receiptLineIdentifierMeta =
+      const VerificationMeta('receiptLineIdentifier');
+  @override
+  late final GeneratedColumn<String> receiptLineIdentifier =
+      GeneratedColumn<String>(
+        'receipt_line_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _receiptIdentifierMeta = const VerificationMeta(
+    'receiptIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES receipts (receipt_identifier)',
+        ),
+      );
+  static const VerificationMeta _positionMeta = const VerificationMeta(
+    'position',
+  );
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recognizedTextMeta = const VerificationMeta(
+    'recognizedText',
+  );
+  @override
+  late final GeneratedColumn<String> recognizedText = GeneratedColumn<String>(
+    'recognized_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _correctedTextMeta = const VerificationMeta(
+    'correctedText',
+  );
+  @override
+  late final GeneratedColumn<String> correctedText = GeneratedColumn<String>(
+    'corrected_text',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unitPriceInCentsMeta = const VerificationMeta(
+    'unitPriceInCents',
+  );
+  @override
+  late final GeneratedColumn<int> unitPriceInCents = GeneratedColumn<int>(
+    'unit_price_in_cents',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lineTotalInCentsMeta = const VerificationMeta(
+    'lineTotalInCents',
+  );
+  @override
+  late final GeneratedColumn<int> lineTotalInCents = GeneratedColumn<int>(
+    'line_total_in_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _weightInGramsMeta = const VerificationMeta(
+    'weightInGrams',
+  );
+  @override
+  late final GeneratedColumn<int> weightInGrams = GeneratedColumn<int>(
+    'weight_in_grams',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _productIdentifierMeta = const VerificationMeta(
+    'productIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> productIdentifier =
+      GeneratedColumn<String>(
+        'product_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES products (product_identifier)',
+        ),
+      );
+  static const VerificationMeta _stockBatchIdentifierMeta =
+      const VerificationMeta('stockBatchIdentifier');
+  @override
+  late final GeneratedColumn<String> stockBatchIdentifier =
+      GeneratedColumn<String>(
+        'stock_batch_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES stock_batches (stock_batch_identifier)',
+        ),
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptLineIdentifier,
+    receiptIdentifier,
+    position,
+    kind,
+    recognizedText,
+    correctedText,
+    quantity,
+    unitPriceInCents,
+    lineTotalInCents,
+    weightInGrams,
+    status,
+    productIdentifier,
+    stockBatchIdentifier,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_lines';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptLineRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('receipt_line_identifier')) {
+      context.handle(
+        _receiptLineIdentifierMeta,
+        receiptLineIdentifier.isAcceptableOrUnknown(
+          data['receipt_line_identifier']!,
+          _receiptLineIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptLineIdentifierMeta);
+    }
+    if (data.containsKey('receipt_identifier')) {
+      context.handle(
+        _receiptIdentifierMeta,
+        receiptIdentifier.isAcceptableOrUnknown(
+          data['receipt_identifier']!,
+          _receiptIdentifierMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_receiptIdentifierMeta);
+    }
+    if (data.containsKey('position')) {
+      context.handle(
+        _positionMeta,
+        position.isAcceptableOrUnknown(data['position']!, _positionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_positionMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('recognized_text')) {
+      context.handle(
+        _recognizedTextMeta,
+        recognizedText.isAcceptableOrUnknown(
+          data['recognized_text']!,
+          _recognizedTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recognizedTextMeta);
+    }
+    if (data.containsKey('corrected_text')) {
+      context.handle(
+        _correctedTextMeta,
+        correctedText.isAcceptableOrUnknown(
+          data['corrected_text']!,
+          _correctedTextMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
+    if (data.containsKey('unit_price_in_cents')) {
+      context.handle(
+        _unitPriceInCentsMeta,
+        unitPriceInCents.isAcceptableOrUnknown(
+          data['unit_price_in_cents']!,
+          _unitPriceInCentsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('line_total_in_cents')) {
+      context.handle(
+        _lineTotalInCentsMeta,
+        lineTotalInCents.isAcceptableOrUnknown(
+          data['line_total_in_cents']!,
+          _lineTotalInCentsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lineTotalInCentsMeta);
+    }
+    if (data.containsKey('weight_in_grams')) {
+      context.handle(
+        _weightInGramsMeta,
+        weightInGrams.isAcceptableOrUnknown(
+          data['weight_in_grams']!,
+          _weightInGramsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('product_identifier')) {
+      context.handle(
+        _productIdentifierMeta,
+        productIdentifier.isAcceptableOrUnknown(
+          data['product_identifier']!,
+          _productIdentifierMeta,
+        ),
+      );
+    }
+    if (data.containsKey('stock_batch_identifier')) {
+      context.handle(
+        _stockBatchIdentifierMeta,
+        stockBatchIdentifier.isAcceptableOrUnknown(
+          data['stock_batch_identifier']!,
+          _stockBatchIdentifierMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptLineIdentifier};
+  @override
+  ReceiptLineRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptLineRow(
+      receiptLineIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_line_identifier'],
+      )!,
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      recognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recognized_text'],
+      )!,
+      correctedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}corrected_text'],
+      ),
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      unitPriceInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit_price_in_cents'],
+      ),
+      lineTotalInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}line_total_in_cents'],
+      )!,
+      weightInGrams: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}weight_in_grams'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      productIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_identifier'],
+      ),
+      stockBatchIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stock_batch_identifier'],
+      ),
+    );
+  }
+
+  @override
+  $ReceiptLinesTable createAlias(String alias) {
+    return $ReceiptLinesTable(attachedDatabase, alias);
+  }
+}
+
+class ReceiptLineRow extends DataClass implements Insertable<ReceiptLineRow> {
+  final String receiptLineIdentifier;
+  final String receiptIdentifier;
+
+  /// Order on the receipt, from 0.
+  final int position;
+
+  /// `item`, `discount` or `deposit`.
+  final String kind;
+  final String recognizedText;
+
+  /// What the user corrected a misread line to; indexed and learned instead.
+  final String? correctedText;
+  final int quantity;
+  final int? unitPriceInCents;
+
+  /// Negative for discounts.
+  final int lineTotalInCents;
+  final int? weightInGrams;
+
+  /// `matched`, `suggested`, `unrecognised` or `ignored`.
+  final String status;
+  final String? productIdentifier;
+
+  /// The batch this line added; `null` while the line is open or ignored.
+  final String? stockBatchIdentifier;
+  const ReceiptLineRow({
+    required this.receiptLineIdentifier,
+    required this.receiptIdentifier,
+    required this.position,
+    required this.kind,
+    required this.recognizedText,
+    this.correctedText,
+    required this.quantity,
+    this.unitPriceInCents,
+    required this.lineTotalInCents,
+    this.weightInGrams,
+    required this.status,
+    this.productIdentifier,
+    this.stockBatchIdentifier,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_line_identifier'] = Variable<String>(receiptLineIdentifier);
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['position'] = Variable<int>(position);
+    map['kind'] = Variable<String>(kind);
+    map['recognized_text'] = Variable<String>(recognizedText);
+    if (!nullToAbsent || correctedText != null) {
+      map['corrected_text'] = Variable<String>(correctedText);
+    }
+    map['quantity'] = Variable<int>(quantity);
+    if (!nullToAbsent || unitPriceInCents != null) {
+      map['unit_price_in_cents'] = Variable<int>(unitPriceInCents);
+    }
+    map['line_total_in_cents'] = Variable<int>(lineTotalInCents);
+    if (!nullToAbsent || weightInGrams != null) {
+      map['weight_in_grams'] = Variable<int>(weightInGrams);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || productIdentifier != null) {
+      map['product_identifier'] = Variable<String>(productIdentifier);
+    }
+    if (!nullToAbsent || stockBatchIdentifier != null) {
+      map['stock_batch_identifier'] = Variable<String>(stockBatchIdentifier);
+    }
+    return map;
+  }
+
+  ReceiptLinesCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptLinesCompanion(
+      receiptLineIdentifier: Value(receiptLineIdentifier),
+      receiptIdentifier: Value(receiptIdentifier),
+      position: Value(position),
+      kind: Value(kind),
+      recognizedText: Value(recognizedText),
+      correctedText: correctedText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correctedText),
+      quantity: Value(quantity),
+      unitPriceInCents: unitPriceInCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(unitPriceInCents),
+      lineTotalInCents: Value(lineTotalInCents),
+      weightInGrams: weightInGrams == null && nullToAbsent
+          ? const Value.absent()
+          : Value(weightInGrams),
+      status: Value(status),
+      productIdentifier: productIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productIdentifier),
+      stockBatchIdentifier: stockBatchIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(stockBatchIdentifier),
+    );
+  }
+
+  factory ReceiptLineRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptLineRow(
+      receiptLineIdentifier: serializer.fromJson<String>(
+        json['receiptLineIdentifier'],
+      ),
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      position: serializer.fromJson<int>(json['position']),
+      kind: serializer.fromJson<String>(json['kind']),
+      recognizedText: serializer.fromJson<String>(json['recognizedText']),
+      correctedText: serializer.fromJson<String?>(json['correctedText']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unitPriceInCents: serializer.fromJson<int?>(json['unitPriceInCents']),
+      lineTotalInCents: serializer.fromJson<int>(json['lineTotalInCents']),
+      weightInGrams: serializer.fromJson<int?>(json['weightInGrams']),
+      status: serializer.fromJson<String>(json['status']),
+      productIdentifier: serializer.fromJson<String?>(
+        json['productIdentifier'],
+      ),
+      stockBatchIdentifier: serializer.fromJson<String?>(
+        json['stockBatchIdentifier'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptLineIdentifier': serializer.toJson<String>(receiptLineIdentifier),
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'position': serializer.toJson<int>(position),
+      'kind': serializer.toJson<String>(kind),
+      'recognizedText': serializer.toJson<String>(recognizedText),
+      'correctedText': serializer.toJson<String?>(correctedText),
+      'quantity': serializer.toJson<int>(quantity),
+      'unitPriceInCents': serializer.toJson<int?>(unitPriceInCents),
+      'lineTotalInCents': serializer.toJson<int>(lineTotalInCents),
+      'weightInGrams': serializer.toJson<int?>(weightInGrams),
+      'status': serializer.toJson<String>(status),
+      'productIdentifier': serializer.toJson<String?>(productIdentifier),
+      'stockBatchIdentifier': serializer.toJson<String?>(stockBatchIdentifier),
+    };
+  }
+
+  ReceiptLineRow copyWith({
+    String? receiptLineIdentifier,
+    String? receiptIdentifier,
+    int? position,
+    String? kind,
+    String? recognizedText,
+    Value<String?> correctedText = const Value.absent(),
+    int? quantity,
+    Value<int?> unitPriceInCents = const Value.absent(),
+    int? lineTotalInCents,
+    Value<int?> weightInGrams = const Value.absent(),
+    String? status,
+    Value<String?> productIdentifier = const Value.absent(),
+    Value<String?> stockBatchIdentifier = const Value.absent(),
+  }) => ReceiptLineRow(
+    receiptLineIdentifier: receiptLineIdentifier ?? this.receiptLineIdentifier,
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    position: position ?? this.position,
+    kind: kind ?? this.kind,
+    recognizedText: recognizedText ?? this.recognizedText,
+    correctedText: correctedText.present
+        ? correctedText.value
+        : this.correctedText,
+    quantity: quantity ?? this.quantity,
+    unitPriceInCents: unitPriceInCents.present
+        ? unitPriceInCents.value
+        : this.unitPriceInCents,
+    lineTotalInCents: lineTotalInCents ?? this.lineTotalInCents,
+    weightInGrams: weightInGrams.present
+        ? weightInGrams.value
+        : this.weightInGrams,
+    status: status ?? this.status,
+    productIdentifier: productIdentifier.present
+        ? productIdentifier.value
+        : this.productIdentifier,
+    stockBatchIdentifier: stockBatchIdentifier.present
+        ? stockBatchIdentifier.value
+        : this.stockBatchIdentifier,
+  );
+  ReceiptLineRow copyWithCompanion(ReceiptLinesCompanion data) {
+    return ReceiptLineRow(
+      receiptLineIdentifier: data.receiptLineIdentifier.present
+          ? data.receiptLineIdentifier.value
+          : this.receiptLineIdentifier,
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      position: data.position.present ? data.position.value : this.position,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      recognizedText: data.recognizedText.present
+          ? data.recognizedText.value
+          : this.recognizedText,
+      correctedText: data.correctedText.present
+          ? data.correctedText.value
+          : this.correctedText,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unitPriceInCents: data.unitPriceInCents.present
+          ? data.unitPriceInCents.value
+          : this.unitPriceInCents,
+      lineTotalInCents: data.lineTotalInCents.present
+          ? data.lineTotalInCents.value
+          : this.lineTotalInCents,
+      weightInGrams: data.weightInGrams.present
+          ? data.weightInGrams.value
+          : this.weightInGrams,
+      status: data.status.present ? data.status.value : this.status,
+      productIdentifier: data.productIdentifier.present
+          ? data.productIdentifier.value
+          : this.productIdentifier,
+      stockBatchIdentifier: data.stockBatchIdentifier.present
+          ? data.stockBatchIdentifier.value
+          : this.stockBatchIdentifier,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptLineRow(')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('position: $position, ')
+          ..write('kind: $kind, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPriceInCents: $unitPriceInCents, ')
+          ..write('lineTotalInCents: $lineTotalInCents, ')
+          ..write('weightInGrams: $weightInGrams, ')
+          ..write('status: $status, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('stockBatchIdentifier: $stockBatchIdentifier')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptLineIdentifier,
+    receiptIdentifier,
+    position,
+    kind,
+    recognizedText,
+    correctedText,
+    quantity,
+    unitPriceInCents,
+    lineTotalInCents,
+    weightInGrams,
+    status,
+    productIdentifier,
+    stockBatchIdentifier,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptLineRow &&
+          other.receiptLineIdentifier == this.receiptLineIdentifier &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.position == this.position &&
+          other.kind == this.kind &&
+          other.recognizedText == this.recognizedText &&
+          other.correctedText == this.correctedText &&
+          other.quantity == this.quantity &&
+          other.unitPriceInCents == this.unitPriceInCents &&
+          other.lineTotalInCents == this.lineTotalInCents &&
+          other.weightInGrams == this.weightInGrams &&
+          other.status == this.status &&
+          other.productIdentifier == this.productIdentifier &&
+          other.stockBatchIdentifier == this.stockBatchIdentifier);
+}
+
+class ReceiptLinesCompanion extends UpdateCompanion<ReceiptLineRow> {
+  final Value<String> receiptLineIdentifier;
+  final Value<String> receiptIdentifier;
+  final Value<int> position;
+  final Value<String> kind;
+  final Value<String> recognizedText;
+  final Value<String?> correctedText;
+  final Value<int> quantity;
+  final Value<int?> unitPriceInCents;
+  final Value<int> lineTotalInCents;
+  final Value<int?> weightInGrams;
+  final Value<String> status;
+  final Value<String?> productIdentifier;
+  final Value<String?> stockBatchIdentifier;
+  final Value<int> rowid;
+  const ReceiptLinesCompanion({
+    this.receiptLineIdentifier = const Value.absent(),
+    this.receiptIdentifier = const Value.absent(),
+    this.position = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.recognizedText = const Value.absent(),
+    this.correctedText = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unitPriceInCents = const Value.absent(),
+    this.lineTotalInCents = const Value.absent(),
+    this.weightInGrams = const Value.absent(),
+    this.status = const Value.absent(),
+    this.productIdentifier = const Value.absent(),
+    this.stockBatchIdentifier = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptLinesCompanion.insert({
+    required String receiptLineIdentifier,
+    required String receiptIdentifier,
+    required int position,
+    required String kind,
+    required String recognizedText,
+    this.correctedText = const Value.absent(),
+    required int quantity,
+    this.unitPriceInCents = const Value.absent(),
+    required int lineTotalInCents,
+    this.weightInGrams = const Value.absent(),
+    required String status,
+    this.productIdentifier = const Value.absent(),
+    this.stockBatchIdentifier = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : receiptLineIdentifier = Value(receiptLineIdentifier),
+       receiptIdentifier = Value(receiptIdentifier),
+       position = Value(position),
+       kind = Value(kind),
+       recognizedText = Value(recognizedText),
+       quantity = Value(quantity),
+       lineTotalInCents = Value(lineTotalInCents),
+       status = Value(status);
+  static Insertable<ReceiptLineRow> custom({
+    Expression<String>? receiptLineIdentifier,
+    Expression<String>? receiptIdentifier,
+    Expression<int>? position,
+    Expression<String>? kind,
+    Expression<String>? recognizedText,
+    Expression<String>? correctedText,
+    Expression<int>? quantity,
+    Expression<int>? unitPriceInCents,
+    Expression<int>? lineTotalInCents,
+    Expression<int>? weightInGrams,
+    Expression<String>? status,
+    Expression<String>? productIdentifier,
+    Expression<String>? stockBatchIdentifier,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptLineIdentifier != null)
+        'receipt_line_identifier': receiptLineIdentifier,
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (position != null) 'position': position,
+      if (kind != null) 'kind': kind,
+      if (recognizedText != null) 'recognized_text': recognizedText,
+      if (correctedText != null) 'corrected_text': correctedText,
+      if (quantity != null) 'quantity': quantity,
+      if (unitPriceInCents != null) 'unit_price_in_cents': unitPriceInCents,
+      if (lineTotalInCents != null) 'line_total_in_cents': lineTotalInCents,
+      if (weightInGrams != null) 'weight_in_grams': weightInGrams,
+      if (status != null) 'status': status,
+      if (productIdentifier != null) 'product_identifier': productIdentifier,
+      if (stockBatchIdentifier != null)
+        'stock_batch_identifier': stockBatchIdentifier,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptLinesCompanion copyWith({
+    Value<String>? receiptLineIdentifier,
+    Value<String>? receiptIdentifier,
+    Value<int>? position,
+    Value<String>? kind,
+    Value<String>? recognizedText,
+    Value<String?>? correctedText,
+    Value<int>? quantity,
+    Value<int?>? unitPriceInCents,
+    Value<int>? lineTotalInCents,
+    Value<int?>? weightInGrams,
+    Value<String>? status,
+    Value<String?>? productIdentifier,
+    Value<String?>? stockBatchIdentifier,
+    Value<int>? rowid,
+  }) {
+    return ReceiptLinesCompanion(
+      receiptLineIdentifier:
+          receiptLineIdentifier ?? this.receiptLineIdentifier,
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      position: position ?? this.position,
+      kind: kind ?? this.kind,
+      recognizedText: recognizedText ?? this.recognizedText,
+      correctedText: correctedText ?? this.correctedText,
+      quantity: quantity ?? this.quantity,
+      unitPriceInCents: unitPriceInCents ?? this.unitPriceInCents,
+      lineTotalInCents: lineTotalInCents ?? this.lineTotalInCents,
+      weightInGrams: weightInGrams ?? this.weightInGrams,
+      status: status ?? this.status,
+      productIdentifier: productIdentifier ?? this.productIdentifier,
+      stockBatchIdentifier: stockBatchIdentifier ?? this.stockBatchIdentifier,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptLineIdentifier.present) {
+      map['receipt_line_identifier'] = Variable<String>(
+        receiptLineIdentifier.value,
+      );
+    }
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (recognizedText.present) {
+      map['recognized_text'] = Variable<String>(recognizedText.value);
+    }
+    if (correctedText.present) {
+      map['corrected_text'] = Variable<String>(correctedText.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unitPriceInCents.present) {
+      map['unit_price_in_cents'] = Variable<int>(unitPriceInCents.value);
+    }
+    if (lineTotalInCents.present) {
+      map['line_total_in_cents'] = Variable<int>(lineTotalInCents.value);
+    }
+    if (weightInGrams.present) {
+      map['weight_in_grams'] = Variable<int>(weightInGrams.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (productIdentifier.present) {
+      map['product_identifier'] = Variable<String>(productIdentifier.value);
+    }
+    if (stockBatchIdentifier.present) {
+      map['stock_batch_identifier'] = Variable<String>(
+        stockBatchIdentifier.value,
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptLinesCompanion(')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('position: $position, ')
+          ..write('kind: $kind, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPriceInCents: $unitPriceInCents, ')
+          ..write('lineTotalInCents: $lineTotalInCents, ')
+          ..write('weightInGrams: $weightInGrams, ')
+          ..write('status: $status, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('stockBatchIdentifier: $stockBatchIdentifier, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ReceiptTextMappingsTable extends ReceiptTextMappings
+    with TableInfo<$ReceiptTextMappingsTable, ReceiptTextMappingRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReceiptTextMappingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _storeNameMeta = const VerificationMeta(
+    'storeName',
+  );
+  @override
+  late final GeneratedColumn<String> storeName = GeneratedColumn<String>(
+    'store_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lineTextMeta = const VerificationMeta(
+    'lineText',
+  );
+  @override
+  late final GeneratedColumn<String> lineText = GeneratedColumn<String>(
+    'line_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _productIdentifierMeta = const VerificationMeta(
+    'productIdentifier',
+  );
+  @override
+  late final GeneratedColumn<String> productIdentifier =
+      GeneratedColumn<String>(
+        'product_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES products (product_identifier)',
+        ),
+      );
+  static const VerificationMeta _learnedAtMeta = const VerificationMeta(
+    'learnedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> learnedAt = GeneratedColumn<DateTime>(
+    'learned_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    storeName,
+    lineText,
+    productIdentifier,
+    learnedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_text_mappings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReceiptTextMappingRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('store_name')) {
+      context.handle(
+        _storeNameMeta,
+        storeName.isAcceptableOrUnknown(data['store_name']!, _storeNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_storeNameMeta);
+    }
+    if (data.containsKey('line_text')) {
+      context.handle(
+        _lineTextMeta,
+        lineText.isAcceptableOrUnknown(data['line_text']!, _lineTextMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_lineTextMeta);
+    }
+    if (data.containsKey('product_identifier')) {
+      context.handle(
+        _productIdentifierMeta,
+        productIdentifier.isAcceptableOrUnknown(
+          data['product_identifier']!,
+          _productIdentifierMeta,
+        ),
+      );
+    }
+    if (data.containsKey('learned_at')) {
+      context.handle(
+        _learnedAtMeta,
+        learnedAt.isAcceptableOrUnknown(data['learned_at']!, _learnedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_learnedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {storeName, lineText};
+  @override
+  ReceiptTextMappingRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptTextMappingRow(
+      storeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}store_name'],
+      )!,
+      lineText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}line_text'],
+      )!,
+      productIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_identifier'],
+      ),
+      learnedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}learned_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReceiptTextMappingsTable createAlias(String alias) {
+    return $ReceiptTextMappingsTable(attachedDatabase, alias);
+  }
+}
+
+class ReceiptTextMappingRow extends DataClass
+    implements Insertable<ReceiptTextMappingRow> {
+  /// Both normalised: lower case, accents folded, punctuation as spaces.
+  final String storeName;
+  final String lineText;
+  final String? productIdentifier;
+  final DateTime learnedAt;
+  const ReceiptTextMappingRow({
+    required this.storeName,
+    required this.lineText,
+    this.productIdentifier,
+    required this.learnedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['store_name'] = Variable<String>(storeName);
+    map['line_text'] = Variable<String>(lineText);
+    if (!nullToAbsent || productIdentifier != null) {
+      map['product_identifier'] = Variable<String>(productIdentifier);
+    }
+    map['learned_at'] = Variable<DateTime>(learnedAt);
+    return map;
+  }
+
+  ReceiptTextMappingsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptTextMappingsCompanion(
+      storeName: Value(storeName),
+      lineText: Value(lineText),
+      productIdentifier: productIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productIdentifier),
+      learnedAt: Value(learnedAt),
+    );
+  }
+
+  factory ReceiptTextMappingRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptTextMappingRow(
+      storeName: serializer.fromJson<String>(json['storeName']),
+      lineText: serializer.fromJson<String>(json['lineText']),
+      productIdentifier: serializer.fromJson<String?>(
+        json['productIdentifier'],
+      ),
+      learnedAt: serializer.fromJson<DateTime>(json['learnedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'storeName': serializer.toJson<String>(storeName),
+      'lineText': serializer.toJson<String>(lineText),
+      'productIdentifier': serializer.toJson<String?>(productIdentifier),
+      'learnedAt': serializer.toJson<DateTime>(learnedAt),
+    };
+  }
+
+  ReceiptTextMappingRow copyWith({
+    String? storeName,
+    String? lineText,
+    Value<String?> productIdentifier = const Value.absent(),
+    DateTime? learnedAt,
+  }) => ReceiptTextMappingRow(
+    storeName: storeName ?? this.storeName,
+    lineText: lineText ?? this.lineText,
+    productIdentifier: productIdentifier.present
+        ? productIdentifier.value
+        : this.productIdentifier,
+    learnedAt: learnedAt ?? this.learnedAt,
+  );
+  ReceiptTextMappingRow copyWithCompanion(ReceiptTextMappingsCompanion data) {
+    return ReceiptTextMappingRow(
+      storeName: data.storeName.present ? data.storeName.value : this.storeName,
+      lineText: data.lineText.present ? data.lineText.value : this.lineText,
+      productIdentifier: data.productIdentifier.present
+          ? data.productIdentifier.value
+          : this.productIdentifier,
+      learnedAt: data.learnedAt.present ? data.learnedAt.value : this.learnedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptTextMappingRow(')
+          ..write('storeName: $storeName, ')
+          ..write('lineText: $lineText, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('learnedAt: $learnedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(storeName, lineText, productIdentifier, learnedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptTextMappingRow &&
+          other.storeName == this.storeName &&
+          other.lineText == this.lineText &&
+          other.productIdentifier == this.productIdentifier &&
+          other.learnedAt == this.learnedAt);
+}
+
+class ReceiptTextMappingsCompanion
+    extends UpdateCompanion<ReceiptTextMappingRow> {
+  final Value<String> storeName;
+  final Value<String> lineText;
+  final Value<String?> productIdentifier;
+  final Value<DateTime> learnedAt;
+  final Value<int> rowid;
+  const ReceiptTextMappingsCompanion({
+    this.storeName = const Value.absent(),
+    this.lineText = const Value.absent(),
+    this.productIdentifier = const Value.absent(),
+    this.learnedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptTextMappingsCompanion.insert({
+    required String storeName,
+    required String lineText,
+    this.productIdentifier = const Value.absent(),
+    required DateTime learnedAt,
+    this.rowid = const Value.absent(),
+  }) : storeName = Value(storeName),
+       lineText = Value(lineText),
+       learnedAt = Value(learnedAt);
+  static Insertable<ReceiptTextMappingRow> custom({
+    Expression<String>? storeName,
+    Expression<String>? lineText,
+    Expression<String>? productIdentifier,
+    Expression<DateTime>? learnedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (storeName != null) 'store_name': storeName,
+      if (lineText != null) 'line_text': lineText,
+      if (productIdentifier != null) 'product_identifier': productIdentifier,
+      if (learnedAt != null) 'learned_at': learnedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptTextMappingsCompanion copyWith({
+    Value<String>? storeName,
+    Value<String>? lineText,
+    Value<String?>? productIdentifier,
+    Value<DateTime>? learnedAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptTextMappingsCompanion(
+      storeName: storeName ?? this.storeName,
+      lineText: lineText ?? this.lineText,
+      productIdentifier: productIdentifier ?? this.productIdentifier,
+      learnedAt: learnedAt ?? this.learnedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (storeName.present) {
+      map['store_name'] = Variable<String>(storeName.value);
+    }
+    if (lineText.present) {
+      map['line_text'] = Variable<String>(lineText.value);
+    }
+    if (productIdentifier.present) {
+      map['product_identifier'] = Variable<String>(productIdentifier.value);
+    }
+    if (learnedAt.present) {
+      map['learned_at'] = Variable<DateTime>(learnedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptTextMappingsCompanion(')
+          ..write('storeName: $storeName, ')
+          ..write('lineText: $lineText, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('learnedAt: $learnedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$ApplicationDatabase extends GeneratedDatabase {
   _$ApplicationDatabase(QueryExecutor e) : super(e);
   $ApplicationDatabaseManager get managers => $ApplicationDatabaseManager(this);
+  late final ReceiptSearchIndex receiptSearchIndex = ReceiptSearchIndex(this);
   late final $PreferenceEntriesTable preferenceEntries =
       $PreferenceEntriesTable(this);
   late final $SchemaMetadataEntriesTable schemaMetadataEntries =
@@ -7000,6 +9346,11 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
   late final $ProductBarcodesTable productBarcodes = $ProductBarcodesTable(
     this,
   );
+  late final $ReceiptsTable receipts = $ReceiptsTable(this);
+  late final $ReceiptPagesTable receiptPages = $ReceiptPagesTable(this);
+  late final $ReceiptLinesTable receiptLines = $ReceiptLinesTable(this);
+  late final $ReceiptTextMappingsTable receiptTextMappings =
+      $ReceiptTextMappingsTable(this);
   late final Index inventoryMovementsByTime = Index(
     'inventory_movements_by_time',
     'CREATE INDEX inventory_movements_by_time ON inventory_movements (occurred_at)',
@@ -7019,6 +9370,14 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
   late final Index productBarcodesByProduct = Index(
     'product_barcodes_by_product',
     'CREATE INDEX product_barcodes_by_product ON product_barcodes (product_identifier)',
+  );
+  late final Index receiptsByCreation = Index(
+    'receipts_by_creation',
+    'CREATE INDEX receipts_by_creation ON receipts (created_at)',
+  );
+  late final Index receiptLinesByReceipt = Index(
+    'receipt_lines_by_receipt',
+    'CREATE INDEX receipt_lines_by_receipt ON receipt_lines (receipt_identifier, position)',
   );
   late final PreferencesDao preferencesDao = PreferencesDao(
     this as ApplicationDatabase,
@@ -7047,11 +9406,15 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
   late final StatisticsDao statisticsDao = StatisticsDao(
     this as ApplicationDatabase,
   );
+  late final ReceiptScanningDao receiptScanningDao = ReceiptScanningDao(
+    this as ApplicationDatabase,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    receiptSearchIndex,
     preferenceEntries,
     schemaMetadataEntries,
     storagePlaces,
@@ -7065,17 +9428,210 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
     shoppingListEntries,
     itemPictures,
     productBarcodes,
+    receipts,
+    receiptPages,
+    receiptLines,
+    receiptTextMappings,
     inventoryMovementsByTime,
     inventoryMovementsByProductAndTime,
     inventoryMovementsByBatch,
     itemPicturesByOwner,
     productBarcodesByProduct,
+    receiptsByCreation,
+    receiptLinesByReceipt,
   ];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
+typedef $ReceiptSearchIndexCreateCompanionBuilder =
+    ReceiptSearchIndexCompanion Function({
+      required String receiptIdentifier,
+      required String receiptLineIdentifier,
+      required String body,
+      Value<int> rowid,
+    });
+typedef $ReceiptSearchIndexUpdateCompanionBuilder =
+    ReceiptSearchIndexCompanion Function({
+      Value<String> receiptIdentifier,
+      Value<String> receiptLineIdentifier,
+      Value<String> body,
+      Value<int> rowid,
+    });
+
+class $ReceiptSearchIndexFilterComposer
+    extends Composer<_$ApplicationDatabase, ReceiptSearchIndex> {
+  $ReceiptSearchIndexFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $ReceiptSearchIndexOrderingComposer
+    extends Composer<_$ApplicationDatabase, ReceiptSearchIndex> {
+  $ReceiptSearchIndexOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get body => $composableBuilder(
+    column: $table.body,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $ReceiptSearchIndexAnnotationComposer
+    extends Composer<_$ApplicationDatabase, ReceiptSearchIndex> {
+  $ReceiptSearchIndexAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get body =>
+      $composableBuilder(column: $table.body, builder: (column) => column);
+}
+
+class $ReceiptSearchIndexTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          ReceiptSearchIndex,
+          ReceiptSearchIndexData,
+          $ReceiptSearchIndexFilterComposer,
+          $ReceiptSearchIndexOrderingComposer,
+          $ReceiptSearchIndexAnnotationComposer,
+          $ReceiptSearchIndexCreateCompanionBuilder,
+          $ReceiptSearchIndexUpdateCompanionBuilder,
+          (
+            ReceiptSearchIndexData,
+            BaseReferences<
+              _$ApplicationDatabase,
+              ReceiptSearchIndex,
+              ReceiptSearchIndexData
+            >,
+          ),
+          ReceiptSearchIndexData,
+          PrefetchHooks Function()
+        > {
+  $ReceiptSearchIndexTableManager(
+    _$ApplicationDatabase db,
+    ReceiptSearchIndex table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $ReceiptSearchIndexFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $ReceiptSearchIndexOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $ReceiptSearchIndexAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<String> receiptLineIdentifier = const Value.absent(),
+                Value<String> body = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptSearchIndexCompanion(
+                receiptIdentifier: receiptIdentifier,
+                receiptLineIdentifier: receiptLineIdentifier,
+                body: body,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptIdentifier,
+                required String receiptLineIdentifier,
+                required String body,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptSearchIndexCompanion.insert(
+                receiptIdentifier: receiptIdentifier,
+                receiptLineIdentifier: receiptLineIdentifier,
+                body: body,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<ReceiptSearchIndex, ReceiptSearchIndexData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$ApplicationDatabase,
+                    ReceiptSearchIndex,
+                    ReceiptSearchIndexData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $ReceiptSearchIndexProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      ReceiptSearchIndex,
+      ReceiptSearchIndexData,
+      $ReceiptSearchIndexFilterComposer,
+      $ReceiptSearchIndexOrderingComposer,
+      $ReceiptSearchIndexAnnotationComposer,
+      $ReceiptSearchIndexCreateCompanionBuilder,
+      $ReceiptSearchIndexUpdateCompanionBuilder,
+      (
+        ReceiptSearchIndexData,
+        BaseReferences<
+          _$ApplicationDatabase,
+          ReceiptSearchIndex,
+          ReceiptSearchIndexData
+        >,
+      ),
+      ReceiptSearchIndexData,
+      PrefetchHooks Function()
+    >;
 typedef $$PreferenceEntriesTableCreateCompanionBuilder =
     PreferenceEntriesCompanion Function({
       required String preferenceKey,
@@ -9156,6 +11712,59 @@ final class $$ProductsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ReceiptLinesTable, List<ReceiptLineRow>>
+  _receiptLinesRefsTable(_$ApplicationDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.receiptLines,
+        aliasName:
+            'products__product_identifier__receipt_lines__product_identifier',
+      );
+
+  $$ReceiptLinesTableProcessedTableManager get receiptLinesRefs {
+    final manager = $$ReceiptLinesTableTableManager($_db, $_db.receiptLines)
+        .filter(
+          (f) => f.productIdentifier.productIdentifier.sqlEquals(
+            $_itemColumn<String>('product_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptLinesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $ReceiptTextMappingsTable,
+    List<ReceiptTextMappingRow>
+  >
+  _receiptTextMappingsRefsTable(
+    _$ApplicationDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.receiptTextMappings,
+    aliasName:
+        'products__product_identifier__receipt_text_mappings__product_identifier',
+  );
+
+  $$ReceiptTextMappingsTableProcessedTableManager get receiptTextMappingsRefs {
+    final manager =
+        $$ReceiptTextMappingsTableTableManager(
+          $_db,
+          $_db.receiptTextMappings,
+        ).filter(
+          (f) => f.productIdentifier.productIdentifier.sqlEquals(
+            $_itemColumn<String>('product_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _receiptTextMappingsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ProductsTableFilterComposer
@@ -9384,6 +11993,56 @@ class $$ProductsTableFilterComposer
           }) => $$ProductBarcodesTableFilterComposer(
             $db: $db,
             $table: $db.productBarcodes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptLinesRefs(
+    Expression<bool> Function($$ReceiptLinesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptLinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptTextMappingsRefs(
+    Expression<bool> Function($$ReceiptTextMappingsTableFilterComposer f) f,
+  ) {
+    final $$ReceiptTextMappingsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.receiptTextMappings,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptTextMappingsTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptTextMappings,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9735,6 +12394,57 @@ class $$ProductsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> receiptLinesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptLinesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptLinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> receiptTextMappingsRefs<T extends Object>(
+    Expression<T> Function($$ReceiptTextMappingsTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptTextMappingsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.productIdentifier,
+          referencedTable: $db.receiptTextMappings,
+          getReferencedColumn: (t) => t.productIdentifier,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$ReceiptTextMappingsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.receiptTextMappings,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$ProductsTableTableManager
@@ -9758,6 +12468,8 @@ class $$ProductsTableTableManager
             bool restockRulesRefs,
             bool shoppingListEntriesRefs,
             bool productBarcodesRefs,
+            bool receiptLinesRefs,
+            bool receiptTextMappingsRefs,
           })
         > {
   $$ProductsTableTableManager(_$ApplicationDatabase db, $ProductsTable table)
@@ -9856,6 +12568,8 @@ class $$ProductsTableTableManager
                 restockRulesRefs = false,
                 shoppingListEntriesRefs = false,
                 productBarcodesRefs = false,
+                receiptLinesRefs = false,
+                receiptTextMappingsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -9865,6 +12579,8 @@ class $$ProductsTableTableManager
                     if (restockRulesRefs) db.restockRules,
                     if (shoppingListEntriesRefs) db.shoppingListEntries,
                     if (productBarcodesRefs) db.productBarcodes,
+                    if (receiptLinesRefs) db.receiptLines,
+                    if (receiptTextMappingsRefs) db.receiptTextMappings,
                   ],
                   addJoins:
                       <
@@ -10029,6 +12745,52 @@ class $$ProductsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (receiptLinesRefs)
+                        await $_getPrefetchedData<
+                          ProductRow,
+                          $ProductsTable,
+                          ReceiptLineRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProductsTableReferences
+                              ._receiptLinesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProductsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptLinesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.productIdentifier ==
+                                    item.productIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (receiptTextMappingsRefs)
+                        await $_getPrefetchedData<
+                          ProductRow,
+                          $ProductsTable,
+                          ReceiptTextMappingRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ProductsTableReferences
+                              ._receiptTextMappingsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ProductsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptTextMappingsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.productIdentifier ==
+                                    item.productIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -10057,6 +12819,8 @@ typedef $$ProductsTableProcessedTableManager =
         bool restockRulesRefs,
         bool shoppingListEntriesRefs,
         bool productBarcodesRefs,
+        bool receiptLinesRefs,
+        bool receiptTextMappingsRefs,
       })
     >;
 typedef $$StockBatchesTableCreateCompanionBuilder =
@@ -10168,6 +12932,29 @@ final class $$StockBatchesTableReferences
     final cache = $_typedResult.readTableOrNull(
       _inventoryMovementsRefsTable($_db),
     );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ReceiptLinesTable, List<ReceiptLineRow>>
+  _receiptLinesRefsTable(
+    _$ApplicationDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.receiptLines,
+    aliasName:
+        'stock_batches__stock_batch_identifier__receipt_lines__stock_batch_identifier',
+  );
+
+  $$ReceiptLinesTableProcessedTableManager get receiptLinesRefs {
+    final manager = $$ReceiptLinesTableTableManager($_db, $_db.receiptLines)
+        .filter(
+          (f) => f.stockBatchIdentifier.stockBatchIdentifier.sqlEquals(
+            $_itemColumn<String>('stock_batch_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptLinesRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -10298,6 +13085,31 @@ class $$StockBatchesTableFilterComposer
           }) => $$InventoryMovementsTableFilterComposer(
             $db: $db,
             $table: $db.inventoryMovements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptLinesRefs(
+    Expression<bool> Function($$ReceiptLinesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptLinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptLines,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10537,6 +13349,31 @@ class $$StockBatchesTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> receiptLinesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptLinesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptLinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$StockBatchesTableTableManager
@@ -10556,6 +13393,7 @@ class $$StockBatchesTableTableManager
             bool productIdentifier,
             bool compartmentIdentifier,
             bool inventoryMovementsRefs,
+            bool receiptLinesRefs,
           })
         > {
   $$StockBatchesTableTableManager(
@@ -10644,11 +13482,13 @@ class $$StockBatchesTableTableManager
                 productIdentifier = false,
                 compartmentIdentifier = false,
                 inventoryMovementsRefs = false,
+                receiptLinesRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (inventoryMovementsRefs) db.inventoryMovements,
+                    if (receiptLinesRefs) db.receiptLines,
                   ],
                   addJoins:
                       <
@@ -10724,6 +13564,29 @@ class $$StockBatchesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (receiptLinesRefs)
+                        await $_getPrefetchedData<
+                          StockBatchRow,
+                          $StockBatchesTable,
+                          ReceiptLineRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$StockBatchesTableReferences
+                              ._receiptLinesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$StockBatchesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptLinesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.stockBatchIdentifier ==
+                                    item.stockBatchIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -10748,6 +13611,7 @@ typedef $$StockBatchesTableProcessedTableManager =
         bool productIdentifier,
         bool compartmentIdentifier,
         bool inventoryMovementsRefs,
+        bool receiptLinesRefs,
       })
     >;
 typedef $$InventoryMovementsTableCreateCompanionBuilder =
@@ -12971,10 +15835,1791 @@ typedef $$ProductBarcodesTableProcessedTableManager =
       ProductBarcodeRow,
       PrefetchHooks Function({bool productIdentifier})
     >;
+typedef $$ReceiptsTableCreateCompanionBuilder =
+    ReceiptsCompanion Function({
+      required String receiptIdentifier,
+      Value<String?> storeName,
+      Value<CalendarDate?> purchasedOn,
+      Value<int?> totalInCents,
+      required int pageCount,
+      required String recognizedText,
+      required DateTime createdAt,
+      Value<int> rowid,
+    });
+typedef $$ReceiptsTableUpdateCompanionBuilder =
+    ReceiptsCompanion Function({
+      Value<String> receiptIdentifier,
+      Value<String?> storeName,
+      Value<CalendarDate?> purchasedOn,
+      Value<int?> totalInCents,
+      Value<int> pageCount,
+      Value<String> recognizedText,
+      Value<DateTime> createdAt,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptsTableReferences
+    extends BaseReferences<_$ApplicationDatabase, $ReceiptsTable, ReceiptRow> {
+  $$ReceiptsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ReceiptPagesTable, List<ReceiptPageRow>>
+  _receiptPagesRefsTable(_$ApplicationDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.receiptPages,
+        aliasName:
+            'receipts__receipt_identifier__receipt_pages__receipt_identifier',
+      );
+
+  $$ReceiptPagesTableProcessedTableManager get receiptPagesRefs {
+    final manager = $$ReceiptPagesTableTableManager($_db, $_db.receiptPages)
+        .filter(
+          (f) => f.receiptIdentifier.receiptIdentifier.sqlEquals(
+            $_itemColumn<String>('receipt_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptPagesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ReceiptLinesTable, List<ReceiptLineRow>>
+  _receiptLinesRefsTable(_$ApplicationDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.receiptLines,
+        aliasName:
+            'receipts__receipt_identifier__receipt_lines__receipt_identifier',
+      );
+
+  $$ReceiptLinesTableProcessedTableManager get receiptLinesRefs {
+    final manager = $$ReceiptLinesTableTableManager($_db, $_db.receiptLines)
+        .filter(
+          (f) => f.receiptIdentifier.receiptIdentifier.sqlEquals(
+            $_itemColumn<String>('receipt_identifier')!,
+          ),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_receiptLinesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$ReceiptsTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptsTable> {
+  $$ReceiptsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<CalendarDate?, CalendarDate, String>
+  get purchasedOn => $composableBuilder(
+    column: $table.purchasedOn,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get totalInCents => $composableBuilder(
+    column: $table.totalInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get pageCount => $composableBuilder(
+    column: $table.pageCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> receiptPagesRefs(
+    Expression<bool> Function($$ReceiptPagesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptPagesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptPages,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptPagesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptPages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> receiptLinesRefs(
+    Expression<bool> Function($$ReceiptLinesTableFilterComposer f) f,
+  ) {
+    final $$ReceiptLinesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableFilterComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ReceiptsTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptsTable> {
+  $$ReceiptsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get purchasedOn => $composableBuilder(
+    column: $table.purchasedOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalInCents => $composableBuilder(
+    column: $table.totalInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get pageCount => $composableBuilder(
+    column: $table.pageCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ReceiptsTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptsTable> {
+  $$ReceiptsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get receiptIdentifier => $composableBuilder(
+    column: $table.receiptIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get storeName =>
+      $composableBuilder(column: $table.storeName, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<CalendarDate?, String> get purchasedOn =>
+      $composableBuilder(
+        column: $table.purchasedOn,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<int> get totalInCents => $composableBuilder(
+    column: $table.totalInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get pageCount =>
+      $composableBuilder(column: $table.pageCount, builder: (column) => column);
+
+  GeneratedColumn<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  Expression<T> receiptPagesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptPagesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptPagesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptPages,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptPagesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptPages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> receiptLinesRefs<T extends Object>(
+    Expression<T> Function($$ReceiptLinesTableAnnotationComposer a) f,
+  ) {
+    final $$ReceiptLinesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receiptLines,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptLinesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receiptLines,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$ReceiptsTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptsTable,
+          ReceiptRow,
+          $$ReceiptsTableFilterComposer,
+          $$ReceiptsTableOrderingComposer,
+          $$ReceiptsTableAnnotationComposer,
+          $$ReceiptsTableCreateCompanionBuilder,
+          $$ReceiptsTableUpdateCompanionBuilder,
+          (ReceiptRow, $$ReceiptsTableReferences),
+          ReceiptRow,
+          PrefetchHooks Function({bool receiptPagesRefs, bool receiptLinesRefs})
+        > {
+  $$ReceiptsTableTableManager(_$ApplicationDatabase db, $ReceiptsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReceiptsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<String?> storeName = const Value.absent(),
+                Value<CalendarDate?> purchasedOn = const Value.absent(),
+                Value<int?> totalInCents = const Value.absent(),
+                Value<int> pageCount = const Value.absent(),
+                Value<String> recognizedText = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptsCompanion(
+                receiptIdentifier: receiptIdentifier,
+                storeName: storeName,
+                purchasedOn: purchasedOn,
+                totalInCents: totalInCents,
+                pageCount: pageCount,
+                recognizedText: recognizedText,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptIdentifier,
+                Value<String?> storeName = const Value.absent(),
+                Value<CalendarDate?> purchasedOn = const Value.absent(),
+                Value<int?> totalInCents = const Value.absent(),
+                required int pageCount,
+                required String recognizedText,
+                required DateTime createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptsCompanion.insert(
+                receiptIdentifier: receiptIdentifier,
+                storeName: storeName,
+                purchasedOn: purchasedOn,
+                totalInCents: totalInCents,
+                pageCount: pageCount,
+                recognizedText: recognizedText,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptsTable, ReceiptRow>(table),
+                  $$ReceiptsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({receiptPagesRefs = false, receiptLinesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (receiptPagesRefs) db.receiptPages,
+                    if (receiptLinesRefs) db.receiptLines,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (receiptPagesRefs)
+                        await $_getPrefetchedData<
+                          ReceiptRow,
+                          $ReceiptsTable,
+                          ReceiptPageRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ReceiptsTableReferences
+                              ._receiptPagesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ReceiptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptPagesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.receiptIdentifier ==
+                                    item.receiptIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (receiptLinesRefs)
+                        await $_getPrefetchedData<
+                          ReceiptRow,
+                          $ReceiptsTable,
+                          ReceiptLineRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ReceiptsTableReferences
+                              ._receiptLinesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ReceiptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receiptLinesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) =>
+                                    e.receiptIdentifier ==
+                                    item.receiptIdentifier,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ReceiptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptsTable,
+      ReceiptRow,
+      $$ReceiptsTableFilterComposer,
+      $$ReceiptsTableOrderingComposer,
+      $$ReceiptsTableAnnotationComposer,
+      $$ReceiptsTableCreateCompanionBuilder,
+      $$ReceiptsTableUpdateCompanionBuilder,
+      (ReceiptRow, $$ReceiptsTableReferences),
+      ReceiptRow,
+      PrefetchHooks Function({bool receiptPagesRefs, bool receiptLinesRefs})
+    >;
+typedef $$ReceiptPagesTableCreateCompanionBuilder =
+    ReceiptPagesCompanion Function({
+      required String receiptIdentifier,
+      required int pageNumber,
+      Value<String?> pictureReference,
+      required String rawRecognizedText,
+      Value<int> rowid,
+    });
+typedef $$ReceiptPagesTableUpdateCompanionBuilder =
+    ReceiptPagesCompanion Function({
+      Value<String> receiptIdentifier,
+      Value<int> pageNumber,
+      Value<String?> pictureReference,
+      Value<String> rawRecognizedText,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptPagesTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $ReceiptPagesTable,
+          ReceiptPageRow
+        > {
+  $$ReceiptPagesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ReceiptsTable _receiptIdentifierTable(_$ApplicationDatabase db) =>
+      db.receipts.createAlias(
+        'receipt_pages__receipt_identifier__receipts__receipt_identifier',
+      );
+
+  $$ReceiptsTableProcessedTableManager get receiptIdentifier {
+    final $_column = $_itemColumn<String>('receipt_identifier')!;
+
+    final manager = $$ReceiptsTableTableManager(
+      $_db,
+      $_db.receipts,
+    ).filter((f) => f.receiptIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_receiptIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ReceiptPagesTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptPagesTable> {
+  $$ReceiptPagesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get pageNumber => $composableBuilder(
+    column: $table.pageNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pictureReference => $composableBuilder(
+    column: $table.pictureReference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rawRecognizedText => $composableBuilder(
+    column: $table.rawRecognizedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ReceiptsTableFilterComposer get receiptIdentifier {
+    final $$ReceiptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableFilterComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptPagesTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptPagesTable> {
+  $$ReceiptPagesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get pageNumber => $composableBuilder(
+    column: $table.pageNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pictureReference => $composableBuilder(
+    column: $table.pictureReference,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rawRecognizedText => $composableBuilder(
+    column: $table.rawRecognizedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ReceiptsTableOrderingComposer get receiptIdentifier {
+    final $$ReceiptsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableOrderingComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptPagesTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptPagesTable> {
+  $$ReceiptPagesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get pageNumber => $composableBuilder(
+    column: $table.pageNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get pictureReference => $composableBuilder(
+    column: $table.pictureReference,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get rawRecognizedText => $composableBuilder(
+    column: $table.rawRecognizedText,
+    builder: (column) => column,
+  );
+
+  $$ReceiptsTableAnnotationComposer get receiptIdentifier {
+    final $$ReceiptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptPagesTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptPagesTable,
+          ReceiptPageRow,
+          $$ReceiptPagesTableFilterComposer,
+          $$ReceiptPagesTableOrderingComposer,
+          $$ReceiptPagesTableAnnotationComposer,
+          $$ReceiptPagesTableCreateCompanionBuilder,
+          $$ReceiptPagesTableUpdateCompanionBuilder,
+          (ReceiptPageRow, $$ReceiptPagesTableReferences),
+          ReceiptPageRow,
+          PrefetchHooks Function({bool receiptIdentifier})
+        > {
+  $$ReceiptPagesTableTableManager(
+    _$ApplicationDatabase db,
+    $ReceiptPagesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptPagesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptPagesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReceiptPagesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<int> pageNumber = const Value.absent(),
+                Value<String?> pictureReference = const Value.absent(),
+                Value<String> rawRecognizedText = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptPagesCompanion(
+                receiptIdentifier: receiptIdentifier,
+                pageNumber: pageNumber,
+                pictureReference: pictureReference,
+                rawRecognizedText: rawRecognizedText,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptIdentifier,
+                required int pageNumber,
+                Value<String?> pictureReference = const Value.absent(),
+                required String rawRecognizedText,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptPagesCompanion.insert(
+                receiptIdentifier: receiptIdentifier,
+                pageNumber: pageNumber,
+                pictureReference: pictureReference,
+                rawRecognizedText: rawRecognizedText,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptPagesTable, ReceiptPageRow>(table),
+                  $$ReceiptPagesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({receiptIdentifier = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (receiptIdentifier) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.receiptIdentifier,
+                                referencedTable: $$ReceiptPagesTableReferences
+                                    ._receiptIdentifierTable(db),
+                                referencedColumn: $$ReceiptPagesTableReferences
+                                    ._receiptIdentifierTable(db)
+                                    .receiptIdentifier,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ReceiptPagesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptPagesTable,
+      ReceiptPageRow,
+      $$ReceiptPagesTableFilterComposer,
+      $$ReceiptPagesTableOrderingComposer,
+      $$ReceiptPagesTableAnnotationComposer,
+      $$ReceiptPagesTableCreateCompanionBuilder,
+      $$ReceiptPagesTableUpdateCompanionBuilder,
+      (ReceiptPageRow, $$ReceiptPagesTableReferences),
+      ReceiptPageRow,
+      PrefetchHooks Function({bool receiptIdentifier})
+    >;
+typedef $$ReceiptLinesTableCreateCompanionBuilder =
+    ReceiptLinesCompanion Function({
+      required String receiptLineIdentifier,
+      required String receiptIdentifier,
+      required int position,
+      required String kind,
+      required String recognizedText,
+      Value<String?> correctedText,
+      required int quantity,
+      Value<int?> unitPriceInCents,
+      required int lineTotalInCents,
+      Value<int?> weightInGrams,
+      required String status,
+      Value<String?> productIdentifier,
+      Value<String?> stockBatchIdentifier,
+      Value<int> rowid,
+    });
+typedef $$ReceiptLinesTableUpdateCompanionBuilder =
+    ReceiptLinesCompanion Function({
+      Value<String> receiptLineIdentifier,
+      Value<String> receiptIdentifier,
+      Value<int> position,
+      Value<String> kind,
+      Value<String> recognizedText,
+      Value<String?> correctedText,
+      Value<int> quantity,
+      Value<int?> unitPriceInCents,
+      Value<int> lineTotalInCents,
+      Value<int?> weightInGrams,
+      Value<String> status,
+      Value<String?> productIdentifier,
+      Value<String?> stockBatchIdentifier,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptLinesTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $ReceiptLinesTable,
+          ReceiptLineRow
+        > {
+  $$ReceiptLinesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ReceiptsTable _receiptIdentifierTable(_$ApplicationDatabase db) =>
+      db.receipts.createAlias(
+        'receipt_lines__receipt_identifier__receipts__receipt_identifier',
+      );
+
+  $$ReceiptsTableProcessedTableManager get receiptIdentifier {
+    final $_column = $_itemColumn<String>('receipt_identifier')!;
+
+    final manager = $$ReceiptsTableTableManager(
+      $_db,
+      $_db.receipts,
+    ).filter((f) => f.receiptIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_receiptIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ProductsTable _productIdentifierTable(_$ApplicationDatabase db) =>
+      db.products.createAlias(
+        'receipt_lines__product_identifier__products__product_identifier',
+      );
+
+  $$ProductsTableProcessedTableManager? get productIdentifier {
+    final $_column = $_itemColumn<String>('product_identifier');
+    if ($_column == null) return null;
+    final manager = $$ProductsTableTableManager(
+      $_db,
+      $_db.products,
+    ).filter((f) => f.productIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_productIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $StockBatchesTable _stockBatchIdentifierTable(
+    _$ApplicationDatabase db,
+  ) => db.stockBatches.createAlias(
+    'receipt_lines__stock_batch_identifier__stock_batches__stock_batch_identifier',
+  );
+
+  $$StockBatchesTableProcessedTableManager? get stockBatchIdentifier {
+    final $_column = $_itemColumn<String>('stock_batch_identifier');
+    if ($_column == null) return null;
+    final manager = $$StockBatchesTableTableManager(
+      $_db,
+      $_db.stockBatches,
+    ).filter((f) => f.stockBatchIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _stockBatchIdentifierTable($_db),
+    );
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ReceiptLinesTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptLinesTable> {
+  $$ReceiptLinesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get unitPriceInCents => $composableBuilder(
+    column: $table.unitPriceInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lineTotalInCents => $composableBuilder(
+    column: $table.lineTotalInCents,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get weightInGrams => $composableBuilder(
+    column: $table.weightInGrams,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ReceiptsTableFilterComposer get receiptIdentifier {
+    final $$ReceiptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableFilterComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductsTableFilterComposer get productIdentifier {
+    final $$ProductsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableFilterComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$StockBatchesTableFilterComposer get stockBatchIdentifier {
+    final $$StockBatchesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.stockBatches,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockBatchesTableFilterComposer(
+            $db: $db,
+            $table: $db.stockBatches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptLinesTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptLinesTable> {
+  $$ReceiptLinesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get unitPriceInCents => $composableBuilder(
+    column: $table.unitPriceInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lineTotalInCents => $composableBuilder(
+    column: $table.lineTotalInCents,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get weightInGrams => $composableBuilder(
+    column: $table.weightInGrams,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ReceiptsTableOrderingComposer get receiptIdentifier {
+    final $$ReceiptsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableOrderingComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductsTableOrderingComposer get productIdentifier {
+    final $$ProductsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableOrderingComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$StockBatchesTableOrderingComposer get stockBatchIdentifier {
+    final $$StockBatchesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.stockBatches,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockBatchesTableOrderingComposer(
+            $db: $db,
+            $table: $db.stockBatches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptLinesTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptLinesTable> {
+  $$ReceiptLinesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get receiptLineIdentifier => $composableBuilder(
+    column: $table.receiptLineIdentifier,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get recognizedText => $composableBuilder(
+    column: $table.recognizedText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get correctedText => $composableBuilder(
+    column: $table.correctedText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<int> get unitPriceInCents => $composableBuilder(
+    column: $table.unitPriceInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lineTotalInCents => $composableBuilder(
+    column: $table.lineTotalInCents,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get weightInGrams => $composableBuilder(
+    column: $table.weightInGrams,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $$ReceiptsTableAnnotationComposer get receiptIdentifier {
+    final $$ReceiptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.receiptIdentifier,
+      referencedTable: $db.receipts,
+      getReferencedColumn: (t) => t.receiptIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ReceiptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.receipts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ProductsTableAnnotationComposer get productIdentifier {
+    final $$ProductsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$StockBatchesTableAnnotationComposer get stockBatchIdentifier {
+    final $$StockBatchesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.stockBatchIdentifier,
+      referencedTable: $db.stockBatches,
+      getReferencedColumn: (t) => t.stockBatchIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$StockBatchesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.stockBatches,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptLinesTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptLinesTable,
+          ReceiptLineRow,
+          $$ReceiptLinesTableFilterComposer,
+          $$ReceiptLinesTableOrderingComposer,
+          $$ReceiptLinesTableAnnotationComposer,
+          $$ReceiptLinesTableCreateCompanionBuilder,
+          $$ReceiptLinesTableUpdateCompanionBuilder,
+          (ReceiptLineRow, $$ReceiptLinesTableReferences),
+          ReceiptLineRow,
+          PrefetchHooks Function({
+            bool receiptIdentifier,
+            bool productIdentifier,
+            bool stockBatchIdentifier,
+          })
+        > {
+  $$ReceiptLinesTableTableManager(
+    _$ApplicationDatabase db,
+    $ReceiptLinesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptLinesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptLinesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReceiptLinesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> receiptLineIdentifier = const Value.absent(),
+                Value<String> receiptIdentifier = const Value.absent(),
+                Value<int> position = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> recognizedText = const Value.absent(),
+                Value<String?> correctedText = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
+                Value<int?> unitPriceInCents = const Value.absent(),
+                Value<int> lineTotalInCents = const Value.absent(),
+                Value<int?> weightInGrams = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> productIdentifier = const Value.absent(),
+                Value<String?> stockBatchIdentifier = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptLinesCompanion(
+                receiptLineIdentifier: receiptLineIdentifier,
+                receiptIdentifier: receiptIdentifier,
+                position: position,
+                kind: kind,
+                recognizedText: recognizedText,
+                correctedText: correctedText,
+                quantity: quantity,
+                unitPriceInCents: unitPriceInCents,
+                lineTotalInCents: lineTotalInCents,
+                weightInGrams: weightInGrams,
+                status: status,
+                productIdentifier: productIdentifier,
+                stockBatchIdentifier: stockBatchIdentifier,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String receiptLineIdentifier,
+                required String receiptIdentifier,
+                required int position,
+                required String kind,
+                required String recognizedText,
+                Value<String?> correctedText = const Value.absent(),
+                required int quantity,
+                Value<int?> unitPriceInCents = const Value.absent(),
+                required int lineTotalInCents,
+                Value<int?> weightInGrams = const Value.absent(),
+                required String status,
+                Value<String?> productIdentifier = const Value.absent(),
+                Value<String?> stockBatchIdentifier = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptLinesCompanion.insert(
+                receiptLineIdentifier: receiptLineIdentifier,
+                receiptIdentifier: receiptIdentifier,
+                position: position,
+                kind: kind,
+                recognizedText: recognizedText,
+                correctedText: correctedText,
+                quantity: quantity,
+                unitPriceInCents: unitPriceInCents,
+                lineTotalInCents: lineTotalInCents,
+                weightInGrams: weightInGrams,
+                status: status,
+                productIdentifier: productIdentifier,
+                stockBatchIdentifier: stockBatchIdentifier,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptLinesTable, ReceiptLineRow>(table),
+                  $$ReceiptLinesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                receiptIdentifier = false,
+                productIdentifier = false,
+                stockBatchIdentifier = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (receiptIdentifier) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.receiptIdentifier,
+                                    referencedTable:
+                                        $$ReceiptLinesTableReferences
+                                            ._receiptIdentifierTable(db),
+                                    referencedColumn:
+                                        $$ReceiptLinesTableReferences
+                                            ._receiptIdentifierTable(db)
+                                            .receiptIdentifier,
+                                  )
+                                  as T;
+                        }
+                        if (productIdentifier) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.productIdentifier,
+                                    referencedTable:
+                                        $$ReceiptLinesTableReferences
+                                            ._productIdentifierTable(db),
+                                    referencedColumn:
+                                        $$ReceiptLinesTableReferences
+                                            ._productIdentifierTable(db)
+                                            .productIdentifier,
+                                  )
+                                  as T;
+                        }
+                        if (stockBatchIdentifier) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.stockBatchIdentifier,
+                                    referencedTable:
+                                        $$ReceiptLinesTableReferences
+                                            ._stockBatchIdentifierTable(db),
+                                    referencedColumn:
+                                        $$ReceiptLinesTableReferences
+                                            ._stockBatchIdentifierTable(db)
+                                            .stockBatchIdentifier,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$ReceiptLinesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptLinesTable,
+      ReceiptLineRow,
+      $$ReceiptLinesTableFilterComposer,
+      $$ReceiptLinesTableOrderingComposer,
+      $$ReceiptLinesTableAnnotationComposer,
+      $$ReceiptLinesTableCreateCompanionBuilder,
+      $$ReceiptLinesTableUpdateCompanionBuilder,
+      (ReceiptLineRow, $$ReceiptLinesTableReferences),
+      ReceiptLineRow,
+      PrefetchHooks Function({
+        bool receiptIdentifier,
+        bool productIdentifier,
+        bool stockBatchIdentifier,
+      })
+    >;
+typedef $$ReceiptTextMappingsTableCreateCompanionBuilder =
+    ReceiptTextMappingsCompanion Function({
+      required String storeName,
+      required String lineText,
+      Value<String?> productIdentifier,
+      required DateTime learnedAt,
+      Value<int> rowid,
+    });
+typedef $$ReceiptTextMappingsTableUpdateCompanionBuilder =
+    ReceiptTextMappingsCompanion Function({
+      Value<String> storeName,
+      Value<String> lineText,
+      Value<String?> productIdentifier,
+      Value<DateTime> learnedAt,
+      Value<int> rowid,
+    });
+
+final class $$ReceiptTextMappingsTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $ReceiptTextMappingsTable,
+          ReceiptTextMappingRow
+        > {
+  $$ReceiptTextMappingsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ProductsTable _productIdentifierTable(
+    _$ApplicationDatabase db,
+  ) => db.products.createAlias(
+    'receipt_text_mappings__product_identifier__products__product_identifier',
+  );
+
+  $$ProductsTableProcessedTableManager? get productIdentifier {
+    final $_column = $_itemColumn<String>('product_identifier');
+    if ($_column == null) return null;
+    final manager = $$ProductsTableTableManager(
+      $_db,
+      $_db.products,
+    ).filter((f) => f.productIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_productIdentifierTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ReceiptTextMappingsTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptTextMappingsTable> {
+  $$ReceiptTextMappingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lineText => $composableBuilder(
+    column: $table.lineText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get learnedAt => $composableBuilder(
+    column: $table.learnedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ProductsTableFilterComposer get productIdentifier {
+    final $$ProductsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableFilterComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptTextMappingsTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptTextMappingsTable> {
+  $$ReceiptTextMappingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get storeName => $composableBuilder(
+    column: $table.storeName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lineText => $composableBuilder(
+    column: $table.lineText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get learnedAt => $composableBuilder(
+    column: $table.learnedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ProductsTableOrderingComposer get productIdentifier {
+    final $$ProductsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableOrderingComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptTextMappingsTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $ReceiptTextMappingsTable> {
+  $$ReceiptTextMappingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get storeName =>
+      $composableBuilder(column: $table.storeName, builder: (column) => column);
+
+  GeneratedColumn<String> get lineText =>
+      $composableBuilder(column: $table.lineText, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get learnedAt =>
+      $composableBuilder(column: $table.learnedAt, builder: (column) => column);
+
+  $$ProductsTableAnnotationComposer get productIdentifier {
+    final $$ProductsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.productIdentifier,
+      referencedTable: $db.products,
+      getReferencedColumn: (t) => t.productIdentifier,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ProductsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.products,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ReceiptTextMappingsTableTableManager
+    extends
+        RootTableManager<
+          _$ApplicationDatabase,
+          $ReceiptTextMappingsTable,
+          ReceiptTextMappingRow,
+          $$ReceiptTextMappingsTableFilterComposer,
+          $$ReceiptTextMappingsTableOrderingComposer,
+          $$ReceiptTextMappingsTableAnnotationComposer,
+          $$ReceiptTextMappingsTableCreateCompanionBuilder,
+          $$ReceiptTextMappingsTableUpdateCompanionBuilder,
+          (ReceiptTextMappingRow, $$ReceiptTextMappingsTableReferences),
+          ReceiptTextMappingRow,
+          PrefetchHooks Function({bool productIdentifier})
+        > {
+  $$ReceiptTextMappingsTableTableManager(
+    _$ApplicationDatabase db,
+    $ReceiptTextMappingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReceiptTextMappingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReceiptTextMappingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ReceiptTextMappingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> storeName = const Value.absent(),
+                Value<String> lineText = const Value.absent(),
+                Value<String?> productIdentifier = const Value.absent(),
+                Value<DateTime> learnedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptTextMappingsCompanion(
+                storeName: storeName,
+                lineText: lineText,
+                productIdentifier: productIdentifier,
+                learnedAt: learnedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String storeName,
+                required String lineText,
+                Value<String?> productIdentifier = const Value.absent(),
+                required DateTime learnedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ReceiptTextMappingsCompanion.insert(
+                storeName: storeName,
+                lineText: lineText,
+                productIdentifier: productIdentifier,
+                learnedAt: learnedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ReceiptTextMappingsTable, ReceiptTextMappingRow>(
+                    table,
+                  ),
+                  $$ReceiptTextMappingsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({productIdentifier = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (productIdentifier) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.productIdentifier,
+                                referencedTable:
+                                    $$ReceiptTextMappingsTableReferences
+                                        ._productIdentifierTable(db),
+                                referencedColumn:
+                                    $$ReceiptTextMappingsTableReferences
+                                        ._productIdentifierTable(db)
+                                        .productIdentifier,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ReceiptTextMappingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ApplicationDatabase,
+      $ReceiptTextMappingsTable,
+      ReceiptTextMappingRow,
+      $$ReceiptTextMappingsTableFilterComposer,
+      $$ReceiptTextMappingsTableOrderingComposer,
+      $$ReceiptTextMappingsTableAnnotationComposer,
+      $$ReceiptTextMappingsTableCreateCompanionBuilder,
+      $$ReceiptTextMappingsTableUpdateCompanionBuilder,
+      (ReceiptTextMappingRow, $$ReceiptTextMappingsTableReferences),
+      ReceiptTextMappingRow,
+      PrefetchHooks Function({bool productIdentifier})
+    >;
 
 class $ApplicationDatabaseManager {
   final _$ApplicationDatabase _db;
   $ApplicationDatabaseManager(this._db);
+  $ReceiptSearchIndexTableManager get receiptSearchIndex =>
+      $ReceiptSearchIndexTableManager(_db, _db.receiptSearchIndex);
   $$PreferenceEntriesTableTableManager get preferenceEntries =>
       $$PreferenceEntriesTableTableManager(_db, _db.preferenceEntries);
   $$SchemaMetadataEntriesTableTableManager get schemaMetadataEntries =>
@@ -13005,4 +17650,12 @@ class $ApplicationDatabaseManager {
       $$ItemPicturesTableTableManager(_db, _db.itemPictures);
   $$ProductBarcodesTableTableManager get productBarcodes =>
       $$ProductBarcodesTableTableManager(_db, _db.productBarcodes);
+  $$ReceiptsTableTableManager get receipts =>
+      $$ReceiptsTableTableManager(_db, _db.receipts);
+  $$ReceiptPagesTableTableManager get receiptPages =>
+      $$ReceiptPagesTableTableManager(_db, _db.receiptPages);
+  $$ReceiptLinesTableTableManager get receiptLines =>
+      $$ReceiptLinesTableTableManager(_db, _db.receiptLines);
+  $$ReceiptTextMappingsTableTableManager get receiptTextMappings =>
+      $$ReceiptTextMappingsTableTableManager(_db, _db.receiptTextMappings);
 }

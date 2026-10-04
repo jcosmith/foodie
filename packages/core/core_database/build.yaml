@@ -9,4 +9,11 @@ targets:
           databases:
             application_database: lib/src/application_database.dart
           schema_dir: drift_schemas/
+          # The receipt archive's full-text index (architecture 10.10).
+          sql:
+            dialect: sqlite
+            options:
+              version: "3.45"
+              modules:
+                - fts5
           test_dir: test/drift/

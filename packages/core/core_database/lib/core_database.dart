@@ -12,6 +12,10 @@ export 'src/application_database.dart'
         ItemPictureRow,
         ProductBarcodeRow,
         ProductRow,
+        ReceiptLineRow,
+        ReceiptPageRow,
+        ReceiptRow,
+        ReceiptTextMappingRow,
         RestockRuleRow,
         ScheduledNotificationRecordRow,
         ShoppingListEntryRow,
@@ -28,6 +32,7 @@ export 'src/tables/item_pictures/item_pictures_dao.dart';
 export 'src/tables/notifications/scheduled_notifications_dao.dart';
 export 'src/tables/preferences/preferences_dao.dart';
 export 'src/tables/product_catalog/product_catalog_dao.dart';
+export 'src/tables/receipt_scanning/receipt_scanning_dao.dart';
 export 'src/tables/restock/restock_dao.dart';
 export 'src/tables/schema_metadata/schema_metadata_dao.dart';
 export 'src/tables/statistics/statistics_dao.dart';

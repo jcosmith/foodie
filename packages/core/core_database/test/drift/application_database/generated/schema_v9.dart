@@ -5,6 +5,275 @@ import 'dart:typed_data' as i2;
 //
 import 'package:drift/drift.dart';
 
+class ReceiptSearchIndex extends Table
+    with
+        TableInfo<ReceiptSearchIndex, ReceiptSearchIndexData>,
+        VirtualTableInfo<ReceiptSearchIndex, ReceiptSearchIndexData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ReceiptSearchIndex(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  late final GeneratedColumn<String> receiptLineIdentifier =
+      GeneratedColumn<String>(
+        'receipt_line_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: '',
+      );
+  late final GeneratedColumn<String> body = GeneratedColumn<String>(
+    'body',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    receiptLineIdentifier,
+    body,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_search_index';
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  ReceiptSearchIndexData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptSearchIndexData(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      ),
+      receiptLineIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_line_identifier'],
+      ),
+      body: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}body'],
+      ),
+    );
+  }
+
+  @override
+  ReceiptSearchIndex createAlias(String alias) {
+    return ReceiptSearchIndex(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(receipt_identifier UNINDEXED, receipt_line_identifier UNINDEXED, body, tokenize = \'unicode61 remove_diacritics 2\')';
+}
+
+class ReceiptSearchIndexData extends DataClass
+    implements Insertable<ReceiptSearchIndexData> {
+  final String? receiptIdentifier;
+  final String? receiptLineIdentifier;
+  final String? body;
+  const ReceiptSearchIndexData({
+    this.receiptIdentifier,
+    this.receiptLineIdentifier,
+    this.body,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || receiptIdentifier != null) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    }
+    if (!nullToAbsent || receiptLineIdentifier != null) {
+      map['receipt_line_identifier'] = Variable<String>(receiptLineIdentifier);
+    }
+    if (!nullToAbsent || body != null) {
+      map['body'] = Variable<String>(body);
+    }
+    return map;
+  }
+
+  ReceiptSearchIndexCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptSearchIndexCompanion(
+      receiptIdentifier: receiptIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receiptIdentifier),
+      receiptLineIdentifier: receiptLineIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receiptLineIdentifier),
+      body: body == null && nullToAbsent ? const Value.absent() : Value(body),
+    );
+  }
+
+  factory ReceiptSearchIndexData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptSearchIndexData(
+      receiptIdentifier: serializer.fromJson<String?>(
+        json['receiptIdentifier'],
+      ),
+      receiptLineIdentifier: serializer.fromJson<String?>(
+        json['receiptLineIdentifier'],
+      ),
+      body: serializer.fromJson<String?>(json['body']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptIdentifier': serializer.toJson<String?>(receiptIdentifier),
+      'receiptLineIdentifier': serializer.toJson<String?>(
+        receiptLineIdentifier,
+      ),
+      'body': serializer.toJson<String?>(body),
+    };
+  }
+
+  ReceiptSearchIndexData copyWith({
+    Value<String?> receiptIdentifier = const Value.absent(),
+    Value<String?> receiptLineIdentifier = const Value.absent(),
+    Value<String?> body = const Value.absent(),
+  }) => ReceiptSearchIndexData(
+    receiptIdentifier: receiptIdentifier.present
+        ? receiptIdentifier.value
+        : this.receiptIdentifier,
+    receiptLineIdentifier: receiptLineIdentifier.present
+        ? receiptLineIdentifier.value
+        : this.receiptLineIdentifier,
+    body: body.present ? body.value : this.body,
+  );
+  ReceiptSearchIndexData copyWithCompanion(ReceiptSearchIndexCompanion data) {
+    return ReceiptSearchIndexData(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      receiptLineIdentifier: data.receiptLineIdentifier.present
+          ? data.receiptLineIdentifier.value
+          : this.receiptLineIdentifier,
+      body: data.body.present ? data.body.value : this.body,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptSearchIndexData(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('body: $body')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(receiptIdentifier, receiptLineIdentifier, body);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptSearchIndexData &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.receiptLineIdentifier == this.receiptLineIdentifier &&
+          other.body == this.body);
+}
+
+class ReceiptSearchIndexCompanion
+    extends UpdateCompanion<ReceiptSearchIndexData> {
+  final Value<String?> receiptIdentifier;
+  final Value<String?> receiptLineIdentifier;
+  final Value<String?> body;
+  final Value<int> rowid;
+  const ReceiptSearchIndexCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.receiptLineIdentifier = const Value.absent(),
+    this.body = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptSearchIndexCompanion.insert({
+    this.receiptIdentifier = const Value.absent(),
+    this.receiptLineIdentifier = const Value.absent(),
+    this.body = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  static Insertable<ReceiptSearchIndexData> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<String>? receiptLineIdentifier,
+    Expression<String>? body,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (receiptLineIdentifier != null)
+        'receipt_line_identifier': receiptLineIdentifier,
+      if (body != null) 'body': body,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptSearchIndexCompanion copyWith({
+    Value<String?>? receiptIdentifier,
+    Value<String?>? receiptLineIdentifier,
+    Value<String?>? body,
+    Value<int>? rowid,
+  }) {
+    return ReceiptSearchIndexCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      receiptLineIdentifier:
+          receiptLineIdentifier ?? this.receiptLineIdentifier,
+      body: body ?? this.body,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (receiptLineIdentifier.present) {
+      map['receipt_line_identifier'] = Variable<String>(
+        receiptLineIdentifier.value,
+      );
+    }
+    if (body.present) {
+      map['body'] = Variable<String>(body.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptSearchIndexCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('body: $body, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class PreferenceEntries extends Table
     with TableInfo<PreferenceEntries, PreferenceEntriesData> {
   @override
@@ -5674,8 +5943,1671 @@ class ProductBarcodesCompanion extends UpdateCompanion<ProductBarcodesData> {
   }
 }
 
+class Receipts extends Table with TableInfo<Receipts, ReceiptsData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Receipts(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  late final GeneratedColumn<String> storeName = GeneratedColumn<String>(
+    'store_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<String> purchasedOn = GeneratedColumn<String>(
+    'purchased_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<int> totalInCents = GeneratedColumn<int>(
+    'total_in_cents',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<int> pageCount = GeneratedColumn<int>(
+    'page_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> recognizedText = GeneratedColumn<String>(
+    'recognized_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    storeName,
+    purchasedOn,
+    totalInCents,
+    pageCount,
+    recognizedText,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipts';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptIdentifier};
+  @override
+  ReceiptsData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptsData(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      storeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}store_name'],
+      ),
+      purchasedOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}purchased_on'],
+      ),
+      totalInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_in_cents'],
+      ),
+      pageCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_count'],
+      )!,
+      recognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recognized_text'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  Receipts createAlias(String alias) {
+    return Receipts(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(receipt_identifier)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class ReceiptsData extends DataClass implements Insertable<ReceiptsData> {
+  final String receiptIdentifier;
+  final String? storeName;
+  final String? purchasedOn;
+  final int? totalInCents;
+  final int pageCount;
+  final String recognizedText;
+  final String createdAt;
+  const ReceiptsData({
+    required this.receiptIdentifier,
+    this.storeName,
+    this.purchasedOn,
+    this.totalInCents,
+    required this.pageCount,
+    required this.recognizedText,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    if (!nullToAbsent || storeName != null) {
+      map['store_name'] = Variable<String>(storeName);
+    }
+    if (!nullToAbsent || purchasedOn != null) {
+      map['purchased_on'] = Variable<String>(purchasedOn);
+    }
+    if (!nullToAbsent || totalInCents != null) {
+      map['total_in_cents'] = Variable<int>(totalInCents);
+    }
+    map['page_count'] = Variable<int>(pageCount);
+    map['recognized_text'] = Variable<String>(recognizedText);
+    map['created_at'] = Variable<String>(createdAt);
+    return map;
+  }
+
+  ReceiptsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptsCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      storeName: storeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(storeName),
+      purchasedOn: purchasedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(purchasedOn),
+      totalInCents: totalInCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalInCents),
+      pageCount: Value(pageCount),
+      recognizedText: Value(recognizedText),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ReceiptsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptsData(
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      storeName: serializer.fromJson<String?>(json['storeName']),
+      purchasedOn: serializer.fromJson<String?>(json['purchasedOn']),
+      totalInCents: serializer.fromJson<int?>(json['totalInCents']),
+      pageCount: serializer.fromJson<int>(json['pageCount']),
+      recognizedText: serializer.fromJson<String>(json['recognizedText']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'storeName': serializer.toJson<String?>(storeName),
+      'purchasedOn': serializer.toJson<String?>(purchasedOn),
+      'totalInCents': serializer.toJson<int?>(totalInCents),
+      'pageCount': serializer.toJson<int>(pageCount),
+      'recognizedText': serializer.toJson<String>(recognizedText),
+      'createdAt': serializer.toJson<String>(createdAt),
+    };
+  }
+
+  ReceiptsData copyWith({
+    String? receiptIdentifier,
+    Value<String?> storeName = const Value.absent(),
+    Value<String?> purchasedOn = const Value.absent(),
+    Value<int?> totalInCents = const Value.absent(),
+    int? pageCount,
+    String? recognizedText,
+    String? createdAt,
+  }) => ReceiptsData(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    storeName: storeName.present ? storeName.value : this.storeName,
+    purchasedOn: purchasedOn.present ? purchasedOn.value : this.purchasedOn,
+    totalInCents: totalInCents.present ? totalInCents.value : this.totalInCents,
+    pageCount: pageCount ?? this.pageCount,
+    recognizedText: recognizedText ?? this.recognizedText,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ReceiptsData copyWithCompanion(ReceiptsCompanion data) {
+    return ReceiptsData(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      storeName: data.storeName.present ? data.storeName.value : this.storeName,
+      purchasedOn: data.purchasedOn.present
+          ? data.purchasedOn.value
+          : this.purchasedOn,
+      totalInCents: data.totalInCents.present
+          ? data.totalInCents.value
+          : this.totalInCents,
+      pageCount: data.pageCount.present ? data.pageCount.value : this.pageCount,
+      recognizedText: data.recognizedText.present
+          ? data.recognizedText.value
+          : this.recognizedText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptsData(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('storeName: $storeName, ')
+          ..write('purchasedOn: $purchasedOn, ')
+          ..write('totalInCents: $totalInCents, ')
+          ..write('pageCount: $pageCount, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptIdentifier,
+    storeName,
+    purchasedOn,
+    totalInCents,
+    pageCount,
+    recognizedText,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptsData &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.storeName == this.storeName &&
+          other.purchasedOn == this.purchasedOn &&
+          other.totalInCents == this.totalInCents &&
+          other.pageCount == this.pageCount &&
+          other.recognizedText == this.recognizedText &&
+          other.createdAt == this.createdAt);
+}
+
+class ReceiptsCompanion extends UpdateCompanion<ReceiptsData> {
+  final Value<String> receiptIdentifier;
+  final Value<String?> storeName;
+  final Value<String?> purchasedOn;
+  final Value<int?> totalInCents;
+  final Value<int> pageCount;
+  final Value<String> recognizedText;
+  final Value<String> createdAt;
+  final Value<int> rowid;
+  const ReceiptsCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.storeName = const Value.absent(),
+    this.purchasedOn = const Value.absent(),
+    this.totalInCents = const Value.absent(),
+    this.pageCount = const Value.absent(),
+    this.recognizedText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptsCompanion.insert({
+    required String receiptIdentifier,
+    this.storeName = const Value.absent(),
+    this.purchasedOn = const Value.absent(),
+    this.totalInCents = const Value.absent(),
+    required int pageCount,
+    required String recognizedText,
+    required String createdAt,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       pageCount = Value(pageCount),
+       recognizedText = Value(recognizedText),
+       createdAt = Value(createdAt);
+  static Insertable<ReceiptsData> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<String>? storeName,
+    Expression<String>? purchasedOn,
+    Expression<int>? totalInCents,
+    Expression<int>? pageCount,
+    Expression<String>? recognizedText,
+    Expression<String>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (storeName != null) 'store_name': storeName,
+      if (purchasedOn != null) 'purchased_on': purchasedOn,
+      if (totalInCents != null) 'total_in_cents': totalInCents,
+      if (pageCount != null) 'page_count': pageCount,
+      if (recognizedText != null) 'recognized_text': recognizedText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptsCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<String?>? storeName,
+    Value<String?>? purchasedOn,
+    Value<int?>? totalInCents,
+    Value<int>? pageCount,
+    Value<String>? recognizedText,
+    Value<String>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptsCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      storeName: storeName ?? this.storeName,
+      purchasedOn: purchasedOn ?? this.purchasedOn,
+      totalInCents: totalInCents ?? this.totalInCents,
+      pageCount: pageCount ?? this.pageCount,
+      recognizedText: recognizedText ?? this.recognizedText,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (storeName.present) {
+      map['store_name'] = Variable<String>(storeName.value);
+    }
+    if (purchasedOn.present) {
+      map['purchased_on'] = Variable<String>(purchasedOn.value);
+    }
+    if (totalInCents.present) {
+      map['total_in_cents'] = Variable<int>(totalInCents.value);
+    }
+    if (pageCount.present) {
+      map['page_count'] = Variable<int>(pageCount.value);
+    }
+    if (recognizedText.present) {
+      map['recognized_text'] = Variable<String>(recognizedText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptsCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('storeName: $storeName, ')
+          ..write('purchasedOn: $purchasedOn, ')
+          ..write('totalInCents: $totalInCents, ')
+          ..write('pageCount: $pageCount, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class ReceiptPages extends Table
+    with TableInfo<ReceiptPages, ReceiptPagesData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ReceiptPages(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL REFERENCES receipts(receipt_identifier)',
+      );
+  late final GeneratedColumn<int> pageNumber = GeneratedColumn<int>(
+    'page_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> pictureReference = GeneratedColumn<String>(
+    'picture_reference',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<String> rawRecognizedText =
+      GeneratedColumn<String>(
+        'raw_recognized_text',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptIdentifier,
+    pageNumber,
+    pictureReference,
+    rawRecognizedText,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_pages';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptIdentifier, pageNumber};
+  @override
+  ReceiptPagesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptPagesData(
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      pageNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_number'],
+      )!,
+      pictureReference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}picture_reference'],
+      ),
+      rawRecognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_recognized_text'],
+      )!,
+    );
+  }
+
+  @override
+  ReceiptPages createAlias(String alias) {
+    return ReceiptPages(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(receipt_identifier, page_number)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class ReceiptPagesData extends DataClass
+    implements Insertable<ReceiptPagesData> {
+  final String receiptIdentifier;
+  final int pageNumber;
+  final String? pictureReference;
+  final String rawRecognizedText;
+  const ReceiptPagesData({
+    required this.receiptIdentifier,
+    required this.pageNumber,
+    this.pictureReference,
+    required this.rawRecognizedText,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['page_number'] = Variable<int>(pageNumber);
+    if (!nullToAbsent || pictureReference != null) {
+      map['picture_reference'] = Variable<String>(pictureReference);
+    }
+    map['raw_recognized_text'] = Variable<String>(rawRecognizedText);
+    return map;
+  }
+
+  ReceiptPagesCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptPagesCompanion(
+      receiptIdentifier: Value(receiptIdentifier),
+      pageNumber: Value(pageNumber),
+      pictureReference: pictureReference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pictureReference),
+      rawRecognizedText: Value(rawRecognizedText),
+    );
+  }
+
+  factory ReceiptPagesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptPagesData(
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      pageNumber: serializer.fromJson<int>(json['pageNumber']),
+      pictureReference: serializer.fromJson<String?>(json['pictureReference']),
+      rawRecognizedText: serializer.fromJson<String>(json['rawRecognizedText']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'pageNumber': serializer.toJson<int>(pageNumber),
+      'pictureReference': serializer.toJson<String?>(pictureReference),
+      'rawRecognizedText': serializer.toJson<String>(rawRecognizedText),
+    };
+  }
+
+  ReceiptPagesData copyWith({
+    String? receiptIdentifier,
+    int? pageNumber,
+    Value<String?> pictureReference = const Value.absent(),
+    String? rawRecognizedText,
+  }) => ReceiptPagesData(
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    pageNumber: pageNumber ?? this.pageNumber,
+    pictureReference: pictureReference.present
+        ? pictureReference.value
+        : this.pictureReference,
+    rawRecognizedText: rawRecognizedText ?? this.rawRecognizedText,
+  );
+  ReceiptPagesData copyWithCompanion(ReceiptPagesCompanion data) {
+    return ReceiptPagesData(
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      pageNumber: data.pageNumber.present
+          ? data.pageNumber.value
+          : this.pageNumber,
+      pictureReference: data.pictureReference.present
+          ? data.pictureReference.value
+          : this.pictureReference,
+      rawRecognizedText: data.rawRecognizedText.present
+          ? data.rawRecognizedText.value
+          : this.rawRecognizedText,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptPagesData(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('pageNumber: $pageNumber, ')
+          ..write('pictureReference: $pictureReference, ')
+          ..write('rawRecognizedText: $rawRecognizedText')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptIdentifier,
+    pageNumber,
+    pictureReference,
+    rawRecognizedText,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptPagesData &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.pageNumber == this.pageNumber &&
+          other.pictureReference == this.pictureReference &&
+          other.rawRecognizedText == this.rawRecognizedText);
+}
+
+class ReceiptPagesCompanion extends UpdateCompanion<ReceiptPagesData> {
+  final Value<String> receiptIdentifier;
+  final Value<int> pageNumber;
+  final Value<String?> pictureReference;
+  final Value<String> rawRecognizedText;
+  final Value<int> rowid;
+  const ReceiptPagesCompanion({
+    this.receiptIdentifier = const Value.absent(),
+    this.pageNumber = const Value.absent(),
+    this.pictureReference = const Value.absent(),
+    this.rawRecognizedText = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptPagesCompanion.insert({
+    required String receiptIdentifier,
+    required int pageNumber,
+    this.pictureReference = const Value.absent(),
+    required String rawRecognizedText,
+    this.rowid = const Value.absent(),
+  }) : receiptIdentifier = Value(receiptIdentifier),
+       pageNumber = Value(pageNumber),
+       rawRecognizedText = Value(rawRecognizedText);
+  static Insertable<ReceiptPagesData> custom({
+    Expression<String>? receiptIdentifier,
+    Expression<int>? pageNumber,
+    Expression<String>? pictureReference,
+    Expression<String>? rawRecognizedText,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (pageNumber != null) 'page_number': pageNumber,
+      if (pictureReference != null) 'picture_reference': pictureReference,
+      if (rawRecognizedText != null) 'raw_recognized_text': rawRecognizedText,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptPagesCompanion copyWith({
+    Value<String>? receiptIdentifier,
+    Value<int>? pageNumber,
+    Value<String?>? pictureReference,
+    Value<String>? rawRecognizedText,
+    Value<int>? rowid,
+  }) {
+    return ReceiptPagesCompanion(
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      pageNumber: pageNumber ?? this.pageNumber,
+      pictureReference: pictureReference ?? this.pictureReference,
+      rawRecognizedText: rawRecognizedText ?? this.rawRecognizedText,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (pageNumber.present) {
+      map['page_number'] = Variable<int>(pageNumber.value);
+    }
+    if (pictureReference.present) {
+      map['picture_reference'] = Variable<String>(pictureReference.value);
+    }
+    if (rawRecognizedText.present) {
+      map['raw_recognized_text'] = Variable<String>(rawRecognizedText.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptPagesCompanion(')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('pageNumber: $pageNumber, ')
+          ..write('pictureReference: $pictureReference, ')
+          ..write('rawRecognizedText: $rawRecognizedText, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class ReceiptLines extends Table
+    with TableInfo<ReceiptLines, ReceiptLinesData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ReceiptLines(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> receiptLineIdentifier =
+      GeneratedColumn<String>(
+        'receipt_line_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  late final GeneratedColumn<String> receiptIdentifier =
+      GeneratedColumn<String>(
+        'receipt_identifier',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL REFERENCES receipts(receipt_identifier)',
+      );
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> recognizedText = GeneratedColumn<String>(
+    'recognized_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> correctedText = GeneratedColumn<String>(
+    'corrected_text',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<int> unitPriceInCents = GeneratedColumn<int>(
+    'unit_price_in_cents',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<int> lineTotalInCents = GeneratedColumn<int>(
+    'line_total_in_cents',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<int> weightInGrams = GeneratedColumn<int>(
+    'weight_in_grams',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> productIdentifier =
+      GeneratedColumn<String>(
+        'product_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: 'NULL REFERENCES products(product_identifier)',
+      );
+  late final GeneratedColumn<String> stockBatchIdentifier =
+      GeneratedColumn<String>(
+        'stock_batch_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints:
+            'NULL REFERENCES stock_batches(stock_batch_identifier)',
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    receiptLineIdentifier,
+    receiptIdentifier,
+    position,
+    kind,
+    recognizedText,
+    correctedText,
+    quantity,
+    unitPriceInCents,
+    lineTotalInCents,
+    weightInGrams,
+    status,
+    productIdentifier,
+    stockBatchIdentifier,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_lines';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {receiptLineIdentifier};
+  @override
+  ReceiptLinesData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptLinesData(
+      receiptLineIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_line_identifier'],
+      )!,
+      receiptIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}receipt_identifier'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      recognizedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recognized_text'],
+      )!,
+      correctedText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}corrected_text'],
+      ),
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      unitPriceInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unit_price_in_cents'],
+      ),
+      lineTotalInCents: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}line_total_in_cents'],
+      )!,
+      weightInGrams: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}weight_in_grams'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      productIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_identifier'],
+      ),
+      stockBatchIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stock_batch_identifier'],
+      ),
+    );
+  }
+
+  @override
+  ReceiptLines createAlias(String alias) {
+    return ReceiptLines(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(receipt_line_identifier)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class ReceiptLinesData extends DataClass
+    implements Insertable<ReceiptLinesData> {
+  final String receiptLineIdentifier;
+  final String receiptIdentifier;
+  final int position;
+  final String kind;
+  final String recognizedText;
+  final String? correctedText;
+  final int quantity;
+  final int? unitPriceInCents;
+  final int lineTotalInCents;
+  final int? weightInGrams;
+  final String status;
+  final String? productIdentifier;
+  final String? stockBatchIdentifier;
+  const ReceiptLinesData({
+    required this.receiptLineIdentifier,
+    required this.receiptIdentifier,
+    required this.position,
+    required this.kind,
+    required this.recognizedText,
+    this.correctedText,
+    required this.quantity,
+    this.unitPriceInCents,
+    required this.lineTotalInCents,
+    this.weightInGrams,
+    required this.status,
+    this.productIdentifier,
+    this.stockBatchIdentifier,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['receipt_line_identifier'] = Variable<String>(receiptLineIdentifier);
+    map['receipt_identifier'] = Variable<String>(receiptIdentifier);
+    map['position'] = Variable<int>(position);
+    map['kind'] = Variable<String>(kind);
+    map['recognized_text'] = Variable<String>(recognizedText);
+    if (!nullToAbsent || correctedText != null) {
+      map['corrected_text'] = Variable<String>(correctedText);
+    }
+    map['quantity'] = Variable<int>(quantity);
+    if (!nullToAbsent || unitPriceInCents != null) {
+      map['unit_price_in_cents'] = Variable<int>(unitPriceInCents);
+    }
+    map['line_total_in_cents'] = Variable<int>(lineTotalInCents);
+    if (!nullToAbsent || weightInGrams != null) {
+      map['weight_in_grams'] = Variable<int>(weightInGrams);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || productIdentifier != null) {
+      map['product_identifier'] = Variable<String>(productIdentifier);
+    }
+    if (!nullToAbsent || stockBatchIdentifier != null) {
+      map['stock_batch_identifier'] = Variable<String>(stockBatchIdentifier);
+    }
+    return map;
+  }
+
+  ReceiptLinesCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptLinesCompanion(
+      receiptLineIdentifier: Value(receiptLineIdentifier),
+      receiptIdentifier: Value(receiptIdentifier),
+      position: Value(position),
+      kind: Value(kind),
+      recognizedText: Value(recognizedText),
+      correctedText: correctedText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correctedText),
+      quantity: Value(quantity),
+      unitPriceInCents: unitPriceInCents == null && nullToAbsent
+          ? const Value.absent()
+          : Value(unitPriceInCents),
+      lineTotalInCents: Value(lineTotalInCents),
+      weightInGrams: weightInGrams == null && nullToAbsent
+          ? const Value.absent()
+          : Value(weightInGrams),
+      status: Value(status),
+      productIdentifier: productIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productIdentifier),
+      stockBatchIdentifier: stockBatchIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(stockBatchIdentifier),
+    );
+  }
+
+  factory ReceiptLinesData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptLinesData(
+      receiptLineIdentifier: serializer.fromJson<String>(
+        json['receiptLineIdentifier'],
+      ),
+      receiptIdentifier: serializer.fromJson<String>(json['receiptIdentifier']),
+      position: serializer.fromJson<int>(json['position']),
+      kind: serializer.fromJson<String>(json['kind']),
+      recognizedText: serializer.fromJson<String>(json['recognizedText']),
+      correctedText: serializer.fromJson<String?>(json['correctedText']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unitPriceInCents: serializer.fromJson<int?>(json['unitPriceInCents']),
+      lineTotalInCents: serializer.fromJson<int>(json['lineTotalInCents']),
+      weightInGrams: serializer.fromJson<int?>(json['weightInGrams']),
+      status: serializer.fromJson<String>(json['status']),
+      productIdentifier: serializer.fromJson<String?>(
+        json['productIdentifier'],
+      ),
+      stockBatchIdentifier: serializer.fromJson<String?>(
+        json['stockBatchIdentifier'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'receiptLineIdentifier': serializer.toJson<String>(receiptLineIdentifier),
+      'receiptIdentifier': serializer.toJson<String>(receiptIdentifier),
+      'position': serializer.toJson<int>(position),
+      'kind': serializer.toJson<String>(kind),
+      'recognizedText': serializer.toJson<String>(recognizedText),
+      'correctedText': serializer.toJson<String?>(correctedText),
+      'quantity': serializer.toJson<int>(quantity),
+      'unitPriceInCents': serializer.toJson<int?>(unitPriceInCents),
+      'lineTotalInCents': serializer.toJson<int>(lineTotalInCents),
+      'weightInGrams': serializer.toJson<int?>(weightInGrams),
+      'status': serializer.toJson<String>(status),
+      'productIdentifier': serializer.toJson<String?>(productIdentifier),
+      'stockBatchIdentifier': serializer.toJson<String?>(stockBatchIdentifier),
+    };
+  }
+
+  ReceiptLinesData copyWith({
+    String? receiptLineIdentifier,
+    String? receiptIdentifier,
+    int? position,
+    String? kind,
+    String? recognizedText,
+    Value<String?> correctedText = const Value.absent(),
+    int? quantity,
+    Value<int?> unitPriceInCents = const Value.absent(),
+    int? lineTotalInCents,
+    Value<int?> weightInGrams = const Value.absent(),
+    String? status,
+    Value<String?> productIdentifier = const Value.absent(),
+    Value<String?> stockBatchIdentifier = const Value.absent(),
+  }) => ReceiptLinesData(
+    receiptLineIdentifier: receiptLineIdentifier ?? this.receiptLineIdentifier,
+    receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+    position: position ?? this.position,
+    kind: kind ?? this.kind,
+    recognizedText: recognizedText ?? this.recognizedText,
+    correctedText: correctedText.present
+        ? correctedText.value
+        : this.correctedText,
+    quantity: quantity ?? this.quantity,
+    unitPriceInCents: unitPriceInCents.present
+        ? unitPriceInCents.value
+        : this.unitPriceInCents,
+    lineTotalInCents: lineTotalInCents ?? this.lineTotalInCents,
+    weightInGrams: weightInGrams.present
+        ? weightInGrams.value
+        : this.weightInGrams,
+    status: status ?? this.status,
+    productIdentifier: productIdentifier.present
+        ? productIdentifier.value
+        : this.productIdentifier,
+    stockBatchIdentifier: stockBatchIdentifier.present
+        ? stockBatchIdentifier.value
+        : this.stockBatchIdentifier,
+  );
+  ReceiptLinesData copyWithCompanion(ReceiptLinesCompanion data) {
+    return ReceiptLinesData(
+      receiptLineIdentifier: data.receiptLineIdentifier.present
+          ? data.receiptLineIdentifier.value
+          : this.receiptLineIdentifier,
+      receiptIdentifier: data.receiptIdentifier.present
+          ? data.receiptIdentifier.value
+          : this.receiptIdentifier,
+      position: data.position.present ? data.position.value : this.position,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      recognizedText: data.recognizedText.present
+          ? data.recognizedText.value
+          : this.recognizedText,
+      correctedText: data.correctedText.present
+          ? data.correctedText.value
+          : this.correctedText,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unitPriceInCents: data.unitPriceInCents.present
+          ? data.unitPriceInCents.value
+          : this.unitPriceInCents,
+      lineTotalInCents: data.lineTotalInCents.present
+          ? data.lineTotalInCents.value
+          : this.lineTotalInCents,
+      weightInGrams: data.weightInGrams.present
+          ? data.weightInGrams.value
+          : this.weightInGrams,
+      status: data.status.present ? data.status.value : this.status,
+      productIdentifier: data.productIdentifier.present
+          ? data.productIdentifier.value
+          : this.productIdentifier,
+      stockBatchIdentifier: data.stockBatchIdentifier.present
+          ? data.stockBatchIdentifier.value
+          : this.stockBatchIdentifier,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptLinesData(')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('position: $position, ')
+          ..write('kind: $kind, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPriceInCents: $unitPriceInCents, ')
+          ..write('lineTotalInCents: $lineTotalInCents, ')
+          ..write('weightInGrams: $weightInGrams, ')
+          ..write('status: $status, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('stockBatchIdentifier: $stockBatchIdentifier')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    receiptLineIdentifier,
+    receiptIdentifier,
+    position,
+    kind,
+    recognizedText,
+    correctedText,
+    quantity,
+    unitPriceInCents,
+    lineTotalInCents,
+    weightInGrams,
+    status,
+    productIdentifier,
+    stockBatchIdentifier,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptLinesData &&
+          other.receiptLineIdentifier == this.receiptLineIdentifier &&
+          other.receiptIdentifier == this.receiptIdentifier &&
+          other.position == this.position &&
+          other.kind == this.kind &&
+          other.recognizedText == this.recognizedText &&
+          other.correctedText == this.correctedText &&
+          other.quantity == this.quantity &&
+          other.unitPriceInCents == this.unitPriceInCents &&
+          other.lineTotalInCents == this.lineTotalInCents &&
+          other.weightInGrams == this.weightInGrams &&
+          other.status == this.status &&
+          other.productIdentifier == this.productIdentifier &&
+          other.stockBatchIdentifier == this.stockBatchIdentifier);
+}
+
+class ReceiptLinesCompanion extends UpdateCompanion<ReceiptLinesData> {
+  final Value<String> receiptLineIdentifier;
+  final Value<String> receiptIdentifier;
+  final Value<int> position;
+  final Value<String> kind;
+  final Value<String> recognizedText;
+  final Value<String?> correctedText;
+  final Value<int> quantity;
+  final Value<int?> unitPriceInCents;
+  final Value<int> lineTotalInCents;
+  final Value<int?> weightInGrams;
+  final Value<String> status;
+  final Value<String?> productIdentifier;
+  final Value<String?> stockBatchIdentifier;
+  final Value<int> rowid;
+  const ReceiptLinesCompanion({
+    this.receiptLineIdentifier = const Value.absent(),
+    this.receiptIdentifier = const Value.absent(),
+    this.position = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.recognizedText = const Value.absent(),
+    this.correctedText = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unitPriceInCents = const Value.absent(),
+    this.lineTotalInCents = const Value.absent(),
+    this.weightInGrams = const Value.absent(),
+    this.status = const Value.absent(),
+    this.productIdentifier = const Value.absent(),
+    this.stockBatchIdentifier = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptLinesCompanion.insert({
+    required String receiptLineIdentifier,
+    required String receiptIdentifier,
+    required int position,
+    required String kind,
+    required String recognizedText,
+    this.correctedText = const Value.absent(),
+    required int quantity,
+    this.unitPriceInCents = const Value.absent(),
+    required int lineTotalInCents,
+    this.weightInGrams = const Value.absent(),
+    required String status,
+    this.productIdentifier = const Value.absent(),
+    this.stockBatchIdentifier = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : receiptLineIdentifier = Value(receiptLineIdentifier),
+       receiptIdentifier = Value(receiptIdentifier),
+       position = Value(position),
+       kind = Value(kind),
+       recognizedText = Value(recognizedText),
+       quantity = Value(quantity),
+       lineTotalInCents = Value(lineTotalInCents),
+       status = Value(status);
+  static Insertable<ReceiptLinesData> custom({
+    Expression<String>? receiptLineIdentifier,
+    Expression<String>? receiptIdentifier,
+    Expression<int>? position,
+    Expression<String>? kind,
+    Expression<String>? recognizedText,
+    Expression<String>? correctedText,
+    Expression<int>? quantity,
+    Expression<int>? unitPriceInCents,
+    Expression<int>? lineTotalInCents,
+    Expression<int>? weightInGrams,
+    Expression<String>? status,
+    Expression<String>? productIdentifier,
+    Expression<String>? stockBatchIdentifier,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (receiptLineIdentifier != null)
+        'receipt_line_identifier': receiptLineIdentifier,
+      if (receiptIdentifier != null) 'receipt_identifier': receiptIdentifier,
+      if (position != null) 'position': position,
+      if (kind != null) 'kind': kind,
+      if (recognizedText != null) 'recognized_text': recognizedText,
+      if (correctedText != null) 'corrected_text': correctedText,
+      if (quantity != null) 'quantity': quantity,
+      if (unitPriceInCents != null) 'unit_price_in_cents': unitPriceInCents,
+      if (lineTotalInCents != null) 'line_total_in_cents': lineTotalInCents,
+      if (weightInGrams != null) 'weight_in_grams': weightInGrams,
+      if (status != null) 'status': status,
+      if (productIdentifier != null) 'product_identifier': productIdentifier,
+      if (stockBatchIdentifier != null)
+        'stock_batch_identifier': stockBatchIdentifier,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptLinesCompanion copyWith({
+    Value<String>? receiptLineIdentifier,
+    Value<String>? receiptIdentifier,
+    Value<int>? position,
+    Value<String>? kind,
+    Value<String>? recognizedText,
+    Value<String?>? correctedText,
+    Value<int>? quantity,
+    Value<int?>? unitPriceInCents,
+    Value<int>? lineTotalInCents,
+    Value<int?>? weightInGrams,
+    Value<String>? status,
+    Value<String?>? productIdentifier,
+    Value<String?>? stockBatchIdentifier,
+    Value<int>? rowid,
+  }) {
+    return ReceiptLinesCompanion(
+      receiptLineIdentifier:
+          receiptLineIdentifier ?? this.receiptLineIdentifier,
+      receiptIdentifier: receiptIdentifier ?? this.receiptIdentifier,
+      position: position ?? this.position,
+      kind: kind ?? this.kind,
+      recognizedText: recognizedText ?? this.recognizedText,
+      correctedText: correctedText ?? this.correctedText,
+      quantity: quantity ?? this.quantity,
+      unitPriceInCents: unitPriceInCents ?? this.unitPriceInCents,
+      lineTotalInCents: lineTotalInCents ?? this.lineTotalInCents,
+      weightInGrams: weightInGrams ?? this.weightInGrams,
+      status: status ?? this.status,
+      productIdentifier: productIdentifier ?? this.productIdentifier,
+      stockBatchIdentifier: stockBatchIdentifier ?? this.stockBatchIdentifier,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (receiptLineIdentifier.present) {
+      map['receipt_line_identifier'] = Variable<String>(
+        receiptLineIdentifier.value,
+      );
+    }
+    if (receiptIdentifier.present) {
+      map['receipt_identifier'] = Variable<String>(receiptIdentifier.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (recognizedText.present) {
+      map['recognized_text'] = Variable<String>(recognizedText.value);
+    }
+    if (correctedText.present) {
+      map['corrected_text'] = Variable<String>(correctedText.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unitPriceInCents.present) {
+      map['unit_price_in_cents'] = Variable<int>(unitPriceInCents.value);
+    }
+    if (lineTotalInCents.present) {
+      map['line_total_in_cents'] = Variable<int>(lineTotalInCents.value);
+    }
+    if (weightInGrams.present) {
+      map['weight_in_grams'] = Variable<int>(weightInGrams.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (productIdentifier.present) {
+      map['product_identifier'] = Variable<String>(productIdentifier.value);
+    }
+    if (stockBatchIdentifier.present) {
+      map['stock_batch_identifier'] = Variable<String>(
+        stockBatchIdentifier.value,
+      );
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptLinesCompanion(')
+          ..write('receiptLineIdentifier: $receiptLineIdentifier, ')
+          ..write('receiptIdentifier: $receiptIdentifier, ')
+          ..write('position: $position, ')
+          ..write('kind: $kind, ')
+          ..write('recognizedText: $recognizedText, ')
+          ..write('correctedText: $correctedText, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPriceInCents: $unitPriceInCents, ')
+          ..write('lineTotalInCents: $lineTotalInCents, ')
+          ..write('weightInGrams: $weightInGrams, ')
+          ..write('status: $status, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('stockBatchIdentifier: $stockBatchIdentifier, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class ReceiptTextMappings extends Table
+    with TableInfo<ReceiptTextMappings, ReceiptTextMappingsData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ReceiptTextMappings(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> storeName = GeneratedColumn<String>(
+    'store_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> lineText = GeneratedColumn<String>(
+    'line_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> productIdentifier =
+      GeneratedColumn<String>(
+        'product_identifier',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        $customConstraints: 'NULL REFERENCES products(product_identifier)',
+      );
+  late final GeneratedColumn<String> learnedAt = GeneratedColumn<String>(
+    'learned_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    storeName,
+    lineText,
+    productIdentifier,
+    learnedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'receipt_text_mappings';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {storeName, lineText};
+  @override
+  ReceiptTextMappingsData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReceiptTextMappingsData(
+      storeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}store_name'],
+      )!,
+      lineText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}line_text'],
+      )!,
+      productIdentifier: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_identifier'],
+      ),
+      learnedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}learned_at'],
+      )!,
+    );
+  }
+
+  @override
+  ReceiptTextMappings createAlias(String alias) {
+    return ReceiptTextMappings(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(store_name, line_text)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class ReceiptTextMappingsData extends DataClass
+    implements Insertable<ReceiptTextMappingsData> {
+  final String storeName;
+  final String lineText;
+  final String? productIdentifier;
+  final String learnedAt;
+  const ReceiptTextMappingsData({
+    required this.storeName,
+    required this.lineText,
+    this.productIdentifier,
+    required this.learnedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['store_name'] = Variable<String>(storeName);
+    map['line_text'] = Variable<String>(lineText);
+    if (!nullToAbsent || productIdentifier != null) {
+      map['product_identifier'] = Variable<String>(productIdentifier);
+    }
+    map['learned_at'] = Variable<String>(learnedAt);
+    return map;
+  }
+
+  ReceiptTextMappingsCompanion toCompanion(bool nullToAbsent) {
+    return ReceiptTextMappingsCompanion(
+      storeName: Value(storeName),
+      lineText: Value(lineText),
+      productIdentifier: productIdentifier == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productIdentifier),
+      learnedAt: Value(learnedAt),
+    );
+  }
+
+  factory ReceiptTextMappingsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReceiptTextMappingsData(
+      storeName: serializer.fromJson<String>(json['storeName']),
+      lineText: serializer.fromJson<String>(json['lineText']),
+      productIdentifier: serializer.fromJson<String?>(
+        json['productIdentifier'],
+      ),
+      learnedAt: serializer.fromJson<String>(json['learnedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'storeName': serializer.toJson<String>(storeName),
+      'lineText': serializer.toJson<String>(lineText),
+      'productIdentifier': serializer.toJson<String?>(productIdentifier),
+      'learnedAt': serializer.toJson<String>(learnedAt),
+    };
+  }
+
+  ReceiptTextMappingsData copyWith({
+    String? storeName,
+    String? lineText,
+    Value<String?> productIdentifier = const Value.absent(),
+    String? learnedAt,
+  }) => ReceiptTextMappingsData(
+    storeName: storeName ?? this.storeName,
+    lineText: lineText ?? this.lineText,
+    productIdentifier: productIdentifier.present
+        ? productIdentifier.value
+        : this.productIdentifier,
+    learnedAt: learnedAt ?? this.learnedAt,
+  );
+  ReceiptTextMappingsData copyWithCompanion(ReceiptTextMappingsCompanion data) {
+    return ReceiptTextMappingsData(
+      storeName: data.storeName.present ? data.storeName.value : this.storeName,
+      lineText: data.lineText.present ? data.lineText.value : this.lineText,
+      productIdentifier: data.productIdentifier.present
+          ? data.productIdentifier.value
+          : this.productIdentifier,
+      learnedAt: data.learnedAt.present ? data.learnedAt.value : this.learnedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptTextMappingsData(')
+          ..write('storeName: $storeName, ')
+          ..write('lineText: $lineText, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('learnedAt: $learnedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(storeName, lineText, productIdentifier, learnedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReceiptTextMappingsData &&
+          other.storeName == this.storeName &&
+          other.lineText == this.lineText &&
+          other.productIdentifier == this.productIdentifier &&
+          other.learnedAt == this.learnedAt);
+}
+
+class ReceiptTextMappingsCompanion
+    extends UpdateCompanion<ReceiptTextMappingsData> {
+  final Value<String> storeName;
+  final Value<String> lineText;
+  final Value<String?> productIdentifier;
+  final Value<String> learnedAt;
+  final Value<int> rowid;
+  const ReceiptTextMappingsCompanion({
+    this.storeName = const Value.absent(),
+    this.lineText = const Value.absent(),
+    this.productIdentifier = const Value.absent(),
+    this.learnedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReceiptTextMappingsCompanion.insert({
+    required String storeName,
+    required String lineText,
+    this.productIdentifier = const Value.absent(),
+    required String learnedAt,
+    this.rowid = const Value.absent(),
+  }) : storeName = Value(storeName),
+       lineText = Value(lineText),
+       learnedAt = Value(learnedAt);
+  static Insertable<ReceiptTextMappingsData> custom({
+    Expression<String>? storeName,
+    Expression<String>? lineText,
+    Expression<String>? productIdentifier,
+    Expression<String>? learnedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (storeName != null) 'store_name': storeName,
+      if (lineText != null) 'line_text': lineText,
+      if (productIdentifier != null) 'product_identifier': productIdentifier,
+      if (learnedAt != null) 'learned_at': learnedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReceiptTextMappingsCompanion copyWith({
+    Value<String>? storeName,
+    Value<String>? lineText,
+    Value<String?>? productIdentifier,
+    Value<String>? learnedAt,
+    Value<int>? rowid,
+  }) {
+    return ReceiptTextMappingsCompanion(
+      storeName: storeName ?? this.storeName,
+      lineText: lineText ?? this.lineText,
+      productIdentifier: productIdentifier ?? this.productIdentifier,
+      learnedAt: learnedAt ?? this.learnedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (storeName.present) {
+      map['store_name'] = Variable<String>(storeName.value);
+    }
+    if (lineText.present) {
+      map['line_text'] = Variable<String>(lineText.value);
+    }
+    if (productIdentifier.present) {
+      map['product_identifier'] = Variable<String>(productIdentifier.value);
+    }
+    if (learnedAt.present) {
+      map['learned_at'] = Variable<String>(learnedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReceiptTextMappingsCompanion(')
+          ..write('storeName: $storeName, ')
+          ..write('lineText: $lineText, ')
+          ..write('productIdentifier: $productIdentifier, ')
+          ..write('learnedAt: $learnedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class DatabaseAtV9 extends GeneratedDatabase {
   DatabaseAtV9(QueryExecutor e) : super(e);
+  late final ReceiptSearchIndex receiptSearchIndex = ReceiptSearchIndex(this);
   late final PreferenceEntries preferenceEntries = PreferenceEntries(this);
   late final SchemaMetadata schemaMetadata = SchemaMetadata(this);
   late final StoragePlaces storagePlaces = StoragePlaces(this);
@@ -5692,6 +7624,12 @@ class DatabaseAtV9 extends GeneratedDatabase {
   );
   late final ItemPictures itemPictures = ItemPictures(this);
   late final ProductBarcodes productBarcodes = ProductBarcodes(this);
+  late final Receipts receipts = Receipts(this);
+  late final ReceiptPages receiptPages = ReceiptPages(this);
+  late final ReceiptLines receiptLines = ReceiptLines(this);
+  late final ReceiptTextMappings receiptTextMappings = ReceiptTextMappings(
+    this,
+  );
   late final Index inventoryMovementsByTime = Index(
     'inventory_movements_by_time',
     'CREATE INDEX inventory_movements_by_time ON inventory_movements (occurred_at)',
@@ -5712,11 +7650,20 @@ class DatabaseAtV9 extends GeneratedDatabase {
     'product_barcodes_by_product',
     'CREATE INDEX product_barcodes_by_product ON product_barcodes (product_identifier)',
   );
+  late final Index receiptsByCreation = Index(
+    'receipts_by_creation',
+    'CREATE INDEX receipts_by_creation ON receipts (created_at)',
+  );
+  late final Index receiptLinesByReceipt = Index(
+    'receipt_lines_by_receipt',
+    'CREATE INDEX receipt_lines_by_receipt ON receipt_lines (receipt_identifier, position)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    receiptSearchIndex,
     preferenceEntries,
     schemaMetadata,
     storagePlaces,
@@ -5730,11 +7677,17 @@ class DatabaseAtV9 extends GeneratedDatabase {
     shoppingListEntries,
     itemPictures,
     productBarcodes,
+    receipts,
+    receiptPages,
+    receiptLines,
+    receiptTextMappings,
     inventoryMovementsByTime,
     inventoryMovementsByProductAndTime,
     inventoryMovementsByBatch,
     itemPicturesByOwner,
     productBarcodesByProduct,
+    receiptsByCreation,
+    receiptLinesByReceipt,
   ];
   @override
   int get schemaVersion => 9;

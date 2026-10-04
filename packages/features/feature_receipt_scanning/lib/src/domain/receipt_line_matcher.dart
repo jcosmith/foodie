@@ -35,12 +35,14 @@ final class ReceiptTextMapping {
     required this.storeName,
     required this.lineText,
     this.productIdentifier,
+    this.learnedAt,
   });
 
   /// Both normalised with [ReceiptText.normalize].
   final String storeName;
   final String lineText;
   final ProductIdentifier? productIdentifier;
+  final DateTime? learnedAt;
 
   bool get isIgnored => productIdentifier == null;
 }

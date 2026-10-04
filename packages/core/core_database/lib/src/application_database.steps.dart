@@ -2557,6 +2557,7 @@ final class Schema9 extends i0.VersionedSchema {
   Schema9({required super.database}) : super(version: 9);
   @override
   late final List<i1.DatabaseSchemaEntity> entities = [
+    receiptSearchIndex,
     preferenceEntries,
     schemaMetadata,
     storagePlaces,
@@ -2570,12 +2571,28 @@ final class Schema9 extends i0.VersionedSchema {
     shoppingListEntries,
     itemPictures,
     productBarcodes,
+    receipts,
+    receiptPages,
+    receiptLines,
+    receiptTextMappings,
     inventoryMovementsByTime,
     inventoryMovementsByProductAndTime,
     inventoryMovementsByBatch,
     itemPicturesByOwner,
     productBarcodesByProduct,
+    receiptsByCreation,
+    receiptLinesByReceipt,
   ];
+  late final Shape15 receiptSearchIndex = Shape15(
+    source: i0.VersionedVirtualTable(
+      entityName: 'receipt_search_index',
+      moduleAndArgs:
+          'fts5(receipt_identifier UNINDEXED, receipt_line_identifier UNINDEXED, body, tokenize = \'unicode61 remove_diacritics 2\')',
+      columns: [_column_72, _column_73, _column_74],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
   late final Shape0 preferenceEntries = Shape0(
     source: i0.VersionedTable(
       entityName: 'preference_entries',
@@ -2598,14 +2615,14 @@ final class Schema9 extends i0.VersionedSchema {
     ),
     alias: null,
   );
-  late final Shape15 storagePlaces = Shape15(
+  late final Shape16 storagePlaces = Shape16(
     source: i0.VersionedTable(
       entityName: 'storage_places',
       withoutRowId: false,
       isStrict: false,
       tableConstraints: ['PRIMARY KEY(storage_place_identifier)'],
       columns: [
-        _column_72,
+        _column_75,
         _column_8,
         _column_9,
         _column_10,
@@ -2617,7 +2634,7 @@ final class Schema9 extends i0.VersionedSchema {
     ),
     alias: null,
   );
-  late final Shape16 compartments = Shape16(
+  late final Shape17 compartments = Shape17(
     source: i0.VersionedTable(
       entityName: 'compartments',
       withoutRowId: false,
@@ -2625,7 +2642,7 @@ final class Schema9 extends i0.VersionedSchema {
       tableConstraints: ['PRIMARY KEY(compartment_identifier)'],
       columns: [
         _column_14,
-        _column_73,
+        _column_76,
         _column_16,
         _column_9,
         _column_17,
@@ -2637,7 +2654,7 @@ final class Schema9 extends i0.VersionedSchema {
     ),
     alias: null,
   );
-  late final Shape17 categories = Shape17(
+  late final Shape18 categories = Shape18(
     source: i0.VersionedTable(
       entityName: 'categories',
       withoutRowId: false,
@@ -2648,16 +2665,16 @@ final class Schema9 extends i0.VersionedSchema {
         _column_19,
         _column_9,
         _column_26,
-        _column_74,
+        _column_77,
         _column_21,
         _column_11,
-        _column_75,
+        _column_78,
       ],
       attachedDatabase: database,
     ),
     alias: null,
   );
-  late final Shape18 products = Shape18(
+  late final Shape19 products = Shape19(
     source: i0.VersionedTable(
       entityName: 'products',
       withoutRowId: false,
@@ -2671,7 +2688,7 @@ final class Schema9 extends i0.VersionedSchema {
         _column_24,
         _column_25,
         _column_26,
-        _column_74,
+        _column_77,
         _column_27,
         _column_71,
         _column_70,
@@ -2682,7 +2699,7 @@ final class Schema9 extends i0.VersionedSchema {
     ),
     alias: null,
   );
-  late final Shape19 stockBatches = Shape19(
+  late final Shape20 stockBatches = Shape20(
     source: i0.VersionedTable(
       entityName: 'stock_batches',
       withoutRowId: false,
@@ -2696,9 +2713,9 @@ final class Schema9 extends i0.VersionedSchema {
         _column_32,
         _column_33,
         _column_34,
-        _column_76,
+        _column_79,
         _column_36,
-        _column_77,
+        _column_80,
         _column_37,
         _column_13,
       ],
@@ -2808,6 +2825,72 @@ final class Schema9 extends i0.VersionedSchema {
     ),
     alias: null,
   );
+  late final Shape21 receipts = Shape21(
+    source: i0.VersionedTable(
+      entityName: 'receipts',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(receipt_identifier)'],
+      columns: [
+        _column_81,
+        _column_82,
+        _column_83,
+        _column_84,
+        _column_85,
+        _column_86,
+        _column_13,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape22 receiptPages = Shape22(
+    source: i0.VersionedTable(
+      entityName: 'receipt_pages',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(receipt_identifier, page_number)'],
+      columns: [_column_87, _column_88, _column_89, _column_90],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape23 receiptLines = Shape23(
+    source: i0.VersionedTable(
+      entityName: 'receipt_lines',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(receipt_line_identifier)'],
+      columns: [
+        _column_91,
+        _column_87,
+        _column_92,
+        _column_93,
+        _column_86,
+        _column_94,
+        _column_95,
+        _column_96,
+        _column_97,
+        _column_98,
+        _column_99,
+        _column_52,
+        _column_100,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape24 receiptTextMappings = Shape24(
+    source: i0.VersionedTable(
+      entityName: 'receipt_text_mappings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(store_name, line_text)'],
+      columns: [_column_101, _column_102, _column_52, _column_69],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
   final i1.Index inventoryMovementsByTime = i1.Index(
     'inventory_movements_by_time',
     'CREATE INDEX inventory_movements_by_time ON inventory_movements (occurred_at)',
@@ -2828,10 +2911,53 @@ final class Schema9 extends i0.VersionedSchema {
     'product_barcodes_by_product',
     'CREATE INDEX product_barcodes_by_product ON product_barcodes (product_identifier)',
   );
+  final i1.Index receiptsByCreation = i1.Index(
+    'receipts_by_creation',
+    'CREATE INDEX receipts_by_creation ON receipts (created_at)',
+  );
+  final i1.Index receiptLinesByReceipt = i1.Index(
+    'receipt_lines_by_receipt',
+    'CREATE INDEX receipt_lines_by_receipt ON receipt_lines (receipt_identifier, position)',
+  );
 }
 
-class Shape15 extends i0.VersionedTable {
+class Shape15 extends i0.VersionedVirtualTable {
   Shape15({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get receiptIdentifier =>
+      columnsByName['receipt_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get receiptLineIdentifier =>
+      columnsByName['receipt_line_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get body =>
+      columnsByName['body']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_72(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'receipt_identifier',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: '',
+    );
+i1.GeneratedColumn<String> _column_73(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'receipt_line_identifier',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: '',
+    );
+i1.GeneratedColumn<String> _column_74(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'body',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: '',
+    );
+
+class Shape16 extends i0.VersionedTable {
+  Shape16({required super.source, required super.alias}) : super.aliased();
   i1.GeneratedColumn<String> get storagePlaceIdentifier =>
       columnsByName['storage_place_identifier']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<String> get defaultNameKey =>
@@ -2848,7 +2974,7 @@ class Shape15 extends i0.VersionedTable {
       columnsByName['created_at']! as i1.GeneratedColumn<String>;
 }
 
-i1.GeneratedColumn<String> _column_72(String aliasedName) =>
+i1.GeneratedColumn<String> _column_75(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'storage_place_identifier',
       aliasedName,
@@ -2857,8 +2983,8 @@ i1.GeneratedColumn<String> _column_72(String aliasedName) =>
       $customConstraints: 'NOT NULL',
     );
 
-class Shape16 extends i0.VersionedTable {
-  Shape16({required super.source, required super.alias}) : super.aliased();
+class Shape17 extends i0.VersionedTable {
+  Shape17({required super.source, required super.alias}) : super.aliased();
   i1.GeneratedColumn<String> get compartmentIdentifier =>
       columnsByName['compartment_identifier']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<String> get storagePlaceIdentifier =>
@@ -2877,7 +3003,7 @@ class Shape16 extends i0.VersionedTable {
       columnsByName['created_at']! as i1.GeneratedColumn<String>;
 }
 
-i1.GeneratedColumn<String> _column_73(String aliasedName) =>
+i1.GeneratedColumn<String> _column_76(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'storage_place_identifier',
       aliasedName,
@@ -2887,8 +3013,8 @@ i1.GeneratedColumn<String> _column_73(String aliasedName) =>
           'NOT NULL REFERENCES storage_places(storage_place_identifier)',
     );
 
-class Shape17 extends i0.VersionedTable {
-  Shape17({required super.source, required super.alias}) : super.aliased();
+class Shape18 extends i0.VersionedTable {
+  Shape18({required super.source, required super.alias}) : super.aliased();
   i1.GeneratedColumn<String> get categoryIdentifier =>
       columnsByName['category_identifier']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<String> get catalogKey =>
@@ -2909,7 +3035,7 @@ class Shape17 extends i0.VersionedTable {
       columnsByName['storage_domain']! as i1.GeneratedColumn<String>;
 }
 
-i1.GeneratedColumn<int> _column_74(String aliasedName) =>
+i1.GeneratedColumn<int> _column_77(String aliasedName) =>
     i1.GeneratedColumn<int>(
       'shelf_life_after_opening_days',
       aliasedName,
@@ -2917,7 +3043,7 @@ i1.GeneratedColumn<int> _column_74(String aliasedName) =>
       type: i1.DriftSqlType.int,
       $customConstraints: 'NULL',
     );
-i1.GeneratedColumn<String> _column_75(String aliasedName) =>
+i1.GeneratedColumn<String> _column_78(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'storage_domain',
       aliasedName,
@@ -2927,8 +3053,8 @@ i1.GeneratedColumn<String> _column_75(String aliasedName) =>
       defaultValue: const i1.CustomExpression('\'freezer\''),
     );
 
-class Shape18 extends i0.VersionedTable {
-  Shape18({required super.source, required super.alias}) : super.aliased();
+class Shape19 extends i0.VersionedTable {
+  Shape19({required super.source, required super.alias}) : super.aliased();
   i1.GeneratedColumn<String> get productIdentifier =>
       columnsByName['product_identifier']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<String> get categoryIdentifier =>
@@ -2960,8 +3086,8 @@ class Shape18 extends i0.VersionedTable {
       columnsByName['created_at']! as i1.GeneratedColumn<String>;
 }
 
-class Shape19 extends i0.VersionedTable {
-  Shape19({required super.source, required super.alias}) : super.aliased();
+class Shape20 extends i0.VersionedTable {
+  Shape20({required super.source, required super.alias}) : super.aliased();
   i1.GeneratedColumn<String> get stockBatchIdentifier =>
       columnsByName['stock_batch_identifier']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<String> get productIdentifier =>
@@ -2988,7 +3114,7 @@ class Shape19 extends i0.VersionedTable {
       columnsByName['created_at']! as i1.GeneratedColumn<String>;
 }
 
-i1.GeneratedColumn<String> _column_76(String aliasedName) =>
+i1.GeneratedColumn<String> _column_79(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'stored_on',
       aliasedName,
@@ -2996,13 +3122,266 @@ i1.GeneratedColumn<String> _column_76(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<String> _column_77(String aliasedName) =>
+i1.GeneratedColumn<String> _column_80(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'opened_on',
       aliasedName,
       true,
       type: i1.DriftSqlType.string,
       $customConstraints: 'NULL',
+    );
+
+class Shape21 extends i0.VersionedTable {
+  Shape21({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get receiptIdentifier =>
+      columnsByName['receipt_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get storeName =>
+      columnsByName['store_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get purchasedOn =>
+      columnsByName['purchased_on']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get totalInCents =>
+      columnsByName['total_in_cents']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get pageCount =>
+      columnsByName['page_count']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get recognizedText =>
+      columnsByName['recognized_text']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_81(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'receipt_identifier',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_82(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'store_name',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_83(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'purchased_on',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<int> _column_84(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'total_in_cents',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<int> _column_85(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'page_count',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_86(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'recognized_text',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+
+class Shape22 extends i0.VersionedTable {
+  Shape22({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get receiptIdentifier =>
+      columnsByName['receipt_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get pageNumber =>
+      columnsByName['page_number']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get pictureReference =>
+      columnsByName['picture_reference']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get rawRecognizedText =>
+      columnsByName['raw_recognized_text']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_87(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'receipt_identifier',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL REFERENCES receipts(receipt_identifier)',
+    );
+i1.GeneratedColumn<int> _column_88(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'page_number',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_89(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'picture_reference',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_90(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'raw_recognized_text',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+
+class Shape23 extends i0.VersionedTable {
+  Shape23({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get receiptLineIdentifier =>
+      columnsByName['receipt_line_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get receiptIdentifier =>
+      columnsByName['receipt_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get position =>
+      columnsByName['position']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get kind =>
+      columnsByName['kind']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get recognizedText =>
+      columnsByName['recognized_text']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get correctedText =>
+      columnsByName['corrected_text']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get quantity =>
+      columnsByName['quantity']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get unitPriceInCents =>
+      columnsByName['unit_price_in_cents']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get lineTotalInCents =>
+      columnsByName['line_total_in_cents']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get weightInGrams =>
+      columnsByName['weight_in_grams']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get status =>
+      columnsByName['status']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get productIdentifier =>
+      columnsByName['product_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get stockBatchIdentifier =>
+      columnsByName['stock_batch_identifier']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_91(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'receipt_line_identifier',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_92(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'position',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_93(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'kind',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_94(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'corrected_text',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<int> _column_95(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'quantity',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_96(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'unit_price_in_cents',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<int> _column_97(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'line_total_in_cents',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<int> _column_98(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'weight_in_grams',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_99(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'status',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_100(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'stock_batch_identifier',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints:
+          'NULL REFERENCES stock_batches(stock_batch_identifier)',
+    );
+
+class Shape24 extends i0.VersionedTable {
+  Shape24({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get storeName =>
+      columnsByName['store_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get lineText =>
+      columnsByName['line_text']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get productIdentifier =>
+      columnsByName['product_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get learnedAt =>
+      columnsByName['learned_at']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_101(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'store_name',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_102(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'line_text',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
     );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,

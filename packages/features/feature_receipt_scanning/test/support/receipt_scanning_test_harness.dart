@@ -115,9 +115,8 @@ final class ReceiptScanningTestHarness {
       (await container.read(storageLayoutQueryServiceProvider).readStorageLayout())
           .activeCompartments;
 
-  Future<ReceiptReview> review(List<List<String>> rows) => read(
-    prepareReceiptReviewUseCaseProvider,
-  ).execute(pages: [receiptPage(rows)], names: names);
+  Future<ReceiptReview> review(List<List<String>> rows) =>
+      read(prepareReceiptReviewUseCaseProvider).execute(pages: [receiptPage(rows)], names: names);
 
   Future<List<StockBatch>> activeBatches() =>
       container.read(inventoryQueryServiceProvider).readActiveBatches();

@@ -15,6 +15,8 @@ import 'tables/preferences/preference_entries_table.dart';
 import 'tables/preferences/preferences_dao.dart';
 import 'tables/product_catalog/product_catalog_dao.dart';
 import 'tables/product_catalog/product_catalog_tables.dart';
+import 'tables/receipt_scanning/receipt_scanning_dao.dart';
+import 'tables/receipt_scanning/receipt_scanning_tables.dart';
 import 'tables/restock/restock_dao.dart';
 import 'tables/restock/restock_tables.dart';
 import 'tables/schema_metadata/schema_metadata_dao.dart';
@@ -49,7 +51,12 @@ part 'application_database.g.dart';
     ShoppingListEntries,
     ItemPictures,
     ProductBarcodes,
+    Receipts,
+    ReceiptPages,
+    ReceiptLines,
+    ReceiptTextMappings,
   ],
+  include: {'tables/receipt_scanning/receipt_search_index.drift'},
   daos: [
     PreferencesDao,
     SchemaMetadataDao,
@@ -61,6 +68,7 @@ part 'application_database.g.dart';
     ItemPicturesDao,
     ProductBarcodesDao,
     StatisticsDao,
+    ReceiptScanningDao,
   ],
 )
 class ApplicationDatabase extends _$ApplicationDatabase {
@@ -139,6 +147,14 @@ class ApplicationDatabase extends _$ApplicationDatabase {
         // Supplies keep no time: a category's shelf life may be empty.
         // SQLite cannot drop NOT NULL, so the table is copied.
         await migrator.alterTable(TableMigration(schema.categories));
+        // Receipt scanning (architecture 10.10).
+        await migrator.createTable(schema.receipts);
+        await migrator.createIndex(schema.receiptsByCreation);
+        await migrator.createTable(schema.receiptPages);
+        await migrator.createTable(schema.receiptLines);
+        await migrator.createIndex(schema.receiptLinesByReceipt);
+        await migrator.createTable(schema.receiptTextMappings);
+        await migrator.create(schema.receiptSearchIndex);
       },
     ),
     beforeOpen: (openingDetails) async {
