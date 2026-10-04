@@ -21,7 +21,7 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
 
   @override
   String get backupExplanation =>
-      'Deine Daten gibt es nur auf diesem Telefon. Eine Sicherung ist eine passwortgeschützte Datei, die du an einem sicheren Ort aufbewahrst, zum Beispiel auf einem Computer oder in deinem eigenen Cloud-Speicher.';
+      'Deine Daten gibt es nur auf diesem Telefon. Eine Sicherung ist eine Datei, auf Wunsch mit einem Passwort geschützt, die du an einem sicheren Ort aufbewahrst, zum Beispiel auf einem Computer oder in deinem eigenen Cloud-Speicher.';
 
   @override
   String get saveBackupButton => 'Sicherung speichern';
@@ -37,6 +37,12 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
 
   @override
   String get passwordDialogTitle => 'Sicherung schützen';
+
+  @override
+  String get protectWithPasswordLabel => 'Mit einem Passwort schützen';
+
+  @override
+  String get unprotectedBackupWarning => 'Wer diese Datei bekommt, kann deine Daten lesen.';
 
   @override
   String passwordDialogMessage(int count) {

@@ -155,12 +155,17 @@ void main() {
     await _settle(tester);
   }
 
-  Future<void> saveBackup(WidgetTester tester) async {
+  Future<void> saveBackup(WidgetTester tester, {bool isPasswordProtected = true}) async {
     await tester.tap(find.text('Save backup'));
     await _settleUntilFound(tester, find.text('Protect your backup'));
-    final passwordFields = find.byType(TextField);
-    await tester.enterText(passwordFields.at(0), password);
-    await tester.enterText(passwordFields.at(1), password);
+    if (isPasswordProtected) {
+      final passwordFields = find.byType(TextField);
+      await tester.enterText(passwordFields.at(0), password);
+      await tester.enterText(passwordFields.at(1), password);
+    } else {
+      await tester.tap(find.text('Protect with a password'));
+      await tester.pumpAndSettle();
+    }
     await tester.tap(find.widgetWithText(FilledButton, 'Save backup').last);
     await _settleUntilFound(tester, find.text('Backup saved'));
   }
@@ -195,6 +200,25 @@ void main() {
     expect(applicationRestarter.restartCount.value, 1);
     expect(find.text('Working on your backup…'), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+    final databasePath = (await tester.runAsync(
+      () => database
+          .customSelect("SELECT file FROM pragma_database_list WHERE name = 'main'")
+          .getSingle(),
+    ))!.read<String>('file');
+    expect(File(DatabaseBackupGateway.restoreStagingPathFor(databasePath)).existsSync(), isTrue);
+  });
+
+  testWidgets('restores a backup without a password, without asking for one', (tester) async {
+    await startApplication(tester);
+    await saveBackup(tester, isPasswordProtected: false);
+
+    await tester.tap(find.text('Restore backup'));
+    await _settleUntilFound(tester, find.text('Replace everything?'));
+    expect(find.text('Open backup'), findsNothing);
+    await tester.tap(find.widgetWithText(FilledButton, 'Restore'));
+    await _settleUntilFound(tester, find.text('Restarted app'));
+
+    expect(applicationRestarter.restartCount.value, 1);
     final databasePath = (await tester.runAsync(
       () => database
           .customSelect("SELECT file FROM pragma_database_list WHERE name = 'main'")

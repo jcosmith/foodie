@@ -184,6 +184,29 @@ void main() {
     );
   });
 
+  test('a backup without a password needs none to restore', () async {
+    final result = await container
+        .read(createBackupUseCaseProvider)
+        .execute(password: null, repeatedPassword: null);
+    expect(result.valueOrNull, isTrue);
+    final backupPath = (File(
+      '${temporaryDirectory.path}/unprotected.foodiebackup',
+    )..writeAsBytesSync(fileStore.savedBytes!)).path;
+    final restoreBackup = container.read(restoreBackupUseCaseProvider);
+
+    final inspection = await restoreBackup.inspect(backupPath: backupPath);
+    expect(inspection.valueOrNull?.isPasswordProtected, isFalse);
+    await restoreBackup.restore(backupPath: backupPath);
+    expect(restarter.restartCount, 1);
+
+    // A protected one asks.
+    final protectedPath = await saveBackup();
+    expect(
+      (await restoreBackup.inspect(backupPath: protectedPath)).failureOrNull,
+      isA<BackupPasswordRequired>(),
+    );
+  });
+
   test('restoring checks the password, then prepares the restore and restarts', () async {
     final backupPath = await saveBackup();
     final restoreBackup = container.read(restoreBackupUseCaseProvider);

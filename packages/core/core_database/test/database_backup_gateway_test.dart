@@ -27,7 +27,7 @@ void main() {
     );
   }
 
-  Future<String> createBackup({required String text}) async {
+  Future<String> createBackup({required String text, String? password = password}) async {
     final database = await phone('old_phone').open();
     await database.preferencesDao.writeEncodedValue(
       preferenceKey: 'test.text',
@@ -35,7 +35,7 @@ void main() {
       updatedAt: clock.nowUtc(),
     );
     final backupPath = '${temporaryDirectory.path}/freezer.freezerbackup';
-    await DatabaseBackupGateway(database).exportEncryptedSnapshot(
+    await DatabaseBackupGateway(database).exportSnapshot(
       destinationPath: backupPath,
       password: password,
       applicationVersion: '0.2.0',
@@ -73,6 +73,92 @@ void main() {
         .get();
     expect(tableNames, isNot(contains('freezer_backup_manifest')));
     await restoredDatabase.close();
+  });
+
+  test('a backup without a password is a plain database that restores without one', () async {
+    final backupPath = await createBackup(text: 'readable by anyone', password: null);
+    expect(String.fromCharCodes(File(backupPath).readAsBytesSync().take(15)), 'SQLite format 3');
+    expect(
+      String.fromCharCodes(File(backupPath).readAsBytesSync()).contains('readable by anyone'),
+      isTrue,
+    );
+
+    final newPhone = phone('new_phone');
+    final database = await newPhone.open();
+    final gateway = DatabaseBackupGateway(database);
+    final inspection = await gateway.inspectBackup(backupPath: backupPath);
+    expect(inspection.valueOrNull?.isPasswordProtected, isFalse);
+    expect(inspection.valueOrNull?.formatVersion, BackupManifest.currentFormatVersion);
+    expect(BackupManifest.currentFormatVersion, 3);
+    // A password typed anyway does no harm.
+    expect(
+      (await gateway.inspectBackup(backupPath: backupPath, password: 'unneeded')).isSuccess,
+      isTrue,
+    );
+    final result = await gateway.prepareRestore(backupPath: backupPath);
+    expect(result.valueOrNull?.isPasswordProtected, isFalse);
+    await database.close();
+
+    final restoredDatabase = await newPhone.open();
+    expect(
+      await restoredDatabase.preferencesDao.readEncodedValue('test.text'),
+      'readable by anyone',
+    );
+    await restoredDatabase.close();
+  });
+
+  test('a protected backup says it needs its password', () async {
+    final backupPath = await createBackup(text: 'secret');
+    final database = await phone('new_phone').open();
+    final gateway = DatabaseBackupGateway(database);
+
+    expect(
+      (await gateway.inspectBackup(backupPath: backupPath)).failureOrNull,
+      isA<BackupNeedsPassword>(),
+    );
+    expect(
+      (await gateway.prepareRestore(backupPath: backupPath)).failureOrNull,
+      isA<BackupNeedsPassword>(),
+    );
+    final inspection = await gateway.inspectBackup(backupPath: backupPath, password: password);
+    expect(inspection.valueOrNull?.isPasswordProtected, isTrue);
+    await database.close();
+  });
+
+  test('protected backups of the older formats still restore', () async {
+    for (final formatVersion in [1, 2]) {
+      final backupPath = await createBackup(text: 'format $formatVersion');
+      // As the app wrote them then: no word about a password.
+      sqlite3.open(backupPath)
+        ..execute('PRAGMA key = ${_quoted(password)}')
+        ..execute(
+          "UPDATE freezer_backup_manifest SET value = '$formatVersion' "
+          "WHERE name = 'format_version'",
+        )
+        ..execute("DELETE FROM freezer_backup_manifest WHERE name = 'password_protected'")
+        ..close();
+      final newPhone = phone('new_phone_$formatVersion');
+      final database = await newPhone.open();
+      final gateway = DatabaseBackupGateway(database);
+
+      expect(
+        (await gateway.inspectBackup(backupPath: backupPath)).failureOrNull,
+        isA<BackupNeedsPassword>(),
+      );
+      final result = await gateway.prepareRestore(backupPath: backupPath, password: password);
+      expect(result.valueOrNull?.formatVersion, formatVersion);
+      expect(result.valueOrNull?.isPasswordProtected, isTrue);
+      await database.close();
+      final restoredDatabase = await newPhone.open();
+      expect(
+        await restoredDatabase.preferencesDao.readEncodedValue('test.text'),
+        'format $formatVersion',
+      );
+      await restoredDatabase.close();
+      File(backupPath).deleteSync();
+      // The next round's old phone starts over, with a key of its own.
+      Directory('${temporaryDirectory.path}/old_phone').deleteSync(recursive: true);
+    }
   });
 
   test('a wrong password changes nothing', () async {
@@ -139,7 +225,7 @@ void main() {
       final gateway = DatabaseBackupGateway(database);
       expect(await gateway.countPicturesForBackup(), 2);
       final backupPath = '${temporaryDirectory.path}/pictures.freezerbackup';
-      await gateway.exportEncryptedSnapshot(
+      await gateway.exportSnapshot(
         destinationPath: backupPath,
         password: password,
         applicationVersion: '0.3.0',

@@ -26,6 +26,14 @@ final class BackupNotSaved extends DataPortabilityFailure {
   String get debugDescription => 'The save dialog reported an error';
 }
 
+/// The backup is protected; its password has to be asked for.
+final class BackupPasswordRequired extends DataPortabilityFailure {
+  const BackupPasswordRequired();
+
+  @override
+  String get debugDescription => 'The backup needs its password';
+}
+
 /// Wrong password, or a file that is not an encrypted backup at all.
 final class BackupNotReadable extends DataPortabilityFailure {
   const BackupNotReadable();

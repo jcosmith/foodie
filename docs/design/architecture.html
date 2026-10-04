@@ -983,7 +983,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       <div class="callout is-warning">
         <strong>Consequence: losing the phone means losing the data</strong>, unless the user exports a backup. The data portability module is therefore part of the first release, not a later nice-to-have, and the app reminds the user every few months to export a backup.
       </div>
-      <p>The backup is a password-encrypted archive containing a consistent database snapshot (taken with SQLite's <code>VACUUM INTO</code>) and a manifest with schema version and app version. The user chooses where it goes through the system save or share dialog; the app itself never sends it anywhere. Restoring an older schema runs the normal migrations; restoring a newer schema is refused with a clear message.</p>
+      <p>The backup is an archive containing a consistent database snapshot (taken with SQLite's <code>VACUUM INTO</code>) and a manifest with schema version and app version. It is encrypted with a password unless the user switches the protection off when saving; the dialog then warns that anyone who gets the file can read the data, the file is a plain SQLite database, and restoring it asks for no password. The user chooses where it goes through the system save or share dialog; the app itself never sends it anywhere. Restoring an older schema runs the normal migrations; restoring a newer schema is refused with a clear message.</p>
     </section>
 
     <!-- 11 -->
@@ -1246,7 +1246,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
       events: "Subscribes to CompartmentRenamed and CompartmentArchived to refresh labels; otherwise queries live data",
       dependencies: ["feature_product_catalog", "feature_storage_layout", "core_database", "core_preferences", "core_module_contract", "core_design_system", "core_localization"] },
     { identifier: "feature_data_portability", label: "Data portability", kind: "feature", phase: "2",
-      responsibility: "Password-encrypted backup export and restore of the whole database, CSV export for the user's own analysis, schema version check on restore, periodic backup reminder.",
+      responsibility: "Backup export (password-encrypted unless the user chooses none) and restore of the whole database, CSV export for the user's own analysis, schema version check on restore, periodic backup reminder.",
       publicApi: ["DataPortabilityFeatureModule"],
       events: "Publishes DataRestored (all modules replan)",
       dependencies: ["core_database", "core_preferences", "core_events", "core_module_contract", "core_design_system", "core_localization"] },

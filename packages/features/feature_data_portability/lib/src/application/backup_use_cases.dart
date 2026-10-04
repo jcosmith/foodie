@@ -12,7 +12,8 @@ import '../domain/data_portability_failure.dart';
 import 'backup_file_store.dart';
 import 'data_portability_providers.dart';
 
-/// Saves a password-encrypted backup wherever the user chooses.
+/// Saves a backup, encrypted with a password unless the user chose none,
+/// wherever the user chooses.
 final class CreateBackupUseCase {
   const CreateBackupUseCase({
     required DatabaseBackupGateway backupGateway,
@@ -45,8 +46,8 @@ final class CreateBackupUseCase {
   /// the save dialog). Without pictures, the file is much smaller (about
   /// 300 KB per photo, section 10.2).
   Future<Result<bool, DataPortabilityFailure>> execute({
-    required String password,
-    required String repeatedPassword,
+    required String? password,
+    required String? repeatedPassword,
     bool includesPictures = true,
   }) async {
     final preparation = await prepare(
@@ -60,12 +61,13 @@ final class CreateBackupUseCase {
     };
   }
 
-  /// Builds the encrypted backup file; [save] then hands it to the save
-  /// dialog. Two steps, so the app shows its progress while the file is
-  /// built but not while the system's dialog is open (issue #4).
+  /// Builds the backup file, unencrypted when [password] is `null`; [save]
+  /// then hands it to the save dialog. Two steps, so the app shows its
+  /// progress while the file is built but not while the system's dialog is
+  /// open (issue #4).
   Future<Result<PreparedBackup, DataPortabilityFailure>> prepare({
-    required String password,
-    required String repeatedPassword,
+    required String? password,
+    required String? repeatedPassword,
     bool includesPictures = true,
   }) async {
     final passwordProblem = BackupPasswordPolicy.check(
@@ -81,7 +83,7 @@ final class CreateBackupUseCase {
     final scratchDirectory = await _fileStore.createScratchDirectory();
     try {
       final snapshotPath = path.join(scratchDirectory.path, fileName);
-      await _backupGateway.exportEncryptedSnapshot(
+      await _backupGateway.exportSnapshot(
         destinationPath: snapshotPath,
         password: password,
         applicationVersion: _applicationVersion,
@@ -144,10 +146,11 @@ final class RestoreBackupUseCase {
   final ApplicationRestarter _applicationRestarter;
 
   /// Checks the password and the file, and tells when the backup was made,
-  /// so the user can confirm before anything changes.
+  /// so the user can confirm before anything changes. A protected backup
+  /// without [password] is a [BackupPasswordRequired] failure.
   Future<Result<BackupManifest, DataPortabilityFailure>> inspect({
     required String backupPath,
-    required String password,
+    String? password,
   }) async =>
       _translate(await _backupGateway.inspectBackup(backupPath: backupPath, password: password));
 
@@ -156,7 +159,7 @@ final class RestoreBackupUseCase {
   /// removes the pictures of the data that was replaced.
   Future<Result<BackupManifest, DataPortabilityFailure>> restore({
     required String backupPath,
-    required String password,
+    String? password,
   }) async {
     final result = _translate(
       await _backupGateway.prepareRestore(
@@ -176,6 +179,7 @@ final class RestoreBackupUseCase {
     FailedResult(failure: WrongPasswordOrUnreadableFile()) => const Result.failure(
       BackupNotReadable(),
     ),
+    FailedResult(failure: BackupNeedsPassword()) => const Result.failure(BackupPasswordRequired()),
     FailedResult(failure: NotAFoodieBackup()) => const Result.failure(NotABackupOfThisApp()),
     FailedResult(failure: BackupFromNewerVersion(:final manifest)) => Result.failure(
       BackupNeedsNewerApp(manifest.applicationVersion),

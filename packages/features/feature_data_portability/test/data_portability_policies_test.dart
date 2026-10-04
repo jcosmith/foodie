@@ -19,6 +19,10 @@ void main() {
     );
   });
 
+  test('a backup without a password has nothing to check', () {
+    expect(BackupPasswordPolicy.check(password: null, repeatedPassword: null), isNull);
+  });
+
   test('a backup is due with food and no backup in the last 90 days', () {
     final now = DateTime.utc(2026, 10, 2);
     bool isDue(DateTime? lastBackupAt, {bool hasStoredFood = true}) =>

@@ -184,6 +184,43 @@ void main() {
     expect(find.text('No backup yet'), findsOneWidget);
   });
 
+  testWidgets('saves a backup without a password after a warning', (tester) async {
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: buildLocalizedTestApplication(
+          featureLocalizationDelegates: const DataPortabilityFeatureModule().localizationDelegates,
+          home: const Scaffold(body: SingleChildScrollView(child: BackupConfigSection())),
+        ),
+      ),
+    );
+    await _settle(tester);
+
+    await tester.tap(find.text('Save backup'));
+    await _settle(tester);
+    final protectionSwitch = find.widgetWithText(SwitchListTile, 'Protect with a password');
+    expect(tester.widget<SwitchListTile>(protectionSwitch).value, isTrue);
+    expect(find.byType(TextField), findsNWidgets(2));
+    expect(find.text('Anyone who gets this file can read your data.'), findsNothing);
+
+    await tester.tap(protectionSwitch);
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('Anyone who gets this file can read your data.'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Save backup').last);
+    await _settleUntilFound(tester, find.text('Backup saved'));
+
+    final manifest = await tester.runAsync(() async {
+      final backupFile = File('${temporaryDirectory.path}/saved.foodiebackup')
+        ..writeAsBytesSync(fileStore.savedBytes!);
+      final inspection = await DatabaseBackupGateway(
+        database,
+      ).inspectBackup(backupPath: backupFile.path);
+      return inspection.valueOrNull;
+    });
+    expect(manifest?.isPasswordProtected, isFalse);
+  });
+
   testWidgets('offers to leave the photos out', (tester) async {
     final pictureFileName = createMediaFileName();
     final thumbnailFileName = createMediaFileName();

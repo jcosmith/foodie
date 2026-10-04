@@ -16,8 +16,8 @@ import '../domain/backup_policies.dart';
 import '../domain/data_portability_failure.dart';
 import '../l10n/generated/data_portability_localizations.dart';
 
-/// Asks for a password, and whether to include photos when there are any,
-/// and saves a backup through the system dialog.
+/// Asks for a password (or none), and whether to include photos when there
+/// are any, and saves a backup through the system dialog.
 Future<void> showCreateBackupFlow(BuildContext context, WidgetRef ref) async {
   final localizations = DataPortabilityLocalizations.of(context);
   final messenger = ScaffoldMessenger.of(context);
@@ -53,8 +53,9 @@ Future<void> showCreateBackupFlow(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// Picks a backup file, checks its password, asks for confirmation and
-/// restores it; the app then restarts with the restored data.
+/// Picks a backup file, checks its password if it has one, asks for
+/// confirmation and restores it; the app then restarts with the restored
+/// data.
 Future<void> showRestoreBackupFlow(BuildContext context, WidgetRef ref) async {
   final localizations = DataPortabilityLocalizations.of(context);
   final dateFormatter = context.dateDisplayFormatter;
@@ -62,22 +63,26 @@ Future<void> showRestoreBackupFlow(BuildContext context, WidgetRef ref) async {
   if (backupPath == null || !context.mounted) return;
   final restoreBackup = ref.read(restoreBackupUseCaseProvider);
 
-  String? passwordError;
+  // First without a password: a backup saved without one goes straight to
+  // the confirmation (issue #12).
+  String? password;
   while (true) {
     if (!context.mounted) return;
-    final password = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) => _BackupPasswordDialog(errorText: passwordError),
-    );
-    if (password == null || !context.mounted) return;
     final inspection = await _whileShowingProgress(
       context,
       restoreBackup.inspect(backupPath: backupPath, password: password),
     );
     if (!context.mounted) return;
     switch (inspection) {
-      case FailedResult(failure: BackupNotReadable()):
-        passwordError = localizations.backupNotReadable;
+      case FailedResult(:final failure)
+          when failure is BackupPasswordRequired || failure is BackupNotReadable:
+        password = await showDialog<String>(
+          context: context,
+          builder: (dialogContext) => _BackupPasswordDialog(
+            errorText: failure is BackupNotReadable ? localizations.backupNotReadable : null,
+          ),
+        );
+        if (password == null) return;
         continue;
       case FailedResult(:final failure):
         ScaffoldMessenger.of(
@@ -215,15 +220,18 @@ extension DataPortabilityFailureTexts on DataPortabilityLocalizations {
     BackupPasswordTooShort() => passwordTooShort(BackupPasswordPolicy.minimumLength),
     BackupPasswordsDoNotMatch() => passwordsDoNotMatch,
     BackupNotSaved() => backupNotSaved,
+    BackupPasswordRequired() => restorePasswordMessage,
     BackupNotReadable() => backupNotReadable,
     NotABackupOfThisApp() => notABackupOfThisApp,
     BackupNeedsNewerApp(:final applicationVersion) => backupNeedsNewerApp(applicationVersion),
   };
 }
 
-typedef _NewBackupChoice = ({String password, bool includesPictures});
+/// No password when the user switched the protection off.
+typedef _NewBackupChoice = ({String? password, bool includesPictures});
 
-/// A new password, typed twice, and whether photos go in.
+/// A new password, typed twice, or none after a warning, and whether photos
+/// go in.
 class _NewBackupPasswordDialog extends StatefulWidget {
   const _NewBackupPasswordDialog({required this.pictureCount});
 
@@ -238,6 +246,7 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _repeatedPasswordController = TextEditingController();
   DataPortabilityFailure? _problem;
+  bool _isPasswordProtected = true;
   bool _includesPictures = true;
 
   @override
@@ -248,16 +257,15 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
   }
 
   void _submit() {
+    final password = _isPasswordProtected ? _passwordController.text : null;
     final problem = BackupPasswordPolicy.check(
-      password: _passwordController.text,
-      repeatedPassword: _repeatedPasswordController.text,
+      password: password,
+      repeatedPassword: _isPasswordProtected ? _repeatedPasswordController.text : null,
     );
     if (problem != null) {
       setState(() => _problem = problem);
     } else {
-      Navigator.of(
-        context,
-      ).pop((password: _passwordController.text, includesPictures: _includesPictures));
+      Navigator.of(context).pop((password: password, includesPictures: _includesPictures));
     }
   }
 
@@ -271,32 +279,48 @@ class _NewBackupPasswordDialogState extends State<_NewBackupPasswordDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(localizations.passwordDialogMessage(BackupPasswordPolicy.minimumLength)),
-            const SizedBox(height: FoodieSpacing.medium),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              autofocus: true,
-              autofillHints: const [AutofillHints.newPassword],
-              decoration: InputDecoration(
-                labelText: localizations.passwordLabel,
-                errorText: problem is BackupPasswordTooShort
-                    ? localizations.describeFailure(problem)
-                    : null,
-              ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(localizations.protectWithPasswordLabel),
+              value: _isPasswordProtected,
+              onChanged: (isPasswordProtected) => setState(() {
+                _isPasswordProtected = isPasswordProtected;
+                _problem = null;
+              }),
             ),
-            const SizedBox(height: FoodieSpacing.small),
-            TextField(
-              controller: _repeatedPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: localizations.repeatPasswordLabel,
-                errorText: problem is BackupPasswordsDoNotMatch
-                    ? localizations.describeFailure(problem)
-                    : null,
+            if (!_isPasswordProtected)
+              Text(
+                localizations.unprotectedBackupWarning,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              )
+            else ...[
+              Text(localizations.passwordDialogMessage(BackupPasswordPolicy.minimumLength)),
+              const SizedBox(height: FoodieSpacing.medium),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                autofocus: true,
+                autofillHints: const [AutofillHints.newPassword],
+                decoration: InputDecoration(
+                  labelText: localizations.passwordLabel,
+                  errorText: problem is BackupPasswordTooShort
+                      ? localizations.describeFailure(problem)
+                      : null,
+                ),
               ),
-              onSubmitted: (_) => _submit(),
-            ),
+              const SizedBox(height: FoodieSpacing.small),
+              TextField(
+                controller: _repeatedPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: localizations.repeatPasswordLabel,
+                  errorText: problem is BackupPasswordsDoNotMatch
+                      ? localizations.describeFailure(problem)
+                      : null,
+                ),
+                onSubmitted: (_) => _submit(),
+              ),
+            ],
             if (widget.pictureCount > 0) ...[
               const SizedBox(height: FoodieSpacing.small),
               SwitchListTile(

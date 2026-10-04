@@ -465,7 +465,7 @@ void main() {
         encodedValue: 'de',
         updatedAt: DateTime.utc(2026, 9, 1),
       );
-      await DatabaseBackupGateway(otherPhone).exportEncryptedSnapshot(
+      await DatabaseBackupGateway(otherPhone).exportSnapshot(
         destinationPath: backupPath,
         password: password,
         applicationVersion: '0.1.0',

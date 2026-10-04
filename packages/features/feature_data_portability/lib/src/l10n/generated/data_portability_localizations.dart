@@ -116,7 +116,7 @@ abstract class DataPortabilityLocalizations {
   /// No description provided for @backupExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Your data exists only on this phone. A backup is a password-protected file that you keep somewhere safe, for example on a computer or in your own cloud storage.'**
+  /// **'Your data exists only on this phone. A backup is a file, protected by a password if you like, that you keep somewhere safe, for example on a computer or in your own cloud storage.'**
   String get backupExplanation;
 
   /// No description provided for @saveBackupButton.
@@ -148,6 +148,18 @@ abstract class DataPortabilityLocalizations {
   /// In en, this message translates to:
   /// **'Protect your backup'**
   String get passwordDialogTitle;
+
+  /// No description provided for @protectWithPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect with a password'**
+  String get protectWithPasswordLabel;
+
+  /// No description provided for @unprotectedBackupWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone who gets this file can read your data.'**
+  String get unprotectedBackupWarning;
 
   /// No description provided for @passwordDialogMessage.
   ///
