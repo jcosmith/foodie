@@ -69,6 +69,29 @@ void main() {
     });
   });
 
+  group('receipt pages', () {
+    test('are upright, grey, at most 2400 pixels long and without EXIF', () async {
+      final result = await const ImageProcessingService().processDocumentPage(
+        _cameraPhoto(width: 3600, height: 1200),
+      );
+
+      final pageBytes = result.valueOrNull!;
+      expect(_containsExifSegment(pageBytes), isFalse);
+      final page = image_codec.decodeJpg(pageBytes)!;
+      expect((page.width, page.height), (800, 2400), reason: 'rotated upright, then shrunk');
+      final pixel = page.getPixel(400, 1200);
+      expect((pixel.r - pixel.g).abs(), lessThan(3));
+      expect((pixel.g - pixel.b).abs(), lessThan(3));
+    });
+
+    test('refuse files that are no picture', () async {
+      final result = await const ImageProcessingService().processDocumentPage(
+        Uint8List.fromList([1, 2, 3]),
+      );
+      expect(result.failureOrNull, isA<UnreadableImage>());
+    });
+  });
+
   group('product icons', () {
     test('scale a wide photo into a transparent 192-pixel square PNG', () async {
       final result = await const ImageProcessingService().processIcon(
@@ -206,6 +229,27 @@ void main() {
       expect(deletedFileCount, 3);
       expect(await store.listFileNames(), keptReference.allFileNames);
       expect((await store.listFileNames()).intersection(orphanReference.allFileNames), isEmpty);
+    });
+
+    test('a store in another folder never sees or sweeps the pictures', () async {
+      final picture = ImageProcessingService.processPictureSynchronously(
+        _cameraPhoto(width: 40, height: 40),
+      )!;
+      final itemPicture = await store.storePicture(picture);
+      final receipts = EncryptedDirectoryMediaFileStore(
+        keyStore: keyStore,
+        privateDirectoryProvider: () async => privateDirectory,
+        folderName: EncryptedDirectoryMediaFileStore.receiptFolderName,
+      );
+      final receiptPage = createMediaFileName();
+      await receipts.writeFile(receiptPage, Uint8List.fromList([7]));
+
+      await store.sweepOrphanFiles(itemPicture.allFileNames);
+
+      expect(await receipts.listFileNames(), {receiptPage});
+      expect(await store.listFileNames(), itemPicture.allFileNames);
+      expect(await receipts.readFile(receiptPage), [7]);
+      expect(File('${privateDirectory.path}/receipts/$receiptPage').existsSync(), isTrue);
     });
 
     test('refuses names that could point outside its folder', () async {

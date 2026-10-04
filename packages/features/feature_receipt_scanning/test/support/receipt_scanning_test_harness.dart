@@ -4,6 +4,8 @@ import 'package:core_events/core_events.dart';
 import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
+import 'package:core_media_storage/core_media_storage.dart';
+import 'package:core_media_storage/testing.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
@@ -51,6 +53,30 @@ RecognizedReceiptPage receiptPage(List<List<String>> rows) => RecognizedReceiptP
   ],
 );
 
+/// Stands in for the camera: every photo is a small JPEG, and [queuedPages]
+/// says what recognition will read on the next ones.
+final class FakeReceiptCamera implements ReceiptPhotoSource, ReceiptTextRecognizer {
+  final List<RecognizedReceiptPage> queuedPages = [];
+  final List<String> discardedPaths = [];
+  var _photoCount = 0;
+
+  @override
+  Future<ReceiptPhoto?> takePhoto() async {
+    _photoCount++;
+    return ReceiptPhoto(path: 'camera/$_photoCount.jpg', bytes: createTestPhotoBytes());
+  }
+
+  @override
+  Future<ReceiptPhoto?> pickFromGallery() => takePhoto();
+
+  @override
+  Future<void> discard(ReceiptPhoto photo) async => discardedPaths.add(photo.path);
+
+  @override
+  Future<List<RecognizedTextLine>> recognize(ReceiptPhoto photo) async =>
+      queuedPages.isEmpty ? const [] : queuedPages.removeAt(0).lines;
+}
+
 /// The catalog, a freezer with three drawers, the inventory and receipt
 /// scanning on an in-memory database. 3 October 2026, 09:00 UTC.
 final class ReceiptScanningTestHarness {
@@ -68,6 +94,7 @@ final class ReceiptScanningTestHarness {
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
         localLoggerProvider.overrideWithValue(RecordingLogger()),
+        receiptMediaFileStoreProvider.overrideWithValue(receiptImages),
         registeredFeatureModulesProvider.overrideWithValue(modules),
         enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(modules)),
         for (final module in modules) ...module.buildProviderOverrides(dependencies),
@@ -77,17 +104,25 @@ final class ReceiptScanningTestHarness {
 
   final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 3, 9));
   final ApplicationDatabase database = createInMemoryApplicationDatabase();
+  final FakeReceiptCamera camera = FakeReceiptCamera();
+  final InMemoryMediaFileStore receiptImages = InMemoryMediaFileStore();
   late final ProviderContainer container;
+  late final ReceiptScanningFeatureModule receiptModule = ReceiptScanningFeatureModule(
+    photoSourceOverride: camera,
+    textRecognizerOverride: camera,
+  );
 
-  List<FeatureModule> get modules => const [
-    StorageLayoutFeatureModule(),
-    ProductCatalogFeatureModule(),
-    InventoryFeatureModule(),
-    FreezerFeatureModule(),
-    ReceiptScanningFeatureModule(),
+  List<FeatureModule> get modules => [
+    const StorageLayoutFeatureModule(),
+    const ProductCatalogFeatureModule(),
+    const InventoryFeatureModule(),
+    const FreezerFeatureModule(),
+    receiptModule,
   ];
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
+
+  ModuleInitializationContext get initializationContext => _HarnessInitializationContext(this);
 
   /// Product names in English, as the review screen would pass them.
   ProductDisplayNameResolver get names => ProductDisplayNameResolver(

@@ -10,7 +10,10 @@ environment:
 
 dependencies:
   core_database: any
+  core_design_system: any
   core_foundation: any
+  core_localization: any
+  core_media_storage: any
   core_module_contract: any
   feature_inventory: any
   feature_product_catalog: any
@@ -18,10 +21,20 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.4.0
+  go_router: ^18.0.0
+  google_mlkit_text_recognition: ^0.17.1
+  image_picker: ^1.2.3
+  intl: ^0.20.2
   meta: ^1.16.0
 
 dev_dependencies:
   core_events: any
   feature_freezer: any
+  flutter_localizations:
+    sdk: flutter
   flutter_test:
     sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true

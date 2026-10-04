@@ -34,6 +34,12 @@
 #   uses Apple's Vision framework. Its web variant, which loads a decoder
 #   script from a CDN, is never used on phones. The release manifest
 #   removes INTERNET and ACCESS_NETWORK_STATE in case ML Kit declares them.
+# - google_mlkit_text_recognition and google_mlkit_commons: receipt text
+#   recognition (decision D16), only in feature_receipt_scanning. Android
+#   ships the bundled Latin model (com.google.mlkit:text-recognition); the
+#   other scripts are compile-only and never packaged, and nothing is
+#   downloaded. iOS runs ML Kit's on-device model. Same manifest rule as
+#   mobile_scanner. Every other google_mlkit package stays forbidden.
 android_file_picker
 archive
 args
@@ -86,6 +92,8 @@ flutter_timezone
 flutter_web_plugins
 glob
 go_router
+google_mlkit_commons
+google_mlkit_text_recognition
 hooks
 http
 http_parser
