@@ -1,4 +1,7 @@
 import 'package:core_design_system/testing.dart';
+import 'package:core_foundation/core_foundation.dart';
+import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_inventory/src/presentation/inventory_overview_screen.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
@@ -8,6 +11,47 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/inventory_test_harness.dart';
+
+String _shelfName(BuildContext context, int number) => 'Shelf $number';
+
+/// A pantry-like domain, so the freezer tab has something to leave out.
+final class _ShelvesModule extends FeatureModuleBase {
+  const _ShelvesModule();
+
+  static const StorageTemplate cupboard = StorageTemplate(
+    identifier: 'shelves.cupboard',
+    storageKind: StorageKind('testCupboard'),
+    domainIdentifier: StorageDomainIdentifier.pantry,
+    compartmentCount: 2,
+    sortOrder: 10,
+  );
+
+  @override
+  String get moduleIdentifier => 'shelves';
+
+  @override
+  List<StorageKindContribution> get storageKinds => [
+    StorageKindContribution(
+      storageName: 'testCupboard',
+      domainIdentifier: StorageDomainIdentifier.pantry,
+      sortOrder: 300,
+      iconEmoji: '🗄️',
+      placeNameBuilder: (context) => 'Cupboard',
+      kindDescriptionBuilder: (context) => 'cupboard',
+      compartmentNameBuilder: _shelfName,
+      compartmentCountBuilder: (context, count) => '$count shelves',
+      addCompartmentLabelBuilder: (context) => 'Add shelf',
+      templates: [
+        StorageTemplateContribution(
+          identifier: cupboard.identifier,
+          sortOrder: cupboard.sortOrder,
+          compartmentCount: cupboard.compartmentCount,
+          labelBuilder: (context) => 'Cupboard',
+        ),
+      ],
+    ),
+  ];
+}
 
 void main() {
   late InventoryTestHarness harness;
@@ -33,12 +77,62 @@ void main() {
             ...const ProductCatalogFeatureModule().localizationDelegates,
             ...const StorageLayoutFeatureModule().localizationDelegates,
           ],
-          home: const InventoryOverviewScreen(),
+          home: const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.freezer),
         ),
       ),
     );
     await _settle(tester);
   }
+
+  testWidgets('a domain tab shows only the places and items of its domain', (tester) async {
+    final twoDomains = InventoryTestHarness(
+      registeredModules: const [FreezerFeatureModule(), _ShelvesModule()],
+    );
+    addTearDown(twoDomains.dispose);
+    await tester.runAsync(() async {
+      final drawers = await twoDomains.setUpCatalogAndStoragePlace();
+      final shelves = await twoDomains.addStoragePlace(_ShelvesModule.cupboard);
+      await twoDomains.addBatch(
+        product: await twoDomains.seededProduct('mincedMeat'),
+        compartment: drawers.first,
+        amountInBaseUnits: 500,
+      );
+      await twoDomains.addBatch(
+        product: await twoDomains.seededProduct('gardenPeas'),
+        compartment: shelves.last,
+        amountInBaseUnits: 750,
+      );
+    });
+    Future<void> showDomain(StorageDomainIdentifier domainIdentifier) async {
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: twoDomains.container,
+          child: buildLocalizedTestApplication(
+            featureLocalizationDelegates: [
+              ...const InventoryFeatureModule().localizationDelegates,
+              ...const ProductCatalogFeatureModule().localizationDelegates,
+              ...const StorageLayoutFeatureModule().localizationDelegates,
+            ],
+            home: InventoryOverviewScreen(
+              key: ValueKey(domainIdentifier),
+              domainIdentifier: domainIdentifier,
+            ),
+          ),
+        ),
+      );
+      await _settle(tester);
+    }
+
+    await showDomain(StorageDomainIdentifier.freezer);
+    expect(find.text('Minced meat'), findsOneWidget);
+    expect(find.text('Garden peas'), findsNothing);
+    expect(find.text('1 item in 3 drawers'), findsOneWidget);
+
+    await showDomain(StorageDomainIdentifier.pantry);
+    expect(find.text('Garden peas'), findsOneWidget);
+    expect(find.text('Minced meat'), findsNothing);
+    expect(find.text('Shelf 2'), findsOneWidget);
+  });
 
   testWidgets('lists the batch under its drawer', (tester) async {
     await showOverviewWithMincedMeat(tester);
@@ -86,7 +180,7 @@ void main() {
             ...const ProductCatalogFeatureModule().localizationDelegates,
             ...const StorageLayoutFeatureModule().localizationDelegates,
           ],
-          home: const InventoryOverviewScreen(),
+          home: const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.freezer),
         ),
       ),
     );
@@ -121,7 +215,7 @@ void main() {
             ...const ProductCatalogFeatureModule().localizationDelegates,
             ...const StorageLayoutFeatureModule().localizationDelegates,
           ],
-          home: const InventoryOverviewScreen(),
+          home: const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.freezer),
         ),
       ),
     );
@@ -162,7 +256,7 @@ void main() {
               ...const ProductCatalogFeatureModule().localizationDelegates,
               ...const StorageLayoutFeatureModule().localizationDelegates,
             ],
-            home: const InventoryOverviewScreen(),
+            home: const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.freezer),
           ),
         ),
       );

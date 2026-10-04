@@ -9,6 +9,7 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'support/statistics_test_harness.dart';
 
@@ -167,7 +168,9 @@ void main() {
   });
 
   test('the module is wired into the inventory it reads', () {
-    expect(const StatisticsFeatureModule().navigationDestination.initialLocation, '/statistics');
+    final entry = const StatisticsFeatureModule().moreEntries.single;
+    expect(entry.location, '/statistics');
+    expect(entry.routes.whereType<GoRoute>().single.path, '/statistics');
     expect(DiscardReason.values, hasLength(StatisticsDiscardReason.values.length - 1));
   });
 }

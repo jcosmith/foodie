@@ -5,6 +5,7 @@ import 'package:feature_freezer/feature_freezer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 const _module = FreezerFeatureModule();
 
@@ -40,6 +41,14 @@ void main() {
     expect(domain.sortOrder, 10);
     expect(domain.iconEmoji, '❄️');
     expect(domain.countsDiscardsAsWaste, isTrue);
+  });
+
+  test('the freezer is a tab of its own, with a colour icon', () {
+    final destination = _module.navigationDestination;
+    expect(destination.iconEmoji, '❄️');
+    expect(destination.sortOrder, _module.storageDomain.sortOrder);
+    expect(destination.initialLocation, ShellRoutePaths.domainTab(StorageDomainIdentifier.freezer));
+    expect(destination.routes.whereType<GoRoute>().single.path, '/freezer');
   });
 
   test('brings the upright, chest and fridge freezer kinds with their templates', () {

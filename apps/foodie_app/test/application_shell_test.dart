@@ -35,6 +35,14 @@ Future<void> _startApplication(
   await tester.pumpAndSettle();
 }
 
+/// Opens Options from the More tab.
+Future<void> _openOptions(WidgetTester tester) async {
+  await tester.tap(find.text('More'));
+  await _settle(tester);
+  await tester.tap(find.text('Options'));
+  await _settle(tester);
+}
+
 Future<void> _settle(WidgetTester tester) async {
   await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
   await tester.pumpAndSettle();
@@ -47,15 +55,21 @@ Future<void> _stopApplication(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('shows the five tabs in English', (tester) async {
+  testWidgets('shows Home, the domain tabs, Lists and More in English', (tester) async {
     tester.platformDispatcher.localesTestValue = const [Locale('en', 'US')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
 
     await _startApplication(tester);
 
-    for (final label in ['Home', 'Freezer', 'List', 'Insights', 'Config']) {
-      expect(find.text(label), findsOneWidget);
-    }
+    expect(
+      [
+        for (final destination in tester.widgetList<NavigationDestination>(
+          find.byType(NavigationDestination),
+        ))
+          destination.label,
+      ],
+      ['Home', 'Freezer', 'Lists', 'More'],
+    );
     expect(find.text('Good morning'), findsOneWidget);
     expect(find.text('Eat soon'), findsOneWidget);
     expect(find.text('Nothing urgent. Well done!'), findsOneWidget);
@@ -69,7 +83,7 @@ void main() {
 
     await _startApplication(tester, now: DateTime(2026, 10, 2, 20));
 
-    for (final label in ['Start', 'Gefrierfach', 'Liste', 'Auswertung', 'Konfig.']) {
+    for (final label in ['Start', 'Tiefkühler', 'Listen', 'Mehr']) {
       expect(find.text(label), findsOneWidget);
     }
     expect(find.text('Guten Abend'), findsOneWidget);
@@ -93,13 +107,18 @@ void main() {
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     await _startApplication(tester);
 
-    await tester.tap(find.text('List'));
+    await tester.tap(find.text('Lists'));
     await _settle(tester);
+    expect(find.text('Shopping list'), findsOneWidget);
     expect(find.text('Your shopping list is empty'), findsOneWidget);
 
-    await tester.tap(find.text('Insights'));
+    await tester.tap(find.text('More'));
+    await _settle(tester);
+    expect(find.text('Options'), findsOneWidget);
+    await tester.tap(find.text('Statistics'));
     await _settle(tester);
     expect(find.text('No activity yet'), findsOneWidget);
+    expect(find.text('More'), findsOneWidget, reason: 'Statistics opens inside the More tab');
 
     await _stopApplication(tester);
   });
@@ -114,8 +133,9 @@ void main() {
     await _settle(tester);
     expect(find.text('Set up your freezer first'), findsOneWidget);
 
-    await tester.tap(find.text('Config'));
-    await _settle(tester);
+    await _openOptions(tester);
+    expect(find.text('Tabs'), findsOneWidget);
+    expect(find.text('At least one tab stays on.'), findsOneWidget);
     expect(find.text('Freezer layout'), findsOneWidget);
     expect(find.text('Products'), findsOneWidget);
     expect(find.text('Language'), findsOneWidget);
@@ -146,20 +166,19 @@ void main() {
     await _settle(tester);
 
     expect(find.text('Guten Morgen'), findsOneWidget);
-    await tester.tap(find.text('Gefrierfach'));
+    await tester.tap(find.text('Tiefkühler'));
     await _settle(tester);
     expect(find.text('Dein Gefrierschrank ist leer'), findsOneWidget);
 
     await _stopApplication(tester);
   });
 
-  testWidgets('item pictures can be switched off in Config', (tester) async {
+  testWidgets('item pictures can be switched off in Options', (tester) async {
     tester.platformDispatcher.localesTestValue = const [Locale('en')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     await _startApplication(tester);
 
-    await tester.tap(find.text('Config'));
-    await _settle(tester);
+    await _openOptions(tester);
     final configList = find
         .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
         .first;
@@ -178,14 +197,13 @@ void main() {
     await _stopApplication(tester);
   });
 
-  testWidgets('barcode scanning is off until switched on in Config', (tester) async {
+  testWidgets('barcode scanning is off until switched on in Options', (tester) async {
     tester.platformDispatcher.localesTestValue = const [Locale('en')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     await _startApplication(tester);
     expect(find.text('Add to freezer'), findsOneWidget);
 
-    await tester.tap(find.text('Config'));
-    await _settle(tester);
+    await _openOptions(tester);
     final configList = find
         .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
         .first;
@@ -211,18 +229,24 @@ void main() {
     await _stopApplication(tester);
   });
 
-  testWidgets('switches language and theme in Config, in sync with the system', (tester) async {
+  testWidgets('switches language and theme in Options, in sync with the system', (tester) async {
     tester.platformDispatcher.localesTestValue = const [Locale('en')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     final platformServices = InMemoryPlatformServices(perAppLanguageCode: '');
     await _startApplication(tester, platformServices: platformServices);
 
-    await tester.tap(find.text('Config'));
-    await _settle(tester);
+    await _openOptions(tester);
+    await tester.scrollUntilVisible(
+      find.text('Deutsch'),
+      200,
+      scrollable: find
+          .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
+          .first,
+    );
     await tester.tap(find.text('Deutsch'));
     await _settle(tester);
 
-    expect(find.text('Konfiguration'), findsOneWidget);
+    expect(find.text('Optionen'), findsOneWidget);
     expect(platformServices.perAppLanguageCode, 'de');
 
     await tester.scrollUntilVisible(
@@ -234,7 +258,7 @@ void main() {
     );
     await tester.tap(find.text('Dunkel'));
     await _settle(tester);
-    expect(Theme.of(tester.element(find.text('Konfiguration'))).brightness, Brightness.dark);
+    expect(Theme.of(tester.element(find.text('Optionen'))).brightness, Brightness.dark);
 
     await _stopApplication(tester);
   });

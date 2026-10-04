@@ -31,7 +31,9 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
 /// The catalog, the layout and the inventory on an in-memory database, wired
 /// as the app wires them.
 final class InventoryTestHarness {
-  InventoryTestHarness() : database = createInMemoryApplicationDatabase(clock: clock) {
+  /// Storage kinds and catalogs come from [registeredModules].
+  InventoryTestHarness({this.registeredModules = const [FreezerFeatureModule()]})
+    : database = createInMemoryApplicationDatabase(clock: clock) {
     final eventBus = InProcessDomainEventBus(logger: RecordingLogger());
     eventBus.subscribe<DomainEvent>(publishedEvents.add);
     final dependencies = ModuleDependencies(
@@ -46,13 +48,14 @@ final class InventoryTestHarness {
   static final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 2, 12));
   static final CalendarDate today = CalendarDate(2026, 10, 2);
 
+  final List<FeatureModule> registeredModules;
   final ApplicationDatabase database;
   final List<DomainEvent> publishedEvents = [];
   late final ProviderContainer container;
 
   List<Override> buildOverrides(ModuleDependencies dependencies) => [
     applicationDatabaseProvider.overrideWithValue(database),
-    registeredFeatureModulesProvider.overrideWithValue(const [FreezerFeatureModule()]),
+    registeredFeatureModulesProvider.overrideWithValue(registeredModules),
     clockProvider.overrideWithValue(dependencies.clock),
     identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
     domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -75,6 +78,20 @@ final class InventoryTestHarness {
       defaultNames: const _EnglishLayoutDefaultNames(),
     );
     return (await read(storageLayoutQueryServiceProvider).readStorageLayout()).activeCompartments;
+  }
+
+  /// Adds a storage place from any registered template and returns its
+  /// compartments.
+  Future<List<Compartment>> addStoragePlace(StorageTemplate template) async {
+    final storagePlaceIdentifier =
+        (await read(createStoragePlaceFromTemplateUseCaseProvider).execute(
+          template: template,
+          enteredName: template.identifier,
+          defaultNames: const _EnglishLayoutDefaultNames(),
+        )).valueOrNull!;
+    return (await read(
+      storageLayoutQueryServiceProvider,
+    ).readStorageLayout()).storagePlaceLayoutOf(storagePlaceIdentifier)!.compartments;
   }
 
   Future<Product> seededProduct(String catalogKey) async {

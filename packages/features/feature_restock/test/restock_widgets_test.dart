@@ -57,11 +57,31 @@ void main() {
     expect(find.text('Leaf spinach'), findsOneWidget);
   });
 
+  testWidgets('the shopping list is a segment of the Lists tab', (tester) async {
+    final segment = const RestockFeatureModule().listsSegments.single;
+    await show(
+      tester,
+      Builder(
+        builder: (context) => Column(
+          children: [
+            Text(segment.labelBuilder(context)),
+            Text(segment.subtitleBuilder!(context)),
+            Expanded(child: segment.builder(context)),
+          ],
+        ),
+      ),
+    );
+    expect(find.text('Shopping list'), findsOneWidget);
+    expect(find.text('Running-low items are added automatically'), findsOneWidget);
+    expect(find.text('Tick what you bought'), findsOneWidget);
+    expect(find.textContaining('· Running low'), findsOneWidget);
+    expect(const RestockFeatureModule().navigationDestination, isNull);
+  });
+
   testWidgets('ticked items go into the freezer in one step', (tester) async {
     await show(tester, const ShoppingListScreen());
     expect(find.text('Running low', skipOffstage: false), findsNothing);
     expect(find.textContaining('· Running low'), findsOneWidget);
-    expect(find.text('Tick what you bought'), findsOneWidget);
 
     await tester.tap(find.byType(Checkbox));
     await _settle(tester);
