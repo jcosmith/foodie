@@ -39,6 +39,7 @@ final class StatisticsMovementFact {
     required this.movementCount,
     required this.storedDays,
     this.discardReason = StatisticsDiscardReason.notGiven,
+    this.domainIdentifier,
   });
 
   final CalendarDate day;
@@ -53,7 +54,27 @@ final class StatisticsMovementFact {
   /// Number of movements; each one is one item taken out, put in or moved.
   final int movementCount;
 
-  /// Days between freezing and this movement.
+  /// Days between putting the item away and this movement.
   final int storedDays;
   final StatisticsDiscardReason discardReason;
+
+  /// The storage domain of [compartmentIdentifier]; `null` when no module
+  /// knows the compartment's kind any more.
+  final StorageDomainIdentifier? domainIdentifier;
+
+  /// The same fact in [domainIdentifier], which comes from the storage
+  /// layout rather than the database.
+  StatisticsMovementFact inDomain(StorageDomainIdentifier? domainIdentifier) =>
+      StatisticsMovementFact(
+        day: day,
+        activity: activity,
+        productIdentifier: productIdentifier,
+        categoryIdentifier: categoryIdentifier,
+        compartmentIdentifier: compartmentIdentifier,
+        quantity: quantity,
+        movementCount: movementCount,
+        storedDays: storedDays,
+        discardReason: discardReason,
+        domainIdentifier: domainIdentifier,
+      );
 }

@@ -48,6 +48,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
     final localizations = formatting.localizations;
     final catalog = ref.watch(productCatalogProvider).value;
     final layout = ref.watch(storageLayoutProvider).value;
+    final offeredDomains = ref.watch(offeredStatisticsDomainsProvider);
     final categoryGrouping = ref.watch(statisticsCategoryGroupingProvider).value;
     final periods = ref.watch(statisticsPeriodsProvider).value;
     final savedViews = ref.watch(savedStatisticsViewsProvider).value ?? const [];
@@ -205,6 +206,20 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
               ),
           ],
         ),
+        // With one domain there is nothing to choose.
+        if (offeredDomains.length > 1)
+          _FilterSection(
+            title: localizations.filterStorage,
+            choices: [
+              for (final domain in offeredDomains)
+                FilterChip(
+                  label: Text('${domain.iconEmoji} ${domain.labelBuilder(context)}'),
+                  selected: filter.domainIdentifiers.contains(domain.identifier),
+                  onSelected: (_) =>
+                      change((current) => current.withDomainToggled(domain.identifier)),
+                ),
+            ],
+          ),
         if (catalog != null)
           _FilterSection(
             title: localizations.filterCategories,

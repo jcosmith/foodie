@@ -479,6 +479,12 @@ abstract class StatisticsLocalizations {
   /// **'Compartments'**
   String get filterDrawers;
 
+  /// No description provided for @filterStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get filterStorage;
+
   /// No description provided for @filterProducts.
   ///
   /// In en, this message translates to:
@@ -670,6 +676,42 @@ abstract class StatisticsLocalizations {
   /// In en, this message translates to:
   /// **'> 12 mo'**
   String get durationOverTwelveMonths;
+
+  /// No description provided for @durationUnderTwoDays.
+  ///
+  /// In en, this message translates to:
+  /// **'< 2 d'**
+  String get durationUnderTwoDays;
+
+  /// No description provided for @durationTwoToThreeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'2–3 d'**
+  String get durationTwoToThreeDays;
+
+  /// No description provided for @durationFourToSevenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'4–7 d'**
+  String get durationFourToSevenDays;
+
+  /// No description provided for @durationOneToTwoWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'1–2 wk'**
+  String get durationOneToTwoWeeks;
+
+  /// No description provided for @durationTwoToFourWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'2–4 wk'**
+  String get durationTwoToFourWeeks;
+
+  /// No description provided for @durationOverOneMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'> 1 mo'**
+  String get durationOverOneMonth;
 
   /// No description provided for @sixMonthMarker.
   ///

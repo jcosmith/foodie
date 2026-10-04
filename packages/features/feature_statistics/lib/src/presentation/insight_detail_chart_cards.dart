@@ -131,9 +131,11 @@ class StorageDurationChartCard extends StatelessWidget {
     final formatting = StatisticsFormatting.of(context);
     final localizations = formatting.localizations;
     final counts = analysis.eatenItemsByStorageDuration;
-    final labels = formatting.storageDurationLabels;
-    // Columns from six months on are drawn lighter, past the marker.
-    final sixMonthColumn = StatisticsAnalysis.storageDurationLimitsInDays.indexOf(182) + 1;
+    final labels = formatting.storageDurationLabels(analysis.storageDurationScale);
+    // Columns from six months on are drawn lighter, past the marker; short
+    // storage times have no such line.
+    final hasSixMonthMarker = analysis.storageDurationScale == StatisticsDurationScale.months;
+    final sixMonthColumn = StatisticsAnalysis.monthStorageDurationLimitsInDays.indexOf(182) + 1;
     return ChartCard(
       title: localizations.durationTitle,
       subtitle: localizations.durationSubtitle,
@@ -142,11 +144,16 @@ class StorageDurationChartCard extends StatelessWidget {
         labels: labels,
         values: [for (final count in counts) count.toDouble()],
         formatValue: (value) => '${value.round()}',
-        fadedIndexes: {for (var index = sixMonthColumn; index < counts.length; index++) index},
-        marker: ColumnBarMarker(
-          position: sixMonthColumn.toDouble(),
-          label: localizations.sixMonthMarker,
-        ),
+        fadedIndexes: {
+          if (hasSixMonthMarker)
+            for (var index = sixMonthColumn; index < counts.length; index++) index,
+        },
+        marker: hasSixMonthMarker
+            ? ColumnBarMarker(
+                position: sixMonthColumn.toDouble(),
+                label: localizations.sixMonthMarker,
+              )
+            : null,
       ),
       table: ChartTable(
         columnHeaders: const ['', '#'],
@@ -158,8 +165,9 @@ class StorageDurationChartCard extends StatelessWidget {
   }
 }
 
-/// "Freezer map": what is in each compartment now, coloured by age; tapping a
-/// compartment filters it. Follows the category and product filters, not the period.
+/// "Storage map": what is in each compartment of every storage place now,
+/// coloured by age; tapping a compartment filters it. Follows the domain,
+/// category and product filters, not the period.
 class StorageMapChartCard extends ConsumerWidget {
   const StorageMapChartCard({required this.filter, super.key});
 
@@ -172,7 +180,14 @@ class StorageMapChartCard extends ConsumerWidget {
     final localizations = formatting.localizations;
     if (overview == null) return const SizedBox.shrink();
     final compartmentNames = context.compartmentDisplayNameResolver(overview.layout);
-    final compartments = overview.layout.activeCompartments;
+    final compartments = [
+      for (final compartment in overview.layout.activeCompartments)
+        if (filter.domainIdentifiers.isEmpty ||
+            filter.domainIdentifiers.contains(
+              overview.layout.domainOfCompartment(compartment.identifier),
+            ))
+          compartment,
+    ];
     final itemsByCompartment = {
       for (final compartment in compartments)
         compartment.identifier: [

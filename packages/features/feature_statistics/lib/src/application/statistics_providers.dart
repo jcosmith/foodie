@@ -3,6 +3,7 @@ import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:core_preferences/core_preferences.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
+import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/saved_statistics_views.dart';
@@ -75,23 +76,49 @@ final statisticsCategoryGroupingProvider = FutureProvider<StatisticsCategoryGrou
   return StatisticsCategoryGrouping.fromCategories(catalog.categories);
 });
 
+/// The domains the filter offers: every domain switched on, or all of them
+/// while the switches load.
+final offeredStatisticsDomainsProvider = Provider<List<StorageDomainContribution>>((ref) {
+  final paused = ref.watch(pausedStorageDomainIdentifiersProvider);
+  return [
+    for (final domain in ref.watch(registeredStorageDomainsProvider))
+      if (!paused.contains(domain.identifier)) domain,
+  ];
+});
+
+/// Movement facts of one period with the storage domain of each
+/// compartment, which the layout knows and the database does not.
+final statisticsFactsWithDomainsProvider =
+    FutureProvider.family<List<StatisticsMovementFact>, StatisticsDateRange>((ref, period) async {
+      final facts = await ref.watch(statisticsFactsProvider(period).future);
+      final layout = await ref.watch(storageLayoutProvider.future);
+      return [
+        for (final fact in facts)
+          fact.inDomain(layout.domainOfCompartment(fact.compartmentIdentifier)),
+      ];
+    });
+
 /// Everything the Insights charts show. While a new period loads, the
 /// previous analysis stays visible (Riverpod keeps the last value).
 final statisticsAnalysisProvider = FutureProvider<StatisticsAnalysis>((ref) async {
   final filter = ref.watch(statisticsFilterProvider);
   final periods = await ref.watch(statisticsPeriodsProvider.future);
   final categoryGrouping = await ref.watch(statisticsCategoryGroupingProvider.future);
-  final periodFacts = await ref.watch(statisticsFactsProvider(periods.period).future);
+  final periodFacts = await ref.watch(statisticsFactsWithDomainsProvider(periods.period).future);
   final comparisonPeriod = periods.comparisonPeriod;
   final comparisonFacts = comparisonPeriod == null
       ? const <StatisticsMovementFact>[]
-      : await ref.watch(statisticsFactsProvider(comparisonPeriod).future);
+      : await ref.watch(statisticsFactsWithDomainsProvider(comparisonPeriod).future);
   return StatisticsAnalysis(
     filter: filter,
     periods: periods,
     periodFacts: periodFacts,
     comparisonFacts: comparisonFacts,
     categoryGrouping: categoryGrouping,
+    domainsWithoutWaste: {
+      for (final domain in ref.watch(registeredStorageDomainsProvider))
+        if (!domain.countsDiscardsAsWaste) domain.identifier,
+    },
   );
 });
 

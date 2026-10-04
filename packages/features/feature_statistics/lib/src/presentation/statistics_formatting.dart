@@ -98,14 +98,24 @@ final class StatisticsFormatting {
   };
 
   /// Labels of [StatisticsAnalysis.eatenItemsByStorageDuration]'s columns.
-  List<String> get storageDurationLabels => [
-    localizations.durationUnderOneMonth,
-    localizations.durationOneToThreeMonths,
-    localizations.durationThreeToSixMonths,
-    localizations.durationSixToNineMonths,
-    localizations.durationNineToTwelveMonths,
-    localizations.durationOverTwelveMonths,
-  ];
+  List<String> storageDurationLabels(StatisticsDurationScale scale) => switch (scale) {
+    StatisticsDurationScale.days => [
+      localizations.durationUnderTwoDays,
+      localizations.durationTwoToThreeDays,
+      localizations.durationFourToSevenDays,
+      localizations.durationOneToTwoWeeks,
+      localizations.durationTwoToFourWeeks,
+      localizations.durationOverOneMonth,
+    ],
+    StatisticsDurationScale.months => [
+      localizations.durationUnderOneMonth,
+      localizations.durationOneToThreeMonths,
+      localizations.durationThreeToSixMonths,
+      localizations.durationSixToNineMonths,
+      localizations.durationNineToTwelveMonths,
+      localizations.durationOverTwelveMonths,
+    ],
+  };
 
   /// "M" for Monday to "S" for Sunday.
   String weekdayNarrow(int weekday) =>

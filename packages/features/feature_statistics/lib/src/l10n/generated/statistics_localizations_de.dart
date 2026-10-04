@@ -230,6 +230,9 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get filterDrawers => 'Fächer';
 
   @override
+  String get filterStorage => 'Lagerort';
+
+  @override
   String get filterProducts => 'Produkte';
 
   @override
@@ -338,6 +341,24 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
 
   @override
   String get durationOverTwelveMonths => '> 12 Mon.';
+
+  @override
+  String get durationUnderTwoDays => '< 2 T.';
+
+  @override
+  String get durationTwoToThreeDays => '2–3 T.';
+
+  @override
+  String get durationFourToSevenDays => '4–7 T.';
+
+  @override
+  String get durationOneToTwoWeeks => '1–2 Wo.';
+
+  @override
+  String get durationTwoToFourWeeks => '2–4 Wo.';
+
+  @override
+  String get durationOverOneMonth => '> 1 Mon.';
 
   @override
   String get sixMonthMarker => '6 Mon.';

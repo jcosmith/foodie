@@ -115,7 +115,8 @@ void main() {
     expect(find.widgetWithText(InputChip, 'Sat'), findsOneWidget);
     // The weekday chart keeps showing every day, so it can be changed again.
     expect(find.bySemanticsLabel('Sun: 0.2 kg'), findsOneWidget);
-    expect(find.bySemanticsLabel('1–3 mo: 0'), findsOneWidget);
+    // Only peas kept for 20 days are left, so storage time counts in weeks.
+    expect(find.bySemanticsLabel('2–4 wk: 1'), findsOneWidget);
 
     await tester.tap(find.bySemanticsLabel(RegExp('^Drawer 2')));
     await _settle(tester);

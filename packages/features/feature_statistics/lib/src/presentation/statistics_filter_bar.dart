@@ -1,4 +1,5 @@
 import 'package:core_design_system/core_design_system.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,15 @@ class StatisticsFilterBar extends ConsumerWidget {
     final productNames = context.productDisplayNameResolver;
     final compartmentNames = layout == null ? null : context.compartmentDisplayNameResolver(layout);
 
+    final registeredDomains = ref.watch(registeredStorageDomainsProvider);
     final activeChips = <Widget>[
+      for (final domain in registeredDomains)
+        if (filter.domainIdentifiers.contains(domain.identifier))
+          _RemovableChip(
+            label: '${domain.iconEmoji} ${domain.labelBuilder(context)}',
+            onDeleted: () =>
+                filterNotifier.change((current) => current.withDomainToggled(domain.identifier)),
+          ),
       if (catalog != null)
         for (final categoryIdentifier in filter.categoryIdentifiers)
           if (catalog.categoryOf(categoryIdentifier) case final category?)

@@ -334,8 +334,12 @@ void main() {
       ];
       final filter = StatisticsFilter.initial.withDomainToggled(fridge);
 
-      expect(_analyse(facts).totalOf(StatisticsActivity.consumed).current, 500);
-      expect(_analyse(facts, filter: filter).totalOf(StatisticsActivity.consumed).current, 100);
+      expect(
+        _analyse(facts).totalOf(StatisticsActivity.consumed).current,
+        0.5,
+        reason: 'kilograms',
+      );
+      expect(_analyse(facts, filter: filter).totalOf(StatisticsActivity.consumed).current, 0.1);
       expect(filter.activeFilterCount, 1);
       expect(filter.withDomainToggled(fridge), StatisticsFilter.initial);
       expect(
@@ -359,7 +363,7 @@ void main() {
       final analysis = _analyse(facts, domainsWithoutWaste: {household});
 
       expect(analysis.wasteShare.current, 0.25);
-      expect(analysis.totalOf(StatisticsActivity.discarded).current, 100);
+      expect(analysis.totalOf(StatisticsActivity.discarded).current, 0.1);
       expect(
         analysis.discardedItemsByReason
             .where((entry) => entry.$1 == StatisticsDiscardReason.expired)
