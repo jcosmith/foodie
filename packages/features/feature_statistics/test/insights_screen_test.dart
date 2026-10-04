@@ -1,5 +1,6 @@
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_design_system/testing.dart';
+import 'package:core_foundation/core_foundation.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
@@ -31,6 +32,31 @@ final class _ChartContributingModule extends FeatureModuleBase {
       ),
     ),
   ];
+}
+
+String _pantryLabel(BuildContext context) => 'Pantry';
+
+/// A second storage domain, so the filter sheet offers a choice.
+final class _PantryModule extends FeatureModuleBase {
+  const _PantryModule();
+
+  @override
+  String get moduleIdentifier => 'pantry';
+
+  @override
+  ModuleAvailability get availability =>
+      const ModuleAvailability.optional(isEnabledByDefault: true);
+
+  @override
+  StorageDomainContribution get storageDomain => const StorageDomainContribution(
+    identifier: StorageDomainIdentifier.pantry,
+    sortOrder: 30,
+    iconEmoji: '🥫',
+    labelBuilder: _pantryLabel,
+    descriptionBuilder: _pantryLabel,
+    storedOnLabelBuilder: _pantryLabel,
+    countsDiscardsAsWaste: true,
+  );
 }
 
 Future<void> _pumpInsights(
@@ -172,5 +198,24 @@ void main() {
     expect(entry.location, '/statistics');
     expect(entry.routes.whereType<GoRoute>().single.path, '/statistics');
     expect(DiscardReason.values, hasLength(StatisticsDiscardReason.values.length - 1));
+  });
+
+  testWidgets('the filter sheet narrows the charts to one storage domain', (tester) async {
+    final twoDomains = StatisticsTestHarness(registeredModules: [const _PantryModule()]);
+    addTearDown(twoDomains.dispose);
+    await tester.runAsync(() => _recordHistory(twoDomains));
+    await _pumpInsights(tester, twoDomains);
+
+    await tester.tap(find.text('Filters · 0'));
+    await _settle(tester);
+    expect(find.text('Storage'), findsOneWidget);
+    await tester.ensureVisible(find.widgetWithText(FilterChip, '🥫 Pantry'));
+    await tester.tap(find.widgetWithText(FilterChip, '🥫 Pantry'));
+    await _settle(tester);
+
+    expect(twoDomains.read(statisticsFilterProvider).domainIdentifiers, {
+      StorageDomainIdentifier.pantry,
+    });
+    expect(twoDomains.read(statisticsAnalysisProvider).value?.hasAnyActivity, isFalse);
   });
 }
