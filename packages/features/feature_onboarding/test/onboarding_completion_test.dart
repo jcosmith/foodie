@@ -111,6 +111,6 @@ void main() {
 
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
     expect(layout.storagePlaces, hasLength(1));
-    expect(layout.storagePlaces.single.storagePlace.storageKind, StorageKind.chest);
+    expect(layout.storagePlaces.single.storagePlace.storageKind, FreezerStorageKinds.chest);
   });
 }

@@ -110,14 +110,14 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @defaultStoragePlaceName.
   ///
   /// In en, this message translates to:
-  /// **'{storageKind, select, chest{Chest freezer} fridgeFreezerCompartment{Fridge freezer} other{Freezer}}'**
-  String defaultStoragePlaceName(String storageKind);
+  /// **'Storage place'**
+  String get defaultStoragePlaceName;
 
   /// No description provided for @defaultCompartmentName.
   ///
   /// In en, this message translates to:
-  /// **'{storageKind, select, chest{Basket {number}} fridgeFreezerCompartment{Compartment {number}} other{Drawer {number}}}'**
-  String defaultCompartmentName(String storageKind, int number);
+  /// **'Compartment {number}'**
+  String defaultCompartmentName(int number);
 
   /// No description provided for @removedName.
   ///
@@ -128,26 +128,14 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @storageKindDescription.
   ///
   /// In en, this message translates to:
-  /// **'{storageKind, select, chest{chest freezer} fridgeFreezerCompartment{in the fridge} other{upright}}'**
-  String storageKindDescription(String storageKind);
+  /// **'storage place'**
+  String get storageKindDescription;
 
-  /// No description provided for @drawerCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 drawer} other{{count} drawers}}'**
-  String drawerCount(int count);
-
-  /// No description provided for @basketCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 basket} other{{count} baskets}}'**
-  String basketCount(int count);
-
-  /// No description provided for @shelfCount.
+  /// No description provided for @compartmentCount.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 compartment} other{{count} compartments}}'**
-  String shelfCount(int count);
+  String compartmentCount(int count);
 
   /// No description provided for @storagePlaceSummary.
   ///
@@ -173,42 +161,6 @@ abstract class StorageLayoutLocalizations {
   /// **'Which one is closest to yours? You can change everything later.'**
   String get templatePrompt;
 
-  /// No description provided for @templateUprightWithThreeDrawers.
-  ///
-  /// In en, this message translates to:
-  /// **'Upright freezer with 3 drawers'**
-  String get templateUprightWithThreeDrawers;
-
-  /// No description provided for @templateUprightWithFiveDrawers.
-  ///
-  /// In en, this message translates to:
-  /// **'Upright freezer with 5 drawers'**
-  String get templateUprightWithFiveDrawers;
-
-  /// No description provided for @templateUprightWithSevenDrawers.
-  ///
-  /// In en, this message translates to:
-  /// **'Upright freezer with 7 drawers'**
-  String get templateUprightWithSevenDrawers;
-
-  /// No description provided for @templateChestWithBaskets.
-  ///
-  /// In en, this message translates to:
-  /// **'Chest freezer with 3 baskets'**
-  String get templateChestWithBaskets;
-
-  /// No description provided for @templateFridgeFreezerCompartment.
-  ///
-  /// In en, this message translates to:
-  /// **'Freezer compartment of a fridge'**
-  String get templateFridgeFreezerCompartment;
-
-  /// No description provided for @templateEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Start with one drawer and add the rest yourself'**
-  String get templateEmpty;
-
   /// No description provided for @storagePlaceNameLabel.
   ///
   /// In en, this message translates to:
@@ -224,8 +176,8 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @addCompartmentButton.
   ///
   /// In en, this message translates to:
-  /// **'{storageKind, select, chest{Add basket} fridgeFreezerCompartment{Add compartment} other{Add drawer}}'**
-  String addCompartmentButton(String storageKind);
+  /// **'Add compartment'**
+  String get addCompartmentButton;
 
   /// No description provided for @compartmentItemCount.
   ///

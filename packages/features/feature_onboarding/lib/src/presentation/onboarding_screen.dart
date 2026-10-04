@@ -30,10 +30,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     _OnboardingStep.privacyAndReminders,
   ];
   int _stepIndex = 0;
-  StorageTemplate _storageTemplate = StorageTemplate.uprightWithThreeDrawers;
+  StorageTemplate? _chosenTemplate;
   bool _isFinishing = false;
 
   _OnboardingStep get _step => _steps[_stepIndex];
+
+  /// The templates of the first domain that is switched on, the freezer
+  /// unless the user switched it off.
+  List<StorageTemplate> get _templates {
+    final firstDomain = ref.watch(enabledStorageDomainsProvider).firstOrNull;
+    return firstDomain == null
+        ? ref.watch(registeredStorageTemplatesProvider)
+        : ref.watch(storageTemplatesOfDomainProvider(firstDomain.identifier));
+  }
+
+  StorageTemplate? get _storageTemplate => _chosenTemplate ?? _templates.firstOrNull;
 
   Future<void> _finish({required bool requestNotificationPermission}) async {
     setState(() => _isFinishing = true);
@@ -70,8 +81,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Text(localizations.storagePlacePrompt, style: textTheme.bodyLarge),
           const SizedBox(height: FoodieSpacing.small),
           StorageTemplateChoiceList(
+            templates: _templates,
             selectedTemplate: _storageTemplate,
-            onTemplateSelected: (template) => setState(() => _storageTemplate = template),
+            onTemplateSelected: (template) => setState(() => _chosenTemplate = template),
           ),
         ],
       ),

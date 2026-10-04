@@ -124,7 +124,7 @@ final class DriftStorageLayoutRepository implements StorageLayoutRepository {
 
   static StoragePlace _storagePlaceFromRow(StoragePlaceRow row) => StoragePlace(
     identifier: StoragePlaceIdentifier(row.storagePlaceIdentifier),
-    storageKind: StorageKind.fromStorageName(row.storageKind),
+    storageKind: StorageKind(row.storageKind),
     customName: row.customName,
     sortOrder: row.sortOrder,
     isArchived: row.isArchived,

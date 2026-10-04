@@ -104,12 +104,18 @@ void main() {
       await _withContext(tester, locale, (context) {
         final catalog = _module.catalog;
         for (final category in catalog.categories) {
-          expect(catalog.categoryNameBuilder(context, category.catalogKey), isNotEmpty);
+          expect(
+            catalog.categoryNameBuilder(Localizations.localeOf(context), category.catalogKey),
+            isNotEmpty,
+          );
         }
         for (final product in catalog.products) {
-          expect(catalog.productNameBuilder(context, product.catalogKey), isNotEmpty);
+          expect(
+            catalog.productNameBuilder(Localizations.localeOf(context), product.catalogKey),
+            isNotEmpty,
+          );
         }
-        expect(catalog.productNameBuilder(context, 'unknownKey'), isNull);
+        expect(catalog.productNameBuilder(Localizations.localeOf(context), 'unknownKey'), isNull);
         for (final kind in _module.storageKinds) {
           expect(kind.placeNameBuilder(context), isNotEmpty);
           expect(kind.kindDescriptionBuilder(context), isNotEmpty);
@@ -139,7 +145,10 @@ void main() {
       );
       expect(kinds['chest']!.compartmentCountBuilder(context, 3), '3 baskets');
       expect(kinds['upright']!.addCompartmentLabelBuilder(context), 'Add drawer');
-      expect(_module.catalog.productNameBuilder(context, 'leafSpinach'), 'Leaf spinach');
+      expect(
+        _module.catalog.productNameBuilder(Localizations.localeOf(context), 'leafSpinach'),
+        'Leaf spinach',
+      );
       expect(_module.storageDomain.labelBuilder(context), 'Freezer');
       expect(_module.storageDomain.storedOnLabelBuilder(context), 'Frozen on');
     });
@@ -148,7 +157,10 @@ void main() {
       expect(upright.placeNameBuilder(context), 'Gefrierschrank');
       expect(upright.compartmentNameBuilder(context, 3), 'Schublade 3');
       expect(upright.kindDescriptionBuilder(context), 'stehend');
-      expect(_module.catalog.productNameBuilder(context, 'leafSpinach'), 'Blattspinat');
+      expect(
+        _module.catalog.productNameBuilder(Localizations.localeOf(context), 'leafSpinach'),
+        'Blattspinat',
+      );
       expect(_module.storageDomain.labelBuilder(context), 'Tiefkühler');
       expect(_module.storageDomain.storedOnLabelBuilder(context), 'Eingefroren am');
     });

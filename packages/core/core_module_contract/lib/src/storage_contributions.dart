@@ -8,8 +8,9 @@ import 'contributions.dart';
 typedef LocalizedNumberTextBuilder = String Function(BuildContext context, int number);
 
 /// Translates a seeded catalog key, or returns `null` for keys the
-/// contribution does not know.
-typedef CatalogNameBuilder = String? Function(BuildContext context, String catalogKey);
+/// contribution does not know. Takes a locale rather than a context because
+/// names are also needed where there is no widget, such as in reminders.
+typedef CatalogNameBuilder = String? Function(Locale locale, String catalogKey);
 
 /// A storage domain such as the freezer or the pantry (architecture 10.7).
 ///
@@ -58,12 +59,16 @@ final class StorageDomainContribution {
 final class StorageTemplateContribution {
   const StorageTemplateContribution({
     required this.identifier,
+    required this.sortOrder,
     required this.compartmentCount,
     required this.labelBuilder,
   });
 
   /// Stable, unique across all modules: "freezer.upright_five".
   final String identifier;
+
+  /// Order in the domain's list of templates.
+  final int sortOrder;
 
   /// At least one, because a storage place always keeps a compartment.
   final int compartmentCount;
@@ -113,7 +118,7 @@ final class StorageKindContribution {
   /// "Add basket".
   final LocalizedTextBuilder addCompartmentLabelBuilder;
 
-  /// The templates for this kind, in the order they are offered.
+  /// The templates for this kind.
   final List<StorageTemplateContribution> templates;
 }
 

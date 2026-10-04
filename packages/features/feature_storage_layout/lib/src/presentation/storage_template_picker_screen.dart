@@ -1,4 +1,5 @@
 import 'package:core_design_system/core_design_system.dart';
+import 'package:core_foundation/core_foundation.dart';
 import 'package:core_localization/core_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,9 +13,12 @@ import 'layout_localization.dart';
 import 'storage_layout_routes.dart';
 import 'storage_template_choice_list.dart';
 
-/// Adds a storage place from a template, then opens its editor.
+/// Adds a storage place to one domain from one of its templates, then opens
+/// its editor.
 class StorageTemplatePickerScreen extends ConsumerStatefulWidget {
-  const StorageTemplatePickerScreen({super.key});
+  const StorageTemplatePickerScreen({required this.domainIdentifier, super.key});
+
+  final StorageDomainIdentifier domainIdentifier;
 
   @override
   ConsumerState<StorageTemplatePickerScreen> createState() => _StorageTemplatePickerScreenState();
@@ -22,7 +26,7 @@ class StorageTemplatePickerScreen extends ConsumerStatefulWidget {
 
 class _StorageTemplatePickerScreenState extends ConsumerState<StorageTemplatePickerScreen> {
   final TextEditingController _nameController = TextEditingController();
-  StorageTemplate _selectedTemplate = StorageTemplate.uprightWithThreeDrawers;
+  StorageTemplate? _chosenTemplate;
   String? _nameError;
   bool _isSaving = false;
 
@@ -32,13 +36,13 @@ class _StorageTemplatePickerScreenState extends ConsumerState<StorageTemplatePic
     super.dispose();
   }
 
-  Future<void> _createStoragePlace() async {
+  Future<void> _createStoragePlace(StorageTemplate template) async {
     setState(() => _isSaving = true);
     final localizations = StorageLayoutLocalizations.of(context);
     final result = await ref
         .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: _selectedTemplate,
+          template: template,
           enteredName: _nameController.text,
           defaultNames: context.layoutDefaultNames,
         );
@@ -56,7 +60,11 @@ class _StorageTemplatePickerScreenState extends ConsumerState<StorageTemplatePic
   @override
   Widget build(BuildContext context) {
     final localizations = StorageLayoutLocalizations.of(context);
-    final defaultName = context.layoutDefaultNames.storagePlaceName(_selectedTemplate.storageKind);
+    final templates = ref.watch(storageTemplatesOfDomainProvider(widget.domainIdentifier));
+    final selectedTemplate = _chosenTemplate ?? templates.firstOrNull;
+    final defaultName = selectedTemplate == null
+        ? localizations.defaultStoragePlaceName
+        : context.layoutDefaultNames.storagePlaceName(selectedTemplate.storageKind);
     return Scaffold(
       appBar: AppBar(title: Text(localizations.newStoragePlaceTitle)),
       body: ListView(
@@ -65,8 +73,9 @@ class _StorageTemplatePickerScreenState extends ConsumerState<StorageTemplatePic
           Text(localizations.templatePrompt, style: Theme.of(context).textTheme.bodyLarge),
           const SizedBox(height: FoodieSpacing.small),
           StorageTemplateChoiceList(
-            selectedTemplate: _selectedTemplate,
-            onTemplateSelected: (template) => setState(() => _selectedTemplate = template),
+            templates: templates,
+            selectedTemplate: selectedTemplate,
+            onTemplateSelected: (template) => setState(() => _chosenTemplate = template),
           ),
           const SizedBox(height: FoodieSpacing.large),
           TextField(
@@ -86,7 +95,9 @@ class _StorageTemplatePickerScreenState extends ConsumerState<StorageTemplatePic
           ),
           const SizedBox(height: FoodieSpacing.large),
           FilledButton(
-            onPressed: _isSaving ? null : _createStoragePlace,
+            onPressed: _isSaving || selectedTemplate == null
+                ? null
+                : () => _createStoragePlace(selectedTemplate),
             child: Text(localizations.addStoragePlaceButton),
           ),
           TextButton(

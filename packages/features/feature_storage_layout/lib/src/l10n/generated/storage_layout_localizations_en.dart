@@ -15,23 +15,11 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   String get layoutOverviewTitle => 'Freezer layout';
 
   @override
-  String defaultStoragePlaceName(String storageKind) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'Chest freezer',
-      'fridgeFreezerCompartment': 'Fridge freezer',
-      'other': 'Freezer',
-    });
-    return '$_temp0';
-  }
+  String get defaultStoragePlaceName => 'Storage place';
 
   @override
-  String defaultCompartmentName(String storageKind, int number) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'Basket $number',
-      'fridgeFreezerCompartment': 'Compartment $number',
-      'other': 'Drawer $number',
-    });
-    return '$_temp0';
+  String defaultCompartmentName(int number) {
+    return 'Compartment $number';
   }
 
   @override
@@ -40,39 +28,10 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   }
 
   @override
-  String storageKindDescription(String storageKind) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'chest freezer',
-      'fridgeFreezerCompartment': 'in the fridge',
-      'other': 'upright',
-    });
-    return '$_temp0';
-  }
+  String get storageKindDescription => 'storage place';
 
   @override
-  String drawerCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count drawers',
-      one: '1 drawer',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String basketCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count baskets',
-      one: '1 basket',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String shelfCount(int count) {
+  String compartmentCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -97,24 +56,6 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   String get templatePrompt => 'Which one is closest to yours? You can change everything later.';
 
   @override
-  String get templateUprightWithThreeDrawers => 'Upright freezer with 3 drawers';
-
-  @override
-  String get templateUprightWithFiveDrawers => 'Upright freezer with 5 drawers';
-
-  @override
-  String get templateUprightWithSevenDrawers => 'Upright freezer with 7 drawers';
-
-  @override
-  String get templateChestWithBaskets => 'Chest freezer with 3 baskets';
-
-  @override
-  String get templateFridgeFreezerCompartment => 'Freezer compartment of a fridge';
-
-  @override
-  String get templateEmpty => 'Start with one drawer and add the rest yourself';
-
-  @override
   String get storagePlaceNameLabel => 'Name (optional)';
 
   @override
@@ -123,14 +64,7 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   }
 
   @override
-  String addCompartmentButton(String storageKind) {
-    String _temp0 = intl.Intl.selectLogic(storageKind, {
-      'chest': 'Add basket',
-      'fridgeFreezerCompartment': 'Add compartment',
-      'other': 'Add drawer',
-    });
-    return '$_temp0';
-  }
+  String get addCompartmentButton => 'Add compartment';
 
   @override
   String compartmentItemCount(int count) {

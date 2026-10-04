@@ -27,11 +27,12 @@ final storageReminderSettingsProvider = StreamProvider<StorageReminderSettings>(
 final storageReminderNotificationTextsLoaderProvider =
     Provider<Future<StorageReminderNotificationTexts> Function()>((ref) {
       final readApplicationLocale = ref.watch(applicationLocaleReaderProvider);
+      final catalogContributions = ref.watch(registeredCatalogContributionsProvider);
       return () async {
         final locale = await readApplicationLocale();
         return LocalizedStorageReminderNotificationTexts(
           lookupStorageRemindersLocalizations(locale),
-          lookupProductCatalogLocalizations(locale),
+          ContributedCatalogNames(catalogContributions, locale),
         );
       };
     });

@@ -2,20 +2,10 @@
   "@@locale": "en",
   "configSectionTitle": "Freezer layout",
   "layoutOverviewTitle": "Freezer layout",
-  "defaultStoragePlaceName": "{storageKind, select, chest{Chest freezer} fridgeFreezerCompartment{Fridge freezer} other{Freezer}}",
-  "@defaultStoragePlaceName": {
-    "placeholders": {
-      "storageKind": {
-        "type": "String"
-      }
-    }
-  },
-  "defaultCompartmentName": "{storageKind, select, chest{Basket {number}} fridgeFreezerCompartment{Compartment {number}} other{Drawer {number}}}",
+  "defaultStoragePlaceName": "Storage place",
+  "defaultCompartmentName": "Compartment {number}",
   "@defaultCompartmentName": {
     "placeholders": {
-      "storageKind": {
-        "type": "String"
-      },
       "number": {
         "type": "int"
       }
@@ -29,32 +19,9 @@
       }
     }
   },
-  "storageKindDescription": "{storageKind, select, chest{chest freezer} fridgeFreezerCompartment{in the fridge} other{upright}}",
-  "@storageKindDescription": {
-    "placeholders": {
-      "storageKind": {
-        "type": "String"
-      }
-    }
-  },
-  "drawerCount": "{count, plural, =1{1 drawer} other{{count} drawers}}",
-  "@drawerCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "basketCount": "{count, plural, =1{1 basket} other{{count} baskets}}",
-  "@basketCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "shelfCount": "{count, plural, =1{1 compartment} other{{count} compartments}}",
-  "@shelfCount": {
+  "storageKindDescription": "storage place",
+  "compartmentCount": "{count, plural, =1{1 compartment} other{{count} compartments}}",
+  "@compartmentCount": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -75,12 +42,6 @@
   "addStoragePlaceButton": "Add freezer",
   "newStoragePlaceTitle": "Add a freezer",
   "templatePrompt": "Which one is closest to yours? You can change everything later.",
-  "templateUprightWithThreeDrawers": "Upright freezer with 3 drawers",
-  "templateUprightWithFiveDrawers": "Upright freezer with 5 drawers",
-  "templateUprightWithSevenDrawers": "Upright freezer with 7 drawers",
-  "templateChestWithBaskets": "Chest freezer with 3 baskets",
-  "templateFridgeFreezerCompartment": "Freezer compartment of a fridge",
-  "templateEmpty": "Start with one drawer and add the rest yourself",
   "storagePlaceNameLabel": "Name (optional)",
   "storagePlaceNameHelper": "For example \"Kitchen\" or \"Cellar\". Leave empty to use \"{defaultName}\".",
   "@storagePlaceNameHelper": {
@@ -90,14 +51,7 @@
       }
     }
   },
-  "addCompartmentButton": "{storageKind, select, chest{Add basket} fridgeFreezerCompartment{Add compartment} other{Add drawer}}",
-  "@addCompartmentButton": {
-    "placeholders": {
-      "storageKind": {
-        "type": "String"
-      }
-    }
-  },
+  "addCompartmentButton": "Add compartment",
   "compartmentItemCount": "{count, plural, =0{Empty} =1{1 item} other{{count} items}}",
   "@compartmentItemCount": {
     "placeholders": {

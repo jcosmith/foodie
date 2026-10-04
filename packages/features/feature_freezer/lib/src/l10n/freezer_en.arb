@@ -1,0 +1,100 @@
+{
+  "@@locale": "en",
+  "domainLabel": "Freezer",
+  "domainDescription": "Frozen food in drawers and baskets",
+  "storedOnLabel": "Frozen on",
+  "uprightName": "Freezer",
+  "chestName": "Chest freezer",
+  "fridgeFreezerName": "Fridge freezer",
+  "uprightDescription": "upright",
+  "chestDescription": "chest freezer",
+  "fridgeFreezerDescription": "in the fridge",
+  "drawerName": "Drawer {number}",
+  "@drawerName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "basketName": "Basket {number}",
+  "@basketName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "compartmentName": "Compartment {number}",
+  "@compartmentName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "drawerCount": "{count, plural, =1{1 drawer} other{{count} drawers}}",
+  "@drawerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "basketCount": "{count, plural, =1{1 basket} other{{count} baskets}}",
+  "@basketCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "compartmentCount": "{count, plural, =1{1 compartment} other{{count} compartments}}",
+  "@compartmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addDrawer": "Add drawer",
+  "addBasket": "Add basket",
+  "addCompartment": "Add compartment",
+  "templateUprightWithThreeDrawers": "Upright freezer with 3 drawers",
+  "templateUprightWithFiveDrawers": "Upright freezer with 5 drawers",
+  "templateUprightWithSevenDrawers": "Upright freezer with 7 drawers",
+  "templateChestWithBaskets": "Chest freezer with 3 baskets",
+  "templateFridgeFreezerCompartment": "Freezer compartment of a fridge",
+  "templateEmpty": "Start with one drawer and add the rest yourself",
+  "categoryVegetables": "Vegetables",
+  "categoryFruit": "Fruit",
+  "categoryMeatAndFish": "Meat & fish",
+  "categoryMeals": "Meals",
+  "categoryBakery": "Bakery",
+  "categoryDesserts": "Desserts",
+  "categoryOther": "Other",
+  "productLeafSpinach": "Leaf spinach",
+  "productGardenPeas": "Garden peas",
+  "productBroccoli": "Broccoli",
+  "productMixedVegetables": "Mixed vegetables",
+  "productHerbs": "Herbs",
+  "productFrenchFries": "French fries",
+  "productMixedBerries": "Mixed berries",
+  "productStrawberries": "Strawberries",
+  "productMango": "Mango",
+  "productChickenBreast": "Chicken breast",
+  "productMincedMeat": "Minced meat",
+  "productSalmonFillet": "Salmon fillet",
+  "productFishFingers": "Fish fingers",
+  "productPrawns": "Prawns",
+  "productBologneseHomemade": "Bolognese (homemade)",
+  "productSoupHomemade": "Soup (homemade)",
+  "productLasagne": "Lasagne",
+  "productPizzaMargherita": "Pizza Margherita",
+  "productWholegrainBread": "Wholegrain bread",
+  "productBreadRolls": "Bread rolls",
+  "productCroissants": "Croissants",
+  "productVanillaIceCream": "Vanilla ice cream",
+  "productCake": "Cake",
+  "productButter": "Butter"
+}

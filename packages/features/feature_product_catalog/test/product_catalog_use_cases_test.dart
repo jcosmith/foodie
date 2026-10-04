@@ -1,9 +1,9 @@
 import 'package:core_foundation/core_foundation.dart';
+import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_product_catalog/src/application/product_catalog_providers.dart';
 import 'package:feature_product_catalog/src/application/use_cases/product_settings.dart';
-import 'package:core_module_contract/core_module_contract.dart';
-import 'package:feature_freezer/feature_freezer.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/product_catalog_test_harness.dart';

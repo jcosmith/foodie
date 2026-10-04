@@ -57,7 +57,7 @@ class StoragePlaceEditorScreen extends ConsumerWidget {
           children: [
             Text(nameResolver.storagePlaceName(storagePlace)),
             Text(
-              localizations.storagePlaceSummaryOf(storagePlaceLayout),
+              context.storagePlaceSummaryOf(storagePlaceLayout),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -125,7 +125,7 @@ class StoragePlaceEditorScreen extends ConsumerWidget {
             onPressed: () =>
                 ref.read(addCompartmentUseCaseProvider).execute(storagePlaceIdentifier),
             icon: const Icon(Icons.add),
-            label: Text(localizations.addCompartmentButton(storagePlace.storageKind.storageName)),
+            label: Text(context.addCompartmentLabelOf(storagePlace.storageKind)),
           ),
           if (compartments.length == 1) _HintText(localizations.lastCompartmentHint),
           _HintText(localizations.layoutHint),

@@ -4,10 +4,7 @@ import '../l10n/generated/storage_reminders_localizations.dart';
 import 'storage_reminder_notification_texts.dart';
 
 final class LocalizedStorageReminderNotificationTexts implements StorageReminderNotificationTexts {
-  LocalizedStorageReminderNotificationTexts(
-    this._localizations,
-    ProductCatalogLocalizations catalogLocalizations,
-  ) : catalogNames = LocalizedCatalogNames(catalogLocalizations);
+  const LocalizedStorageReminderNotificationTexts(this._localizations, this.catalogNames);
 
   final StorageRemindersLocalizations _localizations;
 

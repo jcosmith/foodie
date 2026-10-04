@@ -8,3 +8,4 @@ export 'src/domain/product.dart';
 export 'src/domain/product_catalog.dart';
 export 'src/domain/product_catalog_events.dart';
 export 'src/domain/product_icon_image.dart';
+export 'src/domain/seeded_catalog.dart';

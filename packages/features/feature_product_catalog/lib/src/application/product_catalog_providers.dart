@@ -2,10 +2,12 @@ import 'package:core_database/core_database.dart';
 import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_media_storage/core_media_storage.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/product_catalog.dart';
 import '../domain/product_catalog_repository.dart';
+import '../domain/seeded_catalog.dart';
 import 'product_catalog_query_service.dart';
 import 'product_icon_image_file_picker.dart';
 import 'use_cases/archive_product_use_case.dart';
@@ -41,12 +43,45 @@ final productCatalogProvider = StreamProvider<ProductCatalog>(
   (ref) => ref.watch(productCatalogQueryServiceProvider).watchCatalog(),
 );
 
+/// The catalogs of every registered module, switched on or not, so switching
+/// a domain on later finds its products.
+final seededCatalogProvider = Provider<SeededCatalog>((ref) {
+  final contributions = ref.watch(registeredCatalogContributionsProvider);
+  return SeededCatalog(
+    categories: [
+      for (final contribution in contributions)
+        for (final category in contribution.categories)
+          SeededCategory(
+            catalogKey: category.catalogKey,
+            storageDomain: category.domainIdentifier,
+            recommendedMaximumStorageDays: category.shelfLifeDays,
+            shelfLifeAfterOpeningDays: category.shelfLifeAfterOpeningDays,
+            iconEmoji: category.iconEmoji,
+          ),
+    ],
+    products: [
+      for (final contribution in contributions)
+        for (final product in contribution.products)
+          SeededProduct(
+            catalogKey: product.catalogKey,
+            categoryCatalogKey: product.categoryCatalogKey,
+            canonicalUnit: product.canonicalUnit,
+            defaultPackageDisplayAmount: product.defaultPackageDisplayAmount,
+            iconEmoji: product.iconEmoji,
+            recommendedMaximumStorageDays: product.shelfLifeDays,
+            shelfLifeAfterOpeningDays: product.shelfLifeAfterOpeningDays,
+          ),
+    ],
+  );
+});
+
 final seedCatalogUseCaseProvider = Provider<SeedCatalogUseCase>(
   (ref) => SeedCatalogUseCase(
     repository: ref.watch(productCatalogRepositoryProvider),
     transactionRunner: ref.watch(transactionRunnerProvider),
     clock: ref.watch(clockProvider),
     identifierGenerator: ref.watch(identifierGeneratorProvider),
+    seededCatalog: ref.watch(seededCatalogProvider),
   ),
 );
 

@@ -7,12 +7,17 @@ export 'src/application/storage_layout_providers.dart'
         compartmentContentsPortProvider,
         compartmentItemCountsProvider,
         createStoragePlaceFromTemplateUseCaseProvider,
+        registeredStorageTemplatesProvider,
+        storageKindDomainsProvider,
         storageLayoutProvider,
-        storageLayoutQueryServiceProvider;
+        storageLayoutQueryServiceProvider,
+        storageTemplateContributionsProvider,
+        storageTemplatesOfDomainProvider;
 export 'src/application/storage_layout_query_service.dart';
 export 'src/application/use_cases/create_storage_place_from_template_use_case.dart';
 export 'src/l10n/generated/storage_layout_localizations.dart';
 export 'src/presentation/layout_localization.dart' show StorageLayoutLocalizationContext;
 export 'src/presentation/storage_layout_routes.dart' show StorageLayoutRoutes;
 export 'src/presentation/storage_template_choice_list.dart';
+export 'src/presentation/storage_template_picker_screen.dart' show StorageTemplatePickerScreen;
 export 'src/storage_layout_feature_module.dart';

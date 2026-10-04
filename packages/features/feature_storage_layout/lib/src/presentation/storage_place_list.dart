@@ -42,7 +42,7 @@ class StoragePlaceList extends ConsumerWidget {
             contentPadding: const EdgeInsetsDirectional.only(start: FoodieSpacing.small),
             leading: const Icon(Icons.kitchen_outlined),
             title: Text(nameResolver.storagePlaceName(storagePlaceLayout.storagePlace)),
-            subtitle: Text(localizations.storagePlaceSummaryOf(storagePlaceLayout)),
+            subtitle: Text(context.storagePlaceSummaryOf(storagePlaceLayout)),
             onTap: () => context.push(
               StorageLayoutRoutes.storagePlaceEditor(storagePlaceLayout.storagePlace.identifier),
             ),

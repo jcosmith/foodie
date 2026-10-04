@@ -78,9 +78,9 @@ void main() {
         compartmentOf(cupboard, 2),
         compartmentOf(unknown, 1),
       ],
-      domainOfStorageKind: const {
-        StorageKind('upright'): StorageDomainIdentifier.freezer,
-        StorageKind('testCupboard'): StorageDomainIdentifier.pantry,
+      domainOfStorageKind: {
+        const StorageKind('upright'): StorageDomainIdentifier.freezer,
+        const StorageKind('testCupboard'): StorageDomainIdentifier.pantry,
       },
     );
 

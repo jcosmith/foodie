@@ -168,6 +168,8 @@ void main() {
     final pictureSwitch = find.widgetWithText(SwitchListTile, 'Item pictures');
     expect(tester.widget<SwitchListTile>(pictureSwitch).value, isTrue);
 
+    await tester.ensureVisible(pictureSwitch);
+    await _settle(tester);
     await tester.tap(pictureSwitch);
     await _settle(tester);
 

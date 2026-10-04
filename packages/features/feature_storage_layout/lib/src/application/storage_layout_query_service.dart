@@ -2,6 +2,7 @@ import 'package:core_foundation/core_foundation.dart';
 
 import '../domain/compartment.dart';
 import '../domain/compartment_contents_port.dart';
+import '../domain/storage_kind.dart';
 import '../domain/storage_layout.dart';
 import '../domain/storage_layout_repository.dart';
 
@@ -11,11 +12,14 @@ final class StorageLayoutQueryService {
   const StorageLayoutQueryService({
     required StorageLayoutRepository repository,
     required CompartmentContentsPort compartmentContents,
+    Map<StorageKind, StorageDomainIdentifier> domainOfStorageKind = const {},
   }) : _repository = repository,
-       _compartmentContents = compartmentContents;
+       _compartmentContents = compartmentContents,
+       _domainOfStorageKind = domainOfStorageKind;
 
   final StorageLayoutRepository _repository;
   final CompartmentContentsPort _compartmentContents;
+  final Map<StorageKind, StorageDomainIdentifier> _domainOfStorageKind;
 
   /// The layout, updated whenever a storage place or compartment changes.
   Stream<StorageLayout> watchStorageLayout() => combineLatestOfTwo(
@@ -24,6 +28,7 @@ final class StorageLayoutQueryService {
     (storagePlaces, compartments) => StorageLayout.fromEntities(
       storagePlacesIncludingArchived: storagePlaces,
       compartmentsIncludingArchived: compartments,
+      domainOfStorageKind: _domainOfStorageKind,
     ),
   );
 

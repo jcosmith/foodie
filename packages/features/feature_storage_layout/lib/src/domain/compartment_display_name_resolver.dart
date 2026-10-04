@@ -43,5 +43,5 @@ final class CompartmentDisplayNameResolver {
   }
 
   StorageKind _storageKindOf(Compartment compartment) =>
-      layout.storagePlaceOf(compartment.storagePlaceIdentifier)?.storageKind ?? StorageKind.upright;
+      layout.storagePlaceOf(compartment.storagePlaceIdentifier)?.storageKind ?? StorageKind.unknown;
 }

@@ -1,15 +1,25 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:meta/meta.dart';
 
 import 'compartment.dart';
+import 'storage_kind.dart';
 import 'storage_place.dart';
 
 /// One storage place with its active compartments in the user's order.
 @immutable
 final class StoragePlaceLayout {
-  const StoragePlaceLayout({required this.storagePlace, required this.compartments});
+  const StoragePlaceLayout({
+    required this.storagePlace,
+    required this.compartments,
+    this.domainIdentifier,
+  });
 
   final StoragePlace storagePlace;
   final List<Compartment> compartments;
+
+  /// The domain of the place's kind; `null` when no registered module knows
+  /// the kind.
+  final StorageDomainIdentifier? domainIdentifier;
 }
 
 /// The whole layout as a read model: active storage places in order, each with its
@@ -20,13 +30,17 @@ final class StorageLayout {
     required this.storagePlaces,
     required Map<StoragePlaceIdentifier, StoragePlace> storagePlaceByIdentifier,
     required Map<CompartmentIdentifier, Compartment> compartmentByIdentifier,
+    required Map<StorageKind, StorageDomainIdentifier> domainOfStorageKind,
   }) : _storagePlaceByIdentifier = storagePlaceByIdentifier,
-       _compartmentByIdentifier = compartmentByIdentifier;
+       _compartmentByIdentifier = compartmentByIdentifier,
+       _domainOfStorageKind = domainOfStorageKind;
 
   /// Builds the read model from flat lists, archived entries included.
+  /// [domainOfStorageKind] tells which domain each known kind belongs to.
   factory StorageLayout.fromEntities({
     required List<StoragePlace> storagePlacesIncludingArchived,
     required List<Compartment> compartmentsIncludingArchived,
+    Map<StorageKind, StorageDomainIdentifier> domainOfStorageKind = const {},
   }) {
     final activeStoragePlaces =
         storagePlacesIncludingArchived.where((storagePlace) => !storagePlace.isArchived).toList()
@@ -36,6 +50,7 @@ final class StorageLayout {
         for (final storagePlace in activeStoragePlaces)
           StoragePlaceLayout(
             storagePlace: storagePlace,
+            domainIdentifier: domainOfStorageKind[storagePlace.storageKind],
             compartments:
                 compartmentsIncludingArchived
                     .where(
@@ -55,6 +70,7 @@ final class StorageLayout {
         for (final compartment in compartmentsIncludingArchived)
           compartment.identifier: compartment,
       },
+      domainOfStorageKind: domainOfStorageKind,
     );
   }
 
@@ -67,6 +83,7 @@ final class StorageLayout {
   final List<StoragePlaceLayout> storagePlaces;
   final Map<StoragePlaceIdentifier, StoragePlace> _storagePlaceByIdentifier;
   final Map<CompartmentIdentifier, Compartment> _compartmentByIdentifier;
+  final Map<StorageKind, StorageDomainIdentifier> _domainOfStorageKind;
 
   bool get hasStoragePlace => storagePlaces.isNotEmpty;
 
@@ -74,6 +91,29 @@ final class StorageLayout {
   List<Compartment> get activeCompartments => [
     for (final storagePlace in storagePlaces) ...storagePlace.compartments,
   ];
+
+  /// Active storage places of one domain, in the user's order.
+  List<StoragePlaceLayout> storagePlacesIn(StorageDomainIdentifier domainIdentifier) => [
+    for (final storagePlace in storagePlaces)
+      if (storagePlace.domainIdentifier == domainIdentifier) storagePlace,
+  ];
+
+  /// Active compartments of the active storage places of one domain.
+  List<Compartment> activeCompartmentsIn(StorageDomainIdentifier domainIdentifier) => [
+    for (final storagePlace in storagePlacesIn(domainIdentifier)) ...storagePlace.compartments,
+  ];
+
+  /// The domain of any storage place, archived ones included.
+  StorageDomainIdentifier? domainOfStoragePlace(StoragePlaceIdentifier storagePlaceIdentifier) {
+    final storagePlace = _storagePlaceByIdentifier[storagePlaceIdentifier];
+    return storagePlace == null ? null : _domainOfStorageKind[storagePlace.storageKind];
+  }
+
+  /// The domain of any compartment, archived ones included.
+  StorageDomainIdentifier? domainOfCompartment(CompartmentIdentifier compartmentIdentifier) {
+    final compartment = _compartmentByIdentifier[compartmentIdentifier];
+    return compartment == null ? null : domainOfStoragePlace(compartment.storagePlaceIdentifier);
+  }
 
   /// Archived compartments of the given storage place, for the "removed compartments" note.
   List<Compartment> archivedCompartmentsOf(StoragePlaceIdentifier storagePlaceIdentifier) => [

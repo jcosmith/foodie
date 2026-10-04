@@ -34,7 +34,7 @@ final class RenameCompartmentUseCase {
       return const Result.failure(CompartmentNotFound());
     }
     final storagePlace = await _repository.readStoragePlace(compartment.storagePlaceIdentifier);
-    final storageKind = storagePlace?.storageKind ?? StorageKind.upright;
+    final storageKind = storagePlace?.storageKind ?? StorageKind.unknown;
     final siblings = await _repository.readActiveCompartmentsOfStoragePlace(
       compartment.storagePlaceIdentifier,
     );
