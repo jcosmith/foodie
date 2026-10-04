@@ -9,7 +9,7 @@ import 'inventory_use_case_dependencies.dart';
 ///
 /// The log stays append-only: a compensating movement of the same kind with
 /// the opposite amount is appended and points at the undone one, so sums per
-/// kind (eaten, thrown away) stay right for statistics.
+/// kind (used, thrown away) stay right for statistics.
 final class UndoStockRemovalUseCase {
   const UndoStockRemovalUseCase({required InventoryUseCaseDependencies dependencies})
     : _dependencies = dependencies;

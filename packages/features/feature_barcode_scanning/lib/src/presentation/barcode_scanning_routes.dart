@@ -2,7 +2,7 @@ import 'package:go_router/go_router.dart';
 
 import 'barcode_scanner_screen.dart';
 
-/// Scan to add puts into the freezer; scan to remove takes out.
+/// Scan to add puts into storage; scan to remove takes out.
 enum ScanMode { add, remove }
 
 abstract final class BarcodeScanningRoutes {

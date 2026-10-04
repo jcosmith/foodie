@@ -1,6 +1,6 @@
 import 'package:core_foundation/core_foundation.dart';
 
-/// How urgently a batch should be eaten; [overdue] once its recommended
+/// How urgently a batch should be used; [overdue] once its recommended
 /// maximum storage time is used up.
 enum StorageAgeStatus { fresh, aging, urgent, overdue }
 
@@ -38,7 +38,7 @@ abstract final class StorageAgePolicy {
     return StorageAgeStatus.fresh;
   }
 
-  /// The first day on which a batch frozen on [frozenOn] is at least
+  /// The first day on which a batch stored on [frozenOn] is at least
   /// [status]; for [StorageAgeStatus.fresh] that is the freezing day.
   static CalendarDate firstDayWithStatus({
     required CalendarDate storedOn,

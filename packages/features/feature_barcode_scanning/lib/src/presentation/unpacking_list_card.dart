@@ -10,8 +10,8 @@ import '../application/barcode_use_cases.dart';
 import '../l10n/generated/barcode_scanning_localizations.dart';
 
 /// The review list of the continuous mode (unpacking groceries, section
-/// 10.3): every scanned item with its amount and drawer, to correct or
-/// remove before everything goes into the freezer at once.
+/// 10.3): every scanned item with its amount and compartment, to correct or
+/// remove before everything goes into storage at once.
 class UnpackingListCard extends ConsumerWidget {
   const UnpackingListCard({
     required this.entries,

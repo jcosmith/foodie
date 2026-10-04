@@ -1,5 +1,6 @@
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_foundation/core_foundation.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
@@ -44,17 +45,22 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
     final overview = ref.watch(inventoryOverviewProvider).value?.ofDomain(widget.domainIdentifier);
+    final domain = ref
+        .watch(registeredStorageDomainsProvider)
+        .where((domain) => domain.identifier == widget.domainIdentifier)
+        .firstOrNull;
+    final addRoute = InventoryRoutes.addStockBatch(domainIdentifier: widget.domainIdentifier);
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(localizations.overviewTitle),
+            Text(domain?.labelBuilder(context) ?? localizations.overviewTitle),
             if (overview != null && overview.hasStoragePlace)
               Text(
                 localizations.itemsInDrawers(
                   localizations.itemCount(overview.items.length),
-                  localizations.drawerCount(overview.layout.activeCompartments.length),
+                  _compartmentCountText(context, overview.layout),
                 ),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
@@ -63,7 +69,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
       ),
       floatingActionButton: overview != null && overview.hasStoragePlace
           ? FloatingActionButton.extended(
-              onPressed: () => context.push(InventoryRoutes.addStockBatch()),
+              onPressed: () => context.push(addRoute),
               icon: const Icon(Icons.add),
               label: Text(localizations.addButton),
             )
@@ -83,11 +89,20 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
           title: localizations.emptyTitle,
           message: localizations.emptyMessage,
           actionLabel: localizations.addButton,
-          onActionPressed: () => context.push(InventoryRoutes.addStockBatch()),
+          onActionPressed: () => context.push(addRoute),
         ),
         final overview => _buildContents(context, overview),
       },
     );
+  }
+
+  /// "3 drawers" when every place is of one kind, else "5 compartments".
+  String _compartmentCountText(BuildContext context, StorageLayout layout) {
+    final count = layout.activeCompartments.length;
+    final kinds = {for (final place in layout.storagePlaces) place.storagePlace.storageKind};
+    return kinds.length == 1
+        ? context.compartmentCountOf(kinds.single, count)
+        : InventoryLocalizations.of(context).drawerCount(count);
   }
 
   Widget _buildContents(BuildContext context, InventoryOverview overview) {
@@ -186,7 +201,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
       ];
     }
     final nameResolver = context.compartmentDisplayNameResolver(overview.layout);
-    // While searching, every drawer with a match is open, so no match hides.
+    // While searching, every compartment with a match is open, so no match hides.
     final isSearching = _searchController.text.trim().isNotEmpty;
     final itemCount = InventoryLocalizations.of(context).itemCount;
     final slivers = <Widget>[];
@@ -222,7 +237,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
     return slivers;
   }
 
-  /// "Expand all" while any drawer is collapsed, otherwise "Collapse all".
+  /// "Expand all" while any compartment is collapsed, otherwise "Collapse all".
   Widget _buildExpandAllButton(InventoryLocalizations localizations, InventoryOverview overview) {
     final compartmentsWithItems = {
       for (final item in overview.items) item.batch.compartmentIdentifier,
@@ -244,8 +259,8 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
   }
 }
 
-/// A drawer's name and item count; tapping it collapses or expands the
-/// drawer's items when [onTap] is set.
+/// A compartment's name and item count; tapping it collapses or expands the
+/// compartment's items when [onTap] is set.
 class _CompartmentHeader extends StatelessWidget {
   const _CompartmentHeader({
     required this.name,

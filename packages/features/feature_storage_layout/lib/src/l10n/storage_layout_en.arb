@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
-  "configSectionTitle": "Freezer layout",
-  "layoutOverviewTitle": "Freezer layout",
+  "configSectionTitle": "Storage places",
+  "layoutOverviewTitle": "Storage places",
   "defaultStoragePlaceName": "Storage place",
   "defaultCompartmentName": "Compartment {number}",
   "@defaultCompartmentName": {
@@ -39,8 +39,8 @@
       }
     }
   },
-  "addStoragePlaceButton": "Add freezer",
-  "newStoragePlaceTitle": "Add a freezer",
+  "addStoragePlaceButton": "Add storage place",
+  "newStoragePlaceTitle": "Add a storage place",
   "templatePrompt": "Which one is closest to yours? You can change everything later.",
   "storagePlaceNameLabel": "Name (optional)",
   "storagePlaceNameHelper": "For example \"Kitchen\" or \"Cellar\". Leave empty to use \"{defaultName}\".",
@@ -64,8 +64,8 @@
   "moveDown": "Move down",
   "removeCompartment": "Remove",
   "changeColor": "Change colour",
-  "compartmentNameTaken": "Another drawer already has this name.",
-  "storagePlaceNameTaken": "Another freezer already has this name.",
+  "compartmentNameTaken": "Another compartment already has this name.",
+  "storagePlaceNameTaken": "Another storage place already has this name.",
   "nameTooLong": "At most 30 characters.",
   "removeCompartmentDialogTitle": "Remove {name}?",
   "@removeCompartmentDialogTitle": {
@@ -93,11 +93,11 @@
       }
     }
   },
-  "lastCompartmentHint": "A freezer needs at least one drawer.",
+  "lastCompartmentHint": "A storage place needs at least one compartment.",
   "layoutHint": "Untouched names follow the app language. Names you type stay as you wrote them.",
-  "renameStoragePlaceAction": "Rename freezer",
-  "renameStoragePlaceDialogTitle": "Rename freezer",
-  "removeStoragePlaceAction": "Remove freezer",
+  "renameStoragePlaceAction": "Rename",
+  "renameStoragePlaceDialogTitle": "Rename storage place",
+  "removeStoragePlaceAction": "Remove storage place",
   "removeStoragePlaceDialogTitle": "Remove {name}?",
   "@removeStoragePlaceDialogTitle": {
     "placeholders": {
@@ -106,8 +106,8 @@
       }
     }
   },
-  "removeStoragePlaceDialogText": "It disappears from the app. Its drawers are kept for your statistics.",
-  "storagePlaceNotEmpty": "{count, plural, =1{Take out or move the 1 item in this freezer first.} other{Take out or move the {count} items in this freezer first.}}",
+  "removeStoragePlaceDialogText": "It disappears from the app. Its compartments are kept for your statistics.",
+  "storagePlaceNotEmpty": "{count, plural, =1{Take out or move the 1 item in here first.} other{Take out or move the {count} items in here first.}}",
   "@storagePlaceNotEmpty": {
     "placeholders": {
       "count": {
@@ -115,9 +115,9 @@
       }
     }
   },
-  "lastStoragePlaceCannotBeRemoved": "You need at least one freezer.",
-  "storagePlaceNotFound": "This freezer was removed.",
-  "noStoragePlaceTitle": "No freezer yet",
-  "noStoragePlaceMessage": "Add your freezer and its drawers, then start filling it.",
+  "lastStoragePlaceCannotBeRemoved": "You need at least one storage place.",
+  "storagePlaceNotFound": "This storage place was removed.",
+  "noStoragePlaceTitle": "No storage place yet",
+  "noStoragePlaceMessage": "Add where you keep things and how it is divided, then start filling it.",
   "genericFailure": "That did not work. Please try again."
 }

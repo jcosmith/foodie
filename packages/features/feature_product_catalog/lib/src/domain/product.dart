@@ -57,7 +57,7 @@ final class Product {
   final ProductIconImage? iconImage;
 
   /// The drawer a new batch goes into unless the user picks another; without
-  /// one, the add form suggests the drawer used last time.
+  /// one, the add form suggests the compartment used last time.
   final CompartmentIdentifier? defaultCompartmentIdentifier;
 
   final bool isArchived;

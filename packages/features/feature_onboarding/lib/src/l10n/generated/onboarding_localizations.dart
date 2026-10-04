@@ -110,7 +110,7 @@ abstract class OnboardingLocalizations {
   /// No description provided for @welcomeMessage.
   ///
   /// In en, this message translates to:
-  /// **'Keep track of what is in your freezer, eat things before they have been in there too long, and know what to buy.'**
+  /// **'Keep track of what is in your freezer, fridge and pantry, use things before they go off, and know what to buy.'**
   String get welcomeMessage;
 
   /// No description provided for @chooseLanguagePrompt.
@@ -140,7 +140,7 @@ abstract class OnboardingLocalizations {
   /// No description provided for @storagePlacePrompt.
   ///
   /// In en, this message translates to:
-  /// **'Which one is closest to yours? You can rename, add and remove drawers later in Config.'**
+  /// **'Which one is closest to yours? You can rename, add and remove compartments later in Options.'**
   String get storagePlacePrompt;
 
   /// No description provided for @privacyTitle.
@@ -170,7 +170,7 @@ abstract class OnboardingLocalizations {
   /// No description provided for @remindersMessage.
   ///
   /// In en, this message translates to:
-  /// **'Allow notifications so the app can tell you once a day what has been frozen for a long time. Item names stay hidden on the lock screen.'**
+  /// **'Allow notifications so the app can tell you once a day what should be used soon. Item names stay hidden on the lock screen.'**
   String get remindersMessage;
 
   /// No description provided for @allowNotificationsButton.

@@ -104,7 +104,7 @@ abstract class StorageRemindersLocalizations {
   /// No description provided for @eatSoonTitle.
   ///
   /// In en, this message translates to:
-  /// **'Eat soon'**
+  /// **'Use soon'**
   String get eatSoonTitle;
 
   /// No description provided for @eatSoonEmpty.
@@ -116,13 +116,13 @@ abstract class StorageRemindersLocalizations {
   /// No description provided for @eatSoonScreenEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Nothing to eat soon'**
+  /// **'Nothing to use soon'**
   String get eatSoonScreenEmptyTitle;
 
   /// No description provided for @eatSoonScreenEmptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Everything in your freezer keeps for a while yet.'**
+  /// **'Everything at home keeps for a while yet.'**
   String get eatSoonScreenEmptyMessage;
 
   /// No description provided for @eatSoonScreenExplanation.
@@ -134,13 +134,13 @@ abstract class StorageRemindersLocalizations {
   /// No description provided for @digestTitle.
   ///
   /// In en, this message translates to:
-  /// **'Eat soon'**
+  /// **'Use soon'**
   String get digestTitle;
 
   /// No description provided for @digestBodyWithCount.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 item in your freezer should be eaten soon.} other{{count} items in your freezer should be eaten soon.}}'**
+  /// **'{count, plural, =1{1 item should be used soon.} other{{count} items should be used soon.}}'**
   String digestBodyWithCount(int count);
 
   /// No description provided for @productNameSeparator.
@@ -164,7 +164,7 @@ abstract class StorageRemindersLocalizations {
   /// No description provided for @dailyDigestDetail.
   ///
   /// In en, this message translates to:
-  /// **'One notification on the days something should be eaten soon'**
+  /// **'One notification on the days something should be used soon'**
   String get dailyDigestDetail;
 
   /// No description provided for @digestTimeLabel.
@@ -206,7 +206,7 @@ abstract class StorageRemindersLocalizations {
   /// No description provided for @storageLimitsDetail.
   ///
   /// In en, this message translates to:
-  /// **'How long each category keeps in the freezer'**
+  /// **'How long each category keeps'**
   String get storageLimitsDetail;
 
   /// No description provided for @storageLimitsTitle.
@@ -218,7 +218,7 @@ abstract class StorageRemindersLocalizations {
   /// No description provided for @storageLimitsExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Food is marked “eat soon” once 85 % of its storage time has passed. A product can have its own time in the product editor.'**
+  /// **'Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.'**
   String get storageLimitsExplanation;
 
   /// No description provided for @storageMonths.

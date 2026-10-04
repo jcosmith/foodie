@@ -3,7 +3,7 @@ import 'package:feature_inventory/domain.dart';
 import 'package:feature_product_catalog/domain.dart';
 import 'package:meta/meta.dart';
 
-/// A batch in the freezer that has a storage limit, as the planner sees it.
+/// A batch at home that has a storage limit, as the planner sees it.
 @immutable
 final class RemindableBatch {
   const RemindableBatch({
@@ -26,7 +26,7 @@ final class RemindableBatch {
 
   final int recommendedMaximumStorageDays;
 
-  /// The first day the batch should be eaten soon, as the badge shows it.
+  /// The first day the batch should be used soon, as the badge shows it.
   CalendarDate get eatSoonFrom => _notBefore(
     StorageAgePolicy.firstDayWithStatus(
       storedOn: storedOn,

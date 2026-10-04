@@ -18,7 +18,7 @@ class OnboardingLocalizationsEn extends OnboardingLocalizations {
 
   @override
   String get welcomeMessage =>
-      'Keep track of what is in your freezer, eat things before they have been in there too long, and know what to buy.';
+      'Keep track of what is in your freezer, fridge and pantry, use things before they go off, and know what to buy.';
 
   @override
   String get chooseLanguagePrompt => 'Which language should the app use?';
@@ -34,7 +34,7 @@ class OnboardingLocalizationsEn extends OnboardingLocalizations {
 
   @override
   String get storagePlacePrompt =>
-      'Which one is closest to yours? You can rename, add and remove drawers later in Config.';
+      'Which one is closest to yours? You can rename, add and remove compartments later in Options.';
 
   @override
   String get privacyTitle => 'Your data stays here';
@@ -52,7 +52,7 @@ class OnboardingLocalizationsEn extends OnboardingLocalizations {
 
   @override
   String get remindersMessage =>
-      'Allow notifications so the app can tell you once a day what has been frozen for a long time. Item names stay hidden on the lock screen.';
+      'Allow notifications so the app can tell you once a day what should be used soon. Item names stay hidden on the lock screen.';
 
   @override
   String get allowNotificationsButton => 'Allow notifications';

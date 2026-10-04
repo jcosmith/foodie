@@ -57,7 +57,7 @@ List<InventoryItem> sortedByEatBefore(Iterable<InventoryItem> items) {
   return [for (final (_, item) in indexedItems) item];
 }
 
-/// The freezer contents joined with the catalog and the layout.
+/// What is stored joined with the catalog and the layout.
 @immutable
 final class InventoryOverview {
   const InventoryOverview({

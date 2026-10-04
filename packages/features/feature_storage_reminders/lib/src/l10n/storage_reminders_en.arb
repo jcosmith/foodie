@@ -1,13 +1,13 @@
 {
   "@@locale": "en",
   "configSectionTitle": "Reminders",
-  "eatSoonTitle": "Eat soon",
+  "eatSoonTitle": "Use soon",
   "eatSoonEmpty": "Nothing urgent. Well done!",
-  "eatSoonScreenEmptyTitle": "Nothing to eat soon",
-  "eatSoonScreenEmptyMessage": "Everything in your freezer keeps for a while yet.",
+  "eatSoonScreenEmptyTitle": "Nothing to use soon",
+  "eatSoonScreenEmptyMessage": "Everything at home keeps for a while yet.",
   "eatSoonScreenExplanation": "Food shows up here once 60 % of its storage time has passed. Tap an item to take some out.",
-  "digestTitle": "Eat soon",
-  "digestBodyWithCount": "{count, plural, =1{1 item in your freezer should be eaten soon.} other{{count} items in your freezer should be eaten soon.}}",
+  "digestTitle": "Use soon",
+  "digestBodyWithCount": "{count, plural, =1{1 item should be used soon.} other{{count} items should be used soon.}}",
   "@digestBodyWithCount": {
     "placeholders": {
       "count": {
@@ -28,16 +28,16 @@
     }
   },
   "dailyDigestSwitch": "Daily reminder",
-  "dailyDigestDetail": "One notification on the days something should be eaten soon",
+  "dailyDigestDetail": "One notification on the days something should be used soon",
   "digestTimeLabel": "Time",
   "showNamesSwitch": "Show food names in notifications",
   "showNamesDetail": "Names may then be readable on the lock screen.",
   "notificationsOffMessage": "Notifications are switched off for this app, so reminders cannot appear.",
   "allowNotificationsButton": "Allow",
   "storageLimitsRow": "Storage limits",
-  "storageLimitsDetail": "How long each category keeps in the freezer",
+  "storageLimitsDetail": "How long each category keeps",
   "storageLimitsTitle": "Storage limits",
-  "storageLimitsExplanation": "Food is marked “eat soon” once 85 % of its storage time has passed. A product can have its own time in the product editor.",
+  "storageLimitsExplanation": "Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.",
   "storageMonths": "{count, plural, =1{1 month} other{{count} months}}",
   "@storageMonths": {
     "placeholders": {

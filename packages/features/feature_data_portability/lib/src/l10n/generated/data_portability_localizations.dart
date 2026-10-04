@@ -260,7 +260,7 @@ abstract class DataPortabilityLocalizations {
   /// No description provided for @reminderCardMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your freezer data is only on this phone. Save a backup so that a lost or broken phone does not take it with it.'**
+  /// **'Your Foodie data is only on this phone. Save a backup so that a lost or broken phone does not take it with it.'**
   String get reminderCardMessage;
 
   /// No description provided for @csvColumnProduct.
@@ -290,13 +290,13 @@ abstract class DataPortabilityLocalizations {
   /// No description provided for @csvColumnStoredOn.
   ///
   /// In en, this message translates to:
-  /// **'Frozen on'**
+  /// **'Stored on'**
   String get csvColumnStoredOn;
 
   /// No description provided for @csvColumnDrawer.
   ///
   /// In en, this message translates to:
-  /// **'Drawer'**
+  /// **'Compartment'**
   String get csvColumnDrawer;
 
   /// No description provided for @csvColumnNote.
@@ -398,7 +398,7 @@ abstract class DataPortabilityLocalizations {
   /// No description provided for @backupNotificationBody.
   ///
   /// In en, this message translates to:
-  /// **'Everything in this app exists only on this phone. Save a backup so that a lost phone does not take your freezer list with it.'**
+  /// **'Everything in this app exists only on this phone. Save a backup so that a lost phone does not take your lists with it.'**
   String get backupNotificationBody;
 
   /// No description provided for @includePicturesLabel.

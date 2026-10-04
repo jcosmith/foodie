@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "overviewTitle": "My freezer",
+  "overviewTitle": "At home",
   "itemCount": "{count, plural, =1{1 item} other{{count} items}}",
   "@itemCount": {
     "placeholders": {
@@ -9,7 +9,7 @@
       }
     }
   },
-  "drawerCount": "{count, plural, =1{1 drawer} other{{count} drawers}}",
+  "drawerCount": "{count, plural, =1{1 compartment} other{{count} compartments}}",
   "@drawerCount": {
     "placeholders": {
       "count": {
@@ -29,11 +29,11 @@
     }
   },
   "searchHint": "Search products",
-  "sortByDrawer": "By drawer",
-  "sortByEatBefore": "Eat first",
+  "sortByDrawer": "By place",
+  "sortByEatBefore": "Use first",
   "expandAllDrawers": "Expand all",
   "collapseAllDrawers": "Collapse all",
-  "frozenAgo": "frozen {age}",
+  "frozenAgo": "added {age}",
   "@frozenAgo": {
     "placeholders": {
       "age": {
@@ -60,11 +60,11 @@
       }
     }
   },
-  "noStoragePlaceTitle": "Set up your freezer first",
-  "noStoragePlaceMessage": "Tell the app which drawers your freezer has, then add what is inside.",
-  "setUpStoragePlaceButton": "Set up freezer",
-  "emptyTitle": "Your freezer is empty",
-  "emptyMessage": "Add what you freeze, and the app keeps track of how long it has been in there.",
+  "noStoragePlaceTitle": "Set up a storage place first",
+  "noStoragePlaceMessage": "Tell the app where you keep things and how it is divided, then add what is inside.",
+  "setUpStoragePlaceButton": "Add storage place",
+  "emptyTitle": "Nothing in here yet",
+  "emptyMessage": "Add what you put away, and the app keeps track of how long it has been there.",
   "noSearchResults": "Nothing matches “{query}”.",
   "@noSearchResults": {
     "placeholders": {
@@ -74,10 +74,10 @@
     }
   },
   "addButton": "Add",
-  "quickActionAdd": "Add to freezer",
+  "quickActionAdd": "Add item",
   "takeTitle": "How much are you taking?",
   "discardTitle": "How much are you throwing away?",
-  "leftAfter": "{amount} stays in the freezer",
+  "leftAfter": "{amount} stays",
   "@leftAfter": {
     "placeholders": {
       "amount": {
@@ -137,7 +137,7 @@
       }
     }
   },
-  "moveTitle": "Move to another drawer",
+  "moveTitle": "Move to another compartment",
   "moveDestinationLabel": "Move to",
   "moveAmountLabel": "How much?",
   "moveAmountButton": "Move {amount}",
@@ -162,7 +162,7 @@
       }
     }
   },
-  "noOtherCompartment": "Add another drawer in the freezer layout to move things.",
+  "noOtherCompartment": "Add another compartment to move things.",
   "correctTitle": "How much is really left?",
   "correctHint": "For when you took more or less than you recorded.",
   "correctedSnackbar": "{product}: {amount} left",
@@ -176,7 +176,7 @@
       }
     }
   },
-  "addTitle": "Add to freezer",
+  "addTitle": "Add",
   "productLabel": "Product",
   "chooseProduct": "Choose a product",
   "quantityLabel": "Amount",
@@ -188,8 +188,8 @@
       }
     }
   },
-  "storedOnLabel": "Frozen on",
-  "compartmentLabel": "Drawer",
+  "storedOnLabel": "Stored on",
+  "compartmentLabel": "Where",
   "noteLabel": "Note (optional)",
   "addedSnackbar": "Added {amount} of {product} to {compartment}",
   "@addedSnackbar": {
@@ -209,8 +209,8 @@
   "quantityExceedsRemaining": "That is more than is left.",
   "invalidAmount": "Please enter a number.",
   "productMissing": "Choose a product first.",
-  "compartmentMissing": "Choose a drawer.",
-  "storedOnInFuture": "The freezing date cannot be in the future.",
+  "compartmentMissing": "Choose where it goes.",
+  "storedOnInFuture": "The date cannot be in the future.",
   "genericFailure": "That did not work. Please try again.",
   "batchPhotoButton": "Photo of this bag"
 }

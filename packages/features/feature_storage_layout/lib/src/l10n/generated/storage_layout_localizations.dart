@@ -98,13 +98,13 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @configSectionTitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer layout'**
+  /// **'Storage places'**
   String get configSectionTitle;
 
   /// No description provided for @layoutOverviewTitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer layout'**
+  /// **'Storage places'**
   String get layoutOverviewTitle;
 
   /// No description provided for @defaultStoragePlaceName.
@@ -146,13 +146,13 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @addStoragePlaceButton.
   ///
   /// In en, this message translates to:
-  /// **'Add freezer'**
+  /// **'Add storage place'**
   String get addStoragePlaceButton;
 
   /// No description provided for @newStoragePlaceTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add a freezer'**
+  /// **'Add a storage place'**
   String get newStoragePlaceTitle;
 
   /// No description provided for @templatePrompt.
@@ -212,13 +212,13 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @compartmentNameTaken.
   ///
   /// In en, this message translates to:
-  /// **'Another drawer already has this name.'**
+  /// **'Another compartment already has this name.'**
   String get compartmentNameTaken;
 
   /// No description provided for @storagePlaceNameTaken.
   ///
   /// In en, this message translates to:
-  /// **'Another freezer already has this name.'**
+  /// **'Another storage place already has this name.'**
   String get storagePlaceNameTaken;
 
   /// No description provided for @nameTooLong.
@@ -260,7 +260,7 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @lastCompartmentHint.
   ///
   /// In en, this message translates to:
-  /// **'A freezer needs at least one drawer.'**
+  /// **'A storage place needs at least one compartment.'**
   String get lastCompartmentHint;
 
   /// No description provided for @layoutHint.
@@ -272,19 +272,19 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @renameStoragePlaceAction.
   ///
   /// In en, this message translates to:
-  /// **'Rename freezer'**
+  /// **'Rename'**
   String get renameStoragePlaceAction;
 
   /// No description provided for @renameStoragePlaceDialogTitle.
   ///
   /// In en, this message translates to:
-  /// **'Rename freezer'**
+  /// **'Rename storage place'**
   String get renameStoragePlaceDialogTitle;
 
   /// No description provided for @removeStoragePlaceAction.
   ///
   /// In en, this message translates to:
-  /// **'Remove freezer'**
+  /// **'Remove storage place'**
   String get removeStoragePlaceAction;
 
   /// No description provided for @removeStoragePlaceDialogTitle.
@@ -296,37 +296,37 @@ abstract class StorageLayoutLocalizations {
   /// No description provided for @removeStoragePlaceDialogText.
   ///
   /// In en, this message translates to:
-  /// **'It disappears from the app. Its drawers are kept for your statistics.'**
+  /// **'It disappears from the app. Its compartments are kept for your statistics.'**
   String get removeStoragePlaceDialogText;
 
   /// No description provided for @storagePlaceNotEmpty.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{Take out or move the 1 item in this freezer first.} other{Take out or move the {count} items in this freezer first.}}'**
+  /// **'{count, plural, =1{Take out or move the 1 item in here first.} other{Take out or move the {count} items in here first.}}'**
   String storagePlaceNotEmpty(int count);
 
   /// No description provided for @lastStoragePlaceCannotBeRemoved.
   ///
   /// In en, this message translates to:
-  /// **'You need at least one freezer.'**
+  /// **'You need at least one storage place.'**
   String get lastStoragePlaceCannotBeRemoved;
 
   /// No description provided for @storagePlaceNotFound.
   ///
   /// In en, this message translates to:
-  /// **'This freezer was removed.'**
+  /// **'This storage place was removed.'**
   String get storagePlaceNotFound;
 
   /// No description provided for @noStoragePlaceTitle.
   ///
   /// In en, this message translates to:
-  /// **'No freezer yet'**
+  /// **'No storage place yet'**
   String get noStoragePlaceTitle;
 
   /// No description provided for @noStoragePlaceMessage.
   ///
   /// In en, this message translates to:
-  /// **'Add your freezer and its drawers, then start filling it.'**
+  /// **'Add where you keep things and how it is divided, then start filling it.'**
   String get noStoragePlaceMessage;
 
   /// No description provided for @genericFailure.

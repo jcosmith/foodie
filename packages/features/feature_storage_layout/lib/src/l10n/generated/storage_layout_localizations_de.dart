@@ -9,10 +9,10 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   StorageLayoutLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get configSectionTitle => 'Aufteilung';
+  String get configSectionTitle => 'Lagerorte';
 
   @override
-  String get layoutOverviewTitle => 'Aufteilung';
+  String get layoutOverviewTitle => 'Lagerorte';
 
   @override
   String get defaultStoragePlaceName => 'Lagerort';
@@ -47,10 +47,10 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   }
 
   @override
-  String get addStoragePlaceButton => 'Gefriergerät hinzufügen';
+  String get addStoragePlaceButton => 'Lagerort hinzufügen';
 
   @override
-  String get newStoragePlaceTitle => 'Gefriergerät hinzufügen';
+  String get newStoragePlaceTitle => 'Lagerort hinzufügen';
 
   @override
   String get templatePrompt => 'Was kommt deinem am nächsten? Du kannst später alles ändern.';
@@ -91,10 +91,10 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   String get changeColor => 'Farbe ändern';
 
   @override
-  String get compartmentNameTaken => 'Eine andere Schublade heißt schon so.';
+  String get compartmentNameTaken => 'Ein anderes Fach heißt schon so.';
 
   @override
-  String get storagePlaceNameTaken => 'Ein anderes Gefriergerät heißt schon so.';
+  String get storagePlaceNameTaken => 'Ein anderer Lagerort heißt schon so.';
 
   @override
   String get nameTooLong => 'Höchstens 30 Zeichen.';
@@ -127,7 +127,7 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   }
 
   @override
-  String get lastCompartmentHint => 'Ein Gefriergerät braucht mindestens eine Schublade.';
+  String get lastCompartmentHint => 'Ein Lagerort braucht mindestens ein Fach.';
 
   @override
   String get layoutHint =>
@@ -137,10 +137,10 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   String get renameStoragePlaceAction => 'Umbenennen';
 
   @override
-  String get renameStoragePlaceDialogTitle => 'Gefriergerät umbenennen';
+  String get renameStoragePlaceDialogTitle => 'Lagerort umbenennen';
 
   @override
-  String get removeStoragePlaceAction => 'Gefriergerät entfernen';
+  String get removeStoragePlaceAction => 'Lagerort entfernen';
 
   @override
   String removeStoragePlaceDialogTitle(String name) {
@@ -149,7 +149,7 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
 
   @override
   String get removeStoragePlaceDialogText =>
-      'Es verschwindet aus der App. Seine Schubladen bleiben für die Statistik erhalten.';
+      'Er verschwindet aus der App. Seine Fächer bleiben für die Statistik erhalten.';
 
   @override
   String storagePlaceNotEmpty(int count) {
@@ -163,17 +163,17 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   }
 
   @override
-  String get lastStoragePlaceCannotBeRemoved => 'Du brauchst mindestens ein Gefriergerät.';
+  String get lastStoragePlaceCannotBeRemoved => 'Du brauchst mindestens einen Lagerort.';
 
   @override
-  String get storagePlaceNotFound => 'Dieses Gefriergerät wurde entfernt.';
+  String get storagePlaceNotFound => 'Dieser Lagerort wurde entfernt.';
 
   @override
-  String get noStoragePlaceTitle => 'Noch kein Gefriergerät';
+  String get noStoragePlaceTitle => 'Noch kein Lagerort';
 
   @override
   String get noStoragePlaceMessage =>
-      'Lege dein Gefriergerät und seine Schubladen an und fülle es dann.';
+      'Lege an, wo du Dinge aufbewahrst und wie es aufgeteilt ist, und fülle es dann.';
 
   @override
   String get genericFailure => 'Das hat nicht geklappt. Bitte versuche es noch einmal.';

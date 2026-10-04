@@ -49,7 +49,7 @@ final class AutomaticEntryCannotBeRemoved extends RestockFailure {
   String get debugDescription => 'Entries from restock rules follow the stock';
 }
 
-/// Putting bought items into the freezer needs a freezer.
+/// Putting bought items into storage needs a storage place.
 final class NoCompartmentForBoughtItems extends RestockFailure {
   const NoCompartmentForBoughtItems();
 

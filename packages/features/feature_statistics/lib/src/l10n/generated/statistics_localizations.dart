@@ -170,7 +170,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @kpiEaten.
   ///
   /// In en, this message translates to:
-  /// **'Eaten'**
+  /// **'Used'**
   String get kpiEaten;
 
   /// No description provided for @kpiAdded.
@@ -218,7 +218,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @trendTitle.
   ///
   /// In en, this message translates to:
-  /// **'Eaten vs added'**
+  /// **'Used vs added'**
   String get trendTitle;
 
   /// No description provided for @trendSubtitle.
@@ -230,13 +230,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @trendSubtitleWithComparison.
   ///
   /// In en, this message translates to:
-  /// **'Dashed: eaten in the comparison period · drag to zoom'**
+  /// **'Dashed: used in the comparison period · drag to zoom'**
   String get trendSubtitleWithComparison;
 
   /// No description provided for @seriesEaten.
   ///
   /// In en, this message translates to:
-  /// **'Eaten'**
+  /// **'Used'**
   String get seriesEaten;
 
   /// No description provided for @seriesAdded.
@@ -308,13 +308,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @noHistoryMessage.
   ///
   /// In en, this message translates to:
-  /// **'Insights appear once you put items in the freezer and take them out.'**
+  /// **'Insights appear once you put items away and take them out.'**
   String get noHistoryMessage;
 
   /// No description provided for @activityConsumed.
   ///
   /// In en, this message translates to:
-  /// **'Eaten'**
+  /// **'Used'**
   String get activityConsumed;
 
   /// No description provided for @activityAdded.
@@ -476,7 +476,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @filterDrawers.
   ///
   /// In en, this message translates to:
-  /// **'Drawers'**
+  /// **'Compartments'**
   String get filterDrawers;
 
   /// No description provided for @filterProducts.
@@ -572,13 +572,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @detailsButtonSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer days, weekdays, storage time and the freezer map'**
+  /// **'Busy days, weekdays, storage time and the storage map'**
   String get detailsButtonSubtitle;
 
   /// No description provided for @calendarTitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer days'**
+  /// **'Busy days'**
   String get calendarTitle;
 
   /// No description provided for @calendarSubtitle.
@@ -596,7 +596,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @activityItemsConsumed.
   ///
   /// In en, this message translates to:
-  /// **'items eaten'**
+  /// **'items used'**
   String get activityItemsConsumed;
 
   /// No description provided for @activityItemsAdded.
@@ -626,13 +626,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @durationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Time in freezer before eaten'**
+  /// **'Time stored before use'**
   String get durationTitle;
 
   /// No description provided for @durationSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Number of items eaten, by storage time'**
+  /// **'Number of items used, by storage time'**
   String get durationSubtitle;
 
   /// No description provided for @durationUnderOneMonth.
@@ -680,13 +680,13 @@ abstract class StatisticsLocalizations {
   /// No description provided for @storageMapTitle.
   ///
   /// In en, this message translates to:
-  /// **'Freezer map'**
+  /// **'Storage map'**
   String get storageMapTitle;
 
   /// No description provided for @storageMapSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Current contents by drawer, coloured by age. Tap to filter.'**
+  /// **'Current contents by compartment, coloured by age. Tap to filter.'**
   String get storageMapSubtitle;
 
   /// No description provided for @drawerItems.

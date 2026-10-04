@@ -29,7 +29,7 @@ final class StorageMapCompartment {
 
 /// The freezer's current contents per drawer, each item a symbol coloured by
 /// its age (UI examples document, phone 9: "Where is the old stuff?").
-/// The items are drawn with a custom painter (decision D7); every drawer is
+/// The items are drawn with a custom painter (decision D7); every compartment is
 /// one tap target.
 class StorageMap extends StatelessWidget {
   const StorageMap({required this.drawers, this.onDrawerTapped, super.key});

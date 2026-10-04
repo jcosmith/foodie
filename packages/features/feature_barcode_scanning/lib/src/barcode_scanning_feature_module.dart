@@ -57,7 +57,7 @@ final class BarcodeScanningFeatureModule extends FeatureModuleBase {
   List<RouteBase> buildRoutes() => buildBarcodeScanningRoutes();
 
   /// "Scan to add" and "Scan to remove" in the floating add menu, after the
-  /// inventory's own "Add to freezer" (10).
+  /// inventory's own "Add item" (10).
   @override
   List<QuickActionContribution> get quickActions => [
     QuickActionContribution(

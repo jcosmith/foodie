@@ -47,7 +47,7 @@ final class StatisticsMovementFact {
   final CategoryIdentifier categoryIdentifier;
   final CompartmentIdentifier compartmentIdentifier;
 
-  /// Always positive: what was added, eaten, thrown away or moved.
+  /// Always positive: what was added, used, thrown away or moved.
   final Quantity quantity;
 
   /// Number of movements; each one is one item taken out, put in or moved.

@@ -82,7 +82,7 @@ class RunsOutInChartCard extends ConsumerWidget {
     );
   }
 
-  /// Follows the category and product filters; period and drawers do not
+  /// Follows the category and product filters; period and compartments do not
   /// change when the current stock runs out.
   bool _matchesFilter(Product product) =>
       (filter.categoryIdentifiers.isEmpty ||

@@ -63,8 +63,8 @@ class BackupConfigSection extends ConsumerWidget {
   }
 }
 
-/// Shown on Home while [isBackupDueProvider] is true: there is food in the
-/// freezer but no recent backup.
+/// Shown on Home while [isBackupDueProvider] is true: something is stored
+/// but there is no recent backup.
 class BackupReminderCard extends ConsumerWidget {
   const BackupReminderCard({super.key});
 

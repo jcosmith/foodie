@@ -119,7 +119,7 @@ Future<void> showRestoreBackupFlow(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// Exports the freezer contents or the history as CSV.
+/// Exports what is stored or the history as CSV.
 Future<void> showCsvExportFlow(BuildContext context, WidgetRef ref, CsvExportKind kind) async {
   final localizations = DataPortabilityLocalizations.of(context);
   final quantityFormatter = context.quantityFormatter;

@@ -11,7 +11,7 @@ abstract final class OnboardingPreferenceKeys {
   );
 }
 
-/// Finishes onboarding: creates the freezer the user picked (if they had
+/// Finishes onboarding: creates the storage place the user picked (if they had
 /// none yet) and remembers that onboarding is done.
 final class CompleteOnboardingUseCase {
   const CompleteOnboardingUseCase({

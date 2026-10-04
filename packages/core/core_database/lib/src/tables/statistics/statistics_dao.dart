@@ -11,7 +11,7 @@ part 'statistics_dao.g.dart';
 /// Movements of one local day that share kind, product, compartment, unit,
 /// discard reason and storage age, summed.
 ///
-/// Quantities are positive for every kind: what was added, eaten, thrown
+/// Quantities are positive for every kind: what was added, used, thrown
 /// away or moved. Undone removals cancel out, because their compensating
 /// movement has the same kind and the opposite delta.
 @immutable

@@ -49,7 +49,7 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get resetFilters => 'Reset';
 
   @override
-  String get kpiEaten => 'Eaten';
+  String get kpiEaten => 'Used';
 
   @override
   String get kpiAdded => 'Added';
@@ -77,16 +77,16 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get deltaNone => 'no comparison';
 
   @override
-  String get trendTitle => 'Eaten vs added';
+  String get trendTitle => 'Used vs added';
 
   @override
   String get trendSubtitle => 'Drag across the chart to zoom in';
 
   @override
-  String get trendSubtitleWithComparison => 'Dashed: eaten in the comparison period · drag to zoom';
+  String get trendSubtitleWithComparison => 'Dashed: used in the comparison period · drag to zoom';
 
   @override
-  String get seriesEaten => 'Eaten';
+  String get seriesEaten => 'Used';
 
   @override
   String get seriesAdded => 'Added';
@@ -132,11 +132,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get noHistoryTitle => 'No activity yet';
 
   @override
-  String get noHistoryMessage =>
-      'Insights appear once you put items in the freezer and take them out.';
+  String get noHistoryMessage => 'Insights appear once you put items away and take them out.';
 
   @override
-  String get activityConsumed => 'Eaten';
+  String get activityConsumed => 'Used';
 
   @override
   String get activityAdded => 'Added';
@@ -225,7 +224,7 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get filterCategories => 'Categories';
 
   @override
-  String get filterDrawers => 'Drawers';
+  String get filterDrawers => 'Compartments';
 
   @override
   String get filterProducts => 'Products';
@@ -283,10 +282,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get detailsButton => 'More insights';
 
   @override
-  String get detailsButtonSubtitle => 'Freezer days, weekdays, storage time and the freezer map';
+  String get detailsButtonSubtitle => 'Busy days, weekdays, storage time and the storage map';
 
   @override
-  String get calendarTitle => 'Freezer days';
+  String get calendarTitle => 'Busy days';
 
   @override
   String calendarSubtitle(String activityItems) {
@@ -299,7 +298,7 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   }
 
   @override
-  String get activityItemsConsumed => 'items eaten';
+  String get activityItemsConsumed => 'items used';
 
   @override
   String get activityItemsAdded => 'items added';
@@ -314,10 +313,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get weekdayTitle => 'By weekday';
 
   @override
-  String get durationTitle => 'Time in freezer before eaten';
+  String get durationTitle => 'Time stored before use';
 
   @override
-  String get durationSubtitle => 'Number of items eaten, by storage time';
+  String get durationSubtitle => 'Number of items used, by storage time';
 
   @override
   String get durationUnderOneMonth => '< 1 mo';
@@ -341,10 +340,11 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get sixMonthMarker => '6 mo';
 
   @override
-  String get storageMapTitle => 'Freezer map';
+  String get storageMapTitle => 'Storage map';
 
   @override
-  String get storageMapSubtitle => 'Current contents by drawer, coloured by age. Tap to filter.';
+  String get storageMapSubtitle =>
+      'Current contents by compartment, coloured by age. Tap to filter.';
 
   @override
   String drawerItems(int count) {

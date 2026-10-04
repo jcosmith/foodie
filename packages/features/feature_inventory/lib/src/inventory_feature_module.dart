@@ -11,9 +11,9 @@ import 'data/drift_inventory_repository.dart';
 import 'l10n/generated/inventory_localizations.dart';
 import 'presentation/inventory_routes.dart';
 
-/// What is in the freezer: the "Freezer" tab, the add form and the sheets for
+/// What is stored: the domain tabs, the add form and the sheets for
 /// taking, throwing away, moving and correcting. Also tells the storage
-/// layout which drawers hold something.
+/// layout which compartments hold something.
 final class InventoryFeatureModule extends FeatureModuleBase {
   const InventoryFeatureModule();
 

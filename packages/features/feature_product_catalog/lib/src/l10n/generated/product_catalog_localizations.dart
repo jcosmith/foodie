@@ -254,19 +254,19 @@ abstract class ProductCatalogLocalizations {
   /// No description provided for @defaultCompartmentLabel.
   ///
   /// In en, this message translates to:
-  /// **'Default drawer'**
+  /// **'Default compartment'**
   String get defaultCompartmentLabel;
 
   /// No description provided for @defaultCompartmentNone.
   ///
   /// In en, this message translates to:
-  /// **'The drawer used last time'**
+  /// **'The compartment used last time'**
   String get defaultCompartmentNone;
 
   /// No description provided for @defaultCompartmentHelper.
   ///
   /// In en, this message translates to:
-  /// **'Chosen for you when you add this product to the freezer.'**
+  /// **'Chosen for you when you add this product.'**
   String get defaultCompartmentHelper;
 
   /// No description provided for @archiveProductAction.
@@ -284,7 +284,7 @@ abstract class ProductCatalogLocalizations {
   /// No description provided for @archiveProductDialogText.
   ///
   /// In en, this message translates to:
-  /// **'It disappears from the product list. Items already in the freezer and your statistics keep it.'**
+  /// **'It disappears from the product list. Items already at home and your statistics keep it.'**
   String get archiveProductDialogText;
 
   /// No description provided for @nameMissing.

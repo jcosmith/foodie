@@ -144,7 +144,7 @@ class _WrongProductButton extends ConsumerWidget {
 }
 
 /// Scan to add (section 10.3): one tap puts the package size, or the weight
-/// in a weighed-goods code, into the drawer used last time; "Change
+/// in a weighed-goods code, into the compartment used last time; "Change
 /// details" opens the add form pre-filled instead.
 class ScanToAddPanel extends ConsumerStatefulWidget {
   const ScanToAddPanel({

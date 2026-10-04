@@ -108,8 +108,8 @@ final class RemoveShoppingListEntryUseCase {
   }
 }
 
-/// "Put ticked items in the freezer" (UI example phone 6): every ticked
-/// product becomes a batch frozen today, in the drawer the product went into
+/// "Put ticked items away" (UI example phone 6): every ticked
+/// product becomes a batch stored today, in the compartment the product went into
 /// last time, through the inventory's own use case. Returns how many batches
 /// were added.
 final class PutTickedItemsAwayUseCase {

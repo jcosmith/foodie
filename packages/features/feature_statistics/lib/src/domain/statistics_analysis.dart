@@ -99,7 +99,7 @@ final class StatisticsAnalysis {
   /// Whether anything at all happened in the period with the current filter.
   bool get hasAnyActivity => _selectedFacts(_periodFacts).isNotEmpty;
 
-  /// Items eaten or thrown away in the period.
+  /// Items used or thrown away in the period.
   int get removalCount => _selectedFacts(_periodFacts)
       .where(
         (fact) =>

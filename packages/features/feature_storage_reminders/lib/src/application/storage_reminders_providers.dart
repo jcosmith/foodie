@@ -72,7 +72,7 @@ final storageReminderReplanningCoordinatorProvider = Provider<RecomputationCoord
   return coordinator;
 });
 
-/// What the "Eat soon" card and screen list: batches past 60 % of their
+/// What the "Use soon" card and screen list: batches past 60 % of their
 /// storage time, most urgent first; `null` while loading.
 final eatSoonItemsProvider = Provider<List<InventoryItem>?>((ref) {
   final overview = ref.watch(inventoryOverviewProvider).value;

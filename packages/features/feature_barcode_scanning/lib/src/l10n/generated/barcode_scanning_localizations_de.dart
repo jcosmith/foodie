@@ -40,7 +40,7 @@ class BarcodeScanningLocalizationsDe extends BarcodeScanningLocalizations {
 
   @override
   String amountInStoragePlace(String amount) {
-    return '$amount eingefroren';
+    return '$amount zu Hause';
   }
 
   @override
@@ -66,8 +66,8 @@ class BarcodeScanningLocalizationsDe extends BarcodeScanningLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Packungen eingefroren. Von der ältesten nehmen?',
-      one: '1 Packung eingefroren. Davon nehmen?',
+      other: '$count Packungen zu Hause. Von der ältesten nehmen?',
+      one: '1 Packung zu Hause. Davon nehmen?',
     );
     return '$_temp0';
   }
@@ -79,7 +79,7 @@ class BarcodeScanningLocalizationsDe extends BarcodeScanningLocalizations {
   String get otherBags => 'Oder eine andere Packung';
 
   @override
-  String get notInStoragePlace => 'Von diesem Produkt ist nichts eingefroren.';
+  String get notInStoragePlace => 'Von diesem Produkt ist nichts zu Hause.';
 
   @override
   String unknownCode(String code) {
@@ -127,15 +127,15 @@ class BarcodeScanningLocalizationsDe extends BarcodeScanningLocalizations {
   String get amountNeeded => 'Menge fehlt';
 
   @override
-  String get noStoragePlaceYet => 'Richte zuerst einen Gefrierschrank ein';
+  String get noStoragePlaceYet => 'Richte zuerst einen Lagerort ein';
 
   @override
   String putAwayButton(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Teile einfrieren',
-      one: '1 Teil einfrieren',
+      other: '$count Teile einräumen',
+      one: '1 Teil einräumen',
     );
     return '$_temp0';
   }
@@ -145,8 +145,8 @@ class BarcodeScanningLocalizationsDe extends BarcodeScanningLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Teile eingefroren',
-      one: '1 Teil eingefroren',
+      other: '$count Teile eingeräumt',
+      one: '1 Teil eingeräumt',
     );
     return '$_temp0';
   }
@@ -168,8 +168,8 @@ class BarcodeScanningLocalizationsDe extends BarcodeScanningLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Teile sind noch nicht eingefroren.',
-      one: '1 Teil ist noch nicht eingefroren.',
+      other: '$count Teile sind noch nicht eingeräumt.',
+      one: '1 Teil ist noch nicht eingeräumt.',
     );
     return '$_temp0';
   }

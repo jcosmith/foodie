@@ -1,3 +1,4 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,11 +9,16 @@ import 'add_stock_batch_screen.dart';
 abstract final class InventoryRoutes {
   /// The add form, optionally with a product chosen already and an amount
   /// in the product's base unit (barcode scans, where a weighed-goods code
-  /// carries the weight).
-  static String addStockBatch({ProductIdentifier? productIdentifier, int? amountInBaseUnits}) {
+  /// carries the weight), and limited to one domain from its tab.
+  static String addStockBatch({
+    ProductIdentifier? productIdentifier,
+    int? amountInBaseUnits,
+    StorageDomainIdentifier? domainIdentifier,
+  }) {
     final queryParameters = {
       'product': ?productIdentifier?.value,
       'amount': ?amountInBaseUnits?.toString(),
+      'domain': ?domainIdentifier?.value,
     };
     return Uri(
       path: '/inventory/add',
@@ -31,6 +37,10 @@ List<RouteBase> buildInventoryRoutes() => [
         null => null,
       },
       initialAmountInBaseUnits: int.tryParse(state.uri.queryParameters['amount'] ?? ''),
+      domainIdentifier: switch (state.uri.queryParameters['domain']) {
+        final domain? when domain.isNotEmpty => StorageDomainIdentifier(domain),
+        _ => null,
+      },
     ),
   ),
 ];

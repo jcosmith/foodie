@@ -102,7 +102,7 @@ void main() {
 
     expect(find.text('Jul 5, 2026 – Oct 2, 2026'), findsOneWidget);
     expect(find.text('Filters · 0'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 0.5 kg, no comparison'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 0.5 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Added: 1.8 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Thrown away: 44.4%, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Avg. days stored: 27 days, no comparison'), findsOneWidget);
@@ -111,7 +111,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(TrendLineChart), findsOneWidget);
-    expect(find.text('Eaten by category'), findsOneWidget);
+    expect(find.text('Used by category'), findsOneWidget);
     expect(find.text('🫛 Garden peas'), findsOneWidget);
     expect(find.text('Freezer burn'), findsOneWidget);
     expect(find.text('More insights'), findsOneWidget);
@@ -130,13 +130,13 @@ void main() {
 
     expect(find.text('Filters · 1'), findsOneWidget);
     expect(find.widgetWithText(InputChip, 'Meat & fish'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 0 kg, no comparison'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 0 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Thrown away: 100%, no comparison'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(ActionChip, 'Reset'));
     await _settle(tester);
     expect(find.text('Filters · 0'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 0.5 kg, no comparison'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 0.5 kg, no comparison'), findsOneWidget);
   });
 
   testWidgets('the filter sheet switches the measure and says what it leaves out', (tester) async {
@@ -150,7 +150,7 @@ void main() {
     await tester.tap(find.widgetWithText(ChoiceChip, 'Count'));
     await _settle(tester);
     expect(find.text('Counts every item, whatever its unit.'), findsOneWidget);
-    expect(find.bySemanticsLabel('Eaten: 3×, no comparison'), findsOneWidget);
+    expect(find.bySemanticsLabel('Used: 3×, no comparison'), findsOneWidget);
     expect(harness.read(statisticsFilterProvider).measure, StatisticsMeasure.count);
 
     await tester.tap(find.widgetWithText(ChoiceChip, 'All time'));

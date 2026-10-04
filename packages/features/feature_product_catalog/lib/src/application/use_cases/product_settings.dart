@@ -36,7 +36,7 @@ final class ProductSettings {
   /// `null` shows the emoji.
   final ProductIconImage? iconImage;
 
-  /// `null` suggests the drawer used last time.
+  /// `null` suggests the compartment used last time.
   final CompartmentIdentifier? defaultCompartmentIdentifier;
 
   /// Checks the numbers; names are checked by the use cases.

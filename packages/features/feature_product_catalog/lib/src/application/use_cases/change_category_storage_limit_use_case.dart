@@ -6,7 +6,7 @@ import '../../domain/product_catalog_events.dart';
 import '../../domain/product_catalog_failure.dart';
 import '../../domain/product_catalog_repository.dart';
 
-/// Sets how long food of a category keeps in the freezer. Products with their
+/// Sets how long food of a category keeps at home. Products with their
 /// own storage time keep it.
 final class ChangeCategoryStorageLimitUseCase {
   const ChangeCategoryStorageLimitUseCase({

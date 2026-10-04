@@ -27,6 +27,7 @@ final class StorageDomainContribution {
     required this.descriptionBuilder,
     required this.storedOnLabelBuilder,
     required this.countsDiscardsAsWaste,
+    this.addTitleBuilder,
   });
 
   final StorageDomainIdentifier identifier;
@@ -47,6 +48,10 @@ final class StorageDomainContribution {
   /// What the date a batch was put away is called here: "Frozen on" or
   /// "Bought on".
   final LocalizedTextBuilder storedOnLabelBuilder;
+
+  /// The title of the add form inside the domain's tab: "Add to the
+  /// freezer"; `null` shows a plain "Add".
+  final LocalizedTextBuilder? addTitleBuilder;
 
   /// Whether throwing something away from this domain is food waste;
   /// used-up dish soap never is (architecture 10.7, "Waste is a domain property").

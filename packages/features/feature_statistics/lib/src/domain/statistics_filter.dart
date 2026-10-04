@@ -60,7 +60,7 @@ final class StatisticsFilter {
          'A custom period needs its dates',
        );
 
-  /// Three months, compared with the three before, by weight, eaten
+  /// Three months, compared with the three before, by weight, used
   /// (UI examples document, phone 7).
   static const StatisticsFilter initial = StatisticsFilter();
 

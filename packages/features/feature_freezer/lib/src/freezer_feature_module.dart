@@ -54,6 +54,7 @@ final class FreezerFeatureModule extends FeatureModuleBase {
     labelBuilder: (context) => _texts(context).domainLabel,
     descriptionBuilder: (context) => _texts(context).domainDescription,
     storedOnLabelBuilder: (context) => _texts(context).storedOnLabel,
+    addTitleBuilder: (context) => _texts(context).addTitle,
     countsDiscardsAsWaste: true,
   );
 

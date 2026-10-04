@@ -18,7 +18,7 @@ class OnboardingLocalizationsDe extends OnboardingLocalizations {
 
   @override
   String get welcomeMessage =>
-      'Behalte im Blick, was in deinem Gefrierschrank ist, iss es, bevor es zu lange darin liegt, und wisse, was du kaufen musst.';
+      'Behalte im Blick, was in Tiefkühler, Kühlschrank und Vorrat ist, verbrauche es, bevor es verdirbt, und wisse, was du kaufen musst.';
 
   @override
   String get chooseLanguagePrompt => 'In welcher Sprache soll die App sein?';
@@ -34,7 +34,7 @@ class OnboardingLocalizationsDe extends OnboardingLocalizations {
 
   @override
   String get storagePlacePrompt =>
-      'Welcher kommt deinem am nächsten? Schubladen kannst du später in der Konfiguration umbenennen, hinzufügen und entfernen.';
+      'Welcher kommt deinem am nächsten? Fächer kannst du später in den Optionen umbenennen, hinzufügen und entfernen.';
 
   @override
   String get privacyTitle => 'Deine Daten bleiben hier';
@@ -52,7 +52,7 @@ class OnboardingLocalizationsDe extends OnboardingLocalizations {
 
   @override
   String get remindersMessage =>
-      'Erlaube Mitteilungen, damit dir die App einmal am Tag sagt, was schon lange eingefroren ist. Produktnamen bleiben auf dem Sperrbildschirm verborgen.';
+      'Erlaube Mitteilungen, damit dir die App einmal am Tag sagt, was bald verbraucht werden sollte. Produktnamen bleiben auf dem Sperrbildschirm verborgen.';
 
   @override
   String get allowNotificationsButton => 'Mitteilungen erlauben';

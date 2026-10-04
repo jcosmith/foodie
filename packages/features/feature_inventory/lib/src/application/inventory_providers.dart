@@ -25,7 +25,7 @@ final inventoryQueryServiceProvider = Provider<InventoryQueryService>(
   (ref) => InventoryQueryService(ref.watch(inventoryRepositoryProvider)),
 );
 
-/// Everything in the freezer, joined with products and drawers, live.
+/// Everything at home, joined with products and compartments, live.
 final inventoryOverviewProvider = StreamProvider<InventoryOverview>((ref) {
   final clock = ref.watch(clockProvider);
   final catalogAndLayout = combineLatestOfTwo(

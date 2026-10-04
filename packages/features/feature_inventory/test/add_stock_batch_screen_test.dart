@@ -123,12 +123,16 @@ void main() {
     testWidgets('from Home, every place is offered and the date follows the choice', (
       tester,
     ) async {
+      Finder chip(String compartmentName) => find.ancestor(
+        of: find.textContaining(compartmentName),
+        matching: find.byType(ChoiceChip),
+      );
       await showAddForm(tester);
       expect(find.text('Add'), findsOneWidget);
-      expect(find.widgetWithText(ChoiceChip, 'Drawer 1'), findsOneWidget);
+      expect(chip('Drawer 1'), findsOneWidget, reason: 'named with its place, as there are two');
 
-      await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Shelf 2'));
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Shelf 2'));
+      await tester.ensureVisible(chip('Shelf 2'));
+      await tester.tap(chip('Shelf 2'));
       await tester.pumpAndSettle();
       expect(find.text('Bought on'), findsOneWidget);
     });

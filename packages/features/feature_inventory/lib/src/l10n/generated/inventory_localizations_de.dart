@@ -9,7 +9,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   InventoryLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get overviewTitle => 'Mein Gefrierschrank';
+  String get overviewTitle => 'Zu Hause';
 
   @override
   String itemCount(int count) {
@@ -27,8 +27,8 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Schubladen',
-      one: '1 Schublade',
+      other: '$count Fächer',
+      one: '1 Fach',
     );
     return '$_temp0';
   }
@@ -42,10 +42,10 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get searchHint => 'Produkte suchen';
 
   @override
-  String get sortByDrawer => 'Nach Schublade';
+  String get sortByDrawer => 'Nach Ort';
 
   @override
-  String get sortByEatBefore => 'Zuerst essen';
+  String get sortByEatBefore => 'Zuerst verbrauchen';
 
   @override
   String get expandAllDrawers => 'Alle aufklappen';
@@ -55,7 +55,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
 
   @override
   String frozenAgo(String age) {
-    return 'eingefroren $age';
+    return 'eingelagert $age';
   }
 
   @override
@@ -69,21 +69,21 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get noStoragePlaceTitle => 'Richte zuerst dein Gefriergerät ein';
+  String get noStoragePlaceTitle => 'Richte zuerst einen Lagerort ein';
 
   @override
   String get noStoragePlaceMessage =>
-      'Sag der App, welche Schubladen dein Gefriergerät hat, und trage dann ein, was drin ist.';
+      'Sag der App, wo du Dinge aufbewahrst und wie es aufgeteilt ist, und trage dann ein, was drin ist.';
 
   @override
-  String get setUpStoragePlaceButton => 'Gefriergerät einrichten';
+  String get setUpStoragePlaceButton => 'Lagerort hinzufügen';
 
   @override
-  String get emptyTitle => 'Dein Gefrierschrank ist leer';
+  String get emptyTitle => 'Hier ist noch nichts';
 
   @override
   String get emptyMessage =>
-      'Trag ein, was du einfrierst, und die App merkt sich, wie lange es schon drin ist.';
+      'Trag ein, was du einräumst, und die App merkt sich, wie lange es schon da ist.';
 
   @override
   String noSearchResults(String query) {
@@ -94,7 +94,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get addButton => 'Hinzufügen';
 
   @override
-  String get quickActionAdd => 'Einfrieren';
+  String get quickActionAdd => 'Eintragen';
 
   @override
   String get takeTitle => 'Wie viel nimmst du?';
@@ -104,7 +104,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
 
   @override
   String leftAfter(String amount) {
-    return '$amount bleiben im Gefrierfach';
+    return '$amount bleiben';
   }
 
   @override
@@ -170,7 +170,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get moveTitle => 'In eine andere Schublade';
+  String get moveTitle => 'In ein anderes Fach';
 
   @override
   String get moveDestinationLabel => 'Verschieben nach';
@@ -189,8 +189,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get noOtherCompartment =>
-      'Lege in der Aufteilung eine weitere Schublade an, um etwas zu verschieben.';
+  String get noOtherCompartment => 'Lege ein weiteres Fach an, um etwas zu verschieben.';
 
   @override
   String get correctTitle => 'Wie viel ist wirklich noch da?';
@@ -205,7 +204,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get addTitle => 'Einfrieren';
+  String get addTitle => 'Hinzufügen';
 
   @override
   String get productLabel => 'Produkt';
@@ -222,10 +221,10 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get storedOnLabel => 'Eingefroren am';
+  String get storedOnLabel => 'Eingelagert am';
 
   @override
-  String get compartmentLabel => 'Schublade';
+  String get compartmentLabel => 'Wo';
 
   @override
   String get noteLabel => 'Notiz (optional)';
@@ -248,10 +247,10 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get productMissing => 'Wähle zuerst ein Produkt.';
 
   @override
-  String get compartmentMissing => 'Wähle eine Schublade.';
+  String get compartmentMissing => 'Wähle, wohin es kommt.';
 
   @override
-  String get storedOnInFuture => 'Das Einfrierdatum kann nicht in der Zukunft liegen.';
+  String get storedOnInFuture => 'Das Datum kann nicht in der Zukunft liegen.';
 
   @override
   String get genericFailure => 'Das hat nicht geklappt. Bitte versuche es noch einmal.';

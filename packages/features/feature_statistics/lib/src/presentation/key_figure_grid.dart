@@ -7,7 +7,7 @@ import '../domain/statistics_analysis.dart';
 import '../domain/statistics_filter.dart';
 import 'statistics_formatting.dart';
 
-/// Eaten, added, thrown away and average days stored, each with its change
+/// Used, added, thrown away and average days stored, each with its change
 /// against the comparison period and a small chart (UI examples document,
 /// phone 7). Tapping one of the first three shows that activity in the
 /// category charts.

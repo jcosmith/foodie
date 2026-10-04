@@ -12,7 +12,7 @@ class StorageRemindersLocalizationsDe extends StorageRemindersLocalizations {
   String get configSectionTitle => 'Erinnerungen';
 
   @override
-  String get eatSoonTitle => 'Bald essen';
+  String get eatSoonTitle => 'Bald verbrauchen';
 
   @override
   String get eatSoonEmpty => 'Nichts Dringendes. Gut gemacht!';
@@ -21,22 +21,22 @@ class StorageRemindersLocalizationsDe extends StorageRemindersLocalizations {
   String get eatSoonScreenEmptyTitle => 'Nichts muss bald weg';
 
   @override
-  String get eatSoonScreenEmptyMessage => 'Alles im Gefrierschrank hält sich noch eine Weile.';
+  String get eatSoonScreenEmptyMessage => 'Alles zu Hause hält sich noch eine Weile.';
 
   @override
   String get eatSoonScreenExplanation =>
       'Hier erscheint, was 60 % seiner Lagerzeit hinter sich hat. Tippe auf einen Eintrag, um etwas zu entnehmen.';
 
   @override
-  String get digestTitle => 'Bald essen';
+  String get digestTitle => 'Bald verbrauchen';
 
   @override
   String digestBodyWithCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Produkte im Gefrierschrank sollten bald gegessen werden.',
-      one: '1 Produkt im Gefrierschrank sollte bald gegessen werden.',
+      other: '$count Produkte sollten bald verbraucht werden.',
+      one: '1 Produkt sollte bald verbraucht werden.',
     );
     return '$_temp0';
   }
@@ -54,7 +54,7 @@ class StorageRemindersLocalizationsDe extends StorageRemindersLocalizations {
 
   @override
   String get dailyDigestDetail =>
-      'Eine Mitteilung an den Tagen, an denen etwas bald gegessen werden sollte';
+      'Eine Mitteilung an den Tagen, an denen etwas bald verbraucht werden sollte';
 
   @override
   String get digestTimeLabel => 'Uhrzeit';
@@ -76,14 +76,14 @@ class StorageRemindersLocalizationsDe extends StorageRemindersLocalizations {
   String get storageLimitsRow => 'Lagerzeiten';
 
   @override
-  String get storageLimitsDetail => 'Wie lange sich jede Kategorie im Gefrierschrank hält';
+  String get storageLimitsDetail => 'Wie lange sich jede Kategorie hält';
 
   @override
   String get storageLimitsTitle => 'Lagerzeiten';
 
   @override
   String get storageLimitsExplanation =>
-      'Lebensmittel gelten als „bald essen“, sobald 85 % ihrer Lagerzeit vorbei sind. Ein Produkt kann im Produkteditor eine eigene Zeit haben.';
+      'Dinge gelten als „bald verbrauchen“, sobald 85 % ihrer Lagerzeit vorbei sind. Ein Produkt kann im Produkteditor eine eigene Zeit haben.';
 
   @override
   String storageMonths(int count) {

@@ -9,8 +9,8 @@ import '../domain/backup_policies.dart';
 import '../l10n/generated/data_portability_localizations.dart';
 import 'data_portability_providers.dart';
 
-/// Schedules the one backup reminder notification, or none while the freezer
-/// is empty. Idempotent, so it runs at start and after every change.
+/// Schedules the one backup reminder notification, or none while nothing
+/// is stored. Idempotent, so it runs at start and after every change.
 final class ReplanBackupReminderUseCase {
   const ReplanBackupReminderUseCase({
     required InventoryQueryService inventory,

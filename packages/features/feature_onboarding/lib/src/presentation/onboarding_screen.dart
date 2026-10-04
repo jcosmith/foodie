@@ -13,7 +13,7 @@ import '../l10n/generated/onboarding_localizations.dart';
 enum _OnboardingStep { language, storagePlace, privacyAndReminders }
 
 /// The first start: language first (architecture document, section 10.5),
-/// then the kind of freezer unless one exists, then privacy and the
+/// then the first storage place unless one exists, then privacy and the
 /// notification permission with an explanation (section 12).
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -35,7 +35,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   _OnboardingStep get _step => _steps[_stepIndex];
 
-  /// The templates of the first domain that is switched on, the freezer
+  /// The templates of the first domain that is switched on, usually the freezer
   /// unless the user switched it off.
   List<StorageTemplate> get _templates {
     final firstDomain = ref.watch(enabledStorageDomainsProvider).firstOrNull;

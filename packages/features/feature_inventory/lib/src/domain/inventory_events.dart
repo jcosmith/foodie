@@ -31,7 +31,7 @@ final class StockBatchAdded extends StockBatchEvent {
   final Quantity quantity;
 }
 
-/// Some or all of a batch was eaten.
+/// Some or all of a batch was used.
 final class StockBatchConsumed extends StockBatchEvent {
   const StockBatchConsumed({
     required super.stockBatchIdentifier,

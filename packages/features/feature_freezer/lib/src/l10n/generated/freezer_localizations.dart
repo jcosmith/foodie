@@ -113,6 +113,12 @@ abstract class FreezerLocalizations {
   /// **'Frozen on'**
   String get storedOnLabel;
 
+  /// No description provided for @addTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to the freezer'**
+  String get addTitle;
+
   /// No description provided for @uprightName.
   ///
   /// In en, this message translates to:

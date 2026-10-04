@@ -112,13 +112,13 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
   String get iconImageUnreadable => 'This file is no picture the app can read.';
 
   @override
-  String get defaultCompartmentLabel => 'Default drawer';
+  String get defaultCompartmentLabel => 'Default compartment';
 
   @override
-  String get defaultCompartmentNone => 'The drawer used last time';
+  String get defaultCompartmentNone => 'The compartment used last time';
 
   @override
-  String get defaultCompartmentHelper => 'Chosen for you when you add this product to the freezer.';
+  String get defaultCompartmentHelper => 'Chosen for you when you add this product.';
 
   @override
   String get archiveProductAction => 'Hide product';
@@ -130,7 +130,7 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
 
   @override
   String get archiveProductDialogText =>
-      'It disappears from the product list. Items already in the freezer and your statistics keep it.';
+      'It disappears from the product list. Items already at home and your statistics keep it.';
 
   @override
   String get nameMissing => 'Please enter a name.';

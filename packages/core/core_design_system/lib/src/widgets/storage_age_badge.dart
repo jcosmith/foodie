@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/foodie_color_tokens.dart';
 
-/// How urgently an item should be eaten, relative to its recommended
+/// How urgently an item should be used, relative to its recommended
 /// maximum storage time; [overdue] once that time is used up.
 enum StorageAgeLevel { fresh, aging, urgent, overdue }
 

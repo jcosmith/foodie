@@ -28,10 +28,10 @@ final class CsvExportTexts {
     required this.unitSymbol,
   });
 
-  /// Product, category, amount, unit, frozen on, drawer, note.
+  /// Product, category, amount, unit, stored on, compartment, note.
   final List<String> contentsHeader;
 
-  /// Time, what happened, product, amount, unit, drawer, reason.
+  /// Time, what happened, product, amount, unit, compartment, reason.
   final List<String> historyHeader;
   final CatalogNames catalogNames;
   final LayoutDefaultNames layoutDefaultNames;
@@ -40,7 +40,7 @@ final class CsvExportTexts {
   final String Function(QuantityUnit unit) unitSymbol;
 }
 
-/// Exports what is in the freezer, or the whole history, as CSV.
+/// Exports what is at home, or the whole history, as CSV.
 final class CsvExportUseCase {
   const CsvExportUseCase({
     required InventoryQueryService inventory,

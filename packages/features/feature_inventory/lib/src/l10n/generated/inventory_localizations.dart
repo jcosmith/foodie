@@ -98,7 +98,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @overviewTitle.
   ///
   /// In en, this message translates to:
-  /// **'My freezer'**
+  /// **'At home'**
   String get overviewTitle;
 
   /// No description provided for @itemCount.
@@ -110,7 +110,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @drawerCount.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 drawer} other{{count} drawers}}'**
+  /// **'{count, plural, =1{1 compartment} other{{count} compartments}}'**
   String drawerCount(int count);
 
   /// No description provided for @itemsInDrawers.
@@ -128,13 +128,13 @@ abstract class InventoryLocalizations {
   /// No description provided for @sortByDrawer.
   ///
   /// In en, this message translates to:
-  /// **'By drawer'**
+  /// **'By place'**
   String get sortByDrawer;
 
   /// No description provided for @sortByEatBefore.
   ///
   /// In en, this message translates to:
-  /// **'Eat first'**
+  /// **'Use first'**
   String get sortByEatBefore;
 
   /// No description provided for @expandAllDrawers.
@@ -152,7 +152,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @frozenAgo.
   ///
   /// In en, this message translates to:
-  /// **'frozen {age}'**
+  /// **'added {age}'**
   String frozenAgo(String age);
 
   /// No description provided for @ofInitial.
@@ -170,31 +170,31 @@ abstract class InventoryLocalizations {
   /// No description provided for @noStoragePlaceTitle.
   ///
   /// In en, this message translates to:
-  /// **'Set up your freezer first'**
+  /// **'Set up a storage place first'**
   String get noStoragePlaceTitle;
 
   /// No description provided for @noStoragePlaceMessage.
   ///
   /// In en, this message translates to:
-  /// **'Tell the app which drawers your freezer has, then add what is inside.'**
+  /// **'Tell the app where you keep things and how it is divided, then add what is inside.'**
   String get noStoragePlaceMessage;
 
   /// No description provided for @setUpStoragePlaceButton.
   ///
   /// In en, this message translates to:
-  /// **'Set up freezer'**
+  /// **'Add storage place'**
   String get setUpStoragePlaceButton;
 
   /// No description provided for @emptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Your freezer is empty'**
+  /// **'Nothing in here yet'**
   String get emptyTitle;
 
   /// No description provided for @emptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Add what you freeze, and the app keeps track of how long it has been in there.'**
+  /// **'Add what you put away, and the app keeps track of how long it has been there.'**
   String get emptyMessage;
 
   /// No description provided for @noSearchResults.
@@ -212,7 +212,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @quickActionAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add to freezer'**
+  /// **'Add item'**
   String get quickActionAdd;
 
   /// No description provided for @takeTitle.
@@ -230,7 +230,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @leftAfter.
   ///
   /// In en, this message translates to:
-  /// **'{amount} stays in the freezer'**
+  /// **'{amount} stays'**
   String leftAfter(String amount);
 
   /// No description provided for @allTaken.
@@ -344,7 +344,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @moveTitle.
   ///
   /// In en, this message translates to:
-  /// **'Move to another drawer'**
+  /// **'Move to another compartment'**
   String get moveTitle;
 
   /// No description provided for @moveDestinationLabel.
@@ -374,7 +374,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @noOtherCompartment.
   ///
   /// In en, this message translates to:
-  /// **'Add another drawer in the freezer layout to move things.'**
+  /// **'Add another compartment to move things.'**
   String get noOtherCompartment;
 
   /// No description provided for @correctTitle.
@@ -398,7 +398,7 @@ abstract class InventoryLocalizations {
   /// No description provided for @addTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add to freezer'**
+  /// **'Add'**
   String get addTitle;
 
   /// No description provided for @productLabel.
@@ -428,13 +428,13 @@ abstract class InventoryLocalizations {
   /// No description provided for @storedOnLabel.
   ///
   /// In en, this message translates to:
-  /// **'Frozen on'**
+  /// **'Stored on'**
   String get storedOnLabel;
 
   /// No description provided for @compartmentLabel.
   ///
   /// In en, this message translates to:
-  /// **'Drawer'**
+  /// **'Where'**
   String get compartmentLabel;
 
   /// No description provided for @noteLabel.
@@ -476,13 +476,13 @@ abstract class InventoryLocalizations {
   /// No description provided for @compartmentMissing.
   ///
   /// In en, this message translates to:
-  /// **'Choose a drawer.'**
+  /// **'Choose where it goes.'**
   String get compartmentMissing;
 
   /// No description provided for @storedOnInFuture.
   ///
   /// In en, this message translates to:
-  /// **'The freezing date cannot be in the future.'**
+  /// **'The date cannot be in the future.'**
   String get storedOnInFuture;
 
   /// No description provided for @genericFailure.

@@ -21,7 +21,7 @@ import 'unpacking_list_card.dart';
 /// One screen with an Add / Remove switch (UI examples document, phone 4):
 /// the camera picture, and below it what the last code turned out to be.
 /// "Several in a row" collects scanned groceries in a review list instead
-/// and puts them all into the freezer at once (section 10.3).
+/// and puts them all into storage at once (section 10.3).
 class BarcodeScannerScreen extends ConsumerStatefulWidget {
   const BarcodeScannerScreen({required this.initialMode, super.key});
 
@@ -125,7 +125,7 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
     );
   }
 
-  /// Leaving with scanned items that are not in the freezer yet asks first.
+  /// Leaving with scanned items that are not at home yet asks first.
   Future<void> _confirmLeavingWithUnpackingList() async {
     final localizations = BarcodeScanningLocalizations.of(context);
     final navigator = Navigator.of(context);

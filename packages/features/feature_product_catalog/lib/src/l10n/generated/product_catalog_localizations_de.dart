@@ -111,13 +111,13 @@ class ProductCatalogLocalizationsDe extends ProductCatalogLocalizations {
   String get iconImageUnreadable => 'Diese Datei ist kein Bild, das die App lesen kann.';
 
   @override
-  String get defaultCompartmentLabel => 'Standardschublade';
+  String get defaultCompartmentLabel => 'Standardfach';
 
   @override
-  String get defaultCompartmentNone => 'Die zuletzt genutzte Schublade';
+  String get defaultCompartmentNone => 'Das zuletzt genutzte Fach';
 
   @override
-  String get defaultCompartmentHelper => 'Wird vorausgewählt, wenn du dieses Produkt einfrierst.';
+  String get defaultCompartmentHelper => 'Wird vorausgewählt, wenn du dieses Produkt hinzufügst.';
 
   @override
   String get archiveProductAction => 'Produkt ausblenden';
@@ -129,7 +129,7 @@ class ProductCatalogLocalizationsDe extends ProductCatalogLocalizations {
 
   @override
   String get archiveProductDialogText =>
-      'Es verschwindet aus der Produktliste. Bereits eingefrorene Produkte und deine Statistik behalten es.';
+      'Es verschwindet aus der Produktliste. Vorhandene Produkte und deine Statistik behalten es.';
 
   @override
   String get nameMissing => 'Bitte gib einen Namen ein.';

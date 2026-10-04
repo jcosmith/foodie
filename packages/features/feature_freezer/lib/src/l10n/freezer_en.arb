@@ -3,6 +3,7 @@
   "domainLabel": "Freezer",
   "domainDescription": "Frozen food, drawers and baskets",
   "storedOnLabel": "Frozen on",
+  "addTitle": "Add to the freezer",
   "uprightName": "Freezer",
   "chestName": "Chest freezer",
   "fridgeFreezerName": "Fridge freezer",

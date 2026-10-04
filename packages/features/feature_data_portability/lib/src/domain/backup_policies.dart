@@ -37,8 +37,8 @@ abstract final class BackupReminderPolicy {
 
   /// When the backup reminder notification should appear next, in local
   /// time: 90 days after the last backup, or after the oldest food in the
-  /// freezer was stored if there never was one, then every 30 days until a
-  /// backup is made. `null` while the freezer is empty.
+  /// storage was put away if there never was one, then every 30 days until a
+  /// backup is made. `null` while nothing is stored.
   static DateTime? nextNotificationAt({
     required DateTime? lastBackupAtLocal,
     required DateTime? oldestStoredAtLocal,

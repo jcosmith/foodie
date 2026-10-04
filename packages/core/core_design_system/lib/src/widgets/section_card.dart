@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/foodie_spacing.dart';
 
 /// A card with a title row and an optional trailing action, such as the
-/// "Eat soon · See all" card on the home dashboard.
+/// "Use soon · See all" card on the home dashboard.
 class SectionCard extends StatelessWidget {
   const SectionCard({
     required this.title,

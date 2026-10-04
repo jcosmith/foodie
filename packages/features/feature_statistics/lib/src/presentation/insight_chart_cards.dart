@@ -19,7 +19,7 @@ StatisticsFilter _withGroupToggled(StatisticsFilter filter, StatisticsCategoryGr
     ? filter.withCategoryGroupToggled(group.categoryIdentifiers)
     : filter.withCategoryToggled(group.categoryIdentifiers.single);
 
-/// "Eaten vs added": both lines over the period, the eaten line of the
+/// "Used vs added": both lines over the period, the eaten line of the
 /// comparison period dashed; dragging picks a custom period.
 class TrendChartCard extends ConsumerWidget {
   const TrendChartCard({required this.analysis, super.key});
@@ -102,7 +102,7 @@ class TrendChartCard extends ConsumerWidget {
   }
 }
 
-/// "Eaten by category": stacked bars per bucket; tapping a segment or a
+/// "Used by category": stacked bars per bucket; tapping a segment or a
 /// legend entry filters that category.
 class CategoryStackChartCard extends ConsumerWidget {
   const CategoryStackChartCard({required this.analysis, super.key});
@@ -215,7 +215,7 @@ class CategoryShareChartCard extends ConsumerWidget {
   }
 }
 
-/// "Top products", eaten or thrown away; tapping a product filters it.
+/// "Top products", used or thrown away; tapping a product filters it.
 class TopProductsChartCard extends ConsumerStatefulWidget {
   const TopProductsChartCard({required this.analysis, super.key});
 

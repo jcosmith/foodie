@@ -61,9 +61,9 @@
   "iconImageRemove": "Remove picture",
   "iconImageHint": "A picture is shown instead of the emoji. Any picture file works; it is scaled to fit.",
   "iconImageUnreadable": "This file is no picture the app can read.",
-  "defaultCompartmentLabel": "Default drawer",
-  "defaultCompartmentNone": "The drawer used last time",
-  "defaultCompartmentHelper": "Chosen for you when you add this product to the freezer.",
+  "defaultCompartmentLabel": "Default compartment",
+  "defaultCompartmentNone": "The compartment used last time",
+  "defaultCompartmentHelper": "Chosen for you when you add this product.",
   "archiveProductAction": "Hide product",
   "archiveProductDialogTitle": "Hide {name}?",
   "@archiveProductDialogTitle": {
@@ -73,7 +73,7 @@
       }
     }
   },
-  "archiveProductDialogText": "It disappears from the product list. Items already in the freezer and your statistics keep it.",
+  "archiveProductDialogText": "It disappears from the product list. Items already at home and your statistics keep it.",
   "nameMissing": "Please enter a name.",
   "nameTooLong": "At most 40 characters.",
   "invalidSetting": "Amounts must be more than zero.",

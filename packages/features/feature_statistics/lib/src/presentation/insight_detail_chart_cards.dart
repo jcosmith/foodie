@@ -119,7 +119,7 @@ class WeekdayPatternChartCard extends ConsumerWidget {
   }
 }
 
-/// "Time in freezer before eaten": eaten items by storage time, with a
+/// "Time stored before used": eaten items by storage time, with a
 /// marker at six months.
 class StorageDurationChartCard extends StatelessWidget {
   const StorageDurationChartCard({required this.analysis, super.key});
@@ -158,8 +158,8 @@ class StorageDurationChartCard extends StatelessWidget {
   }
 }
 
-/// "Freezer map": what is in each drawer now, coloured by age; tapping a
-/// drawer filters it. Follows the category and product filters, not the period.
+/// "Freezer map": what is in each compartment now, coloured by age; tapping a
+/// compartment filters it. Follows the category and product filters, not the period.
 class StorageMapChartCard extends ConsumerWidget {
   const StorageMapChartCard({required this.filter, super.key});
 

@@ -90,7 +90,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
         : [
             for (final storagePlaceLayout in layout.storagePlaces) ...[
               ...storagePlaceLayout.compartments,
-              // Removed drawers still have history (decision D13).
+              // Removed compartments still have history (decision D13).
               ...layout.archivedCompartmentsOf(storagePlaceLayout.storagePlace.identifier),
             ],
           ];

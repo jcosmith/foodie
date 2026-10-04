@@ -15,14 +15,20 @@ import '../domain/inventory_failure.dart';
 import '../l10n/generated/inventory_localizations.dart';
 import 'inventory_texts.dart';
 
-/// The add form (UI example phone 3): product, amount pre-filled from the
-/// package size, the day it was frozen, the drawer it goes into and a note.
+/// The add form (UI example phones 3 and 13): product, amount pre-filled from
+/// the package size, the day it was put away, the compartment it goes into
+/// and a note. Opened in a domain tab, it offers only that domain's
+/// compartments and speaks its words ("Add to the freezer", "Frozen on").
 class AddStockBatchScreen extends ConsumerStatefulWidget {
   const AddStockBatchScreen({
     this.initialProductIdentifier,
     this.initialAmountInBaseUnits,
+    this.domainIdentifier,
     super.key,
   });
+
+  /// The domain whose tab opened the form; `null` offers every place.
+  final StorageDomainIdentifier? domainIdentifier;
 
   /// Chosen already, for example by a barcode scan.
   final ProductIdentifier? initialProductIdentifier;
@@ -74,8 +80,21 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
     if (productIdentifier != null && mounted) await _selectProduct(productIdentifier);
   }
 
+  /// The layout the form offers: one domain's places, or all of them.
+  StorageLayout? _offeredLayout(StorageLayout? layout) =>
+      switch ((layout, widget.domainIdentifier)) {
+        (final layout?, final domainIdentifier?) => layout.restrictedTo(domainIdentifier),
+        (final layout, null) => layout,
+        (null, _) => null,
+      };
+
+  StorageDomainContribution? _domainOf(StorageDomainIdentifier? domainIdentifier) => ref
+      .read(registeredStorageDomainsProvider)
+      .where((domain) => domain.identifier == domainIdentifier)
+      .firstOrNull;
+
   /// Takes the product's package size (or [amountInBaseUnits]) as the amount
-  /// and its default drawer, or else the drawer it went into last time.
+  /// and its default compartment, or else the one it went into last time.
   Future<void> _selectProduct(ProductIdentifier productIdentifier, {int? amountInBaseUnits}) async {
     final product = await ref
         .read(productCatalogQueryServiceProvider)
@@ -84,7 +103,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
         .read(inventoryQueryServiceProvider)
         .readLastCompartmentOfProduct(productIdentifier);
     if (product == null || !mounted) return;
-    final layout = ref.read(storageLayoutProvider).value ?? StorageLayout.empty;
+    final layout = _offeredLayout(ref.read(storageLayoutProvider).value) ?? StorageLayout.empty;
     bool isActive(CompartmentIdentifier? compartmentIdentifier) =>
         compartmentIdentifier != null &&
         layout.activeCompartments.any(
@@ -194,23 +213,29 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
-    final layout = ref.watch(storageLayoutProvider).value;
+    final layout = _offeredLayout(ref.watch(storageLayoutProvider).value);
     final catalog = ref.watch(productCatalogProvider).value;
+    final title =
+        _domainOf(widget.domainIdentifier)?.addTitleBuilder?.call(context) ??
+        localizations.addTitle;
     if (layout == null || catalog == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(localizations.addTitle)),
+        appBar: AppBar(title: Text(title)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     if (!layout.hasStoragePlace) {
       return Scaffold(
-        appBar: AppBar(title: Text(localizations.addTitle)),
+        appBar: AppBar(title: Text(title)),
         body: EmptyStateView(
           icon: Icons.kitchen_outlined,
           title: localizations.noStoragePlaceTitle,
           message: localizations.noStoragePlaceMessage,
           actionLabel: localizations.setUpStoragePlaceButton,
-          onActionPressed: () => context.push(StorageLayoutRoutes.newStoragePlace),
+          onActionPressed: () => context.push(switch (widget.domainIdentifier) {
+            final domainIdentifier? => StorageLayoutRoutes.newStoragePlaceIn(domainIdentifier),
+            null => StorageLayoutRoutes.newStoragePlace,
+          }),
         ),
       );
     }
@@ -227,6 +252,11 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
           orElse: () => compartments.first.identifier,
         );
     final nameResolver = context.compartmentDisplayNameResolver(layout);
+    final storedOnLabel =
+        _domainOf(
+          layout.domainOfCompartment(compartmentIdentifier),
+        )?.storedOnLabelBuilder(context) ??
+        localizations.storedOnLabel;
     final quantityFormatter = context.quantityFormatter;
     final textTheme = Theme.of(context).textTheme;
     // Only while item pictures are switched on (UI examples document, phone 5).
@@ -235,7 +265,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
         ?.buildPictureSlot(context, _pictureDraft);
 
     return Scaffold(
-      appBar: AppBar(title: Text(localizations.addTitle)),
+      appBar: AppBar(title: Text(title)),
       body: ListView(
         padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
@@ -290,7 +320,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
             borderRadius: BorderRadius.circular(8),
             child: InputDecorator(
               decoration: InputDecoration(
-                labelText: localizations.storedOnLabel,
+                labelText: storedOnLabel,
                 suffixIcon: const Icon(Icons.calendar_today_outlined),
               ),
               child: Text(context.dateDisplayFormatter.formatMediumDate(_storedOn)),

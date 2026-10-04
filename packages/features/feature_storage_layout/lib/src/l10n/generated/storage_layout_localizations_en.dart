@@ -9,10 +9,10 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   StorageLayoutLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get configSectionTitle => 'Freezer layout';
+  String get configSectionTitle => 'Storage places';
 
   @override
-  String get layoutOverviewTitle => 'Freezer layout';
+  String get layoutOverviewTitle => 'Storage places';
 
   @override
   String get defaultStoragePlaceName => 'Storage place';
@@ -47,10 +47,10 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   }
 
   @override
-  String get addStoragePlaceButton => 'Add freezer';
+  String get addStoragePlaceButton => 'Add storage place';
 
   @override
-  String get newStoragePlaceTitle => 'Add a freezer';
+  String get newStoragePlaceTitle => 'Add a storage place';
 
   @override
   String get templatePrompt => 'Which one is closest to yours? You can change everything later.';
@@ -91,10 +91,10 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   String get changeColor => 'Change colour';
 
   @override
-  String get compartmentNameTaken => 'Another drawer already has this name.';
+  String get compartmentNameTaken => 'Another compartment already has this name.';
 
   @override
-  String get storagePlaceNameTaken => 'Another freezer already has this name.';
+  String get storagePlaceNameTaken => 'Another storage place already has this name.';
 
   @override
   String get nameTooLong => 'At most 30 characters.';
@@ -127,20 +127,20 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
   }
 
   @override
-  String get lastCompartmentHint => 'A freezer needs at least one drawer.';
+  String get lastCompartmentHint => 'A storage place needs at least one compartment.';
 
   @override
   String get layoutHint =>
       'Untouched names follow the app language. Names you type stay as you wrote them.';
 
   @override
-  String get renameStoragePlaceAction => 'Rename freezer';
+  String get renameStoragePlaceAction => 'Rename';
 
   @override
-  String get renameStoragePlaceDialogTitle => 'Rename freezer';
+  String get renameStoragePlaceDialogTitle => 'Rename storage place';
 
   @override
-  String get removeStoragePlaceAction => 'Remove freezer';
+  String get removeStoragePlaceAction => 'Remove storage place';
 
   @override
   String removeStoragePlaceDialogTitle(String name) {
@@ -149,30 +149,31 @@ class StorageLayoutLocalizationsEn extends StorageLayoutLocalizations {
 
   @override
   String get removeStoragePlaceDialogText =>
-      'It disappears from the app. Its drawers are kept for your statistics.';
+      'It disappears from the app. Its compartments are kept for your statistics.';
 
   @override
   String storagePlaceNotEmpty(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Take out or move the $count items in this freezer first.',
-      one: 'Take out or move the 1 item in this freezer first.',
+      other: 'Take out or move the $count items in here first.',
+      one: 'Take out or move the 1 item in here first.',
     );
     return '$_temp0';
   }
 
   @override
-  String get lastStoragePlaceCannotBeRemoved => 'You need at least one freezer.';
+  String get lastStoragePlaceCannotBeRemoved => 'You need at least one storage place.';
 
   @override
-  String get storagePlaceNotFound => 'This freezer was removed.';
+  String get storagePlaceNotFound => 'This storage place was removed.';
 
   @override
-  String get noStoragePlaceTitle => 'No freezer yet';
+  String get noStoragePlaceTitle => 'No storage place yet';
 
   @override
-  String get noStoragePlaceMessage => 'Add your freezer and its drawers, then start filling it.';
+  String get noStoragePlaceMessage =>
+      'Add where you keep things and how it is divided, then start filling it.';
 
   @override
   String get genericFailure => 'That did not work. Please try again.';

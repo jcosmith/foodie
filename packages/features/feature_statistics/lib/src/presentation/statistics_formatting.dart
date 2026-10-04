@@ -89,7 +89,7 @@ final class StatisticsFormatting {
     StatisticsActivity.moved => localizations.activityMoved,
   };
 
-  /// "items eaten", for "Number of items eaten per day".
+  /// "items used", for "Number of items used per day".
   String activityItemsName(StatisticsActivity activity) => switch (activity) {
     StatisticsActivity.consumed => localizations.activityItemsConsumed,
     StatisticsActivity.added => localizations.activityItemsAdded,

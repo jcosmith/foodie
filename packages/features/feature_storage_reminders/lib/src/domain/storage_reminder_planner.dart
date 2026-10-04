@@ -20,7 +20,7 @@ final class PlannedStorageDigest {
   final CalendarDate day;
   final DateTime scheduledForLocalTime;
 
-  /// Everything that should be eaten soon on [day]: the batches that became
+  /// Everything that should be used soon on [day]: the batches that became
   /// due that day first, then the rest, most overdue first.
   final List<RemindableBatch> batchesToEatSoon;
 
@@ -31,7 +31,7 @@ final class PlannedStorageDigest {
 /// Plans the rolling daily digest (decision D9).
 ///
 /// A digest is planned for each of the next [planningHorizonDays] days on
-/// which at least one batch becomes due: it reaches "eat soon" (the urgent
+/// which at least one batch becomes due: it reaches "use soon" (the urgent
 /// badge) or uses up its storage time. Days on which nothing changes stay
 /// quiet, so the user is not reminded of the same food every evening. The
 /// plan is recomputed whenever the inventory, the catalog or the settings
