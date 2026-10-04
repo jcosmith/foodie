@@ -15,6 +15,21 @@ class ApplicationShellLocalizationsDe extends ApplicationShellLocalizations {
   String get navigationHome => 'Start';
 
   @override
+  String get navigationLists => 'Listen';
+
+  @override
+  String get navigationMore => 'Mehr';
+
+  @override
+  String get listsTitle => 'Listen';
+
+  @override
+  String get moreTitle => 'Mehr';
+
+  @override
+  String get privacyPromise => 'Deine Daten verlassen dieses Telefon nie.';
+
+  @override
   String get homeGreetingMorning => 'Guten Morgen';
 
   @override

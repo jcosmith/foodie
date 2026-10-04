@@ -35,6 +35,57 @@ class AppearanceConfigSection extends ConsumerWidget {
   }
 }
 
+/// A switch per storage domain that adds or removes its tab at once (UI
+/// example phone 17). Nothing is deleted, and the last tab that is on cannot
+/// be switched off.
+class TabsConfigSection extends ConsumerWidget {
+  const TabsConfigSection({required this.domainModules, super.key});
+
+  /// In tab order.
+  final List<FeatureModule> domainModules;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final localizations = ConfigurationLocalizations.of(context);
+    final enabledModules = ref.watch(enabledFeatureModulesProvider).value ?? const [];
+    return Column(
+      children: [
+        for (final module in domainModules)
+          if (module.storageDomain case final domain?)
+            Builder(
+              builder: (context) {
+                final isEnabled = enabledModules.contains(module);
+                final isLocked =
+                    isEnabled && !canSwitchModuleOff(module, enabledModules: enabledModules);
+                return SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  secondary: ColourTabIcon(emoji: domain.iconEmoji, size: 28),
+                  title: Text(domain.labelBuilder(context)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(domain.descriptionBuilder(context)),
+                      if (isLocked)
+                        Text(
+                          localizations.lastTabHint,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                    ],
+                  ),
+                  value: isEnabled,
+                  onChanged: isLocked
+                      ? null
+                      : (isEnabled) => ref
+                            .read(applicationSettingsProvider)
+                            .switchOptionalFeature(module, isEnabled: isEnabled),
+                );
+              },
+            ),
+      ],
+    );
+  }
+}
+
 /// A switch for every optional module; switching one off removes its
 /// contributions at once.
 class OptionalFeaturesConfigSection extends ConsumerWidget {

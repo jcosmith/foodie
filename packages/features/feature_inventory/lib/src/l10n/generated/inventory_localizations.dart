@@ -95,12 +95,6 @@ abstract class InventoryLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('de'), Locale('en')];
 
-  /// No description provided for @navigationLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Freezer'**
-  String get navigationLabel;
-
   /// No description provided for @overviewTitle.
   ///
   /// In en, this message translates to:

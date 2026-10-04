@@ -12,7 +12,7 @@ class FreezerLocalizationsEn extends FreezerLocalizations {
   String get domainLabel => 'Freezer';
 
   @override
-  String get domainDescription => 'Frozen food in drawers and baskets';
+  String get domainDescription => 'Frozen food, drawers and baskets';
 
   @override
   String get storedOnLabel => 'Frozen on';

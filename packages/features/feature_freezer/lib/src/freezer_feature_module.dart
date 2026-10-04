@@ -1,7 +1,9 @@
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_storage_layout/domain.dart';
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 
 import 'freezer_catalog.dart';
 import 'freezer_storage_templates.dart';
@@ -53,6 +55,21 @@ final class FreezerFeatureModule extends FeatureModuleBase {
     descriptionBuilder: (context) => _texts(context).domainDescription,
     storedOnLabelBuilder: (context) => _texts(context).storedOnLabel,
     countsDiscardsAsWaste: true,
+  );
+
+  @override
+  NavigationDestinationContribution get navigationDestination => NavigationDestinationContribution(
+    sortOrder: storageDomain.sortOrder,
+    iconEmoji: storageDomain.iconEmoji,
+    labelBuilder: storageDomain.labelBuilder,
+    initialLocation: ShellRoutePaths.domainTab(StorageDomainIdentifier.freezer),
+    routes: [
+      GoRoute(
+        path: ShellRoutePaths.domainTab(StorageDomainIdentifier.freezer),
+        builder: (context, state) =>
+            const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.freezer),
+      ),
+    ],
   );
 
   @override

@@ -9,9 +9,6 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   InventoryLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get navigationLabel => 'Gefrierfach';
-
-  @override
   String get overviewTitle => 'Mein Gefrierschrank';
 
   @override

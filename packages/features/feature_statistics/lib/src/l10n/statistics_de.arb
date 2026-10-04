@@ -1,6 +1,7 @@
 {
   "@@locale": "de",
-  "navigationLabel": "Auswertung",
+  "moreEntryTitle": "Statistik",
+  "moreEntrySubtitle": "Gewohnheiten, Verschwendung und Trends, mit einem gemeinsamen Filter",
   "insightsTitle": "Auswertung",
   "periodLabel": "{from} – {to}",
   "period30Days": "30 Tage",

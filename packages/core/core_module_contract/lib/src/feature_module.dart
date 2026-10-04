@@ -26,14 +26,21 @@ abstract interface class FeatureModule {
   /// notification deep links. Paths start with `/<moduleIdentifier>`.
   List<RouteBase> buildRoutes();
 
-  /// Optional tab in the bottom navigation bar.
+  /// The tab of a storage domain module; other modules add [listsSegments],
+  /// [moreEntries] or [configSections] instead.
   NavigationDestinationContribution? get navigationDestination;
+
+  /// Lists shown in the Lists tab.
+  List<ListsSegmentContribution> get listsSegments;
+
+  /// Entries of the More tab.
+  List<MoreEntryContribution> get moreEntries;
 
   /// Whether users may switch this module off (barcode scanning is optional).
   ModuleAvailability get availability;
 
-  /// Name and explanation of an optional module for its switch in the
-  /// Config tab; `null` for modules that are always on.
+  /// Name and explanation of an optional module for its switch in Options;
+  /// `null` for modules that are always on.
   OptionalFeatureDescription? get optionalFeatureDescription;
 
   /// Entries in the floating "add" menu, e.g. "Scan to add".
@@ -45,10 +52,10 @@ abstract interface class FeatureModule {
   /// Cards for the home dashboard ("Eat soon", "Running low").
   List<DashboardCardContribution> get dashboardCards;
 
-  /// Sections shown in the Config tab.
+  /// Sections shown in Options.
   List<ConfigSectionContribution> get configSections;
 
-  /// Extra charts for the Insights tab, filtered by the shared statistics filter.
+  /// Extra charts for the Statistics screens, filtered by the shared statistics filter.
   List<InsightChartContribution> get insightCharts;
 
   /// The storage domain this module switches on and off, with its tab as
@@ -90,6 +97,12 @@ abstract base class FeatureModuleBase implements FeatureModule {
 
   @override
   NavigationDestinationContribution? get navigationDestination => null;
+
+  @override
+  List<ListsSegmentContribution> get listsSegments => const [];
+
+  @override
+  List<MoreEntryContribution> get moreEntries => const [];
 
   @override
   ModuleAvailability get availability => const ModuleAvailability.alwaysEnabled();

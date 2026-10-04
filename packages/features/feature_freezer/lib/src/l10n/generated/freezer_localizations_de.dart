@@ -12,7 +12,7 @@ class FreezerLocalizationsDe extends FreezerLocalizations {
   String get domainLabel => 'Tiefkühler';
 
   @override
-  String get domainDescription => 'Tiefkühlkost in Schubladen und Körben';
+  String get domainDescription => 'Tiefkühlkost, Schubladen und Körbe';
 
   @override
   String get storedOnLabel => 'Eingefroren am';

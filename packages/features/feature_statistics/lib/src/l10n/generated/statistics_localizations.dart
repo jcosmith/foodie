@@ -95,11 +95,17 @@ abstract class StatisticsLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('de'), Locale('en')];
 
-  /// No description provided for @navigationLabel.
+  /// No description provided for @moreEntryTitle.
   ///
   /// In en, this message translates to:
-  /// **'Insights'**
-  String get navigationLabel;
+  /// **'Statistics'**
+  String get moreEntryTitle;
+
+  /// No description provided for @moreEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits, waste and trends, with one shared filter'**
+  String get moreEntrySubtitle;
 
   /// No description provided for @insightsTitle.
   ///

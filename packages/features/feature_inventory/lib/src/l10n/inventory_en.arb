@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-  "navigationLabel": "Freezer",
   "overviewTitle": "My freezer",
   "itemCount": "{count, plural, =1{1 item} other{{count} items}}",
   "@itemCount": {

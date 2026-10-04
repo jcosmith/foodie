@@ -104,7 +104,7 @@ abstract class FreezerLocalizations {
   /// No description provided for @domainDescription.
   ///
   /// In en, this message translates to:
-  /// **'Frozen food in drawers and baskets'**
+  /// **'Frozen food, drawers and baskets'**
   String get domainDescription;
 
   /// No description provided for @storedOnLabel.

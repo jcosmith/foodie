@@ -41,16 +41,6 @@ final class InventoryFeatureModule extends FeatureModuleBase {
   ];
 
   @override
-  NavigationDestinationContribution get navigationDestination => NavigationDestinationContribution(
-    sortOrder: 10,
-    icon: Icons.kitchen_outlined,
-    selectedIcon: Icons.kitchen,
-    labelBuilder: (context) => InventoryLocalizations.of(context).navigationLabel,
-    initialLocation: InventoryRoutes.overview,
-    routes: buildInventoryTabRoutes(),
-  );
-
-  @override
   List<RouteBase> buildRoutes() => buildInventoryRoutes();
 
   @override

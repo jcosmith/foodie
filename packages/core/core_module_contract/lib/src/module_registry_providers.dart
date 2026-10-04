@@ -17,7 +17,7 @@ final registeredFeatureModulesProvider = Provider<List<FeatureModule>>(
   (ref) => throw UnimplementedError('registeredFeatureModulesProvider must be overridden'),
 );
 
-/// The version shown in the Config tab and written into backups. Overridden
+/// The version shown in Options and written into backups. Overridden
 /// by the app shell with the version from its pubspec.
 final applicationVersionProvider = Provider<String>((ref) => '0.0.0');
 

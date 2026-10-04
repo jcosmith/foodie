@@ -1,4 +1,5 @@
 import 'package:core_design_system/core_design_system.dart';
+import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +16,14 @@ import 'stock_item_tile.dart';
 /// How the overview lists the batches.
 enum InventoryListOrder { byCompartment, eatFirst }
 
-/// The "Freezer" tab (UI example phone 2): everything in the freezer, grouped
-/// by drawer or with the least freshness time left first, with a search over
-/// product names. Drawer groups collapse with a tap on their header.
+/// The stock screen every domain tab mounts with its own domain (UI example
+/// phones 2 and 12): everything in the domain's storage places, grouped by
+/// compartment or with the least time left first, with a search over product
+/// names. Compartment groups collapse with a tap on their header.
 class InventoryOverviewScreen extends ConsumerStatefulWidget {
-  const InventoryOverviewScreen({super.key});
+  const InventoryOverviewScreen({required this.domainIdentifier, super.key});
+
+  final StorageDomainIdentifier domainIdentifier;
 
   @override
   ConsumerState<InventoryOverviewScreen> createState() => _InventoryOverviewScreenState();
@@ -39,7 +43,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
   @override
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
-    final overview = ref.watch(inventoryOverviewProvider).value;
+    final overview = ref.watch(inventoryOverviewProvider).value?.ofDomain(widget.domainIdentifier);
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -71,7 +75,8 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
           title: localizations.noStoragePlaceTitle,
           message: localizations.noStoragePlaceMessage,
           actionLabel: localizations.setUpStoragePlaceButton,
-          onActionPressed: () => context.push(StorageLayoutRoutes.newStoragePlace),
+          onActionPressed: () =>
+              context.push(StorageLayoutRoutes.newStoragePlaceIn(widget.domainIdentifier)),
         ),
         final overview when overview.items.isEmpty => EmptyStateView(
           icon: Icons.ac_unit,

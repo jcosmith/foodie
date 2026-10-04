@@ -95,17 +95,29 @@ abstract class ConfigurationLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('de'), Locale('en')];
 
-  /// No description provided for @navigationLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Config'**
-  String get navigationLabel;
-
   /// No description provided for @screenTitle.
   ///
   /// In en, this message translates to:
-  /// **'Config'**
+  /// **'Options'**
   String get screenTitle;
+
+  /// No description provided for @moreEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tabs, optional features, language, appearance, reminders, backup'**
+  String get moreEntrySubtitle;
+
+  /// No description provided for @tabsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tabs'**
+  String get tabsSectionTitle;
+
+  /// No description provided for @lastTabHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one tab stays on.'**
+  String get lastTabHint;
 
   /// No description provided for @languageSectionTitle.
   ///

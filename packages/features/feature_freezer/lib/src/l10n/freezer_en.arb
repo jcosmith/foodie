@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   "domainLabel": "Freezer",
-  "domainDescription": "Frozen food in drawers and baskets",
+  "domainDescription": "Frozen food, drawers and baskets",
   "storedOnLabel": "Frozen on",
   "uprightName": "Freezer",
   "chestName": "Chest freezer",

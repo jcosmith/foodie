@@ -9,9 +9,6 @@ class RestockLocalizationsDe extends RestockLocalizations {
   RestockLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get navigationLabel => 'Liste';
-
-  @override
   String get shoppingListTitle => 'Einkaufsliste';
 
   @override

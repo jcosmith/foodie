@@ -117,7 +117,15 @@ void _verifyRoutes(List<FeatureModule> modules) {
     final topLevelPaths = [
       ...module.buildRoutes().whereType<GoRoute>().map((route) => route.path),
       ...?module.navigationDestination?.routes.whereType<GoRoute>().map((route) => route.path),
+      for (final entry in module.moreEntries)
+        ...entry.routes.whereType<GoRoute>().map((route) => route.path),
     ];
+    if (module.navigationDestination != null && module.storageDomain == null) {
+      throw ModuleRegistryException(
+        'Only storage domains have tabs; ${module.moduleIdentifier} adds a Lists segment, '
+        'a More entry or an Options section instead',
+      );
+    }
     for (final path in topLevelPaths) {
       if (path != routePrefix && !path.startsWith('$routePrefix/')) {
         throw ModuleRegistryException(

@@ -144,8 +144,10 @@ void main() {
   testWidgets('stores the language and theme choices', (tester) async {
     await showConfiguration(tester);
 
+    await tester.scrollUntilVisible(find.text('Deutsch'), 200);
     await tester.tap(find.text('Deutsch'));
     await _settle(tester);
+    await tester.scrollUntilVisible(find.text('Dark'), 200);
     await tester.tap(find.text('Dark'));
     await _settle(tester);
 

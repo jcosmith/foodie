@@ -1,6 +1,5 @@
 {
   "@@locale": "de",
-  "navigationLabel": "Gefrierfach",
   "overviewTitle": "Mein Gefrierschrank",
   "itemCount": "{count, plural, =1{1 Produkt} other{{count} Produkte}}",
   "drawerCount": "{count, plural, =1{1 Schublade} other{{count} Schubladen}}",

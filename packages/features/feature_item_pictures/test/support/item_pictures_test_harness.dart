@@ -65,7 +65,9 @@ final class ItemPicturesTestHarness {
         localLoggerProvider.overrideWithValue(logger),
         registeredFeatureModulesProvider.overrideWithValue(modules),
         enabledFeatureModulesProvider.overrideWith(
-          (ref) => Stream.value(isPictureModuleEnabled ? modules : modules.sublist(0, 3)),
+          (ref) => Stream.value(
+            isPictureModuleEnabled ? modules : modules.sublist(0, modules.length - 1),
+          ),
         ),
         for (final module in modules) ...module.buildProviderOverrides(dependencies),
       ],

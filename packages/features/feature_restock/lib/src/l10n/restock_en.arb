@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-  "navigationLabel": "List",
   "shoppingListTitle": "Shopping list",
   "shoppingListSubtitle": "Running-low items are added automatically",
   "originRestock": "Running low",

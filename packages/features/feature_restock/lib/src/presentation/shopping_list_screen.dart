@@ -10,8 +10,9 @@ import '../domain/shopping_list_entry.dart';
 import '../l10n/generated/restock_localizations.dart';
 import 'restock_texts.dart';
 
-/// The "List" tab (UI example phone 6): running-low products and what the
-/// user added; ticked items go into the freezer in one step.
+/// The shopping list, a segment of the Lists tab (UI example phone 6):
+/// running-low products and what the user added; ticked items are put away
+/// in one step.
 class ShoppingListScreen extends ConsumerWidget {
   const ShoppingListScreen({super.key});
 
@@ -22,16 +23,8 @@ class ShoppingListScreen extends ConsumerWidget {
     final catalog = ref.watch(productCatalogProvider).value;
     final tickedCount = entries?.where((entry) => entry.isChecked).length ?? 0;
 
+    // The Lists tab shows the title above it.
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(localizations.shoppingListTitle),
-            Text(localizations.shoppingListSubtitle, style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addProduct(context, ref),
         icon: const Icon(Icons.add),

@@ -120,6 +120,18 @@ final class InventoryOverview {
 
   bool get hasStoragePlace => layout.hasStoragePlace;
 
+  /// The part of the overview one domain tab shows: its items, and a layout
+  /// with only its storage places.
+  InventoryOverview ofDomain(StorageDomainIdentifier domainIdentifier) => InventoryOverview(
+    items: [
+      for (final item in items)
+        if (layout.domainOfCompartment(item.batch.compartmentIdentifier) == domainIdentifier) item,
+    ],
+    catalog: catalog,
+    layout: layout.restrictedTo(domainIdentifier),
+    today: today,
+  );
+
   /// Items of one compartment, oldest frozen first.
   List<InventoryItem> itemsIn(CompartmentIdentifier compartmentIdentifier) => [
     for (final item in items)

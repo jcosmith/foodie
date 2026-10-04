@@ -109,7 +109,7 @@ void main() {
 
     await tester.tap(find.text('Lists'));
     await _settle(tester);
-    expect(find.text('Shopping list'), findsOneWidget);
+    expect(find.text('Running-low items are added automatically'), findsOneWidget);
     expect(find.text('Your shopping list is empty'), findsOneWidget);
 
     await tester.tap(find.text('More'));
@@ -136,9 +136,13 @@ void main() {
     await _openOptions(tester);
     expect(find.text('Tabs'), findsOneWidget);
     expect(find.text('At least one tab stays on.'), findsOneWidget);
-    expect(find.text('Freezer layout'), findsOneWidget);
-    expect(find.text('Products'), findsOneWidget);
-    expect(find.text('Language'), findsOneWidget);
+    final optionsList = find
+        .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
+        .first;
+    for (final sectionTitle in ['Language', 'Freezer layout', 'Products']) {
+      await tester.scrollUntilVisible(find.text(sectionTitle), 200, scrollable: optionsList);
+      expect(find.text(sectionTitle), findsOneWidget);
+    }
 
     await _stopApplication(tester);
   });

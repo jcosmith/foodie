@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
-  "navigationLabel": "Insights",
+  "moreEntryTitle": "Statistics",
+  "moreEntrySubtitle": "Habits, waste and trends, with one shared filter",
   "insightsTitle": "Insights",
   "periodLabel": "{from} – {to}",
   "@periodLabel": {

@@ -117,7 +117,7 @@ void main() {
           .read(attachItemPictureUseCaseProvider)
           .execute(owner: ProductPictureOwner(spinach.identifier), stagedPicture: stagedPicture);
     });
-    await showAt(tester, InventoryRoutes.overview);
+    await showAt(tester, '/freezer');
 
     expect(find.bySemanticsLabel('Photo'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);

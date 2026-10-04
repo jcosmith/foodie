@@ -3,7 +3,6 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
-import 'package:feature_inventory/src/presentation/inventory_overview_screen.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';

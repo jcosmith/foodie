@@ -107,6 +107,36 @@ abstract class ApplicationShellLocalizations {
   /// **'Home'**
   String get navigationHome;
 
+  /// No description provided for @navigationLists.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists'**
+  String get navigationLists;
+
+  /// No description provided for @navigationMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navigationMore;
+
+  /// No description provided for @listsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lists'**
+  String get listsTitle;
+
+  /// No description provided for @moreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get moreTitle;
+
+  /// No description provided for @privacyPromise.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data never leaves this phone.'**
+  String get privacyPromise;
+
   /// No description provided for @homeGreetingMorning.
   ///
   /// In en, this message translates to:

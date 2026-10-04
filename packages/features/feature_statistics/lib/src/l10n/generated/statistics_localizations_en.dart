@@ -9,7 +9,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   StatisticsLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get navigationLabel => 'Insights';
+  String get moreEntryTitle => 'Statistics';
+
+  @override
+  String get moreEntrySubtitle => 'Habits, waste and trends, with one shared filter';
 
   @override
   String get insightsTitle => 'Insights';

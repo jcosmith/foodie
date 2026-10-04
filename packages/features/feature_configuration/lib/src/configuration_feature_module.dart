@@ -7,9 +7,9 @@ import 'presentation/configuration_screen.dart';
 import 'presentation/configuration_sections.dart';
 import 'presentation/language_choice_list.dart';
 
-/// The Config tab (decision D14, architecture document section 10.5). Holds
-/// language, appearance, optional features and about; every other module
-/// adds its own sections.
+/// Options in the More tab (decision D14, architecture sections 10.5 and
+/// 10.7). Holds the tab switches, language, appearance, optional features
+/// and about; every other module adds its own sections.
 final class ConfigurationFeatureModule extends FeatureModuleBase {
   const ConfigurationFeatureModule();
 
@@ -24,16 +24,19 @@ final class ConfigurationFeatureModule extends FeatureModuleBase {
   ];
 
   @override
-  NavigationDestinationContribution get navigationDestination => NavigationDestinationContribution(
-    sortOrder: 40,
-    icon: Icons.tune_outlined,
-    selectedIcon: Icons.tune,
-    labelBuilder: (context) => ConfigurationLocalizations.of(context).navigationLabel,
-    initialLocation: '/$identifier',
-    routes: [
-      GoRoute(path: '/$identifier', builder: (context, state) => const ConfigurationScreen()),
-    ],
-  );
+  List<MoreEntryContribution> get moreEntries => [
+    MoreEntryContribution(
+      identifier: '$identifier.options',
+      sortOrder: 20,
+      iconEmoji: '⚙️',
+      titleBuilder: (context) => ConfigurationLocalizations.of(context).screenTitle,
+      subtitleBuilder: (context) => ConfigurationLocalizations.of(context).moreEntrySubtitle,
+      location: '/$identifier',
+      routes: [
+        GoRoute(path: '/$identifier', builder: (context, state) => const ConfigurationScreen()),
+      ],
+    ),
+  ];
 
   @override
   List<ConfigSectionContribution> get configSections => [

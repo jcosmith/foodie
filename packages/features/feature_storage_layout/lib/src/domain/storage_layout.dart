@@ -98,6 +98,16 @@ final class StorageLayout {
       if (storagePlace.domainIdentifier == domainIdentifier) storagePlace,
   ];
 
+  /// The same layout with only the active storage places of one domain, as
+  /// that domain's tab shows it. Every place and compartment can still be
+  /// looked up, for names in history.
+  StorageLayout restrictedTo(StorageDomainIdentifier domainIdentifier) => StorageLayout._(
+    storagePlaces: storagePlacesIn(domainIdentifier),
+    storagePlaceByIdentifier: _storagePlaceByIdentifier,
+    compartmentByIdentifier: _compartmentByIdentifier,
+    domainOfStorageKind: _domainOfStorageKind,
+  );
+
   /// Active compartments of the active storage places of one domain.
   List<Compartment> activeCompartmentsIn(StorageDomainIdentifier domainIdentifier) => [
     for (final storagePlace in storagePlacesIn(domainIdentifier)) ...storagePlace.compartments,

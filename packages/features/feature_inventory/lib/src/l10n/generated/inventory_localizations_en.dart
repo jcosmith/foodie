@@ -9,9 +9,6 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   InventoryLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get navigationLabel => 'Freezer';
-
-  @override
   String get overviewTitle => 'My freezer';
 
   @override

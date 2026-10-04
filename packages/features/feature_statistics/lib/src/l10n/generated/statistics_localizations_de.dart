@@ -9,7 +9,11 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   StatisticsLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get navigationLabel => 'Auswertung';
+  String get moreEntryTitle => 'Statistik';
+
+  @override
+  String get moreEntrySubtitle =>
+      'Gewohnheiten, Verschwendung und Trends, mit einem gemeinsamen Filter';
 
   @override
   String get insightsTitle => 'Auswertung';
