@@ -37,12 +37,12 @@ void main() {
     );
   });
 
-  test('version 0.0.1 keeps a build number above 0.1.1+2, so phones update in place', () {
+  test('version 0.0.2 keeps a build number above 0.1.1+2, so phones update in place', () {
     final version = RegExp(
       r'^version: ([0-9.]+)\+([0-9]+)$',
       multiLine: true,
     ).firstMatch(read('pubspec.yaml'))!;
-    expect(version.group(1), '0.0.1');
+    expect(version.group(1), '0.0.2');
     expect(int.parse(version.group(2)!), greaterThan(2));
   });
 
