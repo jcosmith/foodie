@@ -20,6 +20,7 @@
   "packageSizeHelper": "Füllt die Menge beim Einfrieren vor.",
   "shelfLifeLabel": "Hält sich (optional)",
   "shelfLifeHelper": "Leer lassen, um der Kategorie zu folgen: {shelfLife}.",
+  "shelfLifeHelperNone": "Leer lassen, um wie die Kategorie ohne Haltbarkeit zu bleiben.",
   "storageRecommendationNote": "Lagerzeiten sind Empfehlungen, keine Garantie.",
   "iconLabel": "Symbol (ein Emoji, optional)",
   "iconImageChoose": "Bild auswählen",

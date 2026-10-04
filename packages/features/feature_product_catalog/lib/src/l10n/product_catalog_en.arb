@@ -55,6 +55,7 @@
       }
     }
   },
+  "shelfLifeHelperNone": "Leave empty to keep no shelf life, as the category does.",
   "storageRecommendationNote": "Storage times are guidance, not a safety guarantee.",
   "iconLabel": "Icon (an emoji, optional)",
   "iconImageChoose": "Choose a picture",

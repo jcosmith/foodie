@@ -40,6 +40,7 @@
   "shelfLifeUnitMonths": "Monate",
   "shelfLifeUnitLabel": "Einheit",
   "shelfLifeOutOfRange": "Gib 1 Tag bis 36 Monate ein.",
+  "shelfLifeNone": "Ohne Haltbarkeit",
   "storageAgeFresh": "Frisch",
   "storageAgeAging": "Bald verbrauchen",
   "storageAgeUrgent": "Jetzt verbrauchen",

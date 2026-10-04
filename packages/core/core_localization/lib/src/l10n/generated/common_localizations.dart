@@ -334,6 +334,12 @@ abstract class CommonLocalizations {
   /// **'Enter between 1 day and 36 months.'**
   String get shelfLifeOutOfRange;
 
+  /// No description provided for @shelfLifeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No shelf life'**
+  String get shelfLifeNone;
+
   /// No description provided for @storageAgeFresh.
   ///
   /// In en, this message translates to:

@@ -215,6 +215,12 @@ abstract class ProductCatalogLocalizations {
   /// **'Leave empty to follow the category: {shelfLife}.'**
   String shelfLifeHelper(String shelfLife);
 
+  /// No description provided for @shelfLifeHelperNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty to keep no shelf life, as the category does.'**
+  String get shelfLifeHelperNone;
+
   /// No description provided for @storageRecommendationNote.
   ///
   /// In en, this message translates to:

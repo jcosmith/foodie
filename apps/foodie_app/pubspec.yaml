@@ -23,10 +23,11 @@ dependencies:
   feature_data_portability: any
   feature_freezer: any
   feature_fridge: any
-  feature_pantry: any
+  feature_household_supplies: any
   feature_inventory: any
   feature_item_pictures: any
   feature_onboarding: any
+  feature_pantry: any
   feature_product_catalog: any
   feature_restock: any
   feature_statistics: any

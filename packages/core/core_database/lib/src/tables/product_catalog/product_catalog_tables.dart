@@ -13,8 +13,9 @@ class Categories extends Table {
 
   TextColumn get customName => text().nullable()();
 
-  /// The shelf life in days.
-  IntColumn get recommendedMaximumStorageDays => integer()();
+  /// The shelf life in days; `null` for things that keep no time, such as
+  /// dish soap (allowed from schema version 9).
+  IntColumn get recommendedMaximumStorageDays => integer().nullable()();
 
   /// How long an opened package keeps, in days; `null` when opening makes
   /// no difference.

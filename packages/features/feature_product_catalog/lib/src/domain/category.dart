@@ -9,12 +9,12 @@ typedef CategoryIdentifier = TypedIdentifier<Category>;
 final class Category {
   const Category({
     required this.identifier,
-    required this.recommendedMaximumStorageDays,
     required this.iconEmoji,
     required this.sortOrder,
     required this.storageDomain,
     this.catalogKey,
     this.customName,
+    this.recommendedMaximumStorageDays,
     this.shelfLifeAfterOpeningDays,
   });
 
@@ -25,8 +25,9 @@ final class Category {
 
   final String? customName;
 
-  /// The shelf life in days.
-  final int recommendedMaximumStorageDays;
+  /// The shelf life in days; `null` when products of the category keep no
+  /// time, as with household supplies, so they never become due.
+  final int? recommendedMaximumStorageDays;
 
   /// How long an opened package keeps, when that is shorter.
   final int? shelfLifeAfterOpeningDays;

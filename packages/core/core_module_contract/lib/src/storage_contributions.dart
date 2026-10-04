@@ -145,8 +145,8 @@ final class SeededCategoryContribution {
   const SeededCategoryContribution({
     required this.catalogKey,
     required this.domainIdentifier,
-    required this.shelfLifeDays,
     required this.iconEmoji,
+    this.shelfLifeDays,
     this.shelfLifeAfterOpeningDays,
   });
 
@@ -156,8 +156,9 @@ final class SeededCategoryContribution {
   /// The domain products of this category usually live in.
   final StorageDomainIdentifier domainIdentifier;
 
-  /// How long products of this category keep, in days; at least one.
-  final int shelfLifeDays;
+  /// How long products of this category keep, in days; at least one, or
+  /// `null` for supplies that keep no time.
+  final int? shelfLifeDays;
 
   /// How long an opened package keeps, when that is shorter.
   final int? shelfLifeAfterOpeningDays;

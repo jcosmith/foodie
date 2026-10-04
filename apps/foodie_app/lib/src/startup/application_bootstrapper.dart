@@ -30,18 +30,20 @@ final class BootstrappedApplication {
     required this.providerContainer,
     required this.router,
     required StreamSubscription<String> notificationTapSubscription,
-    required List<ProviderSubscription<Object?>> appearanceSubscriptions,
+    required List<ProviderSubscription<Object?>> providerSubscriptions,
   }) : _notificationTapSubscription = notificationTapSubscription,
-       _appearanceSubscriptions = appearanceSubscriptions;
+       _providerSubscriptions = providerSubscriptions;
 
   final ProviderContainer providerContainer;
   final GoRouter router;
   final StreamSubscription<String> _notificationTapSubscription;
-  final List<ProviderSubscription<Object?>> _appearanceSubscriptions;
+
+  /// Language, theme and the module switches, listened to for the app's lifetime.
+  final List<ProviderSubscription<Object?>> _providerSubscriptions;
 
   Future<void> dispose() async {
     await _notificationTapSubscription.cancel();
-    for (final subscription in _appearanceSubscriptions) {
+    for (final subscription in _providerSubscriptions) {
       subscription.close();
     }
     final registeredModules = providerContainer.read(registeredFeatureModulesProvider);
@@ -131,6 +133,14 @@ final class ApplicationBootstrapper {
       ],
     );
 
+    // Modules start knowing which domains are switched off, so nothing is
+    // planned for a paused domain and replanned a moment later.
+    final moduleSwitchesSubscription = providerContainer.listen(
+      enabledFeatureModulesProvider,
+      (_, _) {},
+    );
+    await providerContainer.read(enabledFeatureModulesProvider.future);
+
     final initializationContext = _ContainerModuleInitializationContext(
       providerContainer: providerContainer,
       domainEventBus: domainEventBus,
@@ -168,7 +178,7 @@ final class ApplicationBootstrapper {
       providerContainer: providerContainer,
       router: router,
       notificationTapSubscription: notificationTapSubscription,
-      appearanceSubscriptions: appearanceSubscriptions,
+      providerSubscriptions: [...appearanceSubscriptions, moduleSwitchesSubscription],
     );
   }
 

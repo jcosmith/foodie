@@ -1454,10 +1454,10 @@ class Categories extends Table with TableInfo<Categories, CategoriesData> {
       GeneratedColumn<int>(
         'recommended_maximum_storage_days',
         aliasedName,
-        false,
+        true,
         type: DriftSqlType.int,
-        requiredDuringInsert: true,
-        $customConstraints: 'NOT NULL',
+        requiredDuringInsert: false,
+        $customConstraints: 'NULL',
       );
   late final GeneratedColumn<int> shelfLifeAfterOpeningDays =
       GeneratedColumn<int>(
@@ -1530,7 +1530,7 @@ class Categories extends Table with TableInfo<Categories, CategoriesData> {
       recommendedMaximumStorageDays: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}recommended_maximum_storage_days'],
-      )!,
+      ),
       shelfLifeAfterOpeningDays: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}shelf_life_after_opening_days'],
@@ -1567,7 +1567,7 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
   final String categoryIdentifier;
   final String? catalogKey;
   final String? customName;
-  final int recommendedMaximumStorageDays;
+  final int? recommendedMaximumStorageDays;
   final int? shelfLifeAfterOpeningDays;
   final String iconEmoji;
   final int sortOrder;
@@ -1576,7 +1576,7 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
     required this.categoryIdentifier,
     this.catalogKey,
     this.customName,
-    required this.recommendedMaximumStorageDays,
+    this.recommendedMaximumStorageDays,
     this.shelfLifeAfterOpeningDays,
     required this.iconEmoji,
     required this.sortOrder,
@@ -1592,9 +1592,11 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
     if (!nullToAbsent || customName != null) {
       map['custom_name'] = Variable<String>(customName);
     }
-    map['recommended_maximum_storage_days'] = Variable<int>(
-      recommendedMaximumStorageDays,
-    );
+    if (!nullToAbsent || recommendedMaximumStorageDays != null) {
+      map['recommended_maximum_storage_days'] = Variable<int>(
+        recommendedMaximumStorageDays,
+      );
+    }
     if (!nullToAbsent || shelfLifeAfterOpeningDays != null) {
       map['shelf_life_after_opening_days'] = Variable<int>(
         shelfLifeAfterOpeningDays,
@@ -1615,7 +1617,10 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
       customName: customName == null && nullToAbsent
           ? const Value.absent()
           : Value(customName),
-      recommendedMaximumStorageDays: Value(recommendedMaximumStorageDays),
+      recommendedMaximumStorageDays:
+          recommendedMaximumStorageDays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedMaximumStorageDays),
       shelfLifeAfterOpeningDays:
           shelfLifeAfterOpeningDays == null && nullToAbsent
           ? const Value.absent()
@@ -1637,7 +1642,7 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
       ),
       catalogKey: serializer.fromJson<String?>(json['catalogKey']),
       customName: serializer.fromJson<String?>(json['customName']),
-      recommendedMaximumStorageDays: serializer.fromJson<int>(
+      recommendedMaximumStorageDays: serializer.fromJson<int?>(
         json['recommendedMaximumStorageDays'],
       ),
       shelfLifeAfterOpeningDays: serializer.fromJson<int?>(
@@ -1655,7 +1660,7 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
       'categoryIdentifier': serializer.toJson<String>(categoryIdentifier),
       'catalogKey': serializer.toJson<String?>(catalogKey),
       'customName': serializer.toJson<String?>(customName),
-      'recommendedMaximumStorageDays': serializer.toJson<int>(
+      'recommendedMaximumStorageDays': serializer.toJson<int?>(
         recommendedMaximumStorageDays,
       ),
       'shelfLifeAfterOpeningDays': serializer.toJson<int?>(
@@ -1671,7 +1676,7 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
     String? categoryIdentifier,
     Value<String?> catalogKey = const Value.absent(),
     Value<String?> customName = const Value.absent(),
-    int? recommendedMaximumStorageDays,
+    Value<int?> recommendedMaximumStorageDays = const Value.absent(),
     Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
     String? iconEmoji,
     int? sortOrder,
@@ -1680,8 +1685,9 @@ class CategoriesData extends DataClass implements Insertable<CategoriesData> {
     categoryIdentifier: categoryIdentifier ?? this.categoryIdentifier,
     catalogKey: catalogKey.present ? catalogKey.value : this.catalogKey,
     customName: customName.present ? customName.value : this.customName,
-    recommendedMaximumStorageDays:
-        recommendedMaximumStorageDays ?? this.recommendedMaximumStorageDays,
+    recommendedMaximumStorageDays: recommendedMaximumStorageDays.present
+        ? recommendedMaximumStorageDays.value
+        : this.recommendedMaximumStorageDays,
     shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays.present
         ? shelfLifeAfterOpeningDays.value
         : this.shelfLifeAfterOpeningDays,
@@ -1761,7 +1767,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoriesData> {
   final Value<String> categoryIdentifier;
   final Value<String?> catalogKey;
   final Value<String?> customName;
-  final Value<int> recommendedMaximumStorageDays;
+  final Value<int?> recommendedMaximumStorageDays;
   final Value<int?> shelfLifeAfterOpeningDays;
   final Value<String> iconEmoji;
   final Value<int> sortOrder;
@@ -1782,14 +1788,13 @@ class CategoriesCompanion extends UpdateCompanion<CategoriesData> {
     required String categoryIdentifier,
     this.catalogKey = const Value.absent(),
     this.customName = const Value.absent(),
-    required int recommendedMaximumStorageDays,
+    this.recommendedMaximumStorageDays = const Value.absent(),
     this.shelfLifeAfterOpeningDays = const Value.absent(),
     required String iconEmoji,
     required int sortOrder,
     this.storageDomain = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : categoryIdentifier = Value(categoryIdentifier),
-       recommendedMaximumStorageDays = Value(recommendedMaximumStorageDays),
        iconEmoji = Value(iconEmoji),
        sortOrder = Value(sortOrder);
   static Insertable<CategoriesData> custom({
@@ -1822,7 +1827,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoriesData> {
     Value<String>? categoryIdentifier,
     Value<String?>? catalogKey,
     Value<String?>? customName,
-    Value<int>? recommendedMaximumStorageDays,
+    Value<int?>? recommendedMaximumStorageDays,
     Value<int?>? shelfLifeAfterOpeningDays,
     Value<String>? iconEmoji,
     Value<int>? sortOrder,

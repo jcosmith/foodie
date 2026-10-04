@@ -4,6 +4,7 @@ import 'package:feature_configuration/feature_configuration.dart';
 import 'package:feature_data_portability/feature_data_portability.dart';
 import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_fridge/feature_fridge.dart';
+import 'package:feature_household_supplies/feature_household_supplies.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_item_pictures/feature_item_pictures.dart';
 import 'package:feature_onboarding/feature_onboarding.dart';
@@ -24,6 +25,7 @@ List<FeatureModule> createRegisteredFeatureModules() => [
   const FreezerFeatureModule(),
   const FridgeFeatureModule(),
   const PantryFeatureModule(),
+  const HouseholdSuppliesFeatureModule(),
   const ProductCatalogFeatureModule(),
   const InventoryFeatureModule(),
   const StorageRemindersFeatureModule(),

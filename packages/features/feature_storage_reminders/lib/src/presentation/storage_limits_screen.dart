@@ -33,9 +33,10 @@ class StorageLimitsScreen extends ConsumerWidget {
                   ListTile(
                     leading: ProductIcon(emoji: category.iconEmoji, size: 28),
                     title: Text(nameResolver.categoryName(category)),
-                    trailing: Text(
-                      context.shelfLifeFormatter.formatDays(category.recommendedMaximumStorageDays),
-                    ),
+                    trailing: Text(switch (category.recommendedMaximumStorageDays) {
+                      final int days => context.shelfLifeFormatter.formatDays(days),
+                      null => context.commonLocalizations.shelfLifeNone,
+                    }),
                     onTap: () => _editStorageLimit(context, ref, category),
                   ),
               ],
@@ -65,7 +66,9 @@ class _ShelfLifeDialog extends StatefulWidget {
   const _ShelfLifeDialog({required this.title, required this.initialDays});
 
   final String title;
-  final int initialDays;
+
+  /// `null` for a category without a shelf life, which gets one here.
+  final int? initialDays;
 
   @override
   State<_ShelfLifeDialog> createState() => _ShelfLifeDialogState();

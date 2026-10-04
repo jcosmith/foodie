@@ -321,11 +321,12 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
             labelText: localizations.shelfLifeLabel,
             helperText: selectedCategory == null
                 ? null
-                : localizations.shelfLifeHelper(
-                    context.shelfLifeFormatter.formatDays(
-                      selectedCategory.recommendedMaximumStorageDays,
+                : switch (selectedCategory.recommendedMaximumStorageDays) {
+                    final int categoryDays => localizations.shelfLifeHelper(
+                      context.shelfLifeFormatter.formatDays(categoryDays),
                     ),
-                  ),
+                    null => localizations.shelfLifeHelperNone,
+                  },
             errorText: _shelfLifeError,
           ),
           Padding(

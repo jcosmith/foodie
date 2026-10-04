@@ -86,6 +86,10 @@ class ProductCatalogLocalizationsDe extends ProductCatalogLocalizations {
   }
 
   @override
+  String get shelfLifeHelperNone =>
+      'Leer lassen, um wie die Kategorie ohne Haltbarkeit zu bleiben.';
+
+  @override
   String get storageRecommendationNote => 'Lagerzeiten sind Empfehlungen, keine Garantie.';
 
   @override

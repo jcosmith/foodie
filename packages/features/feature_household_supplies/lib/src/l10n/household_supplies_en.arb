@@ -1,0 +1,93 @@
+{
+  "@@locale": "en",
+  "domainLabel": "Household",
+  "domainDescription": "Cleaning, laundry, bathroom and kitchen paper",
+  "storedOnLabel": "Bought on",
+  "addTitle": "Add supplies",
+  "bestBeforeLabel": "Expires",
+  "cleaningCupboardName": "Cleaning cupboard",
+  "cleaningCupboardDescription": "cleaning cupboard",
+  "bathroomCabinetName": "Bathroom cabinet",
+  "bathroomCabinetDescription": "bathroom cabinet",
+  "laundryRoomName": "Laundry room",
+  "laundryRoomDescription": "laundry room",
+  "gardenShedName": "Garden shed",
+  "gardenShedDescription": "garden shed",
+  "garageName": "Garage",
+  "garageDescription": "garage",
+  "storageRoomName": "Storage room",
+  "storageRoomDescription": "storage room",
+  "firstAidBoxName": "First-aid box",
+  "firstAidBoxDescription": "first-aid box",
+  "shelfName": "Shelf {number}",
+  "@shelfName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfCount": "{count, plural, =1{1 shelf} other{{count} shelves}}",
+  "@shelfCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addShelf": "Add shelf",
+  "boxName": "Box {number}",
+  "@boxName": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "boxCount": "{count, plural, =1{1 box} other{{count} boxes}}",
+  "@boxCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addBox": "Add box",
+  "templateCleaningCupboard": "Cleaning cupboard with 3 shelves",
+  "templateBathroomCabinet": "Bathroom cabinet with 3 shelves",
+  "templateLaundryRoom": "Laundry room with 2 shelves",
+  "templateGardenShed": "Garden shed with 2 shelves",
+  "templateGarage": "Garage with 3 shelves",
+  "templateStorageRoom": "Storage room with 4 shelves",
+  "templateFirstAidBox": "One first-aid box",
+  "categoryCleaning": "Cleaning",
+  "categoryLaundry": "Laundry",
+  "categoryBathroomAndCare": "Bathroom and personal care",
+  "categoryKitchenPaperAndWrap": "Kitchen paper and wrap",
+  "productDishSoap": "Dish soap",
+  "productDishwasherTabs": "Dishwasher tabs",
+  "productAllPurposeCleaner": "All-purpose cleaner",
+  "productGlassCleaner": "Glass cleaner",
+  "productDescaler": "Descaler",
+  "productSpongesAndCloths": "Sponges and cloths",
+  "productBinBags": "Bin bags",
+  "productDetergent": "Detergent",
+  "productSoftener": "Softener",
+  "productStainRemover": "Stain remover",
+  "productToiletPaper": "Toilet paper",
+  "productHandSoap": "Hand soap",
+  "productToothpaste": "Toothpaste",
+  "productToothbrushes": "Toothbrushes",
+  "productShampoo": "Shampoo",
+  "productShowerGel": "Shower gel",
+  "productDeodorant": "Deodorant",
+  "productRazorBlades": "Razor blades",
+  "productCottonPads": "Cotton pads",
+  "productSanitaryProducts": "Sanitary products",
+  "productKitchenRoll": "Kitchen roll",
+  "productTissues": "Tissues",
+  "productAluminiumFoil": "Aluminium foil",
+  "productClingFilm": "Cling film",
+  "productBakingPaper": "Baking paper",
+  "productFreezerBags": "Freezer bags"
+}

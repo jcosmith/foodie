@@ -63,9 +63,6 @@ final class Product {
   final bool isArchived;
   final DateTime createdAt;
 
-  int effectiveRecommendedMaximumStorageDays(Category category) =>
-      recommendedMaximumStorageDays ?? category.recommendedMaximumStorageDays;
-
   String effectiveIconEmoji(Category category) => iconEmoji ?? category.iconEmoji;
 
   Product copyWith({

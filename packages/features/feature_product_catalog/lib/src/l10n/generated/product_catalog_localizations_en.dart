@@ -87,6 +87,9 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
   }
 
   @override
+  String get shelfLifeHelperNone => 'Leave empty to keep no shelf life, as the category does.';
+
+  @override
   String get storageRecommendationNote => 'Storage times are guidance, not a safety guarantee.';
 
   @override

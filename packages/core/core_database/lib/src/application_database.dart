@@ -121,9 +121,9 @@ class ApplicationDatabase extends _$ApplicationDatabase {
         await migrator.addColumn(schema.products, schema.products.iconImage);
       },
       from8To9: (migrator, schema) async {
-        // Household scope (architecture 10.7 and 10.8): neutral names, the
-        // storage domain of categories, opened packages and shelf life
-        // after opening. No data changes shape.
+        // Household scope (architecture 10.7 to 10.9): neutral names, the
+        // storage domain of categories, opened packages, shelf life after
+        // opening, and categories without a shelf life. No data changes shape.
         await customStatement('ALTER TABLE freezers RENAME TO storage_places');
         await customStatement(
           'ALTER TABLE storage_places RENAME COLUMN freezer_identifier TO storage_place_identifier',
@@ -136,6 +136,9 @@ class ApplicationDatabase extends _$ApplicationDatabase {
         await migrator.addColumn(schema.categories, schema.categories.storageDomain);
         await migrator.addColumn(schema.categories, schema.categories.shelfLifeAfterOpeningDays);
         await migrator.addColumn(schema.products, schema.products.shelfLifeAfterOpeningDays);
+        // Supplies keep no time: a category's shelf life may be empty.
+        // SQLite cannot drop NOT NULL, so the table is copied.
+        await migrator.alterTable(TableMigration(schema.categories));
       },
     ),
     beforeOpen: (openingDetails) async {

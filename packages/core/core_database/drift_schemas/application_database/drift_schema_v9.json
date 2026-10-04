@@ -369,7 +369,7 @@
             "name": "recommended_maximum_storage_days",
             "getter_name": "recommendedMaximumStorageDays",
             "moor_type": "int",
-            "nullable": false,
+            "nullable": true,
             "customConstraints": null,
             "default_dart": null,
             "default_client_dart": null,
@@ -1562,7 +1562,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"categories\" (\"category_identifier\" TEXT NOT NULL, \"catalog_key\" TEXT NULL UNIQUE, \"custom_name\" TEXT NULL, \"recommended_maximum_storage_days\" INTEGER NOT NULL, \"shelf_life_after_opening_days\" INTEGER NULL, \"icon_emoji\" TEXT NOT NULL, \"sort_order\" INTEGER NOT NULL, \"storage_domain\" TEXT NOT NULL DEFAULT 'freezer', PRIMARY KEY (\"category_identifier\"));"
+          "sql": "CREATE TABLE IF NOT EXISTS \"categories\" (\"category_identifier\" TEXT NOT NULL, \"catalog_key\" TEXT NULL UNIQUE, \"custom_name\" TEXT NULL, \"recommended_maximum_storage_days\" INTEGER NULL, \"shelf_life_after_opening_days\" INTEGER NULL, \"icon_emoji\" TEXT NOT NULL, \"sort_order\" INTEGER NOT NULL, \"storage_domain\" TEXT NOT NULL DEFAULT 'freezer', PRIMARY KEY (\"category_identifier\"));"
         }
       ]
     },

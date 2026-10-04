@@ -7,14 +7,14 @@ final class SeededCategory {
   const SeededCategory({
     required this.catalogKey,
     required this.storageDomain,
-    required this.recommendedMaximumStorageDays,
     required this.iconEmoji,
+    this.recommendedMaximumStorageDays,
     this.shelfLifeAfterOpeningDays,
   });
 
   final String catalogKey;
   final StorageDomainIdentifier storageDomain;
-  final int recommendedMaximumStorageDays;
+  final int? recommendedMaximumStorageDays;
   final int? shelfLifeAfterOpeningDays;
   final String iconEmoji;
 }

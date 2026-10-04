@@ -2647,7 +2647,7 @@ final class Schema9 extends i0.VersionedSchema {
         _column_18,
         _column_19,
         _column_9,
-        _column_20,
+        _column_26,
         _column_74,
         _column_21,
         _column_11,

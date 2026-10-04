@@ -148,6 +148,7 @@
   "shelfLifeUnitMonths": "months",
   "shelfLifeUnitLabel": "Unit",
   "shelfLifeOutOfRange": "Enter between 1 day and 36 months.",
+  "shelfLifeNone": "No shelf life",
   "storageAgeFresh": "Fresh",
   "storageAgeAging": "Use soon",
   "storageAgeUrgent": "Use now",

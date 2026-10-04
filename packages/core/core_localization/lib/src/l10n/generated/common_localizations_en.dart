@@ -219,6 +219,9 @@ class CommonLocalizationsEn extends CommonLocalizations {
   String get shelfLifeOutOfRange => 'Enter between 1 day and 36 months.';
 
   @override
+  String get shelfLifeNone => 'No shelf life';
+
+  @override
   String get storageAgeFresh => 'Fresh';
 
   @override

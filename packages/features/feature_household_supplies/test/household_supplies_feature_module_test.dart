@@ -34,7 +34,7 @@ Future<void> _withContext(
 
 void main() {
   test('household supplies are an optional domain, off until switched on, last of the tabs', () {
-    expect(_module.moduleIdentifier, 'household_supplies');
+    expect(_module.moduleIdentifier, 'household');
     expect(_module.availability, const ModuleAvailability.optional(isEnabledByDefault: false));
     final domain = _module.storageDomain;
     expect(domain.identifier, StorageDomainIdentifier.household);
