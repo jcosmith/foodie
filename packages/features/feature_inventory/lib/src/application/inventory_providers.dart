@@ -2,6 +2,7 @@ import 'package:core_database/core_database.dart';
 import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,8 +27,9 @@ final inventoryQueryServiceProvider = Provider<InventoryQueryService>(
   (ref) => InventoryQueryService(ref.watch(inventoryRepositoryProvider)),
 );
 
-/// Everything at home, joined with products and compartments, live.
-final inventoryOverviewProvider = StreamProvider<InventoryOverview>((ref) {
+/// Everything at home, joined with products and compartments, live,
+/// switched-off domains included.
+final allInventoryOverviewProvider = StreamProvider<InventoryOverview>((ref) {
   final clock = ref.watch(clockProvider);
   final catalogAndLayout = combineLatestOfTwo(
     ref.watch(productCatalogQueryServiceProvider).watchCatalog(),
@@ -45,6 +47,17 @@ final inventoryOverviewProvider = StreamProvider<InventoryOverview>((ref) {
     ),
   );
 });
+
+/// What the app shows: [allInventoryOverviewProvider] without the items and
+/// places of switched-off domains. Switching a domain filters again without
+/// reopening the database queries.
+final inventoryOverviewProvider = Provider<AsyncValue<InventoryOverview>>(
+  (ref) => ref
+      .watch(allInventoryOverviewProvider)
+      .whenData(
+        (overview) => overview.withoutDomains(ref.watch(pausedStorageDomainIdentifiersProvider)),
+      ),
+);
 
 final inventoryUseCaseDependenciesProvider = Provider<InventoryUseCaseDependencies>(
   (ref) => InventoryUseCaseDependencies(

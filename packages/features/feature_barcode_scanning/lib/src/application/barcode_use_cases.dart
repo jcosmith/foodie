@@ -117,19 +117,24 @@ final class ScanToAddUseCase {
     required StorageLayoutQueryService storageLayout,
     required AddStockBatchUseCase addStockBatch,
     required Clock clock,
+    required Set<StorageDomainIdentifier> Function() readPausedDomains,
   }) : _inventory = inventory,
        _storageLayout = storageLayout,
+       _readPausedDomains = readPausedDomains,
        _addStockBatch = addStockBatch,
        _clock = clock;
 
   final InventoryQueryService _inventory;
   final StorageLayoutQueryService _storageLayout;
+
+  /// Switched-off domains, whose places are never suggested.
+  final Set<StorageDomainIdentifier> Function() _readPausedDomains;
   final AddStockBatchUseCase _addStockBatch;
   final Clock _clock;
 
   Future<ScanToAddSuggestion> suggest(RecognizedBarcode recognizedBarcode) async {
     final product = recognizedBarcode.product;
-    final layout = await _storageLayout.readStorageLayout();
+    final layout = (await _storageLayout.readStorageLayout()).withoutDomains(_readPausedDomains());
     final lastCompartmentIdentifier = await _inventory.readLastCompartmentOfProduct(
       product.identifier,
     );

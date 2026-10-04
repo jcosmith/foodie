@@ -123,6 +123,9 @@ void main() {
         enabledModules: const [_PantryModule()],
       );
       await pausedFreezer.seedCatalogAndStoragePlace();
+      // Riverpod pauses providers nobody listens to.
+      final switches = pausedFreezer.container.listen(enabledFeatureModulesProvider, (_, _) {});
+      addTearDown(switches.close);
       await pausedFreezer.read(enabledFeatureModulesProvider.future);
       await const StorageRemindersFeatureModule().initializeModule(
         pausedFreezer.initializationContext,

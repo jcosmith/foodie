@@ -123,6 +123,24 @@ final class InventoryOverview {
     today: today,
   );
 
+  /// The overview without the items and places of switched-off domains.
+  /// Items in places no module knows stay.
+  InventoryOverview withoutDomains(Set<StorageDomainIdentifier> pausedDomains) =>
+      pausedDomains.isEmpty
+      ? this
+      : InventoryOverview(
+          items: [
+            for (final item in items)
+              if (!pausedDomains.contains(
+                layout.domainOfCompartment(item.batch.compartmentIdentifier),
+              ))
+                item,
+          ],
+          catalog: catalog,
+          layout: layout.withoutDomains(pausedDomains),
+          today: today,
+        );
+
   /// Items of one compartment, oldest frozen first.
   List<InventoryItem> itemsIn(CompartmentIdentifier compartmentIdentifier) => [
     for (final item in items)

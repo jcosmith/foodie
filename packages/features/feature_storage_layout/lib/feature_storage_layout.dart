@@ -9,6 +9,7 @@ export 'src/application/storage_layout_providers.dart'
         createStoragePlaceFromTemplateUseCaseProvider,
         registeredStorageTemplatesProvider,
         storageKindDomainsProvider,
+        storageLayoutOfEnabledDomainsProvider,
         storageLayoutProvider,
         storageLayoutQueryServiceProvider,
         storageTemplateContributionsProvider,

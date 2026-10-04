@@ -108,7 +108,9 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
         .read(inventoryQueryServiceProvider)
         .readLastCompartmentOfProduct(productIdentifier);
     if (product == null || !mounted) return;
-    final layout = _offeredLayout(ref.read(storageLayoutProvider).value) ?? StorageLayout.empty;
+    final layout =
+        _offeredLayout(ref.read(storageLayoutOfEnabledDomainsProvider).value) ??
+        StorageLayout.empty;
     bool isActive(CompartmentIdentifier? compartmentIdentifier) =>
         compartmentIdentifier != null &&
         layout.activeCompartments.any(
@@ -244,7 +246,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
   @override
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
-    final layout = _offeredLayout(ref.watch(storageLayoutProvider).value);
+    final layout = _offeredLayout(ref.watch(storageLayoutOfEnabledDomainsProvider).value);
     final catalog = ref.watch(productCatalogProvider).value;
     final title =
         _domainOf(widget.domainIdentifier)?.addTitleBuilder?.call(context) ??

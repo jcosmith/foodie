@@ -1,4 +1,5 @@
 import 'package:core_foundation/foundation_providers.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -39,5 +40,6 @@ final scanToAddUseCaseProvider = Provider<ScanToAddUseCase>(
     storageLayout: ref.watch(storageLayoutQueryServiceProvider),
     addStockBatch: ref.watch(addStockBatchUseCaseProvider),
     clock: ref.watch(clockProvider),
+    readPausedDomains: () => ref.read(pausedStorageDomainIdentifiersProvider),
   ),
 );

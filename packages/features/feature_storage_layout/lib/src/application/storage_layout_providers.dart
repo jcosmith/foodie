@@ -88,6 +88,16 @@ final storageLayoutProvider = StreamProvider<StorageLayout>(
   (ref) => ref.watch(storageLayoutQueryServiceProvider).watchStorageLayout(),
 );
 
+/// The live layout without the places of switched-off domains, for pickers
+/// and overviews.
+final storageLayoutOfEnabledDomainsProvider = Provider<AsyncValue<StorageLayout>>(
+  (ref) => ref
+      .watch(storageLayoutProvider)
+      .whenData(
+        (layout) => layout.withoutDomains(ref.watch(pausedStorageDomainIdentifiersProvider)),
+      ),
+);
+
 /// Live number of items per compartment.
 final compartmentItemCountsProvider = StreamProvider<Map<CompartmentIdentifier, int>>(
   (ref) => ref.watch(storageLayoutQueryServiceProvider).watchItemCountsByCompartment(),

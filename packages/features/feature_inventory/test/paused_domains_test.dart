@@ -3,7 +3,6 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
-import 'package:feature_inventory/src/application/inventory_providers.dart';
 import 'package:feature_inventory/src/presentation/add_stock_batch_screen.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -47,7 +46,8 @@ void main() {
     final subscription = harness.container.listen(inventoryOverviewProvider, (_, _) {});
     addTearDown(subscription.close);
     await harness.container.read(enabledFeatureModulesProvider.future);
-    final overview = await harness.container.read(inventoryOverviewProvider.future);
+    await harness.container.read(allInventoryOverviewProvider.future);
+    final overview = harness.read(inventoryOverviewProvider).requireValue;
 
     expect(overview.items.map((item) => item.product.catalogKey), ['mincedMeat']);
     expect(overview.layout.storagePlaces.map((place) => place.domainIdentifier), [

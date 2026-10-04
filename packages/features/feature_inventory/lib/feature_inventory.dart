@@ -6,6 +6,7 @@ export 'src/application/inventory_overview.dart';
 export 'src/application/inventory_providers.dart'
     show
         addStockBatchUseCaseProvider,
+        allInventoryOverviewProvider,
         consumeStockUseCaseProvider,
         discardStockUseCaseProvider,
         inventoryOverviewProvider,

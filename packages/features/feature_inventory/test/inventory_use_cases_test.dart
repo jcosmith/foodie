@@ -390,7 +390,7 @@ void main() {
     // Riverpod pauses providers nobody listens to.
     final subscription = harness.container.listen(inventoryOverviewProvider, (_, _) {});
     addTearDown(subscription.close);
-    final overview = await harness.container.read(inventoryOverviewProvider.future);
+    final overview = await harness.container.read(allInventoryOverviewProvider.future);
 
     final item = overview.items.single;
     expect(item.product.identifier, mincedMeat.identifier);

@@ -108,6 +108,22 @@ final class StorageLayout {
     domainOfStorageKind: _domainOfStorageKind,
   );
 
+  /// The same layout without the active storage places of switched-off
+  /// domains. Places of kinds no module knows stay, so nothing goes missing
+  /// without a switch. Every place and compartment can still be looked up.
+  StorageLayout withoutDomains(Set<StorageDomainIdentifier> pausedDomains) {
+    if (pausedDomains.isEmpty) return this;
+    return StorageLayout._(
+      storagePlaces: [
+        for (final storagePlace in storagePlaces)
+          if (!pausedDomains.contains(storagePlace.domainIdentifier)) storagePlace,
+      ],
+      storagePlaceByIdentifier: _storagePlaceByIdentifier,
+      compartmentByIdentifier: _compartmentByIdentifier,
+      domainOfStorageKind: _domainOfStorageKind,
+    );
+  }
+
   /// Active compartments of the active storage places of one domain.
   List<Compartment> activeCompartmentsIn(StorageDomainIdentifier domainIdentifier) => [
     for (final storagePlace in storagePlacesIn(domainIdentifier)) ...storagePlace.compartments,

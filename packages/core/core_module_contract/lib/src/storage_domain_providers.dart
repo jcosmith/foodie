@@ -32,6 +32,21 @@ final enabledStorageDomainIdentifiersProvider = Provider<Set<StorageDomainIdenti
   (ref) => {for (final domain in ref.watch(enabledStorageDomainsProvider)) domain.identifier},
 );
 
+/// Domains the app was built with that are switched off right now: their
+/// items, places, reminders and minimums pause, and nothing is deleted.
+///
+/// Empty while the switches are still loading, so nothing flickers away at
+/// start; at least one domain always stays on, so an empty enabled list only
+/// ever means "not known yet".
+final pausedStorageDomainIdentifiersProvider = Provider<Set<StorageDomainIdentifier>>((ref) {
+  final enabled = ref.watch(enabledStorageDomainIdentifiersProvider);
+  if (enabled.isEmpty) return const {};
+  return {
+    for (final domain in ref.watch(registeredStorageDomainsProvider))
+      if (!enabled.contains(domain.identifier)) domain.identifier,
+  };
+});
+
 /// Every storage kind by its stored name, from every registered module, so
 /// places of a switched-off domain keep their names.
 final registeredStorageKindsProvider = Provider<Map<String, StorageKindContribution>>(

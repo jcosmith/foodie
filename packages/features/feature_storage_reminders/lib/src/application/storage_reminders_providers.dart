@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:core_events/core_events.dart';
 import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/foundation_providers.dart';
@@ -6,6 +8,7 @@ import 'package:core_notifications/core_notifications.dart';
 import 'package:core_preferences/core_preferences.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
+import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/storage_reminder_settings.dart';
@@ -41,6 +44,8 @@ final replanStorageRemindersUseCaseProvider = Provider<ReplanStorageRemindersUse
   (ref) => ReplanStorageRemindersUseCase(
     inventory: ref.watch(inventoryQueryServiceProvider),
     productCatalog: ref.watch(productCatalogQueryServiceProvider),
+    storageLayout: ref.watch(storageLayoutQueryServiceProvider),
+    readPausedDomains: () => ref.read(pausedStorageDomainIdentifiersProvider),
     settingsStore: ref.watch(storageReminderSettingsStoreProvider),
     reconciler: ref.watch(scheduledNotificationReconcilerProvider),
     loadNotificationTexts: ref.watch(storageReminderNotificationTextsLoaderProvider),
@@ -68,6 +73,13 @@ final storageReminderReplanningCoordinatorProvider = Provider<RecomputationCoord
     recompute: ref.watch(replanStorageRemindersUseCaseProvider).execute,
     logger: ref.watch(localLoggerProvider),
   );
+  // Switching a domain off or on again replans; listening keeps the
+  // switches loaded for the use case.
+  ref.listen(pausedStorageDomainIdentifiersProvider, (previous, next) {
+    if (previous != null && !(previous.length == next.length && previous.containsAll(next))) {
+      unawaited(coordinator.requestRecomputation());
+    }
+  });
   ref.onDispose(coordinator.stop);
   return coordinator;
 });

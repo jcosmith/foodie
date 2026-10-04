@@ -353,7 +353,8 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
   @override
   Widget build(BuildContext context) {
     final localizations = InventoryLocalizations.of(context);
-    final layout = ref.watch(storageLayoutProvider).value ?? StorageLayout.empty;
+    // Places of switched-off domains are no destination.
+    final layout = ref.watch(storageLayoutOfEnabledDomainsProvider).value ?? StorageLayout.empty;
     final nameResolver = context.compartmentDisplayNameResolver(layout);
     // The batch's own domain first, so a move to the next shelf is one tap.
     final sourceDomain = layout.domainOfCompartment(widget.item.batch.compartmentIdentifier);
