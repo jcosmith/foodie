@@ -291,6 +291,25 @@ void main() {
       ]);
     });
 
+    test('movement counts per product ignore the product and activity choices', () {
+      final analysis = _analyse(
+        facts,
+        filter: StatisticsFilter.initial
+            .withProductToggled(_soup)
+            .withActivity(StatisticsActivity.discarded),
+      );
+      // Peas: added once, eaten three items; the comparison period is left out.
+      expect(analysis.movementCountsByProduct, {_peas: 4, _soup: 2, _pizza: 1});
+
+      final meals = _analyse(facts, filter: StatisticsFilter.initial.withCategoryToggled(_meals));
+      expect(meals.movementCountsByProduct, {_soup: 2, _pizza: 1});
+      final drawer2 = _analyse(
+        facts,
+        filter: StatisticsFilter.initial.withCompartmentToggled(_drawer2),
+      );
+      expect(drawer2.movementCountsByProduct, {_soup: 1});
+    });
+
     test('a few removals are flagged as thin data', () {
       final analysis = _analyse([facts[1], facts[2]]);
       expect(analysis.removalCount, 3);

@@ -248,6 +248,9 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get productSearch => 'Produkte suchen';
 
   @override
+  String get showAllProducts => 'Alle anzeigen';
+
+  @override
   String get otherCategories => 'Andere';
 
   @override

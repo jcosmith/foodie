@@ -120,6 +120,7 @@
   "filterProducts": "Products",
   "filterWeekdays": "Weekdays",
   "productSearch": "Search products",
+  "showAllProducts": "Show all",
   "otherCategories": "Other",
   "reasonTooOld": "Stored too long",
   "reasonFreezerBurn": "Freezer burn",

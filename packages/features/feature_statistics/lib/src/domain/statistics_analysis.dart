@@ -275,6 +275,19 @@ final class StatisticsAnalysis {
     return [for (final entry in ranking.take(topProductsLimit)) (entry.key, entry.value)];
   }
 
+  /// Movements of any activity per product in the period, with the category,
+  /// drawer and weekday filters applied but not the product or activity
+  /// choice, so selecting a product does not hide the others. Products
+  /// without movements are left out; the filter sheet lists these first.
+  Map<ProductIdentifier, int> get movementCountsByProduct {
+    final counts = <ProductIdentifier, int>{};
+    for (final fact in _selectedFacts(_periodFacts, ignoreProducts: true)) {
+      counts[fact.productIdentifier] = (counts[fact.productIdentifier] ?? 0) + fact.movementCount;
+    }
+    counts.removeWhere((productIdentifier, count) => count <= 0);
+    return counts;
+  }
+
   /// Items thrown away per reason, in a fixed order; reasons without items
   /// are kept so the chart's rows do not jump.
   List<(StatisticsDiscardReason, int)> get discardedItemsByReason {

@@ -245,6 +245,9 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get productSearch => 'Search products';
 
   @override
+  String get showAllProducts => 'Show all';
+
+  @override
   String get otherCategories => 'Other';
 
   @override

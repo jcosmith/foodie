@@ -503,6 +503,12 @@ abstract class StatisticsLocalizations {
   /// **'Search products'**
   String get productSearch;
 
+  /// No description provided for @showAllProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all'**
+  String get showAllProducts;
+
   /// No description provided for @otherCategories.
   ///
   /// In en, this message translates to:
