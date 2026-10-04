@@ -426,6 +426,7 @@ button.config-row:hover { background: var(--app-surface-muted); }
 .module-off-notice { margin: 0 14px; background: #1c2431; color: #c9d3e0; border-radius: 14px; padding: 12px; font-size: 13px; text-align: center; }
 
 /* ---------- Planned screens (static sketches) ---------- */
+.planned-tag.is-built { color: var(--status-fresh); background: var(--status-fresh-soft); }
 .planned-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--status-aging); background: var(--status-aging-soft); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; }
 .static-navigation { display: flex; border-top: 1px solid var(--app-border); background: var(--app-surface); padding: 6px 4px 12px; }
 .static-navigation span { flex: 1; text-align: center; font-size: 11px; color: var(--app-muted); }
@@ -458,7 +459,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
 <body>
 <header class="page-header">
   <h1>Foodie: UI Examples (v3)</h1>
-  <p>Foodie is a household inventory app. Food comes first: the freezer, which is built, then the pantry and fridge, and receipt scanning to add a whole shop at once. Each storage area is its own tab: Freezer, Fridge and Pantry are on after installing, and Household (cleaning, bathroom, garden and so on) is one switch away in Options, with its basics built early and its full feature set later. "Lists" holds the shopping list and receipts; "More" holds Statistics and Options. Phones 1 to 11 are interactive and show the app as built today. Phones 12 to 17 are static sketches of the planned food features (architecture sections 10.7, 10.8 and 10.10).</p>
+  <p>Foodie is a household inventory app. Food comes first: the freezer, fridge and pantry, and receipt scanning to add a whole shop at once, all of which are now built. Each storage area is its own tab: Freezer, Fridge and Pantry are on after installing, and Household (cleaning, bathroom, garden and so on) is one switch away in Options, with its basics built early and its full feature set later. "Lists" holds the shopping list and receipts; "More" holds Statistics and Options. Phones 1 to 11 are interactive and show the freezer app of release 0.1.1. Phones 12 to 17 are static sketches of the household screens, which are now built (architecture sections 10.7, 10.8 and 10.10); the app follows them closely.</p>
   <p>The same principles hold for every screen: the most frequent actions take one or two taps, optional features disappear completely when switched off, and nothing leaves the phone.</p>
   <p>Eleven interactive screen suggestions sharing one in-memory freezer and two years of generated history. Version 2 adds the <strong>Config tab</strong> (language, appearance, optional features), the <strong>freezer layout editor</strong> (add, rename, reorder and remove drawers) and a much richer <strong>Insights</strong> area with a shared filter, cross-filtering and twelve chart types.</p>
   <p>The app language is now chosen inside the app, in the Config screen (phone 10), just as users will do it. Dates, numbers and relative ages follow the chosen language through the browser's <code>Intl</code> formatters. The notes under each phone stay in English.</p>
@@ -702,7 +703,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
     </ul>
   </article>
 
-  <h2 class="gallery-section-title">Planned: food first<small>Static sketches, in English only. One tab per storage area (Freezer, Fridge, Pantry, Household), best-before dates down to a single day, and receipt scanning with a searchable archive. The bottom bar reads Home · Freezer · Fridge · Pantry · (Household) · Lists · More.</small></h2>
+  <h2 class="gallery-section-title">Built: food first<small>Static sketches, in English only. One tab per storage area (Freezer, Fridge, Pantry, Household), best-before dates down to a single day, and receipt scanning with a searchable archive. The bottom bar reads Home · Freezer · Fridge · Pantry · (Household) · Lists · More.</small></h2>
 
   <!-- 12 Fridge tab -->
   <article class="screen-example" id="examplePlannedStock">
@@ -725,7 +726,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
       </div>
       <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊" class="is-current">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="📝">Lists</span><span data-icon="📂">More</span></nav>
     </div></div>
-    <h2>12 · Fridge tab <span class="planned-tag">Planned</span></h2>
+    <h2>12 · Fridge tab <span class="planned-tag is-built">Built</span></h2>
     <ul>
       <li>Each storage area is its own tab. A new install shows Home, Freezer, Fridge, Pantry, Lists and More; switching Household on in Options adds its tab after Pantry.</li>
       <li>Every tab has a colour icon in the same style, and each storage area has its own accent colour (Freezer blue, Fridge teal, Pantry amber, Household green) for its icon and section headers, so the tabs are easy to tell apart.</li>
@@ -749,7 +750,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
         <button type="button" class="primary-button">Save</button>
       </div>
     </div></div>
-    <h2>13 · Add to the fridge <span class="planned-tag">Planned</span></h2>
+    <h2>13 · Add to the fridge <span class="planned-tag is-built">Built</span></h2>
     <ul>
       <li>Best before is pre-filled from the product's typical shelf life, which can be as short as one day. Quick chips cover the usual cases; the date picker covers the rest.</li>
       <li>"Add" in a tab adds to that tab's storage places, which come from the layout editor as freezer drawers do. The Pantry tab works the same way with its shelves and cupboards.</li>
@@ -783,7 +784,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
         <button type="button" class="primary-button">Add 12 items</button>
       </div>
     </div></div>
-    <h2>14 · Receipt review <span class="planned-tag">Planned</span></h2>
+    <h2>14 · Receipt review <span class="planned-tag is-built">Built</span></h2>
     <ul>
       <li>The text is recognised on the phone. Lines that match no known product are flagged at the top with a short explanation and the choices: pick a product, create one, or ignore it.</li>
       <li>Likely matches show a question mark and need one tap. Every answer is learned for this store, so the next receipt needs fewer taps.</li>
@@ -809,7 +810,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
       </div>
       <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="☑" class="is-current">Lists</span><span data-icon="📂">More</span></nav>
     </div></div>
-    <h2>15 · Lists tab: receipt archive and search <span class="planned-tag">Planned</span></h2>
+    <h2>15 · Lists tab: receipt archive and search <span class="planned-tag is-built">Built</span></h2>
     <ul>
       <li>The Lists tab has two segments: the shopping list and the receipts. The Receipts segment only appears while receipt scanning is on.</li>
       <li>Search covers every recognised line, with store, period and amount filters.</li>
@@ -833,9 +834,9 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
       </div>
       <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="📝">Lists</span><span data-icon="☰" class="is-current">More</span></nav>
     </div></div>
-    <h2>16 · More tab <span class="planned-tag">Planned</span></h2>
+    <h2>16 · More tab <span class="planned-tag is-built">Built</span></h2>
     <ul>
-      <li>Statistics (today's Insights screens) and Options (today's Config) move here, so the domain tabs fit in the bottom bar.</li>
+      <li>Statistics (formerly Insights) and Options (formerly Config) live here, so the domain tabs fit in the bottom bar.</li>
       <li>A few headline numbers sit under the two entries; tapping one opens the matching statistic.</li>
       <li>Future modules add entries here or sections to Options, never new tabs.</li>
     </ul>
@@ -861,7 +862,7 @@ mark { background: var(--status-aging-soft); color: inherit; border-radius: 3px;
       </div>
       <nav class="static-navigation"><span data-icon="🏠">Home</span><span data-icon="❄️">Freezer</span><span data-icon="🧊">Fridge</span><span data-icon="🥫">Pantry</span><span data-icon="📝">Lists</span><span data-icon="☰" class="is-current">More</span></nav>
     </div></div>
-    <h2>17 · Options: tabs and optional features <span class="planned-tag">Planned</span></h2>
+    <h2>17 · Options: tabs and optional features <span class="planned-tag is-built">Built</span></h2>
     <ul>
       <li>The switches under "Tabs" add or remove the Freezer, Fridge, Pantry and Household tabs instantly. Freezer, Fridge and Pantry are on after installing; Household is off until the user wants it.</li>
       <li>Switching a tab off keeps its items; switching it on again brings them back. The last tab that is on cannot be switched off.</li>
