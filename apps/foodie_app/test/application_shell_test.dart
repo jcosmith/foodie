@@ -68,7 +68,7 @@ void main() {
         ))
           destination.label,
       ],
-      ['Home', 'Freezer', 'Lists', 'More'],
+      ['Home', 'Freezer', 'Fridge', 'Lists', 'More'],
     );
     expect(find.text('Good morning'), findsOneWidget);
     expect(find.text('Use soon'), findsOneWidget);
