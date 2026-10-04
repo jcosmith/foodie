@@ -38,21 +38,5 @@
   "storageLimitsDetail": "How long each category keeps",
   "storageLimitsTitle": "Storage limits",
   "storageLimitsExplanation": "Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.",
-  "storageMonths": "{count, plural, =1{1 month} other{{count} months}}",
-  "@storageMonths": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "storageMonthsLabel": "Keep for at most, in months",
-  "storageMonthsInvalid": "Enter a number from 1 to {maximum}.",
-  "@storageMonthsInvalid": {
-    "placeholders": {
-      "maximum": {
-        "type": "int"
-      }
-    }
-  }
+  "shelfLifeLabel": "Keeps for"
 }

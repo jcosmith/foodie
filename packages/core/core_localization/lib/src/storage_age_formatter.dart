@@ -9,7 +9,7 @@ import 'l10n/generated/common_localizations.dart';
 final class StorageAgeFormatter {
   const StorageAgeFormatter(this._localizations);
 
-  static const double _averageDaysPerMonth = 30.4;
+  static const double _averageDaysPerMonth = ShelfLife.averageDaysPerMonth;
 
   final CommonLocalizations _localizations;
 

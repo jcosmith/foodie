@@ -85,21 +85,5 @@ class StorageRemindersLocalizationsEn extends StorageRemindersLocalizations {
       'Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.';
 
   @override
-  String storageMonths(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count months',
-      one: '1 month',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get storageMonthsLabel => 'Keep for at most, in months';
-
-  @override
-  String storageMonthsInvalid(int maximum) {
-    return 'Enter a number from 1 to $maximum.';
-  }
+  String get shelfLifeLabel => 'Keeps for';
 }

@@ -31,11 +31,9 @@ class ProductEditorScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
-  static const double _averageDaysPerMonth = 30.4;
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _packageSizeController = TextEditingController();
-  final TextEditingController _storageMonthsController = TextEditingController();
+  final ShelfLifeFieldController _shelfLifeController = ShelfLifeFieldController();
   final TextEditingController _iconController = TextEditingController();
   bool _hasLoadedInitialValues = false;
   CategoryIdentifier? _categoryIdentifier;
@@ -45,7 +43,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
   QuantityUnit _unit = QuantityUnit.gram;
   String? _nameError;
   String? _packageSizeError;
-  String? _storageMonthsError;
+  String? _shelfLifeError;
   bool _isSaving = false;
 
   /// A photo taken for a new product, attached once the product is saved.
@@ -57,7 +55,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
   void dispose() {
     _nameController.dispose();
     _packageSizeController.dispose();
-    _storageMonthsController.dispose();
+    _shelfLifeController.dispose();
     _iconController.dispose();
     _pictureDraft.dispose();
     super.dispose();
@@ -79,10 +77,12 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
       final packageQuantity? => quantityFormatter.formatAmountForInput(packageQuantity),
       null => '',
     };
-    _storageMonthsController.text = switch (product.recommendedMaximumStorageDays) {
-      final storageDays? => (storageDays / _averageDaysPerMonth).round().toString(),
-      null => '',
-    };
+    if (product.recommendedMaximumStorageDays case final storageDays?) {
+      final shelfLife = ShelfLife.fromDays(storageDays);
+      _shelfLifeController
+        ..amountController.text = '${shelfLife.amount}'
+        ..unit = shelfLife.unit;
+    }
     _iconController.text = product.iconEmoji ?? '';
     _defaultCompartmentIdentifier = product.defaultCompartmentIdentifier;
     _iconImage = product.iconImage;
@@ -119,24 +119,20 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
     final packageQuantity = packageSizeText.isEmpty
         ? null
         : QuantityFormatter.parseDisplayAmount(packageSizeText, _unit);
-    final storageMonthsText = _storageMonthsController.text.trim();
-    final storageMonths = storageMonthsText.isEmpty ? null : int.tryParse(storageMonthsText);
     setState(() {
       _packageSizeError = packageSizeText.isNotEmpty && packageQuantity == null
           ? localizations.invalidNumber
           : null;
-      _storageMonthsError = storageMonthsText.isNotEmpty && storageMonths == null
-          ? localizations.invalidNumber
-          : null;
+      _shelfLifeError = _shelfLifeController.isValid
+          ? null
+          : context.commonLocalizations.shelfLifeOutOfRange;
     });
-    if (_packageSizeError != null || _storageMonthsError != null) return null;
+    if (_packageSizeError != null || _shelfLifeError != null) return null;
     return ProductSettings(
       enteredName: _nameController.text,
       categoryIdentifier: _categoryIdentifier!,
       defaultPackageQuantity: packageQuantity,
-      recommendedMaximumStorageDays: storageMonths == null
-          ? null
-          : (storageMonths * _averageDaysPerMonth).round(),
+      recommendedMaximumStorageDays: _shelfLifeController.inDays,
       iconEmoji: _iconController.text,
       iconImage: _iconImage,
       defaultCompartmentIdentifier: _activeDefaultCompartmentIdentifier(
@@ -320,20 +316,17 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
             ),
           ),
           const SizedBox(height: FoodieSpacing.medium),
-          TextField(
-            controller: _storageMonthsController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: localizations.storageMonthsLabel,
-              helperText: selectedCategory == null
-                  ? null
-                  : localizations.storageMonthsHelper(
-                      (selectedCategory.recommendedMaximumStorageDays / _averageDaysPerMonth)
-                          .round(),
+          ShelfLifeField(
+            controller: _shelfLifeController,
+            labelText: localizations.shelfLifeLabel,
+            helperText: selectedCategory == null
+                ? null
+                : localizations.shelfLifeHelper(
+                    context.shelfLifeFormatter.formatDays(
+                      selectedCategory.recommendedMaximumStorageDays,
                     ),
-              helperMaxLines: 2,
-              errorText: _storageMonthsError,
-            ),
+                  ),
+            errorText: _shelfLifeError,
           ),
           Padding(
             padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),

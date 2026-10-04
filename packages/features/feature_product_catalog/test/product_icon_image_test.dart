@@ -104,8 +104,11 @@ void main() {
     await _settle(tester);
 
     expect(find.byType(Image), findsNothing);
-    await tester.ensureVisible(find.text('Choose a picture'));
-    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Choose a picture'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.text('Choose a picture'));
     await _settleUntil(tester, find.byType(Image));
     expect(find.text('Remove picture'), findsOneWidget);

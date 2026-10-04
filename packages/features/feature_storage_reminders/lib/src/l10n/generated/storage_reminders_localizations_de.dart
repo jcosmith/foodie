@@ -86,21 +86,5 @@ class StorageRemindersLocalizationsDe extends StorageRemindersLocalizations {
       'Dinge gelten als „bald verbrauchen“, sobald 85 % ihrer Lagerzeit vorbei sind. Ein Produkt kann im Produkteditor eine eigene Zeit haben.';
 
   @override
-  String storageMonths(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count Monate',
-      one: '1 Monat',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get storageMonthsLabel => 'Höchstens aufbewahren, in Monaten';
-
-  @override
-  String storageMonthsInvalid(int maximum) {
-    return 'Gib eine Zahl von 1 bis $maximum ein.';
-  }
+  String get shelfLifeLabel => 'Hält sich';
 }

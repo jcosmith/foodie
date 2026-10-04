@@ -203,17 +203,17 @@ abstract class ProductCatalogLocalizations {
   /// **'Pre-fills the amount when you add it.'**
   String get packageSizeHelper;
 
-  /// No description provided for @storageMonthsLabel.
+  /// No description provided for @shelfLifeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Keep for at most, in months (optional)'**
-  String get storageMonthsLabel;
+  /// **'Keeps for (optional)'**
+  String get shelfLifeLabel;
 
-  /// No description provided for @storageMonthsHelper.
+  /// No description provided for @shelfLifeHelper.
   ///
   /// In en, this message translates to:
-  /// **'{months, plural, =1{Leave empty to follow the category: about 1 month.} other{Leave empty to follow the category: about {months} months.}}'**
-  String storageMonthsHelper(int months);
+  /// **'Leave empty to follow the category: {shelfLife}.'**
+  String shelfLifeHelper(String shelfLife);
 
   /// No description provided for @storageRecommendationNote.
   ///

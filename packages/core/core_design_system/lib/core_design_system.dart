@@ -23,4 +23,5 @@ export 'src/widgets/colour_tab_icon.dart';
 export 'src/widgets/empty_state_view.dart';
 export 'src/widgets/quantity_stepper.dart';
 export 'src/widgets/section_card.dart';
+export 'src/widgets/shelf_life_field.dart';
 export 'src/widgets/storage_age_badge.dart';

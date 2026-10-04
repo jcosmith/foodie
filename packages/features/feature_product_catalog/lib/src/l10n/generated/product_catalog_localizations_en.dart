@@ -79,17 +79,11 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
   String get packageSizeHelper => 'Pre-fills the amount when you add it.';
 
   @override
-  String get storageMonthsLabel => 'Keep for at most, in months (optional)';
+  String get shelfLifeLabel => 'Keeps for (optional)';
 
   @override
-  String storageMonthsHelper(int months) {
-    String _temp0 = intl.Intl.pluralLogic(
-      months,
-      locale: localeName,
-      other: 'Leave empty to follow the category: about $months months.',
-      one: 'Leave empty to follow the category: about 1 month.',
-    );
-    return '$_temp0';
+  String shelfLifeHelper(String shelfLife) {
+    return 'Leave empty to follow the category: $shelfLife.';
   }
 
   @override

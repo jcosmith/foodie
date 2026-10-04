@@ -149,6 +149,76 @@ class CommonLocalizationsDe extends CommonLocalizations {
   }
 
   @override
+  String shelfLifeDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tage',
+      one: '1 Tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shelfLifeWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Wochen',
+      one: '1 Woche',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shelfLifeMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Monate',
+      one: '1 Monat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shelfLifeAboutWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'etwa $count Wochen',
+      one: 'etwa 1 Woche',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shelfLifeAboutMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'etwa $count Monate',
+      one: 'etwa 1 Monat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shelfLifeUnitDays => 'Tage';
+
+  @override
+  String get shelfLifeUnitWeeks => 'Wochen';
+
+  @override
+  String get shelfLifeUnitMonths => 'Monate';
+
+  @override
+  String get shelfLifeUnitLabel => 'Einheit';
+
+  @override
+  String get shelfLifeOutOfRange => 'Gib 1 Tag bis 36 Monate ein.';
+
+  @override
   String get storageAgeFresh => 'Frisch';
 
   @override

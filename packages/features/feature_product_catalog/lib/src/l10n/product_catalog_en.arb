@@ -46,12 +46,12 @@
   "unitLockedHint": "The unit stays fixed, because stock of this product is stored in it.",
   "packageSizeLabel": "Usual package size (optional)",
   "packageSizeHelper": "Pre-fills the amount when you add it.",
-  "storageMonthsLabel": "Keep for at most, in months (optional)",
-  "storageMonthsHelper": "{months, plural, =1{Leave empty to follow the category: about 1 month.} other{Leave empty to follow the category: about {months} months.}}",
-  "@storageMonthsHelper": {
+  "shelfLifeLabel": "Keeps for (optional)",
+  "shelfLifeHelper": "Leave empty to follow the category: {shelfLife}.",
+  "@shelfLifeHelper": {
     "placeholders": {
-      "months": {
-        "type": "int"
+      "shelfLife": {
+        "type": "String"
       }
     }
   },

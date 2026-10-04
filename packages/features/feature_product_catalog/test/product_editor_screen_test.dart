@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:core_design_system/testing.dart';
+import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_product_catalog/src/application/product_catalog_providers.dart';
+import 'package:feature_product_catalog/src/presentation/product_catalog_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,9 +57,7 @@ void main() {
     expect(find.text('Leave empty to follow the category: about 9 months.'), findsOneWidget);
 
     await tester.enterText(shelfLifeField, '2');
-    await tester.tap(find.text('months'));
-    await _settle(tester);
-    await tester.tap(find.text('days').last);
+    await tester.tap(find.text('days'));
     await _settle(tester);
     await tester.tap(find.text('Save'));
     await _settle(tester);
@@ -68,7 +68,12 @@ void main() {
     await openEditor(tester, product);
     await tester.ensureVisible(find.widgetWithText(TextField, 'Keeps for (optional)'));
     expect(find.widgetWithText(TextField, '2'), findsOneWidget);
-    expect(find.text('days'), findsOneWidget);
+    expect(
+      tester
+          .widget<SegmentedButton<ShelfLifeUnit>>(find.byType(SegmentedButton<ShelfLifeUnit>))
+          .selected,
+      {ShelfLifeUnit.days},
+    );
   });
 
   testWidgets('an out-of-range shelf life is not saved', (tester) async {

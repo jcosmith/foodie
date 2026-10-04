@@ -133,9 +133,7 @@ void main() {
     await tester.tap(find.text('Vegetables'));
     await _settle(tester);
     await tester.enterText(find.byType(TextField), '3');
-    await tester.tap(find.text('months').last);
-    await _settle(tester);
-    await tester.tap(find.text('days').last);
+    await tester.tap(find.text('days'));
     await _settle(tester);
     await tester.tap(find.text('Save'));
     await _settle(tester);

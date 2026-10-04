@@ -93,12 +93,10 @@ void main() {
       );
       expect(find.text('Keeps for'), findsOneWidget);
       expect(find.widgetWithText(TextField, '2'), findsOneWidget);
-      expect(find.text('weeks'), findsOneWidget);
+      expect(_selectedShelfLifeUnit(tester), ShelfLifeUnit.weeks);
 
       await tester.enterText(find.byType(TextField), '3');
-      await tester.tap(find.text('weeks'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('days').last);
+      await tester.tap(find.text('days'));
       await tester.pumpAndSettle();
       expect(controller.shelfLife, const ShelfLife(3, ShelfLifeUnit.days));
       expect(controller.inDays, 3);
@@ -111,7 +109,7 @@ void main() {
       await tester.pumpWidget(
         _wrapInApp(ShelfLifeField(controller: controller, labelText: 'Keeps for')),
       );
-      expect(find.text('months'), findsOneWidget, reason: 'months unless told otherwise');
+      expect(_selectedShelfLifeUnit(tester), ShelfLifeUnit.months, reason: 'unless told otherwise');
       expect(controller.shelfLife, isNull);
       expect(controller.isValid, isTrue);
 
@@ -131,7 +129,14 @@ void main() {
         ),
       );
       expect(find.text('Tage'), findsOneWidget);
+      expect(find.text('Wochen'), findsOneWidget);
+      expect(_selectedShelfLifeUnit(tester), ShelfLifeUnit.days);
       expect(find.widgetWithText(TextField, '1'), findsOneWidget);
     });
   });
 }
+
+ShelfLifeUnit _selectedShelfLifeUnit(WidgetTester tester) => tester
+    .widget<SegmentedButton<ShelfLifeUnit>>(find.byType(SegmentedButton<ShelfLifeUnit>))
+    .selected
+    .single;

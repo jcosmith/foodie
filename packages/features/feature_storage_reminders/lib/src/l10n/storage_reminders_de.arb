@@ -21,7 +21,5 @@
   "storageLimitsDetail": "Wie lange sich jede Kategorie hält",
   "storageLimitsTitle": "Lagerzeiten",
   "storageLimitsExplanation": "Dinge gelten als „bald verbrauchen“, sobald 85 % ihrer Lagerzeit vorbei sind. Ein Produkt kann im Produkteditor eine eigene Zeit haben.",
-  "storageMonths": "{count, plural, =1{1 Monat} other{{count} Monate}}",
-  "storageMonthsLabel": "Höchstens aufbewahren, in Monaten",
-  "storageMonthsInvalid": "Gib eine Zahl von 1 bis {maximum} ein."
+  "shelfLifeLabel": "Hält sich"
 }

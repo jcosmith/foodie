@@ -274,6 +274,66 @@ abstract class CommonLocalizations {
   /// **'{count, plural, =1{1 year ago} other{{count} years ago}}'**
   String relativeAgeYears(int count);
 
+  /// No description provided for @shelfLifeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String shelfLifeDays(int count);
+
+  /// No description provided for @shelfLifeWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 week} other{{count} weeks}}'**
+  String shelfLifeWeeks(int count);
+
+  /// No description provided for @shelfLifeMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String shelfLifeMonths(int count);
+
+  /// No description provided for @shelfLifeAboutWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{about 1 week} other{about {count} weeks}}'**
+  String shelfLifeAboutWeeks(int count);
+
+  /// No description provided for @shelfLifeAboutMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{about 1 month} other{about {count} months}}'**
+  String shelfLifeAboutMonths(int count);
+
+  /// No description provided for @shelfLifeUnitDays.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get shelfLifeUnitDays;
+
+  /// No description provided for @shelfLifeUnitWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'weeks'**
+  String get shelfLifeUnitWeeks;
+
+  /// No description provided for @shelfLifeUnitMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get shelfLifeUnitMonths;
+
+  /// No description provided for @shelfLifeUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get shelfLifeUnitLabel;
+
+  /// No description provided for @shelfLifeOutOfRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter between 1 day and 36 months.'**
+  String get shelfLifeOutOfRange;
+
   /// No description provided for @storageAgeFresh.
   ///
   /// In en, this message translates to:

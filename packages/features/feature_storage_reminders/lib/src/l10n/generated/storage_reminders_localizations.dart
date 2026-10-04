@@ -221,23 +221,11 @@ abstract class StorageRemindersLocalizations {
   /// **'Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.'**
   String get storageLimitsExplanation;
 
-  /// No description provided for @storageMonths.
+  /// No description provided for @shelfLifeLabel.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 month} other{{count} months}}'**
-  String storageMonths(int count);
-
-  /// No description provided for @storageMonthsLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Keep for at most, in months'**
-  String get storageMonthsLabel;
-
-  /// No description provided for @storageMonthsInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a number from 1 to {maximum}.'**
-  String storageMonthsInvalid(int maximum);
+  /// **'Keeps for'**
+  String get shelfLifeLabel;
 }
 
 class _StorageRemindersLocalizationsDelegate

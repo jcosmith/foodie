@@ -78,17 +78,11 @@ class ProductCatalogLocalizationsDe extends ProductCatalogLocalizations {
   String get packageSizeHelper => 'Füllt die Menge beim Einfrieren vor.';
 
   @override
-  String get storageMonthsLabel => 'Höchstens aufbewahren, in Monaten (optional)';
+  String get shelfLifeLabel => 'Hält sich (optional)';
 
   @override
-  String storageMonthsHelper(int months) {
-    String _temp0 = intl.Intl.pluralLogic(
-      months,
-      locale: localeName,
-      other: 'Leer lassen, um der Kategorie zu folgen: etwa $months Monate.',
-      one: 'Leer lassen, um der Kategorie zu folgen: etwa 1 Monat.',
-    );
-    return '$_temp0';
+  String shelfLifeHelper(String shelfLife) {
+    return 'Leer lassen, um der Kategorie zu folgen: $shelfLife.';
   }
 
   @override

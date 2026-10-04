@@ -103,6 +103,51 @@
       }
     }
   },
+  "shelfLifeDays": "{count, plural, =1{1 day} other{{count} days}}",
+  "@shelfLifeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfLifeWeeks": "{count, plural, =1{1 week} other{{count} weeks}}",
+  "@shelfLifeWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfLifeMonths": "{count, plural, =1{1 month} other{{count} months}}",
+  "@shelfLifeMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfLifeAboutWeeks": "{count, plural, =1{about 1 week} other{about {count} weeks}}",
+  "@shelfLifeAboutWeeks": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfLifeAboutMonths": "{count, plural, =1{about 1 month} other{about {count} months}}",
+  "@shelfLifeAboutMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shelfLifeUnitDays": "days",
+  "shelfLifeUnitWeeks": "weeks",
+  "shelfLifeUnitMonths": "months",
+  "shelfLifeUnitLabel": "Unit",
+  "shelfLifeOutOfRange": "Enter between 1 day and 36 months.",
   "storageAgeFresh": "Fresh",
   "storageAgeAging": "Use soon",
   "storageAgeUrgent": "Eat now",
