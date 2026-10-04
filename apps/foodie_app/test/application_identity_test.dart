@@ -37,6 +37,15 @@ void main() {
     );
   });
 
+  test('version 0.0.1 keeps a build number above 0.1.1+2, so phones update in place', () {
+    final version = RegExp(
+      r'^version: ([0-9.]+)\+([0-9]+)$',
+      multiLine: true,
+    ).firstMatch(read('pubspec.yaml'))!;
+    expect(version.group(1), '0.0.1');
+    expect(int.parse(version.group(2)!), greaterThan(2));
+  });
+
   test('the release build tolerates the ML Kit models it leaves out', () {
     expect(read('android/app/build.gradle.kts'), contains('proguardFiles("proguard-rules.pro")'));
     final rules = read('android/app/proguard-rules.pro');
