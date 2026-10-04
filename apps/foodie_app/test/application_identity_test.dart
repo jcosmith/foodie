@@ -37,6 +37,14 @@ void main() {
     );
   });
 
+  test('the release build tolerates the ML Kit models it leaves out', () {
+    expect(read('android/app/build.gradle.kts'), contains('proguardFiles("proguard-rules.pro")'));
+    final rules = read('android/app/proguard-rules.pro');
+    for (final script in ['chinese', 'devanagari', 'japanese', 'korean']) {
+      expect(rules, contains('-dontwarn com.google.mlkit.vision.text.$script.**'));
+    }
+  });
+
   test('the release workflow builds foodie-<version>.apk from apps/foodie_app', () {
     final workflow = read('../../.github/workflows/release.yml');
     expect(workflow, isNot(contains('freezer_app')));
