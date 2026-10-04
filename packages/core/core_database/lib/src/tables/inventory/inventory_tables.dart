@@ -4,7 +4,8 @@ import '../../converters/calendar_date_converter.dart';
 import '../product_catalog/product_catalog_tables.dart';
 import '../storage_layout/storage_layout_tables.dart';
 
-/// One physical bag or box with its freezing date, owned by feature_inventory.
+/// One physical package or box with the day it was put away, owned by
+/// feature_inventory.
 @DataClassName('StockBatchRow')
 class StockBatches extends Table {
   TextColumn get stockBatchIdentifier => text()();
@@ -25,9 +26,14 @@ class StockBatches extends Table {
   /// Set when this batch was split off another one.
   TextColumn get parentBatchIdentifier => text().nullable()();
 
-  TextColumn get frozenOn => text().map(const CalendarDateTextConverter())();
+  /// The day the batch was put away: frozen or bought. Called `frozen_on`
+  /// before schema version 9.
+  TextColumn get storedOn => text().map(const CalendarDateTextConverter())();
 
   TextColumn get bestBeforeOn => text().map(const CalendarDateTextConverter()).nullable()();
+
+  /// The day the package was opened; `null` while it is closed.
+  TextColumn get openedOn => text().map(const CalendarDateTextConverter()).nullable()();
 
   TextColumn get note => text().nullable()();
 
@@ -62,7 +68,8 @@ class InventoryMovements extends Table {
   /// Change of the batch's quantity in the product's base unit; negative for removals.
   IntColumn get quantityDelta => integer()();
 
-  /// `tooOld`, `freezerBurn`, `unwanted` or `other` for discards.
+  /// `tooOld`, `freezerBurn`, `expired`, `spoiled`, `unwanted` or `other`
+  /// for discards.
   TextColumn get discardReason => text().nullable()();
 
   /// Set on a compensating movement (undo); it has the same kind and the

@@ -67,7 +67,9 @@ void main() {
 
     expect(resolver.compartmentNameWithStoragePlace(basket), 'Cellar · Basket 1');
     expect(
-      resolver.layout.storagePlaces.map((storagePlaceLayout) => storagePlaceLayout.storagePlace.identifier.value),
+      resolver.layout.storagePlaces.map(
+        (storagePlaceLayout) => storagePlaceLayout.storagePlace.identifier.value,
+      ),
       ['kitchen', 'cellar'],
     );
   });

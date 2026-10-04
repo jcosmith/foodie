@@ -9,14 +9,14 @@ import '../domain/storage_layout.dart';
 import '../domain/storage_layout_repository.dart';
 import 'storage_layout_query_service.dart';
 import 'use_cases/add_compartment_use_case.dart';
-import 'use_cases/archive_freezer_use_case.dart';
+import 'use_cases/archive_storage_place_use_case.dart';
 import 'use_cases/change_compartment_color_use_case.dart';
-import 'use_cases/create_freezer_from_template_use_case.dart';
+import 'use_cases/create_storage_place_from_template_use_case.dart';
 import 'use_cases/move_contents_and_archive_compartment_use_case.dart';
 import 'use_cases/rename_compartment_use_case.dart';
-import 'use_cases/rename_freezer_use_case.dart';
+import 'use_cases/rename_storage_place_use_case.dart';
 import 'use_cases/reorder_compartments_use_case.dart';
-import 'use_cases/reorder_freezers_use_case.dart';
+import 'use_cases/reorder_storage_places_use_case.dart';
 
 /// Bound to the Drift implementation by the module's provider overrides.
 final storageLayoutRepositoryProvider = Provider<StorageLayoutRepository>(
@@ -36,7 +36,7 @@ final storageLayoutQueryServiceProvider = Provider<StorageLayoutQueryService>(
   ),
 );
 
-/// The live freezer layout.
+/// The live storage place layout.
 final storageLayoutProvider = StreamProvider<StorageLayout>(
   (ref) => ref.watch(storageLayoutQueryServiceProvider).watchStorageLayout(),
 );
@@ -46,30 +46,31 @@ final compartmentItemCountsProvider = StreamProvider<Map<CompartmentIdentifier, 
   (ref) => ref.watch(storageLayoutQueryServiceProvider).watchItemCountsByCompartment(),
 );
 
-final createFreezerFromTemplateUseCaseProvider = Provider<CreateFreezerFromTemplateUseCase>(
-  (ref) => CreateFreezerFromTemplateUseCase(
+final createStoragePlaceFromTemplateUseCaseProvider =
+    Provider<CreateStoragePlaceFromTemplateUseCase>(
+      (ref) => CreateStoragePlaceFromTemplateUseCase(
+        repository: ref.watch(storageLayoutRepositoryProvider),
+        transactionRunner: ref.watch(transactionRunnerProvider),
+        domainEventBus: ref.watch(domainEventBusProvider),
+        clock: ref.watch(clockProvider),
+        identifierGenerator: ref.watch(identifierGeneratorProvider),
+      ),
+    );
+
+final renameStoragePlaceUseCaseProvider = Provider<RenameStoragePlaceUseCase>(
+  (ref) => RenameStoragePlaceUseCase(repository: ref.watch(storageLayoutRepositoryProvider)),
+);
+
+final reorderStoragePlacesUseCaseProvider = Provider<ReorderStoragePlacesUseCase>(
+  (ref) => ReorderStoragePlacesUseCase(
     repository: ref.watch(storageLayoutRepositoryProvider),
-    transactionRunner: ref.watch(transactionRunnerProvider),
     domainEventBus: ref.watch(domainEventBusProvider),
     clock: ref.watch(clockProvider),
-    identifierGenerator: ref.watch(identifierGeneratorProvider),
   ),
 );
 
-final renameFreezerUseCaseProvider = Provider<RenameFreezerUseCase>(
-  (ref) => RenameFreezerUseCase(repository: ref.watch(storageLayoutRepositoryProvider)),
-);
-
-final reorderFreezersUseCaseProvider = Provider<ReorderFreezersUseCase>(
-  (ref) => ReorderFreezersUseCase(
-    repository: ref.watch(storageLayoutRepositoryProvider),
-    domainEventBus: ref.watch(domainEventBusProvider),
-    clock: ref.watch(clockProvider),
-  ),
-);
-
-final archiveFreezerUseCaseProvider = Provider<ArchiveFreezerUseCase>(
-  (ref) => ArchiveFreezerUseCase(
+final archiveStoragePlaceUseCaseProvider = Provider<ArchiveStoragePlaceUseCase>(
+  (ref) => ArchiveStoragePlaceUseCase(
     repository: ref.watch(storageLayoutRepositoryProvider),
     compartmentContents: ref.watch(compartmentContentsPortProvider),
     transactionRunner: ref.watch(transactionRunnerProvider),

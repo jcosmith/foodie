@@ -14,6 +14,7 @@ final class ProductSettings {
     required this.categoryIdentifier,
     this.defaultPackageQuantity,
     this.recommendedMaximumStorageDays,
+    this.shelfLifeAfterOpeningDays,
     this.iconEmoji,
     this.iconImage,
     this.defaultCompartmentIdentifier,
@@ -25,6 +26,9 @@ final class ProductSettings {
 
   /// `null` follows the category's recommendation.
   final int? recommendedMaximumStorageDays;
+
+  /// `null` follows the category.
+  final int? shelfLifeAfterOpeningDays;
 
   /// `null` uses the category icon.
   final String? iconEmoji;
@@ -39,8 +43,10 @@ final class ProductSettings {
   ProductCatalogFailure? validateNumbers() {
     final packageQuantity = defaultPackageQuantity;
     final storageDays = recommendedMaximumStorageDays;
+    final daysAfterOpening = shelfLifeAfterOpeningDays;
     if ((packageQuantity != null && !packageQuantity.isPositive) ||
-        (storageDays != null && storageDays <= 0)) {
+        (storageDays != null && storageDays <= 0) ||
+        (daysAfterOpening != null && daysAfterOpening <= 0)) {
       return const InvalidProductSetting();
     }
     return null;

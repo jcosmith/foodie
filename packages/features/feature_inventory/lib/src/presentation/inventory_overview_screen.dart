@@ -46,7 +46,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(localizations.overviewTitle),
-            if (overview != null && overview.hasFreezer)
+            if (overview != null && overview.hasStoragePlace)
               Text(
                 localizations.itemsInDrawers(
                   localizations.itemCount(overview.items.length),
@@ -57,7 +57,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
           ],
         ),
       ),
-      floatingActionButton: overview != null && overview.hasFreezer
+      floatingActionButton: overview != null && overview.hasStoragePlace
           ? FloatingActionButton.extended(
               onPressed: () => context.push(InventoryRoutes.addStockBatch()),
               icon: const Icon(Icons.add),
@@ -66,12 +66,12 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
           : null,
       body: switch (overview) {
         null => const Center(child: CircularProgressIndicator()),
-        final overview when !overview.hasFreezer => EmptyStateView(
+        final overview when !overview.hasStoragePlace => EmptyStateView(
           icon: Icons.kitchen_outlined,
-          title: localizations.noFreezerTitle,
-          message: localizations.noFreezerMessage,
-          actionLabel: localizations.setUpFreezerButton,
-          onActionPressed: () => context.push(StorageLayoutRoutes.newFreezer),
+          title: localizations.noStoragePlaceTitle,
+          message: localizations.noStoragePlaceMessage,
+          actionLabel: localizations.setUpStoragePlaceButton,
+          onActionPressed: () => context.push(StorageLayoutRoutes.newStoragePlace),
         ),
         final overview when overview.items.isEmpty => EmptyStateView(
           icon: Icons.ac_unit,
@@ -196,7 +196,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
         SliverList.list(
           children: [
             _CompartmentHeader(
-              name: nameResolver.compartmentNameWithFreezer(compartment),
+              name: nameResolver.compartmentNameWithStoragePlace(compartment),
               color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
               itemCountText: itemCount(itemsInCompartment.length),
               isExpanded: isExpanded,

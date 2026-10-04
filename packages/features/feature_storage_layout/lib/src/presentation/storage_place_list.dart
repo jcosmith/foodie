@@ -4,27 +4,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../application/storage_layout_providers.dart';
-import '../domain/freezer.dart';
 import '../domain/storage_layout.dart';
+import '../domain/storage_place.dart';
 import '../l10n/generated/storage_layout_localizations.dart';
 import 'layout_localization.dart';
 import 'storage_layout_routes.dart';
 
-/// The "Freezer layout" section of the Config tab: one row per freezer and
+/// The "Storage place layout" section of the Config tab: one row per storage place and
 /// a button to add another.
-class FreezerLayoutConfigSection extends ConsumerWidget {
-  const FreezerLayoutConfigSection({super.key});
+class StorageLayoutConfigSection extends ConsumerWidget {
+  const StorageLayoutConfigSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final layout = ref.watch(storageLayoutProvider).value ?? StorageLayout.empty;
-    return FreezerLayoutList(layout: layout, allowsReordering: false);
+    return StoragePlaceList(layout: layout, allowsReordering: false);
   }
 }
 
-/// Freezers with their summaries; tapping one opens its editor.
-class FreezerLayoutList extends ConsumerWidget {
-  const FreezerLayoutList({required this.layout, required this.allowsReordering, super.key});
+/// Storage places with their summaries; tapping one opens its editor.
+class StoragePlaceList extends ConsumerWidget {
+  const StoragePlaceList({required this.layout, required this.allowsReordering, super.key});
 
   final StorageLayout layout;
   final bool allowsReordering;
@@ -33,19 +33,20 @@ class FreezerLayoutList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final localizations = StorageLayoutLocalizations.of(context);
     final nameResolver = context.compartmentDisplayNameResolver(layout);
-    final freezers = layout.freezers;
+    final storagePlaces = layout.storagePlaces;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final (index, freezerLayout) in freezers.indexed)
+        for (final (index, storagePlaceLayout) in storagePlaces.indexed)
           ListTile(
             contentPadding: const EdgeInsetsDirectional.only(start: FoodieSpacing.small),
             leading: const Icon(Icons.kitchen_outlined),
-            title: Text(nameResolver.freezerName(freezerLayout.freezer)),
-            subtitle: Text(localizations.freezerSummaryOf(freezerLayout)),
-            onTap: () =>
-                context.push(StorageLayoutRoutes.freezerEditor(freezerLayout.freezer.identifier)),
-            trailing: allowsReordering && freezers.length > 1
+            title: Text(nameResolver.storagePlaceName(storagePlaceLayout.storagePlace)),
+            subtitle: Text(localizations.storagePlaceSummaryOf(storagePlaceLayout)),
+            onTap: () => context.push(
+              StorageLayoutRoutes.storagePlaceEditor(storagePlaceLayout.storagePlace.identifier),
+            ),
+            trailing: allowsReordering && storagePlaces.length > 1
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -53,14 +54,14 @@ class FreezerLayoutList extends ConsumerWidget {
                         tooltip: localizations.moveUp,
                         onPressed: index == 0
                             ? null
-                            : () => _moveFreezer(ref, freezers, index, index - 1),
+                            : () => _moveStoragePlace(ref, storagePlaces, index, index - 1),
                         icon: const Icon(Icons.arrow_upward),
                       ),
                       IconButton(
                         tooltip: localizations.moveDown,
-                        onPressed: index == freezers.length - 1
+                        onPressed: index == storagePlaces.length - 1
                             ? null
-                            : () => _moveFreezer(ref, freezers, index, index + 1),
+                            : () => _moveStoragePlace(ref, storagePlaces, index, index + 1),
                         icon: const Icon(Icons.arrow_downward),
                       ),
                     ],
@@ -70,26 +71,26 @@ class FreezerLayoutList extends ConsumerWidget {
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: TextButton.icon(
-            onPressed: () => context.push(StorageLayoutRoutes.newFreezer),
+            onPressed: () => context.push(StorageLayoutRoutes.newStoragePlace),
             icon: const Icon(Icons.add),
-            label: Text(localizations.addFreezerButton),
+            label: Text(localizations.addStoragePlaceButton),
           ),
         ),
       ],
     );
   }
 
-  static Future<void> _moveFreezer(
+  static Future<void> _moveStoragePlace(
     WidgetRef ref,
-    List<FreezerLayout> freezers,
+    List<StoragePlaceLayout> storagePlaces,
     int fromIndex,
     int toIndex,
   ) async {
-    final orderedIdentifiers = <FreezerIdentifier>[
-      for (final freezerLayout in freezers) freezerLayout.freezer.identifier,
+    final orderedIdentifiers = <StoragePlaceIdentifier>[
+      for (final storagePlaceLayout in storagePlaces) storagePlaceLayout.storagePlace.identifier,
     ];
     final movedIdentifier = orderedIdentifiers.removeAt(fromIndex);
     orderedIdentifiers.insert(toIndex, movedIdentifier);
-    await ref.read(reorderFreezersUseCaseProvider).execute(orderedIdentifiers);
+    await ref.read(reorderStoragePlacesUseCaseProvider).execute(orderedIdentifiers);
   }
 }

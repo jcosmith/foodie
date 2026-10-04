@@ -19,7 +19,7 @@ class InventoryDao extends DatabaseAccessor<ApplicationDatabase> with _$Inventor
       select(stockBatches)
         ..where((batch) => batch.quantityRemaining.isBiggerThanValue(0))
         ..orderBy([
-          (batch) => OrderingTerm.asc(batch.frozenOn),
+          (batch) => OrderingTerm.asc(batch.storedOn),
           (batch) => OrderingTerm.asc(batch.createdAt),
         ]);
 

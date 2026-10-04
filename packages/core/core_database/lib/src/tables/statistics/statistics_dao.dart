@@ -110,7 +110,7 @@ class StatisticsDao extends DatabaseAccessor<ApplicationDatabase> with _$Statist
         'm.compartment_identifier AS compartment_identifier, '
         'b.quantity_unit AS quantity_unit, '
         'm.discard_reason AS discard_reason, '
-        'CAST(julianday(date(m.occurred_at, \'localtime\')) - julianday(b.frozen_on) AS INTEGER) '
+        'CAST(julianday(date(m.occurred_at, \'localtime\')) - julianday(b.stored_on) AS INTEGER) '
         'AS stored_days, '
         'SUM(CASE WHEN m.movement_kind IN (\'added\', \'moved\') '
         'THEN m.quantity_delta ELSE -m.quantity_delta END) AS quantity_in_base_units, '

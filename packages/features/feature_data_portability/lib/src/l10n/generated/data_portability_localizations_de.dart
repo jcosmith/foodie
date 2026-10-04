@@ -119,7 +119,7 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
   String get csvColumnUnit => 'Einheit';
 
   @override
-  String get csvColumnFrozenOn => 'Eingefroren am';
+  String get csvColumnStoredOn => 'Eingefroren am';
 
   @override
   String get csvColumnDrawer => 'Schublade';
@@ -156,6 +156,12 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
 
   @override
   String get reasonFreezerBurn => 'Gefrierbrand';
+
+  @override
+  String get reasonExpired => 'Abgelaufen';
+
+  @override
+  String get reasonSpoiled => 'Verdorben';
 
   @override
   String get reasonUnwanted => 'Wollte keiner';

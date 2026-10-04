@@ -38,7 +38,7 @@ class StockItemTile extends StatelessWidget {
           StorageAgeBadge(level: item.storageAgeStatus.level),
           Text(
             localizations.frozenAgo(
-              context.storageAgeFormatter.formatRelativeAge(since: batch.frozenOn, today: today),
+              context.storageAgeFormatter.formatRelativeAge(since: batch.storedOn, today: today),
             ),
           ),
         ],

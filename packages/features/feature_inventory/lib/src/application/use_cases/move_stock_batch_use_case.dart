@@ -120,7 +120,7 @@ final class StockBatchMover {
       initialQuantity: quantity,
       quantityRemaining: quantity,
       parentBatchIdentifier: batch.identifier,
-      frozenOn: batch.frozenOn,
+      storedOn: batch.storedOn,
       bestBeforeOn: batch.bestBeforeOn,
       note: batch.note,
       createdAt: occurredAt,

@@ -5,7 +5,7 @@ part of 'statistics_dao.dart';
 // ignore_for_file: type=lint
 mixin _$StatisticsDaoMixin on DatabaseAccessor<ApplicationDatabase> {
   $CategoriesTable get categories => attachedDatabase.categories;
-  $FreezersTable get freezers => attachedDatabase.freezers;
+  $StoragePlacesTable get storagePlaces => attachedDatabase.storagePlaces;
   $CompartmentsTable get compartments => attachedDatabase.compartments;
   $ProductsTable get products => attachedDatabase.products;
   $StockBatchesTable get stockBatches => attachedDatabase.stockBatches;
@@ -19,8 +19,8 @@ class StatisticsDaoManager {
   StatisticsDaoManager(this._db);
   $$CategoriesTableTableManager get categories =>
       $$CategoriesTableTableManager(_db.attachedDatabase, _db.categories);
-  $$FreezersTableTableManager get freezers =>
-      $$FreezersTableTableManager(_db.attachedDatabase, _db.freezers);
+  $$StoragePlacesTableTableManager get storagePlaces =>
+      $$StoragePlacesTableTableManager(_db.attachedDatabase, _db.storagePlaces);
   $$CompartmentsTableTableManager get compartments =>
       $$CompartmentsTableTableManager(_db.attachedDatabase, _db.compartments);
   $$ProductsTableTableManager get products =>

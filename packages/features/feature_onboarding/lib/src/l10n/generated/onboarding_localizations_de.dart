@@ -30,10 +30,10 @@ class OnboardingLocalizationsDe extends OnboardingLocalizations {
   String get backButton => 'Zurück';
 
   @override
-  String get freezerTitle => 'Dein Gefrierschrank';
+  String get storagePlaceTitle => 'Dein Gefrierschrank';
 
   @override
-  String get freezerPrompt =>
+  String get storagePlacePrompt =>
       'Welcher kommt deinem am nächsten? Schubladen kannst du später in der Konfiguration umbenennen, hinzufügen und entfernen.';
 
   @override

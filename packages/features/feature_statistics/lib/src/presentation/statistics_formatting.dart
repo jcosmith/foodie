@@ -146,6 +146,8 @@ final class StatisticsFormatting {
   String discardReasonName(StatisticsDiscardReason reason) => switch (reason) {
     StatisticsDiscardReason.tooOld => localizations.reasonTooOld,
     StatisticsDiscardReason.freezerBurn => localizations.reasonFreezerBurn,
+    StatisticsDiscardReason.expired => localizations.reasonExpired,
+    StatisticsDiscardReason.spoiled => localizations.reasonSpoiled,
     StatisticsDiscardReason.unwanted => localizations.reasonUnwanted,
     StatisticsDiscardReason.other => localizations.reasonOther,
     StatisticsDiscardReason.notGiven => localizations.reasonNotGiven,

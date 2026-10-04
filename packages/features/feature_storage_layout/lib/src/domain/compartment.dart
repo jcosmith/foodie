@@ -1,17 +1,17 @@
 import 'package:core_foundation/core_foundation.dart';
 import 'package:meta/meta.dart';
 
-import 'freezer.dart';
+import 'storage_place.dart';
 
 typedef CompartmentIdentifier = TypedIdentifier<Compartment>;
 
-/// A drawer, basket or shelf of a freezer. Never deleted, only archived, so
+/// A compartment, basket or shelf of a storage place. Never deleted, only archived, so
 /// past statistics keep its name (decision D13).
 @immutable
 final class Compartment {
   const Compartment({
     required this.identifier,
-    required this.freezerIdentifier,
+    required this.storagePlaceIdentifier,
     required this.defaultNumber,
     required this.colorTagIndex,
     required this.sortOrder,
@@ -21,10 +21,10 @@ final class Compartment {
   });
 
   final CompartmentIdentifier identifier;
-  final FreezerIdentifier freezerIdentifier;
+  final StoragePlaceIdentifier storagePlaceIdentifier;
 
   /// The number in the default name "Drawer {number}"; it stays the same when
-  /// drawers are reordered.
+  /// compartments are reordered.
   final int defaultNumber;
 
   /// The name the user typed; `null` shows the translated default name.
@@ -41,7 +41,7 @@ final class Compartment {
   bool operator ==(Object other) =>
       other is Compartment &&
       other.identifier == identifier &&
-      other.freezerIdentifier == freezerIdentifier &&
+      other.storagePlaceIdentifier == storagePlaceIdentifier &&
       other.defaultNumber == defaultNumber &&
       other.customName == customName &&
       other.colorTagIndex == colorTagIndex &&
@@ -52,7 +52,7 @@ final class Compartment {
   @override
   int get hashCode => Object.hash(
     identifier,
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNumber,
     customName,
     colorTagIndex,

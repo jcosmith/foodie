@@ -57,9 +57,9 @@ final class WrongPasswordOrUnreadableFile extends BackupFileFailure {
   String get debugDescription => 'Wrong password, or not an encrypted database';
 }
 
-/// The password is right, but the file is not a freezer backup.
-final class NotAFreezerBackup extends BackupFileFailure {
-  const NotAFreezerBackup();
+/// The password is right, but the file is not a backup of this app.
+final class NotAFoodieBackup extends BackupFileFailure {
+  const NotAFoodieBackup();
 
   @override
   String get debugDescription => 'The database has no backup manifest';
@@ -95,6 +95,8 @@ final class DatabaseBackupGateway {
 
   final ApplicationDatabase _database;
 
+  // Named from the time the app was called Freezer; kept so older backups
+  // can still be restored.
   static const String _manifestTable = 'freezer_backup_manifest';
   static const String _filesTable = 'freezer_backup_files';
 
@@ -267,7 +269,7 @@ final class DatabaseBackupGateway {
     }
     try {
       final manifest = await _readManifest();
-      if (manifest == null) return const Result.failure(NotAFreezerBackup());
+      if (manifest == null) return const Result.failure(NotAFoodieBackup());
       if (manifest.schemaVersion > _database.schemaVersion) {
         return Result.failure(BackupFromNewerVersion(manifest));
       }

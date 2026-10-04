@@ -37,6 +37,8 @@ final class EncryptedDatabaseOpener {
        _applicationVersion = applicationVersion,
        _privateDirectoryProvider = privateDirectoryProvider ?? getApplicationSupportDirectory;
 
+  /// Kept from the time the app was called Freezer, so installed apps
+  /// find their data after the rename.
   static const String databaseFileName = 'freezer.sqlite';
 
   final DatabaseEncryptionKeyStore _keyStore;

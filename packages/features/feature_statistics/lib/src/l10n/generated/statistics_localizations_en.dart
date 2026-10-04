@@ -243,6 +243,12 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get reasonFreezerBurn => 'Freezer burn';
 
   @override
+  String get reasonExpired => 'Past its date';
+
+  @override
+  String get reasonSpoiled => 'Gone off';
+
+  @override
   String get reasonUnwanted => 'Nobody wanted it';
 
   @override
@@ -332,10 +338,10 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
   String get sixMonthMarker => '6 mo';
 
   @override
-  String get freezerMapTitle => 'Freezer map';
+  String get storageMapTitle => 'Freezer map';
 
   @override
-  String get freezerMapSubtitle => 'Current contents by drawer, coloured by age. Tap to filter.';
+  String get storageMapSubtitle => 'Current contents by drawer, coloured by age. Tap to filter.';
 
   @override
   String drawerItems(int count) {

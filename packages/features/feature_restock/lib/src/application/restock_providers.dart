@@ -134,8 +134,8 @@ final removeShoppingListEntryUseCaseProvider = Provider<RemoveShoppingListEntryU
   (ref) => RemoveShoppingListEntryUseCase(repository: ref.watch(restockRepositoryProvider)),
 );
 
-final putTickedItemsInFreezerUseCaseProvider = Provider<PutTickedItemsInFreezerUseCase>(
-  (ref) => PutTickedItemsInFreezerUseCase(
+final putTickedItemsAwayUseCaseProvider = Provider<PutTickedItemsAwayUseCase>(
+  (ref) => PutTickedItemsAwayUseCase(
     repository: ref.watch(restockRepositoryProvider),
     productCatalog: ref.watch(productCatalogQueryServiceProvider),
     inventory: ref.watch(inventoryQueryServiceProvider),

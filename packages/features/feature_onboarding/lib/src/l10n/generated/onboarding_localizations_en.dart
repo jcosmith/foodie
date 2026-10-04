@@ -30,10 +30,10 @@ class OnboardingLocalizationsEn extends OnboardingLocalizations {
   String get backButton => 'Back';
 
   @override
-  String get freezerTitle => 'Your freezer';
+  String get storagePlaceTitle => 'Your freezer';
 
   @override
-  String get freezerPrompt =>
+  String get storagePlacePrompt =>
       'Which one is closest to yours? You can rename, add and remove drawers later in Config.';
 
   @override

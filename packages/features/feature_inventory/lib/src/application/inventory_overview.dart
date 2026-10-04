@@ -42,7 +42,7 @@ final class InventoryItem {
       (_, null) => -1,
       (final firstDay?, final secondDay?) => firstDay.compareTo(secondDay),
     };
-    return byEatBefore != 0 ? byEatBefore : first.batch.frozenOn.compareTo(second.batch.frozenOn);
+    return byEatBefore != 0 ? byEatBefore : first.batch.storedOn.compareTo(second.batch.storedOn);
   }
 }
 
@@ -99,14 +99,14 @@ final class InventoryOverview {
       compartment: layout.compartmentOf(batch.compartmentIdentifier),
       iconEmoji: catalog.iconEmojiOf(product),
       storageAgeStatus: StorageAgePolicy.evaluate(
-        frozenOn: batch.frozenOn,
+        storedOn: batch.storedOn,
         today: today,
         recommendedMaximumStorageDays: recommendedMaximumStorageDays,
       ),
       eatBefore: recommendedMaximumStorageDays <= 0
           ? null
           : StorageAgePolicy.storageLimitReachedOn(
-              frozenOn: batch.frozenOn,
+              storedOn: batch.storedOn,
               recommendedMaximumStorageDays: recommendedMaximumStorageDays,
             ),
     );
@@ -118,7 +118,7 @@ final class InventoryOverview {
   final StorageLayout layout;
   final CalendarDate today;
 
-  bool get hasFreezer => layout.hasFreezer;
+  bool get hasStoragePlace => layout.hasStoragePlace;
 
   /// Items of one compartment, oldest frozen first.
   List<InventoryItem> itemsIn(CompartmentIdentifier compartmentIdentifier) => [

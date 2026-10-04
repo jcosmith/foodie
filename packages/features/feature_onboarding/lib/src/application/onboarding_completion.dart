@@ -16,25 +16,25 @@ abstract final class OnboardingPreferenceKeys {
 final class CompleteOnboardingUseCase {
   const CompleteOnboardingUseCase({
     required PreferencesStore preferencesStore,
-    required CreateFreezerFromTemplateUseCase createFreezerFromTemplate,
+    required CreateStoragePlaceFromTemplateUseCase createStoragePlaceFromTemplate,
     required StorageLayoutQueryService storageLayout,
   }) : _preferencesStore = preferencesStore,
-       _createFreezerFromTemplate = createFreezerFromTemplate,
+       _createStoragePlaceFromTemplate = createStoragePlaceFromTemplate,
        _storageLayout = storageLayout;
 
   final PreferencesStore _preferencesStore;
-  final CreateFreezerFromTemplateUseCase _createFreezerFromTemplate;
+  final CreateStoragePlaceFromTemplateUseCase _createStoragePlaceFromTemplate;
   final StorageLayoutQueryService _storageLayout;
 
   Future<void> execute({
-    required FreezerTemplate? freezerTemplate,
+    required StorageTemplate? storageTemplate,
     required LayoutDefaultNames defaultNames,
   }) async {
     final layout = await _storageLayout.readStorageLayout();
-    if (freezerTemplate != null && !layout.hasFreezer) {
+    if (storageTemplate != null && !layout.hasStoragePlace) {
       // A template with the default name cannot fail validation.
-      await _createFreezerFromTemplate.execute(
-        template: freezerTemplate,
+      await _createStoragePlaceFromTemplate.execute(
+        template: storageTemplate,
         defaultNames: defaultNames,
       );
     }
@@ -45,7 +45,7 @@ final class CompleteOnboardingUseCase {
 final completeOnboardingUseCaseProvider = Provider<CompleteOnboardingUseCase>(
   (ref) => CompleteOnboardingUseCase(
     preferencesStore: ref.watch(preferencesStoreProvider),
-    createFreezerFromTemplate: ref.watch(createFreezerFromTemplateUseCaseProvider),
+    createStoragePlaceFromTemplate: ref.watch(createStoragePlaceFromTemplateUseCaseProvider),
     storageLayout: ref.watch(storageLayoutQueryServiceProvider),
   ),
 );

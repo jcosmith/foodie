@@ -644,19 +644,18 @@ class SchemaMetadataEntriesCompanion
   }
 }
 
-class $FreezersTable extends Freezers
-    with TableInfo<$FreezersTable, FreezerRow> {
+class $StoragePlacesTable extends StoragePlaces
+    with TableInfo<$StoragePlacesTable, StoragePlaceRow> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $FreezersTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _freezerIdentifierMeta = const VerificationMeta(
-    'freezerIdentifier',
-  );
+  $StoragePlacesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _storagePlaceIdentifierMeta =
+      const VerificationMeta('storagePlaceIdentifier');
   @override
-  late final GeneratedColumn<String> freezerIdentifier =
+  late final GeneratedColumn<String> storagePlaceIdentifier =
       GeneratedColumn<String>(
-        'freezer_identifier',
+        'storage_place_identifier',
         aliasedName,
         false,
         type: DriftSqlType.string,
@@ -734,7 +733,7 @@ class $FreezersTable extends Freezers
   );
   @override
   List<GeneratedColumn> get $columns => [
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNameKey,
     customName,
     storageKind,
@@ -746,24 +745,24 @@ class $FreezersTable extends Freezers
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'freezers';
+  static const String $name = 'storage_places';
   @override
   VerificationContext validateIntegrity(
-    Insertable<FreezerRow> instance, {
+    Insertable<StoragePlaceRow> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('freezer_identifier')) {
+    if (data.containsKey('storage_place_identifier')) {
       context.handle(
-        _freezerIdentifierMeta,
-        freezerIdentifier.isAcceptableOrUnknown(
-          data['freezer_identifier']!,
-          _freezerIdentifierMeta,
+        _storagePlaceIdentifierMeta,
+        storagePlaceIdentifier.isAcceptableOrUnknown(
+          data['storage_place_identifier']!,
+          _storagePlaceIdentifierMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_freezerIdentifierMeta);
+      context.missing(_storagePlaceIdentifierMeta);
     }
     if (data.containsKey('default_name_key')) {
       context.handle(
@@ -819,14 +818,14 @@ class $FreezersTable extends Freezers
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {freezerIdentifier};
+  Set<GeneratedColumn> get $primaryKey => {storagePlaceIdentifier};
   @override
-  FreezerRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+  StoragePlaceRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return FreezerRow(
-      freezerIdentifier: attachedDatabase.typeMapping.read(
+    return StoragePlaceRow(
+      storagePlaceIdentifier: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}freezer_identifier'],
+        data['${effectivePrefix}storage_place_identifier'],
       )!,
       defaultNameKey: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -856,25 +855,26 @@ class $FreezersTable extends Freezers
   }
 
   @override
-  $FreezersTable createAlias(String alias) {
-    return $FreezersTable(attachedDatabase, alias);
+  $StoragePlacesTable createAlias(String alias) {
+    return $StoragePlacesTable(attachedDatabase, alias);
   }
 }
 
-class FreezerRow extends DataClass implements Insertable<FreezerRow> {
-  final String freezerIdentifier;
+class StoragePlaceRow extends DataClass implements Insertable<StoragePlaceRow> {
+  final String storagePlaceIdentifier;
 
   /// Translation key of the default name, used until the user renames it.
   final String defaultNameKey;
   final String? customName;
 
-  /// `upright`, `chest` or `fridgeFreezerCompartment`.
+  /// The stored name of a storage kind contributed by a domain module, such
+  /// as `upright`, `chest` or `fridgeFreezerCompartment`.
   final String storageKind;
   final int sortOrder;
   final bool isArchived;
   final DateTime createdAt;
-  const FreezerRow({
-    required this.freezerIdentifier,
+  const StoragePlaceRow({
+    required this.storagePlaceIdentifier,
     required this.defaultNameKey,
     this.customName,
     required this.storageKind,
@@ -885,7 +885,7 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['freezer_identifier'] = Variable<String>(freezerIdentifier);
+    map['storage_place_identifier'] = Variable<String>(storagePlaceIdentifier);
     map['default_name_key'] = Variable<String>(defaultNameKey);
     if (!nullToAbsent || customName != null) {
       map['custom_name'] = Variable<String>(customName);
@@ -897,9 +897,9 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     return map;
   }
 
-  FreezersCompanion toCompanion(bool nullToAbsent) {
-    return FreezersCompanion(
-      freezerIdentifier: Value(freezerIdentifier),
+  StoragePlacesCompanion toCompanion(bool nullToAbsent) {
+    return StoragePlacesCompanion(
+      storagePlaceIdentifier: Value(storagePlaceIdentifier),
       defaultNameKey: Value(defaultNameKey),
       customName: customName == null && nullToAbsent
           ? const Value.absent()
@@ -911,13 +911,15 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     );
   }
 
-  factory FreezerRow.fromJson(
+  factory StoragePlaceRow.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return FreezerRow(
-      freezerIdentifier: serializer.fromJson<String>(json['freezerIdentifier']),
+    return StoragePlaceRow(
+      storagePlaceIdentifier: serializer.fromJson<String>(
+        json['storagePlaceIdentifier'],
+      ),
       defaultNameKey: serializer.fromJson<String>(json['defaultNameKey']),
       customName: serializer.fromJson<String?>(json['customName']),
       storageKind: serializer.fromJson<String>(json['storageKind']),
@@ -930,7 +932,9 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'freezerIdentifier': serializer.toJson<String>(freezerIdentifier),
+      'storagePlaceIdentifier': serializer.toJson<String>(
+        storagePlaceIdentifier,
+      ),
       'defaultNameKey': serializer.toJson<String>(defaultNameKey),
       'customName': serializer.toJson<String?>(customName),
       'storageKind': serializer.toJson<String>(storageKind),
@@ -940,16 +944,17 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     };
   }
 
-  FreezerRow copyWith({
-    String? freezerIdentifier,
+  StoragePlaceRow copyWith({
+    String? storagePlaceIdentifier,
     String? defaultNameKey,
     Value<String?> customName = const Value.absent(),
     String? storageKind,
     int? sortOrder,
     bool? isArchived,
     DateTime? createdAt,
-  }) => FreezerRow(
-    freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+  }) => StoragePlaceRow(
+    storagePlaceIdentifier:
+        storagePlaceIdentifier ?? this.storagePlaceIdentifier,
     defaultNameKey: defaultNameKey ?? this.defaultNameKey,
     customName: customName.present ? customName.value : this.customName,
     storageKind: storageKind ?? this.storageKind,
@@ -957,11 +962,11 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
     isArchived: isArchived ?? this.isArchived,
     createdAt: createdAt ?? this.createdAt,
   );
-  FreezerRow copyWithCompanion(FreezersCompanion data) {
-    return FreezerRow(
-      freezerIdentifier: data.freezerIdentifier.present
-          ? data.freezerIdentifier.value
-          : this.freezerIdentifier,
+  StoragePlaceRow copyWithCompanion(StoragePlacesCompanion data) {
+    return StoragePlaceRow(
+      storagePlaceIdentifier: data.storagePlaceIdentifier.present
+          ? data.storagePlaceIdentifier.value
+          : this.storagePlaceIdentifier,
       defaultNameKey: data.defaultNameKey.present
           ? data.defaultNameKey.value
           : this.defaultNameKey,
@@ -981,8 +986,8 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
 
   @override
   String toString() {
-    return (StringBuffer('FreezerRow(')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+    return (StringBuffer('StoragePlaceRow(')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNameKey: $defaultNameKey, ')
           ..write('customName: $customName, ')
           ..write('storageKind: $storageKind, ')
@@ -995,7 +1000,7 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
 
   @override
   int get hashCode => Object.hash(
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNameKey,
     customName,
     storageKind,
@@ -1006,8 +1011,8 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is FreezerRow &&
-          other.freezerIdentifier == this.freezerIdentifier &&
+      (other is StoragePlaceRow &&
+          other.storagePlaceIdentifier == this.storagePlaceIdentifier &&
           other.defaultNameKey == this.defaultNameKey &&
           other.customName == this.customName &&
           other.storageKind == this.storageKind &&
@@ -1016,8 +1021,8 @@ class FreezerRow extends DataClass implements Insertable<FreezerRow> {
           other.createdAt == this.createdAt);
 }
 
-class FreezersCompanion extends UpdateCompanion<FreezerRow> {
-  final Value<String> freezerIdentifier;
+class StoragePlacesCompanion extends UpdateCompanion<StoragePlaceRow> {
+  final Value<String> storagePlaceIdentifier;
   final Value<String> defaultNameKey;
   final Value<String?> customName;
   final Value<String> storageKind;
@@ -1025,8 +1030,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
   final Value<bool> isArchived;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
-  const FreezersCompanion({
-    this.freezerIdentifier = const Value.absent(),
+  const StoragePlacesCompanion({
+    this.storagePlaceIdentifier = const Value.absent(),
     this.defaultNameKey = const Value.absent(),
     this.customName = const Value.absent(),
     this.storageKind = const Value.absent(),
@@ -1035,8 +1040,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  FreezersCompanion.insert({
-    required String freezerIdentifier,
+  StoragePlacesCompanion.insert({
+    required String storagePlaceIdentifier,
     required String defaultNameKey,
     this.customName = const Value.absent(),
     required String storageKind,
@@ -1044,13 +1049,13 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     this.isArchived = const Value.absent(),
     required DateTime createdAt,
     this.rowid = const Value.absent(),
-  }) : freezerIdentifier = Value(freezerIdentifier),
+  }) : storagePlaceIdentifier = Value(storagePlaceIdentifier),
        defaultNameKey = Value(defaultNameKey),
        storageKind = Value(storageKind),
        sortOrder = Value(sortOrder),
        createdAt = Value(createdAt);
-  static Insertable<FreezerRow> custom({
-    Expression<String>? freezerIdentifier,
+  static Insertable<StoragePlaceRow> custom({
+    Expression<String>? storagePlaceIdentifier,
     Expression<String>? defaultNameKey,
     Expression<String>? customName,
     Expression<String>? storageKind,
@@ -1060,7 +1065,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (freezerIdentifier != null) 'freezer_identifier': freezerIdentifier,
+      if (storagePlaceIdentifier != null)
+        'storage_place_identifier': storagePlaceIdentifier,
       if (defaultNameKey != null) 'default_name_key': defaultNameKey,
       if (customName != null) 'custom_name': customName,
       if (storageKind != null) 'storage_kind': storageKind,
@@ -1071,8 +1077,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     });
   }
 
-  FreezersCompanion copyWith({
-    Value<String>? freezerIdentifier,
+  StoragePlacesCompanion copyWith({
+    Value<String>? storagePlaceIdentifier,
     Value<String>? defaultNameKey,
     Value<String?>? customName,
     Value<String>? storageKind,
@@ -1081,8 +1087,9 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
     Value<DateTime>? createdAt,
     Value<int>? rowid,
   }) {
-    return FreezersCompanion(
-      freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+    return StoragePlacesCompanion(
+      storagePlaceIdentifier:
+          storagePlaceIdentifier ?? this.storagePlaceIdentifier,
       defaultNameKey: defaultNameKey ?? this.defaultNameKey,
       customName: customName ?? this.customName,
       storageKind: storageKind ?? this.storageKind,
@@ -1096,8 +1103,10 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (freezerIdentifier.present) {
-      map['freezer_identifier'] = Variable<String>(freezerIdentifier.value);
+    if (storagePlaceIdentifier.present) {
+      map['storage_place_identifier'] = Variable<String>(
+        storagePlaceIdentifier.value,
+      );
     }
     if (defaultNameKey.present) {
       map['default_name_key'] = Variable<String>(defaultNameKey.value);
@@ -1125,8 +1134,8 @@ class FreezersCompanion extends UpdateCompanion<FreezerRow> {
 
   @override
   String toString() {
-    return (StringBuffer('FreezersCompanion(')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+    return (StringBuffer('StoragePlacesCompanion(')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNameKey: $defaultNameKey, ')
           ..write('customName: $customName, ')
           ..write('storageKind: $storageKind, ')
@@ -1156,19 +1165,18 @@ class $CompartmentsTable extends Compartments
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       );
-  static const VerificationMeta _freezerIdentifierMeta = const VerificationMeta(
-    'freezerIdentifier',
-  );
+  static const VerificationMeta _storagePlaceIdentifierMeta =
+      const VerificationMeta('storagePlaceIdentifier');
   @override
-  late final GeneratedColumn<String> freezerIdentifier =
+  late final GeneratedColumn<String> storagePlaceIdentifier =
       GeneratedColumn<String>(
-        'freezer_identifier',
+        'storage_place_identifier',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
         defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES freezers (freezer_identifier)',
+          'REFERENCES storage_places (storage_place_identifier)',
         ),
       );
   static const VerificationMeta _defaultNumberMeta = const VerificationMeta(
@@ -1244,7 +1252,7 @@ class $CompartmentsTable extends Compartments
   @override
   List<GeneratedColumn> get $columns => [
     compartmentIdentifier,
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNumber,
     customName,
     colorTagIndex,
@@ -1275,16 +1283,16 @@ class $CompartmentsTable extends Compartments
     } else if (isInserting) {
       context.missing(_compartmentIdentifierMeta);
     }
-    if (data.containsKey('freezer_identifier')) {
+    if (data.containsKey('storage_place_identifier')) {
       context.handle(
-        _freezerIdentifierMeta,
-        freezerIdentifier.isAcceptableOrUnknown(
-          data['freezer_identifier']!,
-          _freezerIdentifierMeta,
+        _storagePlaceIdentifierMeta,
+        storagePlaceIdentifier.isAcceptableOrUnknown(
+          data['storage_place_identifier']!,
+          _storagePlaceIdentifierMeta,
         ),
       );
     } else if (isInserting) {
-      context.missing(_freezerIdentifierMeta);
+      context.missing(_storagePlaceIdentifierMeta);
     }
     if (data.containsKey('default_number')) {
       context.handle(
@@ -1349,9 +1357,9 @@ class $CompartmentsTable extends Compartments
         DriftSqlType.string,
         data['${effectivePrefix}compartment_identifier'],
       )!,
-      freezerIdentifier: attachedDatabase.typeMapping.read(
+      storagePlaceIdentifier: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}freezer_identifier'],
+        data['${effectivePrefix}storage_place_identifier'],
       )!,
       defaultNumber: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -1388,7 +1396,7 @@ class $CompartmentsTable extends Compartments
 
 class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   final String compartmentIdentifier;
-  final String freezerIdentifier;
+  final String storagePlaceIdentifier;
 
   /// The number in the default name "Drawer {number}"; stays fixed when reordering.
   final int defaultNumber;
@@ -1401,7 +1409,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   final DateTime createdAt;
   const CompartmentRow({
     required this.compartmentIdentifier,
-    required this.freezerIdentifier,
+    required this.storagePlaceIdentifier,
     required this.defaultNumber,
     this.customName,
     required this.colorTagIndex,
@@ -1413,7 +1421,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['compartment_identifier'] = Variable<String>(compartmentIdentifier);
-    map['freezer_identifier'] = Variable<String>(freezerIdentifier);
+    map['storage_place_identifier'] = Variable<String>(storagePlaceIdentifier);
     map['default_number'] = Variable<int>(defaultNumber);
     if (!nullToAbsent || customName != null) {
       map['custom_name'] = Variable<String>(customName);
@@ -1428,7 +1436,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   CompartmentsCompanion toCompanion(bool nullToAbsent) {
     return CompartmentsCompanion(
       compartmentIdentifier: Value(compartmentIdentifier),
-      freezerIdentifier: Value(freezerIdentifier),
+      storagePlaceIdentifier: Value(storagePlaceIdentifier),
       defaultNumber: Value(defaultNumber),
       customName: customName == null && nullToAbsent
           ? const Value.absent()
@@ -1449,7 +1457,9 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
       compartmentIdentifier: serializer.fromJson<String>(
         json['compartmentIdentifier'],
       ),
-      freezerIdentifier: serializer.fromJson<String>(json['freezerIdentifier']),
+      storagePlaceIdentifier: serializer.fromJson<String>(
+        json['storagePlaceIdentifier'],
+      ),
       defaultNumber: serializer.fromJson<int>(json['defaultNumber']),
       customName: serializer.fromJson<String?>(json['customName']),
       colorTagIndex: serializer.fromJson<int>(json['colorTagIndex']),
@@ -1463,7 +1473,9 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'compartmentIdentifier': serializer.toJson<String>(compartmentIdentifier),
-      'freezerIdentifier': serializer.toJson<String>(freezerIdentifier),
+      'storagePlaceIdentifier': serializer.toJson<String>(
+        storagePlaceIdentifier,
+      ),
       'defaultNumber': serializer.toJson<int>(defaultNumber),
       'customName': serializer.toJson<String?>(customName),
       'colorTagIndex': serializer.toJson<int>(colorTagIndex),
@@ -1475,7 +1487,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
 
   CompartmentRow copyWith({
     String? compartmentIdentifier,
-    String? freezerIdentifier,
+    String? storagePlaceIdentifier,
     int? defaultNumber,
     Value<String?> customName = const Value.absent(),
     int? colorTagIndex,
@@ -1484,7 +1496,8 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
     DateTime? createdAt,
   }) => CompartmentRow(
     compartmentIdentifier: compartmentIdentifier ?? this.compartmentIdentifier,
-    freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+    storagePlaceIdentifier:
+        storagePlaceIdentifier ?? this.storagePlaceIdentifier,
     defaultNumber: defaultNumber ?? this.defaultNumber,
     customName: customName.present ? customName.value : this.customName,
     colorTagIndex: colorTagIndex ?? this.colorTagIndex,
@@ -1497,9 +1510,9 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
       compartmentIdentifier: data.compartmentIdentifier.present
           ? data.compartmentIdentifier.value
           : this.compartmentIdentifier,
-      freezerIdentifier: data.freezerIdentifier.present
-          ? data.freezerIdentifier.value
-          : this.freezerIdentifier,
+      storagePlaceIdentifier: data.storagePlaceIdentifier.present
+          ? data.storagePlaceIdentifier.value
+          : this.storagePlaceIdentifier,
       defaultNumber: data.defaultNumber.present
           ? data.defaultNumber.value
           : this.defaultNumber,
@@ -1521,7 +1534,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   String toString() {
     return (StringBuffer('CompartmentRow(')
           ..write('compartmentIdentifier: $compartmentIdentifier, ')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNumber: $defaultNumber, ')
           ..write('customName: $customName, ')
           ..write('colorTagIndex: $colorTagIndex, ')
@@ -1535,7 +1548,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
   @override
   int get hashCode => Object.hash(
     compartmentIdentifier,
-    freezerIdentifier,
+    storagePlaceIdentifier,
     defaultNumber,
     customName,
     colorTagIndex,
@@ -1548,7 +1561,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
       identical(this, other) ||
       (other is CompartmentRow &&
           other.compartmentIdentifier == this.compartmentIdentifier &&
-          other.freezerIdentifier == this.freezerIdentifier &&
+          other.storagePlaceIdentifier == this.storagePlaceIdentifier &&
           other.defaultNumber == this.defaultNumber &&
           other.customName == this.customName &&
           other.colorTagIndex == this.colorTagIndex &&
@@ -1559,7 +1572,7 @@ class CompartmentRow extends DataClass implements Insertable<CompartmentRow> {
 
 class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   final Value<String> compartmentIdentifier;
-  final Value<String> freezerIdentifier;
+  final Value<String> storagePlaceIdentifier;
   final Value<int> defaultNumber;
   final Value<String?> customName;
   final Value<int> colorTagIndex;
@@ -1569,7 +1582,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   final Value<int> rowid;
   const CompartmentsCompanion({
     this.compartmentIdentifier = const Value.absent(),
-    this.freezerIdentifier = const Value.absent(),
+    this.storagePlaceIdentifier = const Value.absent(),
     this.defaultNumber = const Value.absent(),
     this.customName = const Value.absent(),
     this.colorTagIndex = const Value.absent(),
@@ -1580,7 +1593,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   });
   CompartmentsCompanion.insert({
     required String compartmentIdentifier,
-    required String freezerIdentifier,
+    required String storagePlaceIdentifier,
     required int defaultNumber,
     this.customName = const Value.absent(),
     required int colorTagIndex,
@@ -1589,14 +1602,14 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
     required DateTime createdAt,
     this.rowid = const Value.absent(),
   }) : compartmentIdentifier = Value(compartmentIdentifier),
-       freezerIdentifier = Value(freezerIdentifier),
+       storagePlaceIdentifier = Value(storagePlaceIdentifier),
        defaultNumber = Value(defaultNumber),
        colorTagIndex = Value(colorTagIndex),
        sortOrder = Value(sortOrder),
        createdAt = Value(createdAt);
   static Insertable<CompartmentRow> custom({
     Expression<String>? compartmentIdentifier,
-    Expression<String>? freezerIdentifier,
+    Expression<String>? storagePlaceIdentifier,
     Expression<int>? defaultNumber,
     Expression<String>? customName,
     Expression<int>? colorTagIndex,
@@ -1608,7 +1621,8 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
     return RawValuesInsertable({
       if (compartmentIdentifier != null)
         'compartment_identifier': compartmentIdentifier,
-      if (freezerIdentifier != null) 'freezer_identifier': freezerIdentifier,
+      if (storagePlaceIdentifier != null)
+        'storage_place_identifier': storagePlaceIdentifier,
       if (defaultNumber != null) 'default_number': defaultNumber,
       if (customName != null) 'custom_name': customName,
       if (colorTagIndex != null) 'color_tag_index': colorTagIndex,
@@ -1621,7 +1635,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
 
   CompartmentsCompanion copyWith({
     Value<String>? compartmentIdentifier,
-    Value<String>? freezerIdentifier,
+    Value<String>? storagePlaceIdentifier,
     Value<int>? defaultNumber,
     Value<String?>? customName,
     Value<int>? colorTagIndex,
@@ -1633,7 +1647,8 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
     return CompartmentsCompanion(
       compartmentIdentifier:
           compartmentIdentifier ?? this.compartmentIdentifier,
-      freezerIdentifier: freezerIdentifier ?? this.freezerIdentifier,
+      storagePlaceIdentifier:
+          storagePlaceIdentifier ?? this.storagePlaceIdentifier,
       defaultNumber: defaultNumber ?? this.defaultNumber,
       customName: customName ?? this.customName,
       colorTagIndex: colorTagIndex ?? this.colorTagIndex,
@@ -1652,8 +1667,10 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
         compartmentIdentifier.value,
       );
     }
-    if (freezerIdentifier.present) {
-      map['freezer_identifier'] = Variable<String>(freezerIdentifier.value);
+    if (storagePlaceIdentifier.present) {
+      map['storage_place_identifier'] = Variable<String>(
+        storagePlaceIdentifier.value,
+      );
     }
     if (defaultNumber.present) {
       map['default_number'] = Variable<int>(defaultNumber.value);
@@ -1683,7 +1700,7 @@ class CompartmentsCompanion extends UpdateCompanion<CompartmentRow> {
   String toString() {
     return (StringBuffer('CompartmentsCompanion(')
           ..write('compartmentIdentifier: $compartmentIdentifier, ')
-          ..write('freezerIdentifier: $freezerIdentifier, ')
+          ..write('storagePlaceIdentifier: $storagePlaceIdentifier, ')
           ..write('defaultNumber: $defaultNumber, ')
           ..write('customName: $customName, ')
           ..write('colorTagIndex: $colorTagIndex, ')
@@ -1747,6 +1764,17 @@ class $CategoriesTable extends Categories
         type: DriftSqlType.int,
         requiredDuringInsert: true,
       );
+  static const VerificationMeta _shelfLifeAfterOpeningDaysMeta =
+      const VerificationMeta('shelfLifeAfterOpeningDays');
+  @override
+  late final GeneratedColumn<int> shelfLifeAfterOpeningDays =
+      GeneratedColumn<int>(
+        'shelf_life_after_opening_days',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _iconEmojiMeta = const VerificationMeta(
     'iconEmoji',
   );
@@ -1769,14 +1797,28 @@ class $CategoriesTable extends Categories
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _storageDomainMeta = const VerificationMeta(
+    'storageDomain',
+  );
+  @override
+  late final GeneratedColumn<String> storageDomain = GeneratedColumn<String>(
+    'storage_domain',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('freezer'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     categoryIdentifier,
     catalogKey,
     customName,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     sortOrder,
+    storageDomain,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1824,6 +1866,15 @@ class $CategoriesTable extends Categories
     } else if (isInserting) {
       context.missing(_recommendedMaximumStorageDaysMeta);
     }
+    if (data.containsKey('shelf_life_after_opening_days')) {
+      context.handle(
+        _shelfLifeAfterOpeningDaysMeta,
+        shelfLifeAfterOpeningDays.isAcceptableOrUnknown(
+          data['shelf_life_after_opening_days']!,
+          _shelfLifeAfterOpeningDaysMeta,
+        ),
+      );
+    }
     if (data.containsKey('icon_emoji')) {
       context.handle(
         _iconEmojiMeta,
@@ -1839,6 +1890,15 @@ class $CategoriesTable extends Categories
       );
     } else if (isInserting) {
       context.missing(_sortOrderMeta);
+    }
+    if (data.containsKey('storage_domain')) {
+      context.handle(
+        _storageDomainMeta,
+        storageDomain.isAcceptableOrUnknown(
+          data['storage_domain']!,
+          _storageDomainMeta,
+        ),
+      );
     }
     return context;
   }
@@ -1865,6 +1925,10 @@ class $CategoriesTable extends Categories
         DriftSqlType.int,
         data['${effectivePrefix}recommended_maximum_storage_days'],
       )!,
+      shelfLifeAfterOpeningDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}shelf_life_after_opening_days'],
+      ),
       iconEmoji: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}icon_emoji'],
@@ -1872,6 +1936,10 @@ class $CategoriesTable extends Categories
       sortOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
+      )!,
+      storageDomain: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_domain'],
       )!,
     );
   }
@@ -1889,16 +1957,29 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
   /// translated until the user renames it.
   final String? catalogKey;
   final String? customName;
+
+  /// The shelf life in days.
   final int recommendedMaximumStorageDays;
+
+  /// How long an opened package keeps, in days; `null` when opening makes
+  /// no difference.
+  final int? shelfLifeAfterOpeningDays;
   final String iconEmoji;
   final int sortOrder;
+
+  /// The storage domain the category's products usually live in, such as
+  /// `freezer` or `pantry`. Categories from before schema version 9 were all
+  /// freezer categories.
+  final String storageDomain;
   const CategoryRow({
     required this.categoryIdentifier,
     this.catalogKey,
     this.customName,
     required this.recommendedMaximumStorageDays,
+    this.shelfLifeAfterOpeningDays,
     required this.iconEmoji,
     required this.sortOrder,
+    required this.storageDomain,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1913,8 +1994,14 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     map['recommended_maximum_storage_days'] = Variable<int>(
       recommendedMaximumStorageDays,
     );
+    if (!nullToAbsent || shelfLifeAfterOpeningDays != null) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays,
+      );
+    }
     map['icon_emoji'] = Variable<String>(iconEmoji);
     map['sort_order'] = Variable<int>(sortOrder);
+    map['storage_domain'] = Variable<String>(storageDomain);
     return map;
   }
 
@@ -1928,8 +2015,13 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ? const Value.absent()
           : Value(customName),
       recommendedMaximumStorageDays: Value(recommendedMaximumStorageDays),
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(shelfLifeAfterOpeningDays),
       iconEmoji: Value(iconEmoji),
       sortOrder: Value(sortOrder),
+      storageDomain: Value(storageDomain),
     );
   }
 
@@ -1947,8 +2039,12 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       recommendedMaximumStorageDays: serializer.fromJson<int>(
         json['recommendedMaximumStorageDays'],
       ),
+      shelfLifeAfterOpeningDays: serializer.fromJson<int?>(
+        json['shelfLifeAfterOpeningDays'],
+      ),
       iconEmoji: serializer.fromJson<String>(json['iconEmoji']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      storageDomain: serializer.fromJson<String>(json['storageDomain']),
     );
   }
   @override
@@ -1961,8 +2057,12 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       'recommendedMaximumStorageDays': serializer.toJson<int>(
         recommendedMaximumStorageDays,
       ),
+      'shelfLifeAfterOpeningDays': serializer.toJson<int?>(
+        shelfLifeAfterOpeningDays,
+      ),
       'iconEmoji': serializer.toJson<String>(iconEmoji),
       'sortOrder': serializer.toJson<int>(sortOrder),
+      'storageDomain': serializer.toJson<String>(storageDomain),
     };
   }
 
@@ -1971,16 +2071,22 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     Value<String?> catalogKey = const Value.absent(),
     Value<String?> customName = const Value.absent(),
     int? recommendedMaximumStorageDays,
+    Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
     String? iconEmoji,
     int? sortOrder,
+    String? storageDomain,
   }) => CategoryRow(
     categoryIdentifier: categoryIdentifier ?? this.categoryIdentifier,
     catalogKey: catalogKey.present ? catalogKey.value : this.catalogKey,
     customName: customName.present ? customName.value : this.customName,
     recommendedMaximumStorageDays:
         recommendedMaximumStorageDays ?? this.recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays.present
+        ? shelfLifeAfterOpeningDays.value
+        : this.shelfLifeAfterOpeningDays,
     iconEmoji: iconEmoji ?? this.iconEmoji,
     sortOrder: sortOrder ?? this.sortOrder,
+    storageDomain: storageDomain ?? this.storageDomain,
   );
   CategoryRow copyWithCompanion(CategoriesCompanion data) {
     return CategoryRow(
@@ -1996,8 +2102,14 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       recommendedMaximumStorageDays: data.recommendedMaximumStorageDays.present
           ? data.recommendedMaximumStorageDays.value
           : this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays: data.shelfLifeAfterOpeningDays.present
+          ? data.shelfLifeAfterOpeningDays.value
+          : this.shelfLifeAfterOpeningDays,
       iconEmoji: data.iconEmoji.present ? data.iconEmoji.value : this.iconEmoji,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      storageDomain: data.storageDomain.present
+          ? data.storageDomain.value
+          : this.storageDomain,
     );
   }
 
@@ -2010,8 +2122,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
-          ..write('sortOrder: $sortOrder')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('storageDomain: $storageDomain')
           ..write(')'))
         .toString();
   }
@@ -2022,8 +2136,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     catalogKey,
     customName,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     sortOrder,
+    storageDomain,
   );
   @override
   bool operator ==(Object other) =>
@@ -2034,8 +2150,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           other.customName == this.customName &&
           other.recommendedMaximumStorageDays ==
               this.recommendedMaximumStorageDays &&
+          other.shelfLifeAfterOpeningDays == this.shelfLifeAfterOpeningDays &&
           other.iconEmoji == this.iconEmoji &&
-          other.sortOrder == this.sortOrder);
+          other.sortOrder == this.sortOrder &&
+          other.storageDomain == this.storageDomain);
 }
 
 class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
@@ -2043,16 +2161,20 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   final Value<String?> catalogKey;
   final Value<String?> customName;
   final Value<int> recommendedMaximumStorageDays;
+  final Value<int?> shelfLifeAfterOpeningDays;
   final Value<String> iconEmoji;
   final Value<int> sortOrder;
+  final Value<String> storageDomain;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.categoryIdentifier = const Value.absent(),
     this.catalogKey = const Value.absent(),
     this.customName = const Value.absent(),
     this.recommendedMaximumStorageDays = const Value.absent(),
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     this.iconEmoji = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.storageDomain = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
@@ -2060,8 +2182,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.catalogKey = const Value.absent(),
     this.customName = const Value.absent(),
     required int recommendedMaximumStorageDays,
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     required String iconEmoji,
     required int sortOrder,
+    this.storageDomain = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : categoryIdentifier = Value(categoryIdentifier),
        recommendedMaximumStorageDays = Value(recommendedMaximumStorageDays),
@@ -2072,8 +2196,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Expression<String>? catalogKey,
     Expression<String>? customName,
     Expression<int>? recommendedMaximumStorageDays,
+    Expression<int>? shelfLifeAfterOpeningDays,
     Expression<String>? iconEmoji,
     Expression<int>? sortOrder,
+    Expression<String>? storageDomain,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2082,8 +2208,11 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       if (customName != null) 'custom_name': customName,
       if (recommendedMaximumStorageDays != null)
         'recommended_maximum_storage_days': recommendedMaximumStorageDays,
+      if (shelfLifeAfterOpeningDays != null)
+        'shelf_life_after_opening_days': shelfLifeAfterOpeningDays,
       if (iconEmoji != null) 'icon_emoji': iconEmoji,
       if (sortOrder != null) 'sort_order': sortOrder,
+      if (storageDomain != null) 'storage_domain': storageDomain,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2093,8 +2222,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Value<String?>? catalogKey,
     Value<String?>? customName,
     Value<int>? recommendedMaximumStorageDays,
+    Value<int?>? shelfLifeAfterOpeningDays,
     Value<String>? iconEmoji,
     Value<int>? sortOrder,
+    Value<String>? storageDomain,
     Value<int>? rowid,
   }) {
     return CategoriesCompanion(
@@ -2103,8 +2234,11 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       customName: customName ?? this.customName,
       recommendedMaximumStorageDays:
           recommendedMaximumStorageDays ?? this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays ?? this.shelfLifeAfterOpeningDays,
       iconEmoji: iconEmoji ?? this.iconEmoji,
       sortOrder: sortOrder ?? this.sortOrder,
+      storageDomain: storageDomain ?? this.storageDomain,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2126,11 +2260,19 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
         recommendedMaximumStorageDays.value,
       );
     }
+    if (shelfLifeAfterOpeningDays.present) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays.value,
+      );
+    }
     if (iconEmoji.present) {
       map['icon_emoji'] = Variable<String>(iconEmoji.value);
     }
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (storageDomain.present) {
+      map['storage_domain'] = Variable<String>(storageDomain.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2147,8 +2289,10 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
           ..write('sortOrder: $sortOrder, ')
+          ..write('storageDomain: $storageDomain, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2242,6 +2386,17 @@ class $ProductsTable extends Products
         type: DriftSqlType.int,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _shelfLifeAfterOpeningDaysMeta =
+      const VerificationMeta('shelfLifeAfterOpeningDays');
+  @override
+  late final GeneratedColumn<int> shelfLifeAfterOpeningDays =
+      GeneratedColumn<int>(
+        'shelf_life_after_opening_days',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _iconEmojiMeta = const VerificationMeta(
     'iconEmoji',
   );
@@ -2313,6 +2468,7 @@ class $ProductsTable extends Products
     canonicalUnit,
     defaultPackageQuantity,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     iconImage,
     defaultCompartmentIdentifier,
@@ -2394,6 +2550,15 @@ class $ProductsTable extends Products
         ),
       );
     }
+    if (data.containsKey('shelf_life_after_opening_days')) {
+      context.handle(
+        _shelfLifeAfterOpeningDaysMeta,
+        shelfLifeAfterOpeningDays.isAcceptableOrUnknown(
+          data['shelf_life_after_opening_days']!,
+          _shelfLifeAfterOpeningDaysMeta,
+        ),
+      );
+    }
     if (data.containsKey('icon_emoji')) {
       context.handle(
         _iconEmojiMeta,
@@ -2466,6 +2631,10 @@ class $ProductsTable extends Products
         DriftSqlType.int,
         data['${effectivePrefix}recommended_maximum_storage_days'],
       ),
+      shelfLifeAfterOpeningDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}shelf_life_after_opening_days'],
+      ),
       iconEmoji: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}icon_emoji'],
@@ -2506,8 +2675,11 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
   final String canonicalUnit;
   final int? defaultPackageQuantity;
 
-  /// Overrides the category's recommendation when set.
+  /// Overrides the category's shelf life when set.
   final int? recommendedMaximumStorageDays;
+
+  /// Overrides the category's shelf life after opening when set.
+  final int? shelfLifeAfterOpeningDays;
 
   /// Falls back to the category icon when null.
   final String? iconEmoji;
@@ -2530,6 +2702,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     required this.canonicalUnit,
     this.defaultPackageQuantity,
     this.recommendedMaximumStorageDays,
+    this.shelfLifeAfterOpeningDays,
     this.iconEmoji,
     this.iconImage,
     this.defaultCompartmentIdentifier,
@@ -2554,6 +2727,11 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     if (!nullToAbsent || recommendedMaximumStorageDays != null) {
       map['recommended_maximum_storage_days'] = Variable<int>(
         recommendedMaximumStorageDays,
+      );
+    }
+    if (!nullToAbsent || shelfLifeAfterOpeningDays != null) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays,
       );
     }
     if (!nullToAbsent || iconEmoji != null) {
@@ -2590,6 +2768,10 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           recommendedMaximumStorageDays == null && nullToAbsent
           ? const Value.absent()
           : Value(recommendedMaximumStorageDays),
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(shelfLifeAfterOpeningDays),
       iconEmoji: iconEmoji == null && nullToAbsent
           ? const Value.absent()
           : Value(iconEmoji),
@@ -2624,6 +2806,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       recommendedMaximumStorageDays: serializer.fromJson<int?>(
         json['recommendedMaximumStorageDays'],
       ),
+      shelfLifeAfterOpeningDays: serializer.fromJson<int?>(
+        json['shelfLifeAfterOpeningDays'],
+      ),
       iconEmoji: serializer.fromJson<String?>(json['iconEmoji']),
       iconImage: serializer.fromJson<Uint8List?>(json['iconImage']),
       defaultCompartmentIdentifier: serializer.fromJson<String?>(
@@ -2646,6 +2831,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       'recommendedMaximumStorageDays': serializer.toJson<int?>(
         recommendedMaximumStorageDays,
       ),
+      'shelfLifeAfterOpeningDays': serializer.toJson<int?>(
+        shelfLifeAfterOpeningDays,
+      ),
       'iconEmoji': serializer.toJson<String?>(iconEmoji),
       'iconImage': serializer.toJson<Uint8List?>(iconImage),
       'defaultCompartmentIdentifier': serializer.toJson<String?>(
@@ -2664,6 +2852,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     String? canonicalUnit,
     Value<int?> defaultPackageQuantity = const Value.absent(),
     Value<int?> recommendedMaximumStorageDays = const Value.absent(),
+    Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
     Value<String?> iconEmoji = const Value.absent(),
     Value<Uint8List?> iconImage = const Value.absent(),
     Value<String?> defaultCompartmentIdentifier = const Value.absent(),
@@ -2681,6 +2870,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     recommendedMaximumStorageDays: recommendedMaximumStorageDays.present
         ? recommendedMaximumStorageDays.value
         : this.recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays.present
+        ? shelfLifeAfterOpeningDays.value
+        : this.shelfLifeAfterOpeningDays,
     iconEmoji: iconEmoji.present ? iconEmoji.value : this.iconEmoji,
     iconImage: iconImage.present ? iconImage.value : this.iconImage,
     defaultCompartmentIdentifier: defaultCompartmentIdentifier.present
@@ -2712,6 +2904,9 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
       recommendedMaximumStorageDays: data.recommendedMaximumStorageDays.present
           ? data.recommendedMaximumStorageDays.value
           : this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays: data.shelfLifeAfterOpeningDays.present
+          ? data.shelfLifeAfterOpeningDays.value
+          : this.shelfLifeAfterOpeningDays,
       iconEmoji: data.iconEmoji.present ? data.iconEmoji.value : this.iconEmoji,
       iconImage: data.iconImage.present ? data.iconImage.value : this.iconImage,
       defaultCompartmentIdentifier: data.defaultCompartmentIdentifier.present
@@ -2736,6 +2931,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
           ..write('iconImage: $iconImage, ')
           ..write(
@@ -2756,6 +2952,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
     canonicalUnit,
     defaultPackageQuantity,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     $driftBlobEquality.hash(iconImage),
     defaultCompartmentIdentifier,
@@ -2774,6 +2971,7 @@ class ProductRow extends DataClass implements Insertable<ProductRow> {
           other.defaultPackageQuantity == this.defaultPackageQuantity &&
           other.recommendedMaximumStorageDays ==
               this.recommendedMaximumStorageDays &&
+          other.shelfLifeAfterOpeningDays == this.shelfLifeAfterOpeningDays &&
           other.iconEmoji == this.iconEmoji &&
           $driftBlobEquality.equals(other.iconImage, this.iconImage) &&
           other.defaultCompartmentIdentifier ==
@@ -2790,6 +2988,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
   final Value<String> canonicalUnit;
   final Value<int?> defaultPackageQuantity;
   final Value<int?> recommendedMaximumStorageDays;
+  final Value<int?> shelfLifeAfterOpeningDays;
   final Value<String?> iconEmoji;
   final Value<Uint8List?> iconImage;
   final Value<String?> defaultCompartmentIdentifier;
@@ -2804,6 +3003,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     this.canonicalUnit = const Value.absent(),
     this.defaultPackageQuantity = const Value.absent(),
     this.recommendedMaximumStorageDays = const Value.absent(),
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     this.iconEmoji = const Value.absent(),
     this.iconImage = const Value.absent(),
     this.defaultCompartmentIdentifier = const Value.absent(),
@@ -2819,6 +3019,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     required String canonicalUnit,
     this.defaultPackageQuantity = const Value.absent(),
     this.recommendedMaximumStorageDays = const Value.absent(),
+    this.shelfLifeAfterOpeningDays = const Value.absent(),
     this.iconEmoji = const Value.absent(),
     this.iconImage = const Value.absent(),
     this.defaultCompartmentIdentifier = const Value.absent(),
@@ -2837,6 +3038,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Expression<String>? canonicalUnit,
     Expression<int>? defaultPackageQuantity,
     Expression<int>? recommendedMaximumStorageDays,
+    Expression<int>? shelfLifeAfterOpeningDays,
     Expression<String>? iconEmoji,
     Expression<Uint8List>? iconImage,
     Expression<String>? defaultCompartmentIdentifier,
@@ -2854,6 +3056,8 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
         'default_package_quantity': defaultPackageQuantity,
       if (recommendedMaximumStorageDays != null)
         'recommended_maximum_storage_days': recommendedMaximumStorageDays,
+      if (shelfLifeAfterOpeningDays != null)
+        'shelf_life_after_opening_days': shelfLifeAfterOpeningDays,
       if (iconEmoji != null) 'icon_emoji': iconEmoji,
       if (iconImage != null) 'icon_image': iconImage,
       if (defaultCompartmentIdentifier != null)
@@ -2872,6 +3076,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
     Value<String>? canonicalUnit,
     Value<int?>? defaultPackageQuantity,
     Value<int?>? recommendedMaximumStorageDays,
+    Value<int?>? shelfLifeAfterOpeningDays,
     Value<String?>? iconEmoji,
     Value<Uint8List?>? iconImage,
     Value<String?>? defaultCompartmentIdentifier,
@@ -2889,6 +3094,8 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
           defaultPackageQuantity ?? this.defaultPackageQuantity,
       recommendedMaximumStorageDays:
           recommendedMaximumStorageDays ?? this.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays:
+          shelfLifeAfterOpeningDays ?? this.shelfLifeAfterOpeningDays,
       iconEmoji: iconEmoji ?? this.iconEmoji,
       iconImage: iconImage ?? this.iconImage,
       defaultCompartmentIdentifier:
@@ -2927,6 +3134,11 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
         recommendedMaximumStorageDays.value,
       );
     }
+    if (shelfLifeAfterOpeningDays.present) {
+      map['shelf_life_after_opening_days'] = Variable<int>(
+        shelfLifeAfterOpeningDays.value,
+      );
+    }
     if (iconEmoji.present) {
       map['icon_emoji'] = Variable<String>(iconEmoji.value);
     }
@@ -2962,6 +3174,7 @@ class ProductsCompanion extends UpdateCompanion<ProductRow> {
           ..write(
             'recommendedMaximumStorageDays: $recommendedMaximumStorageDays, ',
           )
+          ..write('shelfLifeAfterOpeningDays: $shelfLifeAfterOpeningDays, ')
           ..write('iconEmoji: $iconEmoji, ')
           ..write('iconImage: $iconImage, ')
           ..write(
@@ -3066,14 +3279,14 @@ class $StockBatchesTable extends StockBatches
         requiredDuringInsert: false,
       );
   @override
-  late final GeneratedColumnWithTypeConverter<CalendarDate, String> frozenOn =
+  late final GeneratedColumnWithTypeConverter<CalendarDate, String> storedOn =
       GeneratedColumn<String>(
-        'frozen_on',
+        'stored_on',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
-      ).withConverter<CalendarDate>($StockBatchesTable.$converterfrozenOn);
+      ).withConverter<CalendarDate>($StockBatchesTable.$converterstoredOn);
   @override
   late final GeneratedColumnWithTypeConverter<CalendarDate?, String>
   bestBeforeOn = GeneratedColumn<String>(
@@ -3083,6 +3296,15 @@ class $StockBatchesTable extends StockBatches
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   ).withConverter<CalendarDate?>($StockBatchesTable.$converterbestBeforeOnn);
+  @override
+  late final GeneratedColumnWithTypeConverter<CalendarDate?, String> openedOn =
+      GeneratedColumn<String>(
+        'opened_on',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<CalendarDate?>($StockBatchesTable.$converteropenedOnn);
   static const VerificationMeta _noteMeta = const VerificationMeta('note');
   @override
   late final GeneratedColumn<String> note = GeneratedColumn<String>(
@@ -3112,8 +3334,9 @@ class $StockBatchesTable extends StockBatches
     initialQuantity,
     quantityRemaining,
     parentBatchIdentifier,
-    frozenOn,
+    storedOn,
     bestBeforeOn,
+    openedOn,
     note,
     createdAt,
   ];
@@ -3255,16 +3478,22 @@ class $StockBatchesTable extends StockBatches
         DriftSqlType.string,
         data['${effectivePrefix}parent_batch_identifier'],
       ),
-      frozenOn: $StockBatchesTable.$converterfrozenOn.fromSql(
+      storedOn: $StockBatchesTable.$converterstoredOn.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
-          data['${effectivePrefix}frozen_on'],
+          data['${effectivePrefix}stored_on'],
         )!,
       ),
       bestBeforeOn: $StockBatchesTable.$converterbestBeforeOnn.fromSql(
         attachedDatabase.typeMapping.read(
           DriftSqlType.string,
           data['${effectivePrefix}best_before_on'],
+        ),
+      ),
+      openedOn: $StockBatchesTable.$converteropenedOnn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}opened_on'],
         ),
       ),
       note: attachedDatabase.typeMapping.read(
@@ -3283,12 +3512,16 @@ class $StockBatchesTable extends StockBatches
     return $StockBatchesTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<CalendarDate, String> $converterfrozenOn =
+  static TypeConverter<CalendarDate, String> $converterstoredOn =
       const CalendarDateTextConverter();
   static TypeConverter<CalendarDate, String> $converterbestBeforeOn =
       const CalendarDateTextConverter();
   static TypeConverter<CalendarDate?, String?> $converterbestBeforeOnn =
       NullAwareTypeConverter.wrap($converterbestBeforeOn);
+  static TypeConverter<CalendarDate, String> $converteropenedOn =
+      const CalendarDateTextConverter();
+  static TypeConverter<CalendarDate?, String?> $converteropenedOnn =
+      NullAwareTypeConverter.wrap($converteropenedOn);
 }
 
 class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
@@ -3306,8 +3539,14 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
 
   /// Set when this batch was split off another one.
   final String? parentBatchIdentifier;
-  final CalendarDate frozenOn;
+
+  /// The day the batch was put away: frozen or bought. Called `frozen_on`
+  /// before schema version 9.
+  final CalendarDate storedOn;
   final CalendarDate? bestBeforeOn;
+
+  /// The day the package was opened; `null` while it is closed.
+  final CalendarDate? openedOn;
   final String? note;
   final DateTime createdAt;
   const StockBatchRow({
@@ -3318,8 +3557,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     required this.initialQuantity,
     required this.quantityRemaining,
     this.parentBatchIdentifier,
-    required this.frozenOn,
+    required this.storedOn,
     this.bestBeforeOn,
+    this.openedOn,
     this.note,
     required this.createdAt,
   });
@@ -3336,13 +3576,18 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       map['parent_batch_identifier'] = Variable<String>(parentBatchIdentifier);
     }
     {
-      map['frozen_on'] = Variable<String>(
-        $StockBatchesTable.$converterfrozenOn.toSql(frozenOn),
+      map['stored_on'] = Variable<String>(
+        $StockBatchesTable.$converterstoredOn.toSql(storedOn),
       );
     }
     if (!nullToAbsent || bestBeforeOn != null) {
       map['best_before_on'] = Variable<String>(
         $StockBatchesTable.$converterbestBeforeOnn.toSql(bestBeforeOn),
+      );
+    }
+    if (!nullToAbsent || openedOn != null) {
+      map['opened_on'] = Variable<String>(
+        $StockBatchesTable.$converteropenedOnn.toSql(openedOn),
       );
     }
     if (!nullToAbsent || note != null) {
@@ -3363,10 +3608,13 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       parentBatchIdentifier: parentBatchIdentifier == null && nullToAbsent
           ? const Value.absent()
           : Value(parentBatchIdentifier),
-      frozenOn: Value(frozenOn),
+      storedOn: Value(storedOn),
       bestBeforeOn: bestBeforeOn == null && nullToAbsent
           ? const Value.absent()
           : Value(bestBeforeOn),
+      openedOn: openedOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openedOn),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       createdAt: Value(createdAt),
     );
@@ -3391,8 +3639,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       parentBatchIdentifier: serializer.fromJson<String?>(
         json['parentBatchIdentifier'],
       ),
-      frozenOn: serializer.fromJson<CalendarDate>(json['frozenOn']),
+      storedOn: serializer.fromJson<CalendarDate>(json['storedOn']),
       bestBeforeOn: serializer.fromJson<CalendarDate?>(json['bestBeforeOn']),
+      openedOn: serializer.fromJson<CalendarDate?>(json['openedOn']),
       note: serializer.fromJson<String?>(json['note']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -3410,8 +3659,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       'parentBatchIdentifier': serializer.toJson<String?>(
         parentBatchIdentifier,
       ),
-      'frozenOn': serializer.toJson<CalendarDate>(frozenOn),
+      'storedOn': serializer.toJson<CalendarDate>(storedOn),
       'bestBeforeOn': serializer.toJson<CalendarDate?>(bestBeforeOn),
+      'openedOn': serializer.toJson<CalendarDate?>(openedOn),
       'note': serializer.toJson<String?>(note),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -3425,8 +3675,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     int? initialQuantity,
     int? quantityRemaining,
     Value<String?> parentBatchIdentifier = const Value.absent(),
-    CalendarDate? frozenOn,
+    CalendarDate? storedOn,
     Value<CalendarDate?> bestBeforeOn = const Value.absent(),
+    Value<CalendarDate?> openedOn = const Value.absent(),
     Value<String?> note = const Value.absent(),
     DateTime? createdAt,
   }) => StockBatchRow(
@@ -3439,8 +3690,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     parentBatchIdentifier: parentBatchIdentifier.present
         ? parentBatchIdentifier.value
         : this.parentBatchIdentifier,
-    frozenOn: frozenOn ?? this.frozenOn,
+    storedOn: storedOn ?? this.storedOn,
     bestBeforeOn: bestBeforeOn.present ? bestBeforeOn.value : this.bestBeforeOn,
+    openedOn: openedOn.present ? openedOn.value : this.openedOn,
     note: note.present ? note.value : this.note,
     createdAt: createdAt ?? this.createdAt,
   );
@@ -3467,10 +3719,11 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
       parentBatchIdentifier: data.parentBatchIdentifier.present
           ? data.parentBatchIdentifier.value
           : this.parentBatchIdentifier,
-      frozenOn: data.frozenOn.present ? data.frozenOn.value : this.frozenOn,
+      storedOn: data.storedOn.present ? data.storedOn.value : this.storedOn,
       bestBeforeOn: data.bestBeforeOn.present
           ? data.bestBeforeOn.value
           : this.bestBeforeOn,
+      openedOn: data.openedOn.present ? data.openedOn.value : this.openedOn,
       note: data.note.present ? data.note.value : this.note,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
@@ -3486,8 +3739,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
           ..write('initialQuantity: $initialQuantity, ')
           ..write('quantityRemaining: $quantityRemaining, ')
           ..write('parentBatchIdentifier: $parentBatchIdentifier, ')
-          ..write('frozenOn: $frozenOn, ')
+          ..write('storedOn: $storedOn, ')
           ..write('bestBeforeOn: $bestBeforeOn, ')
+          ..write('openedOn: $openedOn, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -3503,8 +3757,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
     initialQuantity,
     quantityRemaining,
     parentBatchIdentifier,
-    frozenOn,
+    storedOn,
     bestBeforeOn,
+    openedOn,
     note,
     createdAt,
   );
@@ -3519,8 +3774,9 @@ class StockBatchRow extends DataClass implements Insertable<StockBatchRow> {
           other.initialQuantity == this.initialQuantity &&
           other.quantityRemaining == this.quantityRemaining &&
           other.parentBatchIdentifier == this.parentBatchIdentifier &&
-          other.frozenOn == this.frozenOn &&
+          other.storedOn == this.storedOn &&
           other.bestBeforeOn == this.bestBeforeOn &&
+          other.openedOn == this.openedOn &&
           other.note == this.note &&
           other.createdAt == this.createdAt);
 }
@@ -3533,8 +3789,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
   final Value<int> initialQuantity;
   final Value<int> quantityRemaining;
   final Value<String?> parentBatchIdentifier;
-  final Value<CalendarDate> frozenOn;
+  final Value<CalendarDate> storedOn;
   final Value<CalendarDate?> bestBeforeOn;
+  final Value<CalendarDate?> openedOn;
   final Value<String?> note;
   final Value<DateTime> createdAt;
   final Value<int> rowid;
@@ -3546,8 +3803,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     this.initialQuantity = const Value.absent(),
     this.quantityRemaining = const Value.absent(),
     this.parentBatchIdentifier = const Value.absent(),
-    this.frozenOn = const Value.absent(),
+    this.storedOn = const Value.absent(),
     this.bestBeforeOn = const Value.absent(),
+    this.openedOn = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3560,8 +3818,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     required int initialQuantity,
     required int quantityRemaining,
     this.parentBatchIdentifier = const Value.absent(),
-    required CalendarDate frozenOn,
+    required CalendarDate storedOn,
     this.bestBeforeOn = const Value.absent(),
+    this.openedOn = const Value.absent(),
     this.note = const Value.absent(),
     required DateTime createdAt,
     this.rowid = const Value.absent(),
@@ -3571,7 +3830,7 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
        quantityUnit = Value(quantityUnit),
        initialQuantity = Value(initialQuantity),
        quantityRemaining = Value(quantityRemaining),
-       frozenOn = Value(frozenOn),
+       storedOn = Value(storedOn),
        createdAt = Value(createdAt);
   static Insertable<StockBatchRow> custom({
     Expression<String>? stockBatchIdentifier,
@@ -3581,8 +3840,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     Expression<int>? initialQuantity,
     Expression<int>? quantityRemaining,
     Expression<String>? parentBatchIdentifier,
-    Expression<String>? frozenOn,
+    Expression<String>? storedOn,
     Expression<String>? bestBeforeOn,
+    Expression<String>? openedOn,
     Expression<String>? note,
     Expression<DateTime>? createdAt,
     Expression<int>? rowid,
@@ -3598,8 +3858,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
       if (quantityRemaining != null) 'quantity_remaining': quantityRemaining,
       if (parentBatchIdentifier != null)
         'parent_batch_identifier': parentBatchIdentifier,
-      if (frozenOn != null) 'frozen_on': frozenOn,
+      if (storedOn != null) 'stored_on': storedOn,
       if (bestBeforeOn != null) 'best_before_on': bestBeforeOn,
+      if (openedOn != null) 'opened_on': openedOn,
       if (note != null) 'note': note,
       if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
@@ -3614,8 +3875,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
     Value<int>? initialQuantity,
     Value<int>? quantityRemaining,
     Value<String?>? parentBatchIdentifier,
-    Value<CalendarDate>? frozenOn,
+    Value<CalendarDate>? storedOn,
     Value<CalendarDate?>? bestBeforeOn,
+    Value<CalendarDate?>? openedOn,
     Value<String?>? note,
     Value<DateTime>? createdAt,
     Value<int>? rowid,
@@ -3630,8 +3892,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
       quantityRemaining: quantityRemaining ?? this.quantityRemaining,
       parentBatchIdentifier:
           parentBatchIdentifier ?? this.parentBatchIdentifier,
-      frozenOn: frozenOn ?? this.frozenOn,
+      storedOn: storedOn ?? this.storedOn,
       bestBeforeOn: bestBeforeOn ?? this.bestBeforeOn,
+      openedOn: openedOn ?? this.openedOn,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
@@ -3668,14 +3931,19 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
         parentBatchIdentifier.value,
       );
     }
-    if (frozenOn.present) {
-      map['frozen_on'] = Variable<String>(
-        $StockBatchesTable.$converterfrozenOn.toSql(frozenOn.value),
+    if (storedOn.present) {
+      map['stored_on'] = Variable<String>(
+        $StockBatchesTable.$converterstoredOn.toSql(storedOn.value),
       );
     }
     if (bestBeforeOn.present) {
       map['best_before_on'] = Variable<String>(
         $StockBatchesTable.$converterbestBeforeOnn.toSql(bestBeforeOn.value),
+      );
+    }
+    if (openedOn.present) {
+      map['opened_on'] = Variable<String>(
+        $StockBatchesTable.$converteropenedOnn.toSql(openedOn.value),
       );
     }
     if (note.present) {
@@ -3700,8 +3968,9 @@ class StockBatchesCompanion extends UpdateCompanion<StockBatchRow> {
           ..write('initialQuantity: $initialQuantity, ')
           ..write('quantityRemaining: $quantityRemaining, ')
           ..write('parentBatchIdentifier: $parentBatchIdentifier, ')
-          ..write('frozenOn: $frozenOn, ')
+          ..write('storedOn: $storedOn, ')
           ..write('bestBeforeOn: $bestBeforeOn, ')
+          ..write('openedOn: $openedOn, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
@@ -4008,7 +4277,8 @@ class InventoryMovementRow extends DataClass
   /// Change of the batch's quantity in the product's base unit; negative for removals.
   final int quantityDelta;
 
-  /// `tooOld`, `freezerBurn`, `unwanted` or `other` for discards.
+  /// `tooOld`, `freezerBurn`, `expired`, `spoiled`, `unwanted` or `other`
+  /// for discards.
   final String? discardReason;
 
   /// Set on a compensating movement (undo); it has the same kind and the
@@ -6710,7 +6980,7 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
       $PreferenceEntriesTable(this);
   late final $SchemaMetadataEntriesTable schemaMetadataEntries =
       $SchemaMetadataEntriesTable(this);
-  late final $FreezersTable freezers = $FreezersTable(this);
+  late final $StoragePlacesTable storagePlaces = $StoragePlacesTable(this);
   late final $CompartmentsTable compartments = $CompartmentsTable(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
   late final $ProductsTable products = $ProductsTable(this);
@@ -6780,7 +7050,7 @@ abstract class _$ApplicationDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     preferenceEntries,
     schemaMetadataEntries,
-    freezers,
+    storagePlaces,
     compartments,
     categories,
     products,
@@ -7211,9 +7481,9 @@ typedef $$SchemaMetadataEntriesTableProcessedTableManager =
       SchemaMetadataRow,
       PrefetchHooks Function()
     >;
-typedef $$FreezersTableCreateCompanionBuilder =
-    FreezersCompanion Function({
-      required String freezerIdentifier,
+typedef $$StoragePlacesTableCreateCompanionBuilder =
+    StoragePlacesCompanion Function({
+      required String storagePlaceIdentifier,
       required String defaultNameKey,
       Value<String?> customName,
       required String storageKind,
@@ -7222,9 +7492,9 @@ typedef $$FreezersTableCreateCompanionBuilder =
       required DateTime createdAt,
       Value<int> rowid,
     });
-typedef $$FreezersTableUpdateCompanionBuilder =
-    FreezersCompanion Function({
-      Value<String> freezerIdentifier,
+typedef $$StoragePlacesTableUpdateCompanionBuilder =
+    StoragePlacesCompanion Function({
+      Value<String> storagePlaceIdentifier,
       Value<String> defaultNameKey,
       Value<String?> customName,
       Value<String> storageKind,
@@ -7234,23 +7504,33 @@ typedef $$FreezersTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-final class $$FreezersTableReferences
-    extends BaseReferences<_$ApplicationDatabase, $FreezersTable, FreezerRow> {
-  $$FreezersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+final class $$StoragePlacesTableReferences
+    extends
+        BaseReferences<
+          _$ApplicationDatabase,
+          $StoragePlacesTable,
+          StoragePlaceRow
+        > {
+  $$StoragePlacesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static MultiTypedResultKey<$CompartmentsTable, List<CompartmentRow>>
-  _compartmentsRefsTable(_$ApplicationDatabase db) =>
-      MultiTypedResultKey.fromTable(
-        db.compartments,
-        aliasName:
-            'freezers__freezer_identifier__compartments__freezer_identifier',
-      );
+  _compartmentsRefsTable(
+    _$ApplicationDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.compartments,
+    aliasName:
+        'storage_places__storage_place_identifier__compartments__storage_place_identifier',
+  );
 
   $$CompartmentsTableProcessedTableManager get compartmentsRefs {
     final manager = $$CompartmentsTableTableManager($_db, $_db.compartments)
         .filter(
-          (f) => f.freezerIdentifier.freezerIdentifier.sqlEquals(
-            $_itemColumn<String>('freezer_identifier')!,
+          (f) => f.storagePlaceIdentifier.storagePlaceIdentifier.sqlEquals(
+            $_itemColumn<String>('storage_place_identifier')!,
           ),
         );
 
@@ -7261,17 +7541,17 @@ final class $$FreezersTableReferences
   }
 }
 
-class $$FreezersTableFilterComposer
-    extends Composer<_$ApplicationDatabase, $FreezersTable> {
-  $$FreezersTableFilterComposer({
+class $$StoragePlacesTableFilterComposer
+    extends Composer<_$ApplicationDatabase, $StoragePlacesTable> {
+  $$StoragePlacesTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get freezerIdentifier => $composableBuilder(
-    column: $table.freezerIdentifier,
+  ColumnFilters<String> get storagePlaceIdentifier => $composableBuilder(
+    column: $table.storagePlaceIdentifier,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7310,9 +7590,9 @@ class $$FreezersTableFilterComposer
   ) {
     final $$CompartmentsTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
       referencedTable: $db.compartments,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
@@ -7331,17 +7611,17 @@ class $$FreezersTableFilterComposer
   }
 }
 
-class $$FreezersTableOrderingComposer
-    extends Composer<_$ApplicationDatabase, $FreezersTable> {
-  $$FreezersTableOrderingComposer({
+class $$StoragePlacesTableOrderingComposer
+    extends Composer<_$ApplicationDatabase, $StoragePlacesTable> {
+  $$StoragePlacesTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get freezerIdentifier => $composableBuilder(
-    column: $table.freezerIdentifier,
+  ColumnOrderings<String> get storagePlaceIdentifier => $composableBuilder(
+    column: $table.storagePlaceIdentifier,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -7376,17 +7656,17 @@ class $$FreezersTableOrderingComposer
   );
 }
 
-class $$FreezersTableAnnotationComposer
-    extends Composer<_$ApplicationDatabase, $FreezersTable> {
-  $$FreezersTableAnnotationComposer({
+class $$StoragePlacesTableAnnotationComposer
+    extends Composer<_$ApplicationDatabase, $StoragePlacesTable> {
+  $$StoragePlacesTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get freezerIdentifier => $composableBuilder(
-    column: $table.freezerIdentifier,
+  GeneratedColumn<String> get storagePlaceIdentifier => $composableBuilder(
+    column: $table.storagePlaceIdentifier,
     builder: (column) => column,
   );
 
@@ -7421,9 +7701,9 @@ class $$FreezersTableAnnotationComposer
   ) {
     final $$CompartmentsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
       referencedTable: $db.compartments,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
@@ -7442,35 +7722,37 @@ class $$FreezersTableAnnotationComposer
   }
 }
 
-class $$FreezersTableTableManager
+class $$StoragePlacesTableTableManager
     extends
         RootTableManager<
           _$ApplicationDatabase,
-          $FreezersTable,
-          FreezerRow,
-          $$FreezersTableFilterComposer,
-          $$FreezersTableOrderingComposer,
-          $$FreezersTableAnnotationComposer,
-          $$FreezersTableCreateCompanionBuilder,
-          $$FreezersTableUpdateCompanionBuilder,
-          (FreezerRow, $$FreezersTableReferences),
-          FreezerRow,
+          $StoragePlacesTable,
+          StoragePlaceRow,
+          $$StoragePlacesTableFilterComposer,
+          $$StoragePlacesTableOrderingComposer,
+          $$StoragePlacesTableAnnotationComposer,
+          $$StoragePlacesTableCreateCompanionBuilder,
+          $$StoragePlacesTableUpdateCompanionBuilder,
+          (StoragePlaceRow, $$StoragePlacesTableReferences),
+          StoragePlaceRow,
           PrefetchHooks Function({bool compartmentsRefs})
         > {
-  $$FreezersTableTableManager(_$ApplicationDatabase db, $FreezersTable table)
-    : super(
+  $$StoragePlacesTableTableManager(
+    _$ApplicationDatabase db,
+    $StoragePlacesTable table,
+  ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$FreezersTableFilterComposer($db: db, $table: table),
+              $$StoragePlacesTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$FreezersTableOrderingComposer($db: db, $table: table),
+              $$StoragePlacesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$FreezersTableAnnotationComposer($db: db, $table: table),
+              $$StoragePlacesTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<String> freezerIdentifier = const Value.absent(),
+                Value<String> storagePlaceIdentifier = const Value.absent(),
                 Value<String> defaultNameKey = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
                 Value<String> storageKind = const Value.absent(),
@@ -7478,8 +7760,8 @@ class $$FreezersTableTableManager
                 Value<bool> isArchived = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => FreezersCompanion(
-                freezerIdentifier: freezerIdentifier,
+              }) => StoragePlacesCompanion(
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNameKey: defaultNameKey,
                 customName: customName,
                 storageKind: storageKind,
@@ -7490,7 +7772,7 @@ class $$FreezersTableTableManager
               ),
           createCompanionCallback:
               ({
-                required String freezerIdentifier,
+                required String storagePlaceIdentifier,
                 required String defaultNameKey,
                 Value<String?> customName = const Value.absent(),
                 required String storageKind,
@@ -7498,8 +7780,8 @@ class $$FreezersTableTableManager
                 Value<bool> isArchived = const Value.absent(),
                 required DateTime createdAt,
                 Value<int> rowid = const Value.absent(),
-              }) => FreezersCompanion.insert(
-                freezerIdentifier: freezerIdentifier,
+              }) => StoragePlacesCompanion.insert(
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNameKey: defaultNameKey,
                 customName: customName,
                 storageKind: storageKind,
@@ -7511,8 +7793,8 @@ class $$FreezersTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$FreezersTable, FreezerRow>(table),
-                  $$FreezersTableReferences(db, table, e),
+                  e.readTable<$StoragePlacesTable, StoragePlaceRow>(table),
+                  $$StoragePlacesTableReferences(db, table, e),
                 ),
               )
               .toList(),
@@ -7525,22 +7807,24 @@ class $$FreezersTableTableManager
                 return [
                   if (compartmentsRefs)
                     await $_getPrefetchedData<
-                      FreezerRow,
-                      $FreezersTable,
+                      StoragePlaceRow,
+                      $StoragePlacesTable,
                       CompartmentRow
                     >(
                       currentTable: table,
-                      referencedTable: $$FreezersTableReferences
+                      referencedTable: $$StoragePlacesTableReferences
                           ._compartmentsRefsTable(db),
-                      managerFromTypedResult: (p0) => $$FreezersTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).compartmentsRefs,
+                      managerFromTypedResult: (p0) =>
+                          $$StoragePlacesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).compartmentsRefs,
                       referencedItemsForCurrentItem: (item, referencedItems) =>
                           referencedItems.where(
                             (e) =>
-                                e.freezerIdentifier == item.freezerIdentifier,
+                                e.storagePlaceIdentifier ==
+                                item.storagePlaceIdentifier,
                           ),
                       typedResults: items,
                     ),
@@ -7552,24 +7836,24 @@ class $$FreezersTableTableManager
       );
 }
 
-typedef $$FreezersTableProcessedTableManager =
+typedef $$StoragePlacesTableProcessedTableManager =
     ProcessedTableManager<
       _$ApplicationDatabase,
-      $FreezersTable,
-      FreezerRow,
-      $$FreezersTableFilterComposer,
-      $$FreezersTableOrderingComposer,
-      $$FreezersTableAnnotationComposer,
-      $$FreezersTableCreateCompanionBuilder,
-      $$FreezersTableUpdateCompanionBuilder,
-      (FreezerRow, $$FreezersTableReferences),
-      FreezerRow,
+      $StoragePlacesTable,
+      StoragePlaceRow,
+      $$StoragePlacesTableFilterComposer,
+      $$StoragePlacesTableOrderingComposer,
+      $$StoragePlacesTableAnnotationComposer,
+      $$StoragePlacesTableCreateCompanionBuilder,
+      $$StoragePlacesTableUpdateCompanionBuilder,
+      (StoragePlaceRow, $$StoragePlacesTableReferences),
+      StoragePlaceRow,
       PrefetchHooks Function({bool compartmentsRefs})
     >;
 typedef $$CompartmentsTableCreateCompanionBuilder =
     CompartmentsCompanion Function({
       required String compartmentIdentifier,
-      required String freezerIdentifier,
+      required String storagePlaceIdentifier,
       required int defaultNumber,
       Value<String?> customName,
       required int colorTagIndex,
@@ -7581,7 +7865,7 @@ typedef $$CompartmentsTableCreateCompanionBuilder =
 typedef $$CompartmentsTableUpdateCompanionBuilder =
     CompartmentsCompanion Function({
       Value<String> compartmentIdentifier,
-      Value<String> freezerIdentifier,
+      Value<String> storagePlaceIdentifier,
       Value<int> defaultNumber,
       Value<String?> customName,
       Value<int> colorTagIndex,
@@ -7600,19 +7884,22 @@ final class $$CompartmentsTableReferences
         > {
   $$CompartmentsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $FreezersTable _freezerIdentifierTable(_$ApplicationDatabase db) =>
-      db.freezers.createAlias(
-        'compartments__freezer_identifier__freezers__freezer_identifier',
-      );
+  static $StoragePlacesTable _storagePlaceIdentifierTable(
+    _$ApplicationDatabase db,
+  ) => db.storagePlaces.createAlias(
+    'compartments__storage_place_identifier__storage_places__storage_place_identifier',
+  );
 
-  $$FreezersTableProcessedTableManager get freezerIdentifier {
-    final $_column = $_itemColumn<String>('freezer_identifier')!;
+  $$StoragePlacesTableProcessedTableManager get storagePlaceIdentifier {
+    final $_column = $_itemColumn<String>('storage_place_identifier')!;
 
-    final manager = $$FreezersTableTableManager(
+    final manager = $$StoragePlacesTableTableManager(
       $_db,
-      $_db.freezers,
-    ).filter((f) => f.freezerIdentifier.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_freezerIdentifierTable($_db));
+      $_db.storagePlaces,
+    ).filter((f) => f.storagePlaceIdentifier.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _storagePlaceIdentifierTable($_db),
+    );
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -7738,20 +8025,20 @@ class $$CompartmentsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  $$FreezersTableFilterComposer get freezerIdentifier {
-    final $$FreezersTableFilterComposer composer = $composerBuilder(
+  $$StoragePlacesTableFilterComposer get storagePlaceIdentifier {
+    final $$StoragePlacesTableFilterComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
-      referencedTable: $db.freezers,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
+      referencedTable: $db.storagePlaces,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$FreezersTableFilterComposer(
+          }) => $$StoragePlacesTableFilterComposer(
             $db: $db,
-            $table: $db.freezers,
+            $table: $db.storagePlaces,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7881,20 +8168,20 @@ class $$CompartmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  $$FreezersTableOrderingComposer get freezerIdentifier {
-    final $$FreezersTableOrderingComposer composer = $composerBuilder(
+  $$StoragePlacesTableOrderingComposer get storagePlaceIdentifier {
+    final $$StoragePlacesTableOrderingComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
-      referencedTable: $db.freezers,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
+      referencedTable: $db.storagePlaces,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$FreezersTableOrderingComposer(
+          }) => $$StoragePlacesTableOrderingComposer(
             $db: $db,
-            $table: $db.freezers,
+            $table: $db.storagePlaces,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7945,20 +8232,20 @@ class $$CompartmentsTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  $$FreezersTableAnnotationComposer get freezerIdentifier {
-    final $$FreezersTableAnnotationComposer composer = $composerBuilder(
+  $$StoragePlacesTableAnnotationComposer get storagePlaceIdentifier {
+    final $$StoragePlacesTableAnnotationComposer composer = $composerBuilder(
       composer: this,
-      getCurrentColumn: (t) => t.freezerIdentifier,
-      referencedTable: $db.freezers,
-      getReferencedColumn: (t) => t.freezerIdentifier,
+      getCurrentColumn: (t) => t.storagePlaceIdentifier,
+      referencedTable: $db.storagePlaces,
+      getReferencedColumn: (t) => t.storagePlaceIdentifier,
       builder:
           (
             joinBuilder, {
             $addJoinBuilderToRootComposer,
             $removeJoinBuilderFromRootComposer,
-          }) => $$FreezersTableAnnotationComposer(
+          }) => $$StoragePlacesTableAnnotationComposer(
             $db: $db,
-            $table: $db.freezers,
+            $table: $db.storagePlaces,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8059,7 +8346,7 @@ class $$CompartmentsTableTableManager
           (CompartmentRow, $$CompartmentsTableReferences),
           CompartmentRow,
           PrefetchHooks Function({
-            bool freezerIdentifier,
+            bool storagePlaceIdentifier,
             bool productsRefs,
             bool stockBatchesRefs,
             bool inventoryMovementsRefs,
@@ -8081,7 +8368,7 @@ class $$CompartmentsTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> compartmentIdentifier = const Value.absent(),
-                Value<String> freezerIdentifier = const Value.absent(),
+                Value<String> storagePlaceIdentifier = const Value.absent(),
                 Value<int> defaultNumber = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
                 Value<int> colorTagIndex = const Value.absent(),
@@ -8091,7 +8378,7 @@ class $$CompartmentsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => CompartmentsCompanion(
                 compartmentIdentifier: compartmentIdentifier,
-                freezerIdentifier: freezerIdentifier,
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNumber: defaultNumber,
                 customName: customName,
                 colorTagIndex: colorTagIndex,
@@ -8103,7 +8390,7 @@ class $$CompartmentsTableTableManager
           createCompanionCallback:
               ({
                 required String compartmentIdentifier,
-                required String freezerIdentifier,
+                required String storagePlaceIdentifier,
                 required int defaultNumber,
                 Value<String?> customName = const Value.absent(),
                 required int colorTagIndex,
@@ -8113,7 +8400,7 @@ class $$CompartmentsTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => CompartmentsCompanion.insert(
                 compartmentIdentifier: compartmentIdentifier,
-                freezerIdentifier: freezerIdentifier,
+                storagePlaceIdentifier: storagePlaceIdentifier,
                 defaultNumber: defaultNumber,
                 customName: customName,
                 colorTagIndex: colorTagIndex,
@@ -8132,7 +8419,7 @@ class $$CompartmentsTableTableManager
               .toList(),
           prefetchHooksCallback:
               ({
-                freezerIdentifier = false,
+                storagePlaceIdentifier = false,
                 productsRefs = false,
                 stockBatchesRefs = false,
                 inventoryMovementsRefs = false,
@@ -8160,18 +8447,18 @@ class $$CompartmentsTableTableManager
                           dynamic
                         >
                       >(state) {
-                        if (freezerIdentifier) {
+                        if (storagePlaceIdentifier) {
                           state =
                               state.withJoin(
                                     currentTable: table,
-                                    currentColumn: table.freezerIdentifier,
+                                    currentColumn: table.storagePlaceIdentifier,
                                     referencedTable:
                                         $$CompartmentsTableReferences
-                                            ._freezerIdentifierTable(db),
+                                            ._storagePlaceIdentifierTable(db),
                                     referencedColumn:
                                         $$CompartmentsTableReferences
-                                            ._freezerIdentifierTable(db)
-                                            .freezerIdentifier,
+                                            ._storagePlaceIdentifierTable(db)
+                                            .storagePlaceIdentifier,
                                   )
                                   as T;
                         }
@@ -8270,7 +8557,7 @@ typedef $$CompartmentsTableProcessedTableManager =
       (CompartmentRow, $$CompartmentsTableReferences),
       CompartmentRow,
       PrefetchHooks Function({
-        bool freezerIdentifier,
+        bool storagePlaceIdentifier,
         bool productsRefs,
         bool stockBatchesRefs,
         bool inventoryMovementsRefs,
@@ -8282,8 +8569,10 @@ typedef $$CategoriesTableCreateCompanionBuilder =
       Value<String?> catalogKey,
       Value<String?> customName,
       required int recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       required String iconEmoji,
       required int sortOrder,
+      Value<String> storageDomain,
       Value<int> rowid,
     });
 typedef $$CategoriesTableUpdateCompanionBuilder =
@@ -8292,8 +8581,10 @@ typedef $$CategoriesTableUpdateCompanionBuilder =
       Value<String?> catalogKey,
       Value<String?> customName,
       Value<int> recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       Value<String> iconEmoji,
       Value<int> sortOrder,
+      Value<String> storageDomain,
       Value<int> rowid,
     });
 
@@ -8351,6 +8642,11 @@ class $$CategoriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get iconEmoji => $composableBuilder(
     column: $table.iconEmoji,
     builder: (column) => ColumnFilters(column),
@@ -8358,6 +8654,11 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get storageDomain => $composableBuilder(
+    column: $table.storageDomain,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -8416,6 +8717,11 @@ class $$CategoriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get iconEmoji => $composableBuilder(
     column: $table.iconEmoji,
     builder: (column) => ColumnOrderings(column),
@@ -8423,6 +8729,11 @@ class $$CategoriesTableOrderingComposer
 
   ColumnOrderings<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get storageDomain => $composableBuilder(
+    column: $table.storageDomain,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -8456,11 +8767,21 @@ class $$CategoriesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get iconEmoji =>
       $composableBuilder(column: $table.iconEmoji, builder: (column) => column);
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<String> get storageDomain => $composableBuilder(
+    column: $table.storageDomain,
+    builder: (column) => column,
+  );
 
   Expression<T> productsRefs<T extends Object>(
     Expression<T> Function($$ProductsTableAnnotationComposer a) f,
@@ -8522,16 +8843,20 @@ class $$CategoriesTableTableManager
                 Value<String?> catalogKey = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
                 Value<int> recommendedMaximumStorageDays = const Value.absent(),
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 Value<String> iconEmoji = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<String> storageDomain = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion(
                 categoryIdentifier: categoryIdentifier,
                 catalogKey: catalogKey,
                 customName: customName,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 sortOrder: sortOrder,
+                storageDomain: storageDomain,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -8540,16 +8865,20 @@ class $$CategoriesTableTableManager
                 Value<String?> catalogKey = const Value.absent(),
                 Value<String?> customName = const Value.absent(),
                 required int recommendedMaximumStorageDays,
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 required String iconEmoji,
                 required int sortOrder,
+                Value<String> storageDomain = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 categoryIdentifier: categoryIdentifier,
                 catalogKey: catalogKey,
                 customName: customName,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 sortOrder: sortOrder,
+                storageDomain: storageDomain,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -8620,6 +8949,7 @@ typedef $$ProductsTableCreateCompanionBuilder =
       required String canonicalUnit,
       Value<int?> defaultPackageQuantity,
       Value<int?> recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       Value<String?> iconEmoji,
       Value<Uint8List?> iconImage,
       Value<String?> defaultCompartmentIdentifier,
@@ -8636,6 +8966,7 @@ typedef $$ProductsTableUpdateCompanionBuilder =
       Value<String> canonicalUnit,
       Value<int?> defaultPackageQuantity,
       Value<int?> recommendedMaximumStorageDays,
+      Value<int?> shelfLifeAfterOpeningDays,
       Value<String?> iconEmoji,
       Value<Uint8List?> iconImage,
       Value<String?> defaultCompartmentIdentifier,
@@ -8857,6 +9188,11 @@ class $$ProductsTableFilterComposer
 
   ColumnFilters<int> get recommendedMaximumStorageDays => $composableBuilder(
     column: $table.recommendedMaximumStorageDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9091,6 +9427,11 @@ class $$ProductsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get iconEmoji => $composableBuilder(
     column: $table.iconEmoji,
     builder: (column) => ColumnOrderings(column),
@@ -9194,6 +9535,11 @@ class $$ProductsTableAnnotationComposer
 
   GeneratedColumn<int> get recommendedMaximumStorageDays => $composableBuilder(
     column: $table.recommendedMaximumStorageDays,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get shelfLifeAfterOpeningDays => $composableBuilder(
+    column: $table.shelfLifeAfterOpeningDays,
     builder: (column) => column,
   );
 
@@ -9429,6 +9775,7 @@ class $$ProductsTableTableManager
                 Value<int?> defaultPackageQuantity = const Value.absent(),
                 Value<int?> recommendedMaximumStorageDays =
                     const Value.absent(),
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 Value<String?> iconEmoji = const Value.absent(),
                 Value<Uint8List?> iconImage = const Value.absent(),
                 Value<String?> defaultCompartmentIdentifier =
@@ -9444,6 +9791,7 @@ class $$ProductsTableTableManager
                 canonicalUnit: canonicalUnit,
                 defaultPackageQuantity: defaultPackageQuantity,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 iconImage: iconImage,
                 defaultCompartmentIdentifier: defaultCompartmentIdentifier,
@@ -9461,6 +9809,7 @@ class $$ProductsTableTableManager
                 Value<int?> defaultPackageQuantity = const Value.absent(),
                 Value<int?> recommendedMaximumStorageDays =
                     const Value.absent(),
+                Value<int?> shelfLifeAfterOpeningDays = const Value.absent(),
                 Value<String?> iconEmoji = const Value.absent(),
                 Value<Uint8List?> iconImage = const Value.absent(),
                 Value<String?> defaultCompartmentIdentifier =
@@ -9476,6 +9825,7 @@ class $$ProductsTableTableManager
                 canonicalUnit: canonicalUnit,
                 defaultPackageQuantity: defaultPackageQuantity,
                 recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+                shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
                 iconEmoji: iconEmoji,
                 iconImage: iconImage,
                 defaultCompartmentIdentifier: defaultCompartmentIdentifier,
@@ -9712,8 +10062,9 @@ typedef $$StockBatchesTableCreateCompanionBuilder =
       required int initialQuantity,
       required int quantityRemaining,
       Value<String?> parentBatchIdentifier,
-      required CalendarDate frozenOn,
+      required CalendarDate storedOn,
       Value<CalendarDate?> bestBeforeOn,
+      Value<CalendarDate?> openedOn,
       Value<String?> note,
       required DateTime createdAt,
       Value<int> rowid,
@@ -9727,8 +10078,9 @@ typedef $$StockBatchesTableUpdateCompanionBuilder =
       Value<int> initialQuantity,
       Value<int> quantityRemaining,
       Value<String?> parentBatchIdentifier,
-      Value<CalendarDate> frozenOn,
+      Value<CalendarDate> storedOn,
       Value<CalendarDate?> bestBeforeOn,
+      Value<CalendarDate?> openedOn,
       Value<String?> note,
       Value<DateTime> createdAt,
       Value<int> rowid,
@@ -9851,14 +10203,20 @@ class $$StockBatchesTableFilterComposer
   );
 
   ColumnWithTypeConverterFilters<CalendarDate, CalendarDate, String>
-  get frozenOn => $composableBuilder(
-    column: $table.frozenOn,
+  get storedOn => $composableBuilder(
+    column: $table.storedOn,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnWithTypeConverterFilters<CalendarDate?, CalendarDate, String>
   get bestBeforeOn => $composableBuilder(
     column: $table.bestBeforeOn,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<CalendarDate?, CalendarDate, String>
+  get openedOn => $composableBuilder(
+    column: $table.openedOn,
     builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
@@ -9978,13 +10336,18 @@ class $$StockBatchesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get frozenOn => $composableBuilder(
-    column: $table.frozenOn,
+  ColumnOrderings<String> get storedOn => $composableBuilder(
+    column: $table.storedOn,
     builder: (column) => ColumnOrderings(column),
   );
 
   ColumnOrderings<String> get bestBeforeOn => $composableBuilder(
     column: $table.bestBeforeOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get openedOn => $composableBuilder(
+    column: $table.openedOn,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -10079,14 +10442,17 @@ class $$StockBatchesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumnWithTypeConverter<CalendarDate, String> get frozenOn =>
-      $composableBuilder(column: $table.frozenOn, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<CalendarDate, String> get storedOn =>
+      $composableBuilder(column: $table.storedOn, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<CalendarDate?, String> get bestBeforeOn =>
       $composableBuilder(
         column: $table.bestBeforeOn,
         builder: (column) => column,
       );
+
+  GeneratedColumnWithTypeConverter<CalendarDate?, String> get openedOn =>
+      $composableBuilder(column: $table.openedOn, builder: (column) => column);
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
@@ -10208,8 +10574,9 @@ class $$StockBatchesTableTableManager
                 Value<int> initialQuantity = const Value.absent(),
                 Value<int> quantityRemaining = const Value.absent(),
                 Value<String?> parentBatchIdentifier = const Value.absent(),
-                Value<CalendarDate> frozenOn = const Value.absent(),
+                Value<CalendarDate> storedOn = const Value.absent(),
                 Value<CalendarDate?> bestBeforeOn = const Value.absent(),
+                Value<CalendarDate?> openedOn = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -10221,8 +10588,9 @@ class $$StockBatchesTableTableManager
                 initialQuantity: initialQuantity,
                 quantityRemaining: quantityRemaining,
                 parentBatchIdentifier: parentBatchIdentifier,
-                frozenOn: frozenOn,
+                storedOn: storedOn,
                 bestBeforeOn: bestBeforeOn,
+                openedOn: openedOn,
                 note: note,
                 createdAt: createdAt,
                 rowid: rowid,
@@ -10236,8 +10604,9 @@ class $$StockBatchesTableTableManager
                 required int initialQuantity,
                 required int quantityRemaining,
                 Value<String?> parentBatchIdentifier = const Value.absent(),
-                required CalendarDate frozenOn,
+                required CalendarDate storedOn,
                 Value<CalendarDate?> bestBeforeOn = const Value.absent(),
+                Value<CalendarDate?> openedOn = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 required DateTime createdAt,
                 Value<int> rowid = const Value.absent(),
@@ -10249,8 +10618,9 @@ class $$StockBatchesTableTableManager
                 initialQuantity: initialQuantity,
                 quantityRemaining: quantityRemaining,
                 parentBatchIdentifier: parentBatchIdentifier,
-                frozenOn: frozenOn,
+                storedOn: storedOn,
                 bestBeforeOn: bestBeforeOn,
+                openedOn: openedOn,
                 note: note,
                 createdAt: createdAt,
                 rowid: rowid,
@@ -12603,8 +12973,8 @@ class $ApplicationDatabaseManager {
       $$PreferenceEntriesTableTableManager(_db, _db.preferenceEntries);
   $$SchemaMetadataEntriesTableTableManager get schemaMetadataEntries =>
       $$SchemaMetadataEntriesTableTableManager(_db, _db.schemaMetadataEntries);
-  $$FreezersTableTableManager get freezers =>
-      $$FreezersTableTableManager(_db, _db.freezers);
+  $$StoragePlacesTableTableManager get storagePlaces =>
+      $$StoragePlacesTableTableManager(_db, _db.storagePlaces);
   $$CompartmentsTableTableManager get compartments =>
       $$CompartmentsTableTableManager(_db, _db.compartments);
   $$CategoriesTableTableManager get categories =>

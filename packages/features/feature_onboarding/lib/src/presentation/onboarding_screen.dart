@@ -10,7 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../application/onboarding_completion.dart';
 import '../l10n/generated/onboarding_localizations.dart';
 
-enum _OnboardingStep { language, freezer, privacyAndReminders }
+enum _OnboardingStep { language, storagePlace, privacyAndReminders }
 
 /// The first start: language first (architecture document, section 10.5),
 /// then the kind of freezer unless one exists, then privacy and the
@@ -25,11 +25,12 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   late final List<_OnboardingStep> _steps = [
     _OnboardingStep.language,
-    if (!(ref.read(storageLayoutProvider).value?.hasFreezer ?? false)) _OnboardingStep.freezer,
+    if (!(ref.read(storageLayoutProvider).value?.hasStoragePlace ?? false))
+      _OnboardingStep.storagePlace,
     _OnboardingStep.privacyAndReminders,
   ];
   int _stepIndex = 0;
-  FreezerTemplate _freezerTemplate = FreezerTemplate.uprightWithThreeDrawers;
+  StorageTemplate _storageTemplate = StorageTemplate.uprightWithThreeDrawers;
   bool _isFinishing = false;
 
   _OnboardingStep get _step => _steps[_stepIndex];
@@ -43,7 +44,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     await ref
         .read(completeOnboardingUseCaseProvider)
         .execute(
-          freezerTemplate: _steps.contains(_OnboardingStep.freezer) ? _freezerTemplate : null,
+          storageTemplate: _steps.contains(_OnboardingStep.storagePlace) ? _storageTemplate : null,
           defaultNames: context.layoutDefaultNames,
         );
     if (mounted) context.go(ShellRoutePaths.home);
@@ -63,14 +64,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           const LanguageChoiceList(),
         ],
       ),
-      _OnboardingStep.freezer => (
-        localizations.freezerTitle,
+      _OnboardingStep.storagePlace => (
+        localizations.storagePlaceTitle,
         <Widget>[
-          Text(localizations.freezerPrompt, style: textTheme.bodyLarge),
+          Text(localizations.storagePlacePrompt, style: textTheme.bodyLarge),
           const SizedBox(height: FoodieSpacing.small),
-          FreezerTemplateChoiceList(
-            selectedTemplate: _freezerTemplate,
-            onTemplateSelected: (template) => setState(() => _freezerTemplate = template),
+          StorageTemplateChoiceList(
+            selectedTemplate: _storageTemplate,
+            onTemplateSelected: (template) => setState(() => _storageTemplate = template),
           ),
         ],
       ),

@@ -509,6 +509,18 @@ abstract class StatisticsLocalizations {
   /// **'Freezer burn'**
   String get reasonFreezerBurn;
 
+  /// No description provided for @reasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Past its date'**
+  String get reasonExpired;
+
+  /// No description provided for @reasonSpoiled.
+  ///
+  /// In en, this message translates to:
+  /// **'Gone off'**
+  String get reasonSpoiled;
+
   /// No description provided for @reasonUnwanted.
   ///
   /// In en, this message translates to:
@@ -659,17 +671,17 @@ abstract class StatisticsLocalizations {
   /// **'6 mo'**
   String get sixMonthMarker;
 
-  /// No description provided for @freezerMapTitle.
+  /// No description provided for @storageMapTitle.
   ///
   /// In en, this message translates to:
   /// **'Freezer map'**
-  String get freezerMapTitle;
+  String get storageMapTitle;
 
-  /// No description provided for @freezerMapSubtitle.
+  /// No description provided for @storageMapSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Current contents by drawer, coloured by age. Tap to filter.'**
-  String get freezerMapSubtitle;
+  String get storageMapSubtitle;
 
   /// No description provided for @drawerItems.
   ///

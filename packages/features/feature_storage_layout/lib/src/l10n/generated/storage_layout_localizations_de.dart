@@ -15,7 +15,7 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   String get layoutOverviewTitle => 'Aufteilung';
 
   @override
-  String defaultFreezerName(String storageKind) {
+  String defaultStoragePlaceName(String storageKind) {
     String _temp0 = intl.Intl.selectLogic(storageKind, {
       'chest': 'Gefriertruhe',
       'fridgeFreezerCompartment': 'Gefrierfach',
@@ -83,15 +83,15 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   }
 
   @override
-  String freezerSummary(String kind, String compartments) {
+  String storagePlaceSummary(String kind, String compartments) {
     return '$kind · $compartments';
   }
 
   @override
-  String get addFreezerButton => 'Gefriergerät hinzufügen';
+  String get addStoragePlaceButton => 'Gefriergerät hinzufügen';
 
   @override
-  String get newFreezerTitle => 'Gefriergerät hinzufügen';
+  String get newStoragePlaceTitle => 'Gefriergerät hinzufügen';
 
   @override
   String get templatePrompt => 'Was kommt deinem am nächsten? Du kannst später alles ändern.';
@@ -115,10 +115,10 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   String get templateEmpty => 'Mit einer Schublade beginnen und den Rest selbst anlegen';
 
   @override
-  String get freezerNameLabel => 'Name (optional)';
+  String get storagePlaceNameLabel => 'Name (optional)';
 
   @override
-  String freezerNameHelper(String defaultName) {
+  String storagePlaceNameHelper(String defaultName) {
     return 'Zum Beispiel „Küche“ oder „Keller“. Leer lassen für „$defaultName“.';
   }
 
@@ -160,7 +160,7 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   String get compartmentNameTaken => 'Eine andere Schublade heißt schon so.';
 
   @override
-  String get freezerNameTaken => 'Ein anderes Gefriergerät heißt schon so.';
+  String get storagePlaceNameTaken => 'Ein anderes Gefriergerät heißt schon so.';
 
   @override
   String get nameTooLong => 'Höchstens 30 Zeichen.';
@@ -200,25 +200,25 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
       'Unveränderte Namen folgen der App-Sprache. Selbst getippte Namen bleiben, wie du sie geschrieben hast.';
 
   @override
-  String get renameFreezerAction => 'Umbenennen';
+  String get renameStoragePlaceAction => 'Umbenennen';
 
   @override
-  String get renameFreezerDialogTitle => 'Gefriergerät umbenennen';
+  String get renameStoragePlaceDialogTitle => 'Gefriergerät umbenennen';
 
   @override
-  String get removeFreezerAction => 'Gefriergerät entfernen';
+  String get removeStoragePlaceAction => 'Gefriergerät entfernen';
 
   @override
-  String removeFreezerDialogTitle(String name) {
+  String removeStoragePlaceDialogTitle(String name) {
     return '$name entfernen?';
   }
 
   @override
-  String get removeFreezerDialogText =>
+  String get removeStoragePlaceDialogText =>
       'Es verschwindet aus der App. Seine Schubladen bleiben für die Statistik erhalten.';
 
   @override
-  String freezerNotEmpty(int count) {
+  String storagePlaceNotEmpty(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -229,16 +229,16 @@ class StorageLayoutLocalizationsDe extends StorageLayoutLocalizations {
   }
 
   @override
-  String get lastFreezerCannotBeRemoved => 'Du brauchst mindestens ein Gefriergerät.';
+  String get lastStoragePlaceCannotBeRemoved => 'Du brauchst mindestens ein Gefriergerät.';
 
   @override
-  String get freezerNotFound => 'Dieses Gefriergerät wurde entfernt.';
+  String get storagePlaceNotFound => 'Dieses Gefriergerät wurde entfernt.';
 
   @override
-  String get noFreezerTitle => 'Noch kein Gefriergerät';
+  String get noStoragePlaceTitle => 'Noch kein Gefriergerät';
 
   @override
-  String get noFreezerMessage =>
+  String get noStoragePlaceMessage =>
       'Lege dein Gefriergerät und seine Schubladen an und fülle es dann.';
 
   @override

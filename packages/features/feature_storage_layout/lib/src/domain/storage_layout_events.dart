@@ -1,18 +1,18 @@
 import 'package:core_events/core_events.dart';
 
 import 'compartment.dart';
-import 'freezer.dart';
+import 'storage_place.dart';
 
-/// A compartment was added, on its own or as part of a new freezer.
+/// A compartment was added, on its own or as part of a new storage place.
 final class CompartmentCreated extends DomainEvent {
   const CompartmentCreated({
     required this.compartmentIdentifier,
-    required this.freezerIdentifier,
+    required this.storagePlaceIdentifier,
     required super.occurredAt,
   });
 
   final CompartmentIdentifier compartmentIdentifier;
-  final FreezerIdentifier freezerIdentifier;
+  final StoragePlaceIdentifier storagePlaceIdentifier;
 }
 
 /// A compartment got a new name, or went back to its default name.
@@ -22,12 +22,12 @@ final class CompartmentRenamed extends DomainEvent {
   final CompartmentIdentifier compartmentIdentifier;
 }
 
-/// The compartments of a freezer, or the freezers themselves, changed order.
+/// The compartments of a storage place, or the storage places themselves, changed order.
 final class CompartmentReordered extends DomainEvent {
-  const CompartmentReordered({required this.freezerIdentifier, required super.occurredAt});
+  const CompartmentReordered({required this.storagePlaceIdentifier, required super.occurredAt});
 
-  /// The freezer whose compartments moved; `null` when freezers were reordered.
-  final FreezerIdentifier? freezerIdentifier;
+  /// The storage place whose compartments moved; `null` when storage places were reordered.
+  final StoragePlaceIdentifier? storagePlaceIdentifier;
 }
 
 /// A compartment was removed from the layout. It stays in the database so

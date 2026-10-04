@@ -77,7 +77,7 @@ final eatSoonItemsProvider = Provider<List<InventoryItem>?>((ref) {
   final overview = ref.watch(inventoryOverviewProvider).value;
   if (overview == null) return null;
   double storageShareOf(InventoryItem item) => StorageAgePolicy.storageShare(
-    frozenOn: item.batch.frozenOn,
+    storedOn: item.batch.storedOn,
     today: overview.today,
     recommendedMaximumStorageDays:
         overview.catalog.recommendedMaximumStorageDaysOf(item.product) ?? 0,

@@ -118,7 +118,7 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
   String get csvColumnUnit => 'Unit';
 
   @override
-  String get csvColumnFrozenOn => 'Frozen on';
+  String get csvColumnStoredOn => 'Frozen on';
 
   @override
   String get csvColumnDrawer => 'Drawer';
@@ -155,6 +155,12 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
 
   @override
   String get reasonFreezerBurn => 'Freezer burn';
+
+  @override
+  String get reasonExpired => 'Past its date';
+
+  @override
+  String get reasonSpoiled => 'Gone off';
 
   @override
   String get reasonUnwanted => 'Nobody wanted it';

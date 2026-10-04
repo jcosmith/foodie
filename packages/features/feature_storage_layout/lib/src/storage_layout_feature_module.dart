@@ -7,10 +7,10 @@ import 'package:go_router/go_router.dart';
 import 'application/storage_layout_providers.dart';
 import 'data/drift_storage_layout_repository.dart';
 import 'l10n/generated/storage_layout_localizations.dart';
-import 'presentation/freezer_layout_list.dart';
 import 'presentation/storage_layout_routes.dart';
+import 'presentation/storage_place_list.dart';
 
-/// Freezers and their drawers (decision D13). Contributes the "Freezer
+/// Storage places and their compartments (decision D13). Contributes the "Storage place
 /// layout" section of the Config tab and the layout editor screens.
 final class StorageLayoutFeatureModule extends FeatureModuleBase {
   const StorageLayoutFeatureModule();
@@ -41,7 +41,7 @@ final class StorageLayoutFeatureModule extends FeatureModuleBase {
       identifier: '$identifier.freezer_layout',
       sortOrder: 20,
       titleBuilder: (context) => StorageLayoutLocalizations.of(context).configSectionTitle,
-      builder: (context) => const FreezerLayoutConfigSection(),
+      builder: (context) => const StorageLayoutConfigSection(),
     ),
   ];
 }

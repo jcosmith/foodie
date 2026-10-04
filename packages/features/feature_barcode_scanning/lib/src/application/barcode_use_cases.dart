@@ -167,7 +167,7 @@ final class ScanToAddUseCase {
       productIdentifier: suggestion.product.identifier,
       compartmentIdentifier: compartment.identifier,
       quantity: quantity,
-      frozenOn: _clock.todayLocal(),
+      storedOn: _clock.todayLocal(),
     );
   }
 }

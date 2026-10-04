@@ -3,8 +3,8 @@ import 'package:meta/meta.dart';
 
 typedef CategoryIdentifier = TypedIdentifier<Category>;
 
-/// A product category such as vegetables or meals. Its recommended maximum
-/// storage time applies to products that do not set their own.
+/// A product category such as vegetables or dairy. Its shelf life applies to
+/// products that do not set their own.
 @immutable
 final class Category {
   const Category({
@@ -12,8 +12,10 @@ final class Category {
     required this.recommendedMaximumStorageDays,
     required this.iconEmoji,
     required this.sortOrder,
+    required this.storageDomain,
     this.catalogKey,
     this.customName,
+    this.shelfLifeAfterOpeningDays,
   });
 
   final CategoryIdentifier identifier;
@@ -22,17 +24,29 @@ final class Category {
   final String? catalogKey;
 
   final String? customName;
+
+  /// The shelf life in days.
   final int recommendedMaximumStorageDays;
+
+  /// How long an opened package keeps, when that is shorter.
+  final int? shelfLifeAfterOpeningDays;
+
   final String iconEmoji;
   final int sortOrder;
+
+  /// Where products of this category usually live; decides, for example,
+  /// whether throwing them away counts as waste.
+  final StorageDomainIdentifier storageDomain;
 
   Category withRecommendedMaximumStorageDays(int recommendedMaximumStorageDays) => Category(
     identifier: identifier,
     catalogKey: catalogKey,
     customName: customName,
     recommendedMaximumStorageDays: recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays,
     iconEmoji: iconEmoji,
     sortOrder: sortOrder,
+    storageDomain: storageDomain,
   );
 
   @override
@@ -42,8 +56,10 @@ final class Category {
       other.catalogKey == catalogKey &&
       other.customName == customName &&
       other.recommendedMaximumStorageDays == recommendedMaximumStorageDays &&
+      other.shelfLifeAfterOpeningDays == shelfLifeAfterOpeningDays &&
       other.iconEmoji == iconEmoji &&
-      other.sortOrder == sortOrder;
+      other.sortOrder == sortOrder &&
+      other.storageDomain == storageDomain;
 
   @override
   int get hashCode => Object.hash(
@@ -51,7 +67,9 @@ final class Category {
     catalogKey,
     customName,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     sortOrder,
+    storageDomain,
   );
 }

@@ -24,7 +24,7 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get originManual => 'Von dir ergänzt';
 
   @override
-  String putTickedInFreezer(int count) {
+  String putTickedInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -38,7 +38,7 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get nothingTicked => 'Hake ab, was du gekauft hast';
 
   @override
-  String itemsPutInFreezer(int count) {
+  String itemsPutInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -125,7 +125,7 @@ class RestockLocalizationsDe extends RestockLocalizations {
   String get targetBelowMinimum => 'Das muss mindestens die Mindestmenge sein.';
 
   @override
-  String get noFreezerForBoughtItems =>
+  String get noStoragePlaceForBoughtItems =>
       'Richte zuerst deinen Gefrierschrank ein, dann kannst du die Einkäufe einräumen.';
 
   @override

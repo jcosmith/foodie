@@ -40,7 +40,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
   final TextEditingController _noteController = TextEditingController();
   ProductIdentifier? _productIdentifier;
   CompartmentIdentifier? _compartmentIdentifier;
-  late CalendarDate _frozenOn = ref.read(clockProvider).todayLocal();
+  late CalendarDate _storedOn = ref.read(clockProvider).todayLocal();
   String? _amountError;
   String? _productError;
   bool _isSaving = false;
@@ -113,15 +113,15 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
     });
   }
 
-  Future<void> _chooseFrozenOn() async {
+  Future<void> _chooseStoredOn() async {
     final today = ref.read(clockProvider).todayLocal();
     final chosenDate = await showDatePicker(
       context: context,
-      initialDate: _frozenOn.toLocalDateTime(),
+      initialDate: _storedOn.toLocalDateTime(),
       firstDate: today.addDays(-5 * 366).toLocalDateTime(),
       lastDate: today.toLocalDateTime(),
     );
-    if (chosenDate != null) setState(() => _frozenOn = CalendarDate.fromDateTime(chosenDate));
+    if (chosenDate != null) setState(() => _storedOn = CalendarDate.fromDateTime(chosenDate));
   }
 
   Future<void> _save({
@@ -160,7 +160,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
             productIdentifier: product.identifier,
             compartmentIdentifier: compartmentIdentifier,
             quantity: quantity,
-            frozenOn: _frozenOn,
+            storedOn: _storedOn,
             note: _noteController.text,
           ),
         );
@@ -202,15 +202,15 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
         body: const Center(child: CircularProgressIndicator()),
       );
     }
-    if (!layout.hasFreezer) {
+    if (!layout.hasStoragePlace) {
       return Scaffold(
         appBar: AppBar(title: Text(localizations.addTitle)),
         body: EmptyStateView(
           icon: Icons.kitchen_outlined,
-          title: localizations.noFreezerTitle,
-          message: localizations.noFreezerMessage,
-          actionLabel: localizations.setUpFreezerButton,
-          onActionPressed: () => context.push(StorageLayoutRoutes.newFreezer),
+          title: localizations.noStoragePlaceTitle,
+          message: localizations.noStoragePlaceMessage,
+          actionLabel: localizations.setUpStoragePlaceButton,
+          onActionPressed: () => context.push(StorageLayoutRoutes.newStoragePlace),
         ),
       );
     }
@@ -286,14 +286,14 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
           ),
           const SizedBox(height: FoodieSpacing.large),
           InkWell(
-            onTap: _chooseFrozenOn,
+            onTap: _chooseStoredOn,
             borderRadius: BorderRadius.circular(8),
             child: InputDecorator(
               decoration: InputDecoration(
-                labelText: localizations.frozenOnLabel,
+                labelText: localizations.storedOnLabel,
                 suffixIcon: const Icon(Icons.calendar_today_outlined),
               ),
-              child: Text(context.dateDisplayFormatter.formatMediumDate(_frozenOn)),
+              child: Text(context.dateDisplayFormatter.formatMediumDate(_storedOn)),
             ),
           ),
           const SizedBox(height: FoodieSpacing.large),
@@ -310,7 +310,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
                     size: 12,
                     color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
                   ),
-                  label: Text(nameResolver.compartmentNameWithFreezer(compartment)),
+                  label: Text(nameResolver.compartmentNameWithStoragePlace(compartment)),
                   selected: compartment.identifier == compartmentIdentifier,
                   onSelected: (_) =>
                       setState(() => _compartmentIdentifier = compartment.identifier),

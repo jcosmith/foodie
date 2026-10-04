@@ -49,7 +49,7 @@ class BackupConfigSection extends ConsumerWidget {
         Wrap(
           children: [
             TextButton(
-              onPressed: () => showCsvExportFlow(context, ref, CsvExportKind.freezerContents),
+              onPressed: () => showCsvExportFlow(context, ref, CsvExportKind.stockContents),
               child: Text(localizations.exportContentsButton),
             ),
             TextButton(

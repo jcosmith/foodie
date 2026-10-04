@@ -48,7 +48,7 @@ final class ReplanStorageRemindersUseCase {
             RemindableBatch(
               stockBatchIdentifier: batch.identifier,
               productIdentifier: batch.productIdentifier,
-              frozenOn: batch.frozenOn,
+              storedOn: batch.storedOn,
               storedSince: CalendarDate.fromDateTime(batch.createdAt.toLocal()),
               recommendedMaximumStorageDays: storageDays,
             ),

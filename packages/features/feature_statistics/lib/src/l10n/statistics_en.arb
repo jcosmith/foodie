@@ -121,6 +121,8 @@
   "otherCategories": "Other",
   "reasonTooOld": "Stored too long",
   "reasonFreezerBurn": "Freezer burn",
+  "reasonExpired": "Past its date",
+  "reasonSpoiled": "Gone off",
   "reasonUnwanted": "Nobody wanted it",
   "reasonOther": "Other",
   "reasonNotGiven": "No reason given",
@@ -177,8 +179,8 @@
   "durationNineToTwelveMonths": "9–12 mo",
   "durationOverTwelveMonths": "> 12 mo",
   "sixMonthMarker": "6 mo",
-  "freezerMapTitle": "Freezer map",
-  "freezerMapSubtitle": "Current contents by drawer, coloured by age. Tap to filter.",
+  "storageMapTitle": "Freezer map",
+  "storageMapSubtitle": "Current contents by drawer, coloured by age. Tap to filter.",
   "drawerItems": "{count, plural, =1{1 item} other{{count} items}}",
   "@drawerItems": {
     "placeholders": {

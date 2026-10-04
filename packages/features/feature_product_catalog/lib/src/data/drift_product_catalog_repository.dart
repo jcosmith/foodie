@@ -59,8 +59,10 @@ final class DriftProductCatalogRepository implements ProductCatalogRepository {
     catalogKey: row.catalogKey,
     customName: row.customName,
     recommendedMaximumStorageDays: row.recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: row.shelfLifeAfterOpeningDays,
     iconEmoji: row.iconEmoji,
     sortOrder: row.sortOrder,
+    storageDomain: StorageDomainIdentifier.parse(row.storageDomain),
   );
 
   static CategoryRow _rowFromCategory(Category category) => CategoryRow(
@@ -68,8 +70,10 @@ final class DriftProductCatalogRepository implements ProductCatalogRepository {
     catalogKey: category.catalogKey,
     customName: category.customName,
     recommendedMaximumStorageDays: category.recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: category.shelfLifeAfterOpeningDays,
     iconEmoji: category.iconEmoji,
     sortOrder: category.sortOrder,
+    storageDomain: category.storageDomain.value,
   );
 
   static Product _productFromRow(ProductRow row) {
@@ -85,6 +89,7 @@ final class DriftProductCatalogRepository implements ProductCatalogRepository {
           ? null
           : Quantity(amountInBaseUnits: defaultPackageAmount, unit: canonicalUnit),
       recommendedMaximumStorageDays: row.recommendedMaximumStorageDays,
+      shelfLifeAfterOpeningDays: row.shelfLifeAfterOpeningDays,
       iconEmoji: row.iconEmoji,
       iconImage: switch (row.iconImage) {
         final pngBytes? => ProductIconImage(pngBytes),
@@ -107,6 +112,7 @@ final class DriftProductCatalogRepository implements ProductCatalogRepository {
     canonicalUnit: product.canonicalUnit.storageName,
     defaultPackageQuantity: product.defaultPackageQuantity?.amountInBaseUnits,
     recommendedMaximumStorageDays: product.recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays: product.shelfLifeAfterOpeningDays,
     iconEmoji: product.iconEmoji,
     iconImage: product.iconImage?.pngBytes,
     defaultCompartmentIdentifier: product.defaultCompartmentIdentifier?.value,

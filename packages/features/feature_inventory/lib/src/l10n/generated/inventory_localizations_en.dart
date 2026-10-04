@@ -72,14 +72,14 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
-  String get noFreezerTitle => 'Set up your freezer first';
+  String get noStoragePlaceTitle => 'Set up your freezer first';
 
   @override
-  String get noFreezerMessage =>
+  String get noStoragePlaceMessage =>
       'Tell the app which drawers your freezer has, then add what is inside.';
 
   @override
-  String get setUpFreezerButton => 'Set up freezer';
+  String get setUpStoragePlaceButton => 'Set up freezer';
 
   @override
   String get emptyTitle => 'Your freezer is empty';
@@ -151,6 +151,12 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   String get reasonFreezerBurn => 'Freezer burn';
 
   @override
+  String get reasonExpired => 'Past its date';
+
+  @override
+  String get reasonSpoiled => 'Gone off';
+
+  @override
   String get reasonUnwanted => 'Nobody wanted it';
 
   @override
@@ -217,7 +223,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
-  String get frozenOnLabel => 'Frozen on';
+  String get storedOnLabel => 'Frozen on';
 
   @override
   String get compartmentLabel => 'Drawer';
@@ -246,7 +252,7 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   String get compartmentMissing => 'Choose a drawer.';
 
   @override
-  String get frozenOnInFuture => 'The freezing date cannot be in the future.';
+  String get storedOnInFuture => 'The freezing date cannot be in the future.';
 
   @override
   String get genericFailure => 'That did not work. Please try again.';

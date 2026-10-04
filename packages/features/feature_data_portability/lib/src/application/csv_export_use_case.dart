@@ -11,7 +11,7 @@ import '../domain/csv_writer.dart';
 import 'backup_file_store.dart';
 
 /// The two spreadsheets the app can export.
-enum CsvExportKind { freezerContents, history }
+enum CsvExportKind { stockContents, history }
 
 /// Column headers and names in the app's language; amounts and dates stay
 /// machine-readable (decimal point, ISO 8601) so spreadsheets can compute
@@ -65,7 +65,7 @@ final class CsvExportUseCase {
     final csvText = await buildCsv(kind, texts);
     final dateText = CalendarDate.fromDateTime(_clock.nowLocal()).toIso8601String();
     final fileName = switch (kind) {
-      CsvExportKind.freezerContents => 'freezer-contents-$dateText.csv',
+      CsvExportKind.stockContents => 'freezer-contents-$dateText.csv',
       CsvExportKind.history => 'freezer-history-$dateText.csv',
     };
     return _fileStore.saveFile(
@@ -91,7 +91,7 @@ final class CsvExportUseCase {
         };
 
     return switch (kind) {
-      CsvExportKind.freezerContents => CsvWriter.write(texts.contentsHeader, [
+      CsvExportKind.stockContents => CsvWriter.write(texts.contentsHeader, [
         for (final batch in await _inventory.readActiveBatches())
           [
             productNameOf(batch.productIdentifier),
@@ -104,7 +104,7 @@ final class CsvExportUseCase {
             },
             _amount(batch.quantityRemaining),
             texts.unitSymbol(batch.unit),
-            batch.frozenOn.toIso8601String(),
+            batch.storedOn.toIso8601String(),
             compartmentNames.compartmentNameOf(batch.compartmentIdentifier),
             batch.note ?? '',
           ],

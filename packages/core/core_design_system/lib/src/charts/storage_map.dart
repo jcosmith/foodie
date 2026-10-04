@@ -7,8 +7,8 @@ import '../widgets/storage_age_badge.dart';
 
 /// One drawer of a [FreezerMap].
 @immutable
-final class FreezerMapDrawer {
-  const FreezerMapDrawer({
+final class StorageMapCompartment {
+  const StorageMapCompartment({
     required this.label,
     required this.tagColor,
     required this.itemCountLabel,
@@ -31,10 +31,10 @@ final class FreezerMapDrawer {
 /// its age (UI examples document, phone 9: "Where is the old stuff?").
 /// The items are drawn with a custom painter (decision D7); every drawer is
 /// one tap target.
-class FreezerMap extends StatelessWidget {
-  const FreezerMap({required this.drawers, this.onDrawerTapped, super.key});
+class StorageMap extends StatelessWidget {
+  const StorageMap({required this.drawers, this.onDrawerTapped, super.key});
 
-  final List<FreezerMapDrawer> drawers;
+  final List<StorageMapCompartment> drawers;
   final ValueChanged<int>? onDrawerTapped;
 
   @override

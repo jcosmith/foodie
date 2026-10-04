@@ -145,38 +145,41 @@ void main() {
     expect(batch.openedOn, CalendarDate(2026, 10, 2));
   });
 
-  test('categories carry their storage domain; categories and products a shelf life after opening', () async {
-    final catalogDao = database.productCatalogDao;
-    await catalogDao.insertCategory(
-      const CategoryRow(
-        categoryIdentifier: 'category-2',
-        catalogKey: 'dairyAndEggs',
-        recommendedMaximumStorageDays: 7,
-        shelfLifeAfterOpeningDays: 3,
-        iconEmoji: '🥛',
-        sortOrder: 1,
-        storageDomain: 'fridge',
-      ),
-    );
-    await catalogDao.insertProduct(
-      ProductRow(
-        productIdentifier: 'product-2',
-        categoryIdentifier: 'category-2',
-        catalogKey: 'wholeMilk',
-        canonicalUnit: 'milliliter',
-        recommendedMaximumStorageDays: 10,
-        shelfLifeAfterOpeningDays: 3,
-        isArchived: false,
-        createdAt: createdAt,
-      ),
-    );
-    final category = (await catalogDao.readCategories()).singleWhere(
-      (row) => row.categoryIdentifier == 'category-2',
-    );
-    expect(category.storageDomain, 'fridge');
-    expect(category.shelfLifeAfterOpeningDays, 3);
-    expect((await catalogDao.readProduct('product-2'))!.shelfLifeAfterOpeningDays, 3);
-  });
+  test(
+    'categories carry their storage domain; categories and products a shelf life after opening',
+    () async {
+      final catalogDao = database.productCatalogDao;
+      await catalogDao.insertCategory(
+        const CategoryRow(
+          categoryIdentifier: 'category-2',
+          catalogKey: 'dairyAndEggs',
+          recommendedMaximumStorageDays: 7,
+          shelfLifeAfterOpeningDays: 3,
+          iconEmoji: '🥛',
+          sortOrder: 1,
+          storageDomain: 'fridge',
+        ),
+      );
+      await catalogDao.insertProduct(
+        ProductRow(
+          productIdentifier: 'product-2',
+          categoryIdentifier: 'category-2',
+          catalogKey: 'wholeMilk',
+          canonicalUnit: 'milliliter',
+          recommendedMaximumStorageDays: 10,
+          shelfLifeAfterOpeningDays: 3,
+          isArchived: false,
+          createdAt: createdAt,
+        ),
+      );
+      final category = (await catalogDao.readCategories()).singleWhere(
+        (row) => row.categoryIdentifier == 'category-2',
+      );
+      expect(category.storageDomain, 'fridge');
+      expect(category.shelfLifeAfterOpeningDays, 3);
+      expect((await catalogDao.readProduct('product-2'))!.shelfLifeAfterOpeningDays, 3);
+    },
+  );
 
   test('storage places are stored in the storage_places table', () async {
     final tables = await database

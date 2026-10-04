@@ -107,11 +107,11 @@ abstract class StorageLayoutLocalizations {
   /// **'Freezer layout'**
   String get layoutOverviewTitle;
 
-  /// No description provided for @defaultFreezerName.
+  /// No description provided for @defaultStoragePlaceName.
   ///
   /// In en, this message translates to:
   /// **'{storageKind, select, chest{Chest freezer} fridgeFreezerCompartment{Fridge freezer} other{Freezer}}'**
-  String defaultFreezerName(String storageKind);
+  String defaultStoragePlaceName(String storageKind);
 
   /// No description provided for @defaultCompartmentName.
   ///
@@ -149,23 +149,23 @@ abstract class StorageLayoutLocalizations {
   /// **'{count, plural, =1{1 compartment} other{{count} compartments}}'**
   String shelfCount(int count);
 
-  /// No description provided for @freezerSummary.
+  /// No description provided for @storagePlaceSummary.
   ///
   /// In en, this message translates to:
   /// **'{kind} · {compartments}'**
-  String freezerSummary(String kind, String compartments);
+  String storagePlaceSummary(String kind, String compartments);
 
-  /// No description provided for @addFreezerButton.
+  /// No description provided for @addStoragePlaceButton.
   ///
   /// In en, this message translates to:
   /// **'Add freezer'**
-  String get addFreezerButton;
+  String get addStoragePlaceButton;
 
-  /// No description provided for @newFreezerTitle.
+  /// No description provided for @newStoragePlaceTitle.
   ///
   /// In en, this message translates to:
   /// **'Add a freezer'**
-  String get newFreezerTitle;
+  String get newStoragePlaceTitle;
 
   /// No description provided for @templatePrompt.
   ///
@@ -209,17 +209,17 @@ abstract class StorageLayoutLocalizations {
   /// **'Start with one drawer and add the rest yourself'**
   String get templateEmpty;
 
-  /// No description provided for @freezerNameLabel.
+  /// No description provided for @storagePlaceNameLabel.
   ///
   /// In en, this message translates to:
   /// **'Name (optional)'**
-  String get freezerNameLabel;
+  String get storagePlaceNameLabel;
 
-  /// No description provided for @freezerNameHelper.
+  /// No description provided for @storagePlaceNameHelper.
   ///
   /// In en, this message translates to:
   /// **'For example \"Kitchen\" or \"Cellar\". Leave empty to use \"{defaultName}\".'**
-  String freezerNameHelper(String defaultName);
+  String storagePlaceNameHelper(String defaultName);
 
   /// No description provided for @addCompartmentButton.
   ///
@@ -263,11 +263,11 @@ abstract class StorageLayoutLocalizations {
   /// **'Another drawer already has this name.'**
   String get compartmentNameTaken;
 
-  /// No description provided for @freezerNameTaken.
+  /// No description provided for @storagePlaceNameTaken.
   ///
   /// In en, this message translates to:
   /// **'Another freezer already has this name.'**
-  String get freezerNameTaken;
+  String get storagePlaceNameTaken;
 
   /// No description provided for @nameTooLong.
   ///
@@ -317,65 +317,65 @@ abstract class StorageLayoutLocalizations {
   /// **'Untouched names follow the app language. Names you type stay as you wrote them.'**
   String get layoutHint;
 
-  /// No description provided for @renameFreezerAction.
+  /// No description provided for @renameStoragePlaceAction.
   ///
   /// In en, this message translates to:
   /// **'Rename freezer'**
-  String get renameFreezerAction;
+  String get renameStoragePlaceAction;
 
-  /// No description provided for @renameFreezerDialogTitle.
+  /// No description provided for @renameStoragePlaceDialogTitle.
   ///
   /// In en, this message translates to:
   /// **'Rename freezer'**
-  String get renameFreezerDialogTitle;
+  String get renameStoragePlaceDialogTitle;
 
-  /// No description provided for @removeFreezerAction.
+  /// No description provided for @removeStoragePlaceAction.
   ///
   /// In en, this message translates to:
   /// **'Remove freezer'**
-  String get removeFreezerAction;
+  String get removeStoragePlaceAction;
 
-  /// No description provided for @removeFreezerDialogTitle.
+  /// No description provided for @removeStoragePlaceDialogTitle.
   ///
   /// In en, this message translates to:
   /// **'Remove {name}?'**
-  String removeFreezerDialogTitle(String name);
+  String removeStoragePlaceDialogTitle(String name);
 
-  /// No description provided for @removeFreezerDialogText.
+  /// No description provided for @removeStoragePlaceDialogText.
   ///
   /// In en, this message translates to:
   /// **'It disappears from the app. Its drawers are kept for your statistics.'**
-  String get removeFreezerDialogText;
+  String get removeStoragePlaceDialogText;
 
-  /// No description provided for @freezerNotEmpty.
+  /// No description provided for @storagePlaceNotEmpty.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{Take out or move the 1 item in this freezer first.} other{Take out or move the {count} items in this freezer first.}}'**
-  String freezerNotEmpty(int count);
+  String storagePlaceNotEmpty(int count);
 
-  /// No description provided for @lastFreezerCannotBeRemoved.
+  /// No description provided for @lastStoragePlaceCannotBeRemoved.
   ///
   /// In en, this message translates to:
   /// **'You need at least one freezer.'**
-  String get lastFreezerCannotBeRemoved;
+  String get lastStoragePlaceCannotBeRemoved;
 
-  /// No description provided for @freezerNotFound.
+  /// No description provided for @storagePlaceNotFound.
   ///
   /// In en, this message translates to:
   /// **'This freezer was removed.'**
-  String get freezerNotFound;
+  String get storagePlaceNotFound;
 
-  /// No description provided for @noFreezerTitle.
+  /// No description provided for @noStoragePlaceTitle.
   ///
   /// In en, this message translates to:
   /// **'No freezer yet'**
-  String get noFreezerTitle;
+  String get noStoragePlaceTitle;
 
-  /// No description provided for @noFreezerMessage.
+  /// No description provided for @noStoragePlaceMessage.
   ///
   /// In en, this message translates to:
   /// **'Add your freezer and its drawers, then start filling it.'**
-  String get noFreezerMessage;
+  String get noStoragePlaceMessage;
 
   /// No description provided for @genericFailure.
   ///

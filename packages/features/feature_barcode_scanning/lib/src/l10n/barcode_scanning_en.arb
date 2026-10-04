@@ -10,8 +10,8 @@
   "scannerHint": "Hold the barcode inside the frame",
   "scannerPrivacy": "Scanned on this phone. Nothing is sent anywhere.",
   "recognized": "Recognised",
-  "amountInFreezer": "{amount} in the freezer",
-  "@amountInFreezer": {
+  "amountInStoragePlace": "{amount} in the freezer",
+  "@amountInStoragePlace": {
     "placeholders": {
       "amount": {
         "type": "String"
@@ -52,8 +52,8 @@
       }
     }
   },
-  "bagsInFreezer": "{count, plural, =1{1 bag in the freezer. Take from it?} other{{count} bags in the freezer. Take from the oldest?}}",
-  "@bagsInFreezer": {
+  "bagsInStoragePlace": "{count, plural, =1{1 bag in the freezer. Take from it?} other{{count} bags in the freezer. Take from the oldest?}}",
+  "@bagsInStoragePlace": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -62,7 +62,7 @@
   },
   "chooseAmount": "Choose amount",
   "otherBags": "Or another bag",
-  "notInFreezer": "None of this product is in the freezer.",
+  "notInStoragePlace": "None of this product is in the freezer.",
   "unknownCode": "New code {code}. Which product is this?",
   "@unknownCode": {
     "placeholders": {
@@ -88,7 +88,7 @@
     }
   },
   "amountNeeded": "Amount needed",
-  "noFreezerYet": "Set up a freezer first",
+  "noStoragePlaceYet": "Set up a freezer first",
   "putAwayButton": "{count, plural, =1{Put 1 item in the freezer} other{Put {count} items in the freezer}}",
   "@putAwayButton": {
     "placeholders": {

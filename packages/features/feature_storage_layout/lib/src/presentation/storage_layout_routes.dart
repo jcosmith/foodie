@@ -1,17 +1,17 @@
 import 'package:go_router/go_router.dart';
 
-import '../domain/freezer.dart';
-import 'freezer_layout_editor_screen.dart';
-import 'freezer_template_picker_screen.dart';
+import '../domain/storage_place.dart';
 import 'storage_layout_overview_screen.dart';
+import 'storage_place_editor_screen.dart';
+import 'storage_template_picker_screen.dart';
 
 /// Paths of the storage layout screens, for other features to link to.
 abstract final class StorageLayoutRoutes {
   static const String overview = '/storage_layout';
-  static const String newFreezer = '/storage_layout/freezers/new';
+  static const String newStoragePlace = '/storage_layout/places/new';
 
-  static String freezerEditor(FreezerIdentifier freezerIdentifier) =>
-      '/storage_layout/freezers/${Uri.encodeComponent(freezerIdentifier.value)}';
+  static String storagePlaceEditor(StoragePlaceIdentifier storagePlaceIdentifier) =>
+      '/storage_layout/places/${Uri.encodeComponent(storagePlaceIdentifier.value)}';
 }
 
 List<RouteBase> buildStorageLayoutRoutes() => [
@@ -19,14 +19,13 @@ List<RouteBase> buildStorageLayoutRoutes() => [
     path: StorageLayoutRoutes.overview,
     builder: (context, state) => const StorageLayoutOverviewScreen(),
     routes: [
+      GoRoute(path: 'places/new', builder: (context, state) => const StorageTemplatePickerScreen()),
       GoRoute(
-        path: 'freezers/new',
-        builder: (context, state) => const FreezerTemplatePickerScreen(),
-      ),
-      GoRoute(
-        path: 'freezers/:freezerIdentifier',
-        builder: (context, state) => FreezerLayoutEditorScreen(
-          freezerIdentifier: FreezerIdentifier(state.pathParameters['freezerIdentifier']!),
+        path: 'places/:storagePlaceIdentifier',
+        builder: (context, state) => StoragePlaceEditorScreen(
+          storagePlaceIdentifier: StoragePlaceIdentifier(
+            state.pathParameters['storagePlaceIdentifier']!,
+          ),
         ),
       ),
     ],

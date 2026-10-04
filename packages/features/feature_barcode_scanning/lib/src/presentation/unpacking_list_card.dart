@@ -68,11 +68,11 @@ class UnpackingListCard extends ConsumerWidget {
                     : ProductVisual(product: entry.product, catalog: catalog, size: 32),
                 title: Text(context.productDisplayNameResolver.productName(entry.product)),
                 subtitle: Text(switch ((entry.quantity, entry.compartment)) {
-                  (_, null) => localizations.noFreezerYet,
+                  (_, null) => localizations.noStoragePlaceYet,
                   (null, _) => localizations.amountNeeded,
                   (final quantity?, final compartment?) =>
                     '${quantityFormatter.format(quantity)} · '
-                        '${nameResolver?.compartmentNameWithFreezer(compartment) ?? ''}',
+                        '${nameResolver?.compartmentNameWithStoragePlace(compartment) ?? ''}',
                 }),
                 trailing: IconButton(
                   tooltip: localizations.removeFromList,

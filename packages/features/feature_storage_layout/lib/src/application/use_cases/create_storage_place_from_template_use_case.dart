@@ -3,17 +3,17 @@ import 'package:core_events/core_events.dart';
 import 'package:core_foundation/core_foundation.dart';
 
 import '../../domain/compartment.dart';
-import '../../domain/freezer.dart';
-import '../../domain/freezer_template.dart';
 import '../../domain/layout_default_names.dart';
 import '../../domain/layout_name_policy.dart';
 import '../../domain/storage_layout_events.dart';
 import '../../domain/storage_layout_failure.dart';
 import '../../domain/storage_layout_repository.dart';
+import '../../domain/storage_place.dart';
+import '../../domain/storage_template.dart';
 
-/// Adds a freezer with the compartments of a template, at the end of the list.
-final class CreateFreezerFromTemplateUseCase {
-  const CreateFreezerFromTemplateUseCase({
+/// Adds a storage place with the compartments of a template, at the end of the list.
+final class CreateStoragePlaceFromTemplateUseCase {
+  const CreateStoragePlaceFromTemplateUseCase({
     required StorageLayoutRepository repository,
     required TransactionRunner transactionRunner,
     required DomainEventBus domainEventBus,
@@ -32,34 +32,34 @@ final class CreateFreezerFromTemplateUseCase {
   final IdentifierGenerator _identifierGenerator;
 
   /// An empty [enteredName] keeps the translated default name.
-  Future<Result<FreezerIdentifier, StorageLayoutFailure>> execute({
-    required FreezerTemplate template,
+  Future<Result<StoragePlaceIdentifier, StorageLayoutFailure>> execute({
+    required StorageTemplate template,
     required LayoutDefaultNames defaultNames,
     String enteredName = '',
   }) async {
-    final existingFreezers = await _repository.readActiveFreezers();
+    final existingStoragePlaces = await _repository.readActiveStoragePlaces();
     final nameValidation = LayoutNamePolicy.validate(
       enteredName: enteredName,
       siblingDisplayNames: [
-        for (final freezer in existingFreezers)
-          freezer.customName ?? defaultNames.freezerName(freezer.storageKind),
+        for (final storagePlace in existingStoragePlaces)
+          storagePlace.customName ?? defaultNames.storagePlaceName(storagePlace.storageKind),
       ],
     );
     if (nameValidation case FailedResult(:final failure)) return Result.failure(failure);
 
     final createdAt = _clock.nowUtc();
-    final freezer = Freezer(
+    final storagePlace = StoragePlace(
       identifier: _identifierGenerator.createIdentifier(),
       storageKind: template.storageKind,
       customName: nameValidation.valueOrNull,
-      sortOrder: existingFreezers.isEmpty ? 0 : existingFreezers.last.sortOrder + 1,
+      sortOrder: existingStoragePlaces.isEmpty ? 0 : existingStoragePlaces.last.sortOrder + 1,
       createdAt: createdAt,
     );
     final compartments = [
       for (var number = 1; number <= template.compartmentCount; number++)
         Compartment(
           identifier: _identifierGenerator.createIdentifier(),
-          freezerIdentifier: freezer.identifier,
+          storagePlaceIdentifier: storagePlace.identifier,
           defaultNumber: number,
           colorTagIndex: defaultColorTagIndexFor(number),
           sortOrder: number - 1,
@@ -68,7 +68,7 @@ final class CreateFreezerFromTemplateUseCase {
     ];
 
     await _transactionRunner.runInTransaction(() async {
-      await _repository.insertFreezer(freezer);
+      await _repository.insertStoragePlace(storagePlace);
       for (final compartment in compartments) {
         await _repository.insertCompartment(compartment);
       }
@@ -77,11 +77,11 @@ final class CreateFreezerFromTemplateUseCase {
       await _domainEventBus.publish(
         CompartmentCreated(
           compartmentIdentifier: compartment.identifier,
-          freezerIdentifier: freezer.identifier,
+          storagePlaceIdentifier: storagePlace.identifier,
           occurredAt: createdAt,
         ),
       );
     }
-    return Result.success(freezer.identifier);
+    return Result.success(storagePlace.identifier);
   }
 }

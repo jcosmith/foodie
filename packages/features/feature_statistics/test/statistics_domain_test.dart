@@ -280,6 +280,8 @@ void main() {
       expect(analysis.discardedItemsByReason, [
         (StatisticsDiscardReason.tooOld, 0),
         (StatisticsDiscardReason.freezerBurn, 1),
+        (StatisticsDiscardReason.expired, 0),
+        (StatisticsDiscardReason.spoiled, 0),
         (StatisticsDiscardReason.unwanted, 0),
         (StatisticsDiscardReason.other, 0),
       ]);

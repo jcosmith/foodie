@@ -7,7 +7,7 @@ export 'src/application_database.dart'
         ApplicationDatabase,
         CategoryRow,
         CompartmentRow,
-        FreezerRow,
+        StoragePlaceRow,
         InventoryMovementRow,
         ItemPictureRow,
         ProductBarcodeRow,

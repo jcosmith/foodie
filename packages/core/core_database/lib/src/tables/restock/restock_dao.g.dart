@@ -5,7 +5,7 @@ part of 'restock_dao.dart';
 // ignore_for_file: type=lint
 mixin _$RestockDaoMixin on DatabaseAccessor<ApplicationDatabase> {
   $CategoriesTable get categories => attachedDatabase.categories;
-  $FreezersTable get freezers => attachedDatabase.freezers;
+  $StoragePlacesTable get storagePlaces => attachedDatabase.storagePlaces;
   $CompartmentsTable get compartments => attachedDatabase.compartments;
   $ProductsTable get products => attachedDatabase.products;
   $RestockRulesTable get restockRules => attachedDatabase.restockRules;
@@ -19,8 +19,8 @@ class RestockDaoManager {
   RestockDaoManager(this._db);
   $$CategoriesTableTableManager get categories =>
       $$CategoriesTableTableManager(_db.attachedDatabase, _db.categories);
-  $$FreezersTableTableManager get freezers =>
-      $$FreezersTableTableManager(_db.attachedDatabase, _db.freezers);
+  $$StoragePlacesTableTableManager get storagePlaces =>
+      $$StoragePlacesTableTableManager(_db.attachedDatabase, _db.storagePlaces);
   $$CompartmentsTableTableManager get compartments =>
       $$CompartmentsTableTableManager(_db.attachedDatabase, _db.compartments);
   $$ProductsTableTableManager get products =>

@@ -57,7 +57,7 @@ class _SheetHeader extends ConsumerWidget {
         quantityFormatter.format(batch.quantityRemaining),
         quantityFormatter.format(batch.initialQuantity),
       ),
-      context.dateDisplayFormatter.formatMediumDate(batch.frozenOn),
+      context.dateDisplayFormatter.formatMediumDate(batch.storedOn),
       context.compartmentDisplayNameResolver(layout).compartmentNameOf(batch.compartmentIdentifier),
     ].where((detail) => detail.isNotEmpty);
     final itemVisualProvider = ref.watch(enabledItemVisualProvider);
@@ -332,7 +332,7 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
                     size: 12,
                     color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
                   ),
-                  label: Text(nameResolver.compartmentNameWithFreezer(compartment)),
+                  label: Text(nameResolver.compartmentNameWithStoragePlace(compartment)),
                   selected: compartment.identifier == selectedDestination,
                   onSelected: (_) => setState(() => _destination = compartment.identifier),
                 ),

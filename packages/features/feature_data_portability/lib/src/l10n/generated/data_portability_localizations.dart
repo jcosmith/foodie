@@ -287,11 +287,11 @@ abstract class DataPortabilityLocalizations {
   /// **'Unit'**
   String get csvColumnUnit;
 
-  /// No description provided for @csvColumnFrozenOn.
+  /// No description provided for @csvColumnStoredOn.
   ///
   /// In en, this message translates to:
   /// **'Frozen on'**
-  String get csvColumnFrozenOn;
+  String get csvColumnStoredOn;
 
   /// No description provided for @csvColumnDrawer.
   ///
@@ -364,6 +364,18 @@ abstract class DataPortabilityLocalizations {
   /// In en, this message translates to:
   /// **'Freezer burn'**
   String get reasonFreezerBurn;
+
+  /// No description provided for @reasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Past its date'**
+  String get reasonExpired;
+
+  /// No description provided for @reasonSpoiled.
+  ///
+  /// In en, this message translates to:
+  /// **'Gone off'**
+  String get reasonSpoiled;
 
   /// No description provided for @reasonUnwanted.
   ///

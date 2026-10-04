@@ -131,17 +131,17 @@ abstract class OnboardingLocalizations {
   /// **'Back'**
   String get backButton;
 
-  /// No description provided for @freezerTitle.
+  /// No description provided for @storagePlaceTitle.
   ///
   /// In en, this message translates to:
   /// **'Your freezer'**
-  String get freezerTitle;
+  String get storagePlaceTitle;
 
-  /// No description provided for @freezerPrompt.
+  /// No description provided for @storagePlacePrompt.
   ///
   /// In en, this message translates to:
   /// **'Which one is closest to yours? You can rename, add and remove drawers later in Config.'**
-  String get freezerPrompt;
+  String get storagePlacePrompt;
 
   /// No description provided for @privacyTitle.
   ///

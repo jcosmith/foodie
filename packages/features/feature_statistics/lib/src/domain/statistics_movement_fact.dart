@@ -9,6 +9,8 @@ import 'statistics_filter.dart';
 enum StatisticsDiscardReason {
   tooOld,
   freezerBurn,
+  expired,
+  spoiled,
   unwanted,
   other,
 

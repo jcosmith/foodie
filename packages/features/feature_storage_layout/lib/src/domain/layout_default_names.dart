@@ -4,7 +4,7 @@ import 'storage_kind.dart';
 /// current localizations, so untouched names follow the app language while
 /// names the user typed stay as written.
 abstract interface class LayoutDefaultNames {
-  String freezerName(StorageKind storageKind);
+  String storagePlaceName(StorageKind storageKind);
 
   /// "Drawer 3", "Basket 2" or "Compartment 1".
   String compartmentName(StorageKind storageKind, int number);

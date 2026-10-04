@@ -244,6 +244,12 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get reasonFreezerBurn => 'Gefrierbrand';
 
   @override
+  String get reasonExpired => 'Abgelaufen';
+
+  @override
+  String get reasonSpoiled => 'Verdorben';
+
+  @override
   String get reasonUnwanted => 'Wollte keiner';
 
   @override
@@ -334,10 +340,10 @@ class StatisticsLocalizationsDe extends StatisticsLocalizations {
   String get sixMonthMarker => '6 Mon.';
 
   @override
-  String get freezerMapTitle => 'Gefrierfach-Karte';
+  String get storageMapTitle => 'Gefrierfach-Karte';
 
   @override
-  String get freezerMapSubtitle =>
+  String get storageMapSubtitle =>
       'Aktueller Inhalt je Schublade, nach Alter gefärbt. Tippen zum Filtern.';
 
   @override

@@ -38,7 +38,7 @@ part 'application_database.g.dart';
   tables: [
     PreferenceEntries,
     SchemaMetadataEntries,
-    Freezers,
+    StoragePlaces,
     Compartments,
     Categories,
     Products,
@@ -75,7 +75,7 @@ class ApplicationDatabase extends _$ApplicationDatabase {
   final String _applicationVersion;
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -119,6 +119,23 @@ class ApplicationDatabase extends _$ApplicationDatabase {
       from7To8: (migrator, schema) async {
         // Issue #21: a picture as a product's icon.
         await migrator.addColumn(schema.products, schema.products.iconImage);
+      },
+      from8To9: (migrator, schema) async {
+        // Household scope (architecture 10.7 and 10.8): neutral names, the
+        // storage domain of categories, opened packages and shelf life
+        // after opening. No data changes shape.
+        await customStatement('ALTER TABLE freezers RENAME TO storage_places');
+        await customStatement(
+          'ALTER TABLE storage_places RENAME COLUMN freezer_identifier TO storage_place_identifier',
+        );
+        await customStatement(
+          'ALTER TABLE compartments RENAME COLUMN freezer_identifier TO storage_place_identifier',
+        );
+        await customStatement('ALTER TABLE stock_batches RENAME COLUMN frozen_on TO stored_on');
+        await migrator.addColumn(schema.stockBatches, schema.stockBatches.openedOn);
+        await migrator.addColumn(schema.categories, schema.categories.storageDomain);
+        await migrator.addColumn(schema.categories, schema.categories.shelfLifeAfterOpeningDays);
+        await migrator.addColumn(schema.products, schema.products.shelfLifeAfterOpeningDays);
       },
     ),
     beforeOpen: (openingDetails) async {

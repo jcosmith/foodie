@@ -39,7 +39,7 @@ class BarcodeScanningLocalizationsEn extends BarcodeScanningLocalizations {
   String get recognized => 'Recognised';
 
   @override
-  String amountInFreezer(String amount) {
+  String amountInStoragePlace(String amount) {
     return '$amount in the freezer';
   }
 
@@ -62,7 +62,7 @@ class BarcodeScanningLocalizationsEn extends BarcodeScanningLocalizations {
   }
 
   @override
-  String bagsInFreezer(int count) {
+  String bagsInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -79,7 +79,7 @@ class BarcodeScanningLocalizationsEn extends BarcodeScanningLocalizations {
   String get otherBags => 'Or another bag';
 
   @override
-  String get notInFreezer => 'None of this product is in the freezer.';
+  String get notInStoragePlace => 'None of this product is in the freezer.';
 
   @override
   String unknownCode(String code) {
@@ -127,7 +127,7 @@ class BarcodeScanningLocalizationsEn extends BarcodeScanningLocalizations {
   String get amountNeeded => 'Amount needed';
 
   @override
-  String get noFreezerYet => 'Set up a freezer first';
+  String get noStoragePlaceYet => 'Set up a freezer first';
 
   @override
   String putAwayButton(int count) {

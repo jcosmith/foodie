@@ -22,7 +22,7 @@ class InsightDetailsScreen extends ConsumerWidget {
         ActivityCalendarChartCard(analysis: analysis),
         WeekdayPatternChartCard(analysis: analysis),
         StorageDurationChartCard(analysis: analysis),
-        FreezerMapChartCard(filter: analysis.filter),
+        StorageMapChartCard(filter: analysis.filter),
         ...buildContributedInsightCharts(ref),
       ],
     );

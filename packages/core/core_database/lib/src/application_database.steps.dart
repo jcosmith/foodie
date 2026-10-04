@@ -2552,6 +2552,458 @@ i1.GeneratedColumn<i2.Uint8List> _column_71(String aliasedName) =>
       type: i1.DriftSqlType.blob,
       $customConstraints: 'NULL',
     );
+
+final class Schema9 extends i0.VersionedSchema {
+  Schema9({required super.database}) : super(version: 9);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    preferenceEntries,
+    schemaMetadata,
+    storagePlaces,
+    compartments,
+    categories,
+    products,
+    stockBatches,
+    inventoryMovements,
+    scheduledNotificationRecords,
+    restockRules,
+    shoppingListEntries,
+    itemPictures,
+    productBarcodes,
+    inventoryMovementsByTime,
+    inventoryMovementsByProductAndTime,
+    inventoryMovementsByBatch,
+    itemPicturesByOwner,
+    productBarcodesByProduct,
+  ];
+  late final Shape0 preferenceEntries = Shape0(
+    source: i0.VersionedTable(
+      entityName: 'preference_entries',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(preference_key)'],
+      columns: [_column_0, _column_1, _column_2],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape1 schemaMetadata = Shape1(
+    source: i0.VersionedTable(
+      entityName: 'schema_metadata',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(singleton_identifier)'],
+      columns: [_column_3, _column_4, _column_5, _column_6],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape15 storagePlaces = Shape15(
+    source: i0.VersionedTable(
+      entityName: 'storage_places',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(storage_place_identifier)'],
+      columns: [
+        _column_72,
+        _column_8,
+        _column_9,
+        _column_10,
+        _column_11,
+        _column_12,
+        _column_13,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape16 compartments = Shape16(
+    source: i0.VersionedTable(
+      entityName: 'compartments',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(compartment_identifier)'],
+      columns: [
+        _column_14,
+        _column_73,
+        _column_16,
+        _column_9,
+        _column_17,
+        _column_11,
+        _column_12,
+        _column_13,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape17 categories = Shape17(
+    source: i0.VersionedTable(
+      entityName: 'categories',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(category_identifier)'],
+      columns: [
+        _column_18,
+        _column_19,
+        _column_9,
+        _column_20,
+        _column_74,
+        _column_21,
+        _column_11,
+        _column_75,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape18 products = Shape18(
+    source: i0.VersionedTable(
+      entityName: 'products',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(product_identifier)'],
+      columns: [
+        _column_22,
+        _column_23,
+        _column_19,
+        _column_9,
+        _column_24,
+        _column_25,
+        _column_26,
+        _column_74,
+        _column_27,
+        _column_71,
+        _column_70,
+        _column_12,
+        _column_13,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape19 stockBatches = Shape19(
+    source: i0.VersionedTable(
+      entityName: 'stock_batches',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(stock_batch_identifier)'],
+      columns: [
+        _column_28,
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_32,
+        _column_33,
+        _column_34,
+        _column_76,
+        _column_36,
+        _column_77,
+        _column_37,
+        _column_13,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape7 inventoryMovements = Shape7(
+    source: i0.VersionedTable(
+      entityName: 'inventory_movements',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(movement_identifier)'],
+      columns: [
+        _column_38,
+        _column_39,
+        _column_29,
+        _column_30,
+        _column_40,
+        _column_41,
+        _column_42,
+        _column_43,
+        _column_44,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape8 scheduledNotificationRecords = Shape8(
+    source: i0.VersionedTable(
+      entityName: 'scheduled_notification_records',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(notification_identifier)'],
+      columns: [_column_45, _column_46, _column_47],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape9 restockRules = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'restock_rules',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(product_identifier)'],
+      columns: [
+        _column_29,
+        _column_31,
+        _column_48,
+        _column_49,
+        _column_50,
+        _column_2,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape10 shoppingListEntries = Shape10(
+    source: i0.VersionedTable(
+      entityName: 'shopping_list_entries',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(shopping_list_entry_identifier)'],
+      columns: [
+        _column_51,
+        _column_52,
+        _column_53,
+        _column_54,
+        _column_55,
+        _column_56,
+        _column_13,
+        _column_57,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 itemPictures = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'item_pictures',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(item_picture_identifier)'],
+      columns: [
+        _column_58,
+        _column_59,
+        _column_60,
+        _column_61,
+        _column_62,
+        _column_63,
+        _column_64,
+        _column_65,
+        _column_13,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 productBarcodes = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'product_barcodes',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(barcode_value)'],
+      columns: [_column_66, _column_29, _column_67, _column_68, _column_69],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Index inventoryMovementsByTime = i1.Index(
+    'inventory_movements_by_time',
+    'CREATE INDEX inventory_movements_by_time ON inventory_movements (occurred_at)',
+  );
+  final i1.Index inventoryMovementsByProductAndTime = i1.Index(
+    'inventory_movements_by_product_and_time',
+    'CREATE INDEX inventory_movements_by_product_and_time ON inventory_movements (product_identifier, occurred_at)',
+  );
+  final i1.Index inventoryMovementsByBatch = i1.Index(
+    'inventory_movements_by_batch',
+    'CREATE INDEX inventory_movements_by_batch ON inventory_movements (stock_batch_identifier)',
+  );
+  final i1.Index itemPicturesByOwner = i1.Index(
+    'item_pictures_by_owner',
+    'CREATE UNIQUE INDEX item_pictures_by_owner ON item_pictures (owner_kind, owner_identifier)',
+  );
+  final i1.Index productBarcodesByProduct = i1.Index(
+    'product_barcodes_by_product',
+    'CREATE INDEX product_barcodes_by_product ON product_barcodes (product_identifier)',
+  );
+}
+
+class Shape15 extends i0.VersionedTable {
+  Shape15({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get storagePlaceIdentifier =>
+      columnsByName['storage_place_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get defaultNameKey =>
+      columnsByName['default_name_key']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get customName =>
+      columnsByName['custom_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get storageKind =>
+      columnsByName['storage_kind']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get sortOrder =>
+      columnsByName['sort_order']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get isArchived =>
+      columnsByName['is_archived']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_72(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'storage_place_identifier',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+
+class Shape16 extends i0.VersionedTable {
+  Shape16({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get compartmentIdentifier =>
+      columnsByName['compartment_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get storagePlaceIdentifier =>
+      columnsByName['storage_place_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get defaultNumber =>
+      columnsByName['default_number']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get customName =>
+      columnsByName['custom_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get colorTagIndex =>
+      columnsByName['color_tag_index']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get sortOrder =>
+      columnsByName['sort_order']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get isArchived =>
+      columnsByName['is_archived']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_73(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'storage_place_identifier',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints:
+          'NOT NULL REFERENCES storage_places(storage_place_identifier)',
+    );
+
+class Shape17 extends i0.VersionedTable {
+  Shape17({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get categoryIdentifier =>
+      columnsByName['category_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get catalogKey =>
+      columnsByName['catalog_key']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get customName =>
+      columnsByName['custom_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get recommendedMaximumStorageDays =>
+      columnsByName['recommended_maximum_storage_days']!
+          as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get shelfLifeAfterOpeningDays =>
+      columnsByName['shelf_life_after_opening_days']!
+          as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get iconEmoji =>
+      columnsByName['icon_emoji']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get sortOrder =>
+      columnsByName['sort_order']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get storageDomain =>
+      columnsByName['storage_domain']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<int> _column_74(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'shelf_life_after_opening_days',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NULL',
+    );
+i1.GeneratedColumn<String> _column_75(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'storage_domain',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL DEFAULT \'freezer\'',
+      defaultValue: const i1.CustomExpression('\'freezer\''),
+    );
+
+class Shape18 extends i0.VersionedTable {
+  Shape18({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get productIdentifier =>
+      columnsByName['product_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get categoryIdentifier =>
+      columnsByName['category_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get catalogKey =>
+      columnsByName['catalog_key']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get customName =>
+      columnsByName['custom_name']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get canonicalUnit =>
+      columnsByName['canonical_unit']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get defaultPackageQuantity =>
+      columnsByName['default_package_quantity']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get recommendedMaximumStorageDays =>
+      columnsByName['recommended_maximum_storage_days']!
+          as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get shelfLifeAfterOpeningDays =>
+      columnsByName['shelf_life_after_opening_days']!
+          as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get iconEmoji =>
+      columnsByName['icon_emoji']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<i2.Uint8List> get iconImage =>
+      columnsByName['icon_image']! as i1.GeneratedColumn<i2.Uint8List>;
+  i1.GeneratedColumn<String> get defaultCompartmentIdentifier =>
+      columnsByName['default_compartment_identifier']!
+          as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get isArchived =>
+      columnsByName['is_archived']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+}
+
+class Shape19 extends i0.VersionedTable {
+  Shape19({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get stockBatchIdentifier =>
+      columnsByName['stock_batch_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get productIdentifier =>
+      columnsByName['product_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get compartmentIdentifier =>
+      columnsByName['compartment_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get quantityUnit =>
+      columnsByName['quantity_unit']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get initialQuantity =>
+      columnsByName['initial_quantity']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get quantityRemaining =>
+      columnsByName['quantity_remaining']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get parentBatchIdentifier =>
+      columnsByName['parent_batch_identifier']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get storedOn =>
+      columnsByName['stored_on']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get bestBeforeOn =>
+      columnsByName['best_before_on']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get openedOn =>
+      columnsByName['opened_on']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get note =>
+      columnsByName['note']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+}
+
+i1.GeneratedColumn<String> _column_76(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'stored_on',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NOT NULL',
+    );
+i1.GeneratedColumn<String> _column_77(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'opened_on',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
@@ -2560,6 +3012,7 @@ i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
   required Future<void> Function(i1.Migrator m, Schema7 schema) from6To7,
   required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
+  required Future<void> Function(i1.Migrator m, Schema9 schema) from8To9,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -2598,6 +3051,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from7To8(migrator, schema);
         return 8;
+      case 8:
+        final schema = Schema9(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from8To9(migrator, schema);
+        return 9;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -2612,6 +3070,7 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema6 schema) from5To6,
   required Future<void> Function(i1.Migrator m, Schema7 schema) from6To7,
   required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
+  required Future<void> Function(i1.Migrator m, Schema9 schema) from8To9,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
@@ -2621,5 +3080,6 @@ i1.OnUpgrade stepByStep({
     from5To6: from5To6,
     from6To7: from6To7,
     from7To8: from7To8,
+    from8To9: from8To9,
   ),
 );

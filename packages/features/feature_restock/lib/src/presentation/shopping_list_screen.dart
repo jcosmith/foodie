@@ -51,12 +51,12 @@ class ShoppingListScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
               child: FilledButton.icon(
-                onPressed: tickedCount == 0 ? null : () => _putTickedItemsInFreezer(context, ref),
+                onPressed: tickedCount == 0 ? null : () => _putTickedItemsAway(context, ref),
                 icon: const Icon(Icons.kitchen_outlined),
                 label: Text(
                   tickedCount == 0
                       ? localizations.nothingTicked
-                      : localizations.putTickedInFreezer(tickedCount),
+                      : localizations.putTickedInStoragePlace(tickedCount),
                 ),
               ),
             ),
@@ -72,12 +72,12 @@ class ShoppingListScreen extends ConsumerWidget {
     await ref.read(addProductToShoppingListUseCaseProvider).execute(productIdentifier);
   }
 
-  Future<void> _putTickedItemsInFreezer(BuildContext context, WidgetRef ref) async {
+  Future<void> _putTickedItemsAway(BuildContext context, WidgetRef ref) async {
     final localizations = RestockLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final result = await ref.read(putTickedItemsInFreezerUseCaseProvider).execute();
+    final result = await ref.read(putTickedItemsAwayUseCaseProvider).execute();
     final message = switch (result) {
-      SuccessfulResult(value: final addedBatchCount) => localizations.itemsPutInFreezer(
+      SuccessfulResult(value: final addedBatchCount) => localizations.itemsPutInStoragePlace(
         addedBatchCount,
       ),
       FailedResult(:final failure) => localizations.describeFailure(failure),

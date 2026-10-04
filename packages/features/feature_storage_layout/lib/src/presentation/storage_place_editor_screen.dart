@@ -8,21 +8,21 @@ import 'package:go_router/go_router.dart';
 import '../application/storage_layout_providers.dart';
 import '../domain/compartment.dart';
 import '../domain/compartment_display_name_resolver.dart';
-import '../domain/freezer.dart';
 import '../domain/layout_name_policy.dart';
 import '../domain/storage_kind.dart';
 import '../domain/storage_layout.dart';
+import '../domain/storage_place.dart';
 import '../l10n/generated/storage_layout_localizations.dart';
 import 'layout_localization.dart';
 
-enum _FreezerMenuAction { rename, remove }
+enum _StoragePlaceMenuAction { rename, remove }
 
-/// Edits one freezer (UI example phone 11): rename drawers inline, reorder
-/// them with arrows, change their colour tag, add and remove drawers.
-class FreezerLayoutEditorScreen extends ConsumerWidget {
-  const FreezerLayoutEditorScreen({required this.freezerIdentifier, super.key});
+/// Edits one storage place (UI example phone 11): rename compartments inline, reorder
+/// them with arrows, change their colour tag, add and remove compartments.
+class StoragePlaceEditorScreen extends ConsumerWidget {
+  const StoragePlaceEditorScreen({required this.storagePlaceIdentifier, super.key});
 
-  final FreezerIdentifier freezerIdentifier;
+  final StoragePlaceIdentifier storagePlaceIdentifier;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,45 +34,53 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
         body: const Center(child: CircularProgressIndicator()),
       );
     }
-    final freezerLayout = layout.freezerLayoutOf(freezerIdentifier);
-    if (freezerLayout == null) {
+    final storagePlaceLayout = layout.storagePlaceLayoutOf(storagePlaceIdentifier);
+    if (storagePlaceLayout == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: EmptyStateView(icon: Icons.kitchen_outlined, title: localizations.freezerNotFound),
+        body: EmptyStateView(
+          icon: Icons.kitchen_outlined,
+          title: localizations.storagePlaceNotFound,
+        ),
       );
     }
     final itemCounts = ref.watch(compartmentItemCountsProvider).value ?? const {};
     final nameResolver = context.compartmentDisplayNameResolver(layout);
-    final freezer = freezerLayout.freezer;
-    final compartments = freezerLayout.compartments;
-    final archivedCompartments = layout.archivedCompartmentsOf(freezerIdentifier);
+    final storagePlace = storagePlaceLayout.storagePlace;
+    final compartments = storagePlaceLayout.compartments;
+    final archivedCompartments = layout.archivedCompartmentsOf(storagePlaceIdentifier);
 
     return Scaffold(
       appBar: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(nameResolver.freezerName(freezer)),
+            Text(nameResolver.storagePlaceName(storagePlace)),
             Text(
-              localizations.freezerSummaryOf(freezerLayout),
+              localizations.storagePlaceSummaryOf(storagePlaceLayout),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
         ),
         actions: [
-          PopupMenuButton<_FreezerMenuAction>(
+          PopupMenuButton<_StoragePlaceMenuAction>(
             onSelected: (action) => switch (action) {
-              _FreezerMenuAction.rename => _renameFreezer(context, freezer),
-              _FreezerMenuAction.remove => _removeFreezer(context, ref, freezer, nameResolver),
+              _StoragePlaceMenuAction.rename => _renameStoragePlace(context, storagePlace),
+              _StoragePlaceMenuAction.remove => _removeStoragePlace(
+                context,
+                ref,
+                storagePlace,
+                nameResolver,
+              ),
             },
             itemBuilder: (context) => [
               PopupMenuItem(
-                value: _FreezerMenuAction.rename,
-                child: Text(localizations.renameFreezerAction),
+                value: _StoragePlaceMenuAction.rename,
+                child: Text(localizations.renameStoragePlaceAction),
               ),
               PopupMenuItem(
-                value: _FreezerMenuAction.remove,
-                child: Text(localizations.removeFreezerAction),
+                value: _StoragePlaceMenuAction.remove,
+                child: Text(localizations.removeStoragePlaceAction),
               ),
             ],
           ),
@@ -90,14 +98,14 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
                     CompartmentEditorRow(
                       key: ValueKey(compartment.identifier),
                       compartment: compartment,
-                      storageKind: freezer.storageKind,
+                      storageKind: storagePlace.storageKind,
                       itemCount: itemCounts[compartment.identifier] ?? 0,
                       onMoveUp: index == 0
                           ? null
-                          : () => _moveCompartment(ref, freezerLayout, index, index - 1),
+                          : () => _moveCompartment(ref, storagePlaceLayout, index, index - 1),
                       onMoveDown: index == compartments.length - 1
                           ? null
-                          : () => _moveCompartment(ref, freezerLayout, index, index + 1),
+                          : () => _moveCompartment(ref, storagePlaceLayout, index, index + 1),
                       onRemove: compartments.length == 1
                           ? null
                           : () => _removeCompartment(
@@ -114,9 +122,10 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
           ),
           const SizedBox(height: FoodieSpacing.small),
           OutlinedButton.icon(
-            onPressed: () => ref.read(addCompartmentUseCaseProvider).execute(freezerIdentifier),
+            onPressed: () =>
+                ref.read(addCompartmentUseCaseProvider).execute(storagePlaceIdentifier),
             icon: const Icon(Icons.add),
-            label: Text(localizations.addCompartmentButton(freezer.storageKind.storageName)),
+            label: Text(localizations.addCompartmentButton(storagePlace.storageKind.storageName)),
           ),
           if (compartments.length == 1) _HintText(localizations.lastCompartmentHint),
           _HintText(localizations.layoutHint),
@@ -133,19 +142,19 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
 
   static Future<void> _moveCompartment(
     WidgetRef ref,
-    FreezerLayout freezerLayout,
+    StoragePlaceLayout storagePlaceLayout,
     int fromIndex,
     int toIndex,
   ) async {
     final orderedIdentifiers = <CompartmentIdentifier>[
-      for (final compartment in freezerLayout.compartments) compartment.identifier,
+      for (final compartment in storagePlaceLayout.compartments) compartment.identifier,
     ];
     final movedIdentifier = orderedIdentifiers.removeAt(fromIndex);
     orderedIdentifiers.insert(toIndex, movedIdentifier);
     await ref
         .read(reorderCompartmentsUseCaseProvider)
         .execute(
-          freezerIdentifier: freezerLayout.freezer.identifier,
+          storagePlaceIdentifier: storagePlaceLayout.storagePlace.identifier,
           orderedCompartmentIdentifiers: orderedIdentifiers,
         );
   }
@@ -180,15 +189,16 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
     }
   }
 
-  static Future<void> _renameFreezer(BuildContext context, Freezer freezer) => showDialog<void>(
-    context: context,
-    builder: (dialogContext) => _RenameFreezerDialog(freezer: freezer),
-  );
+  static Future<void> _renameStoragePlace(BuildContext context, StoragePlace storagePlace) =>
+      showDialog<void>(
+        context: context,
+        builder: (dialogContext) => _RenameStoragePlaceDialog(storagePlace: storagePlace),
+      );
 
-  static Future<void> _removeFreezer(
+  static Future<void> _removeStoragePlace(
     BuildContext context,
     WidgetRef ref,
-    Freezer freezer,
+    StoragePlace storagePlace,
     CompartmentDisplayNameResolver nameResolver,
   ) async {
     final localizations = StorageLayoutLocalizations.of(context);
@@ -196,8 +206,10 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
     final isConfirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(localizations.removeFreezerDialogTitle(nameResolver.freezerName(freezer))),
-        content: Text(localizations.removeFreezerDialogText),
+        title: Text(
+          localizations.removeStoragePlaceDialogTitle(nameResolver.storagePlaceName(storagePlace)),
+        ),
+        content: Text(localizations.removeStoragePlaceDialogText),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -211,12 +223,14 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
       ),
     );
     if (isConfirmed != true) return;
-    final result = await ref.read(archiveFreezerUseCaseProvider).execute(freezer.identifier);
+    final result = await ref
+        .read(archiveStoragePlaceUseCaseProvider)
+        .execute(storagePlace.identifier);
     if (!context.mounted) return;
     result.fold(
       onSuccess: (_) => context.pop(),
       onFailure: (failure) =>
-          _showMessage(context, localizations.describeFailure(failure, isAboutFreezer: true)),
+          _showMessage(context, localizations.describeFailure(failure, isAboutStoragePlace: true)),
     );
   }
 
@@ -224,7 +238,7 @@ class FreezerLayoutEditorScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }
 
-/// One drawer: colour tag, inline name field, item count, arrows and remove.
+/// One compartment: colour tag, inline name field, item count, arrows and remove.
 class CompartmentEditorRow extends ConsumerStatefulWidget {
   const CompartmentEditorRow({
     required this.compartment,
@@ -369,7 +383,7 @@ class _CompartmentEditorRowState extends ConsumerState<CompartmentEditorRow> {
   }
 }
 
-/// Asks where the items of a drawer that is being removed should go.
+/// Asks where the items of a compartment that is being removed should go.
 class _MoveContentsDialog extends StatefulWidget {
   const _MoveContentsDialog({
     required this.layout,
@@ -387,13 +401,13 @@ class _MoveContentsDialog extends StatefulWidget {
 
 class _MoveContentsDialogState extends State<_MoveContentsDialog> {
   late final List<Compartment> _destinations = [
-    // Siblings first, then the drawers of other freezers.
+    // Siblings first, then the compartments of other storage places.
     for (final compartment in widget.layout.activeCompartments)
       if (compartment.identifier != widget.compartmentToRemove.identifier &&
-          compartment.freezerIdentifier == widget.compartmentToRemove.freezerIdentifier)
+          compartment.storagePlaceIdentifier == widget.compartmentToRemove.storagePlaceIdentifier)
         compartment,
     for (final compartment in widget.layout.activeCompartments)
-      if (compartment.freezerIdentifier != widget.compartmentToRemove.freezerIdentifier)
+      if (compartment.storagePlaceIdentifier != widget.compartmentToRemove.storagePlaceIdentifier)
         compartment,
   ];
   late CompartmentIdentifier _selectedDestination = _destinations.first.identifier;
@@ -421,7 +435,7 @@ class _MoveContentsDialogState extends State<_MoveContentsDialog> {
               for (final destination in _destinations)
                 DropdownMenuItem(
                   value: destination.identifier,
-                  child: Text(nameResolver.compartmentNameWithFreezer(destination)),
+                  child: Text(nameResolver.compartmentNameWithStoragePlace(destination)),
                 ),
             ],
             onChanged: (destination) {
@@ -444,18 +458,18 @@ class _MoveContentsDialogState extends State<_MoveContentsDialog> {
   }
 }
 
-class _RenameFreezerDialog extends ConsumerStatefulWidget {
-  const _RenameFreezerDialog({required this.freezer});
+class _RenameStoragePlaceDialog extends ConsumerStatefulWidget {
+  const _RenameStoragePlaceDialog({required this.storagePlace});
 
-  final Freezer freezer;
+  final StoragePlace storagePlace;
 
   @override
-  ConsumerState<_RenameFreezerDialog> createState() => _RenameFreezerDialogState();
+  ConsumerState<_RenameStoragePlaceDialog> createState() => _RenameStoragePlaceDialogState();
 }
 
-class _RenameFreezerDialogState extends ConsumerState<_RenameFreezerDialog> {
+class _RenameStoragePlaceDialogState extends ConsumerState<_RenameStoragePlaceDialog> {
   late final TextEditingController _nameController = TextEditingController(
-    text: widget.freezer.customName ?? '',
+    text: widget.storagePlace.customName ?? '',
   );
   String? _nameError;
 
@@ -468,17 +482,18 @@ class _RenameFreezerDialogState extends ConsumerState<_RenameFreezerDialog> {
   Future<void> _save() async {
     final localizations = StorageLayoutLocalizations.of(context);
     final result = await ref
-        .read(renameFreezerUseCaseProvider)
+        .read(renameStoragePlaceUseCaseProvider)
         .execute(
-          freezerIdentifier: widget.freezer.identifier,
+          storagePlaceIdentifier: widget.storagePlace.identifier,
           enteredName: _nameController.text,
           defaultNames: context.layoutDefaultNames,
         );
     if (!mounted) return;
     result.fold(
       onSuccess: (_) => Navigator.of(context).pop(),
-      onFailure: (failure) =>
-          setState(() => _nameError = localizations.describeFailure(failure, isAboutFreezer: true)),
+      onFailure: (failure) => setState(
+        () => _nameError = localizations.describeFailure(failure, isAboutStoragePlace: true),
+      ),
     );
   }
 
@@ -487,14 +502,14 @@ class _RenameFreezerDialogState extends ConsumerState<_RenameFreezerDialog> {
     final localizations = StorageLayoutLocalizations.of(context);
     final commonLocalizations = context.commonLocalizations;
     return AlertDialog(
-      title: Text(localizations.renameFreezerDialogTitle),
+      title: Text(localizations.renameStoragePlaceDialogTitle),
       content: TextField(
         controller: _nameController,
         autofocus: true,
         maxLength: LayoutNamePolicy.maximumNameLength,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
-          hintText: context.layoutDefaultNames.freezerName(widget.freezer.storageKind),
+          hintText: context.layoutDefaultNames.storagePlaceName(widget.storagePlace.storageKind),
           errorText: _nameError,
         ),
         onSubmitted: (_) => _save(),

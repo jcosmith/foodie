@@ -13,11 +13,21 @@ class Categories extends Table {
 
   TextColumn get customName => text().nullable()();
 
+  /// The shelf life in days.
   IntColumn get recommendedMaximumStorageDays => integer()();
+
+  /// How long an opened package keeps, in days; `null` when opening makes
+  /// no difference.
+  IntColumn get shelfLifeAfterOpeningDays => integer().nullable()();
 
   TextColumn get iconEmoji => text()();
 
   IntColumn get sortOrder => integer()();
+
+  /// The storage domain the category's products usually live in, such as
+  /// `freezer` or `pantry`. Categories from before schema version 9 were all
+  /// freezer categories.
+  TextColumn get storageDomain => text().withDefault(const Constant('freezer'))();
 
   @override
   Set<Column<Object>> get primaryKey => {categoryIdentifier};
@@ -40,8 +50,11 @@ class Products extends Table {
 
   IntColumn get defaultPackageQuantity => integer().nullable()();
 
-  /// Overrides the category's recommendation when set.
+  /// Overrides the category's shelf life when set.
   IntColumn get recommendedMaximumStorageDays => integer().nullable()();
+
+  /// Overrides the category's shelf life after opening when set.
+  IntColumn get shelfLifeAfterOpeningDays => integer().nullable()();
 
   /// Falls back to the category icon when null.
   TextColumn get iconEmoji => text().nullable()();

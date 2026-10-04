@@ -160,8 +160,8 @@ class StorageDurationChartCard extends StatelessWidget {
 
 /// "Freezer map": what is in each drawer now, coloured by age; tapping a
 /// drawer filters it. Follows the category and product filters, not the period.
-class FreezerMapChartCard extends ConsumerWidget {
-  const FreezerMapChartCard({required this.filter, super.key});
+class StorageMapChartCard extends ConsumerWidget {
+  const StorageMapChartCard({required this.filter, super.key});
 
   final StatisticsFilter filter;
 
@@ -186,14 +186,14 @@ class FreezerMapChartCard extends ConsumerWidget {
         ],
     };
     return ChartCard(
-      title: localizations.freezerMapTitle,
-      subtitle: localizations.freezerMapSubtitle,
+      title: localizations.storageMapTitle,
+      subtitle: localizations.storageMapSubtitle,
       emptyMessage: compartments.isEmpty ? localizations.noData : null,
-      chart: FreezerMap(
+      chart: StorageMap(
         drawers: [
           for (final compartment in compartments)
-            FreezerMapDrawer(
-              label: compartmentNames.compartmentNameWithFreezer(compartment),
+            StorageMapCompartment(
+              label: compartmentNames.compartmentNameWithStoragePlace(compartment),
               tagColor: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
               itemCountLabel: localizations.drawerItems(
                 itemsByCompartment[compartment.identifier]!.length,
@@ -214,7 +214,7 @@ class FreezerMapChartCard extends ConsumerWidget {
         rows: [
           for (final compartment in compartments)
             [
-              compartmentNames.compartmentNameWithFreezer(compartment),
+              compartmentNames.compartmentNameWithStoragePlace(compartment),
               '${itemsByCompartment[compartment.identifier]!.length}',
             ],
         ],

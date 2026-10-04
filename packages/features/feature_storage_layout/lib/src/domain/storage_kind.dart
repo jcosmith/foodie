@@ -1,5 +1,5 @@
-/// What kind of cold storage a freezer is. Decides the default names of the
-/// freezer and of its compartments ("Drawer", "Basket", "Compartment").
+/// What kind of cold storage a storage place is. Decides the default names of the
+/// storage place and of its compartments ("Drawer", "Basket", "Compartment").
 enum StorageKind {
   upright,
   chest,

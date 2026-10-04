@@ -16,7 +16,7 @@ final class AddStockBatchCommand {
     required this.productIdentifier,
     required this.compartmentIdentifier,
     required this.quantity,
-    required this.frozenOn,
+    required this.storedOn,
     this.bestBeforeOn,
     this.note,
   });
@@ -24,7 +24,7 @@ final class AddStockBatchCommand {
   final ProductIdentifier productIdentifier;
   final CompartmentIdentifier compartmentIdentifier;
   final Quantity quantity;
-  final CalendarDate frozenOn;
+  final CalendarDate storedOn;
   final CalendarDate? bestBeforeOn;
   final String? note;
 }
@@ -112,8 +112,8 @@ final class AddStockBatchUseCase {
     if (compartment == null || compartment.isArchived) {
       return const Result.failure(CompartmentNotAvailable());
     }
-    if (command.frozenOn.isAfter(_dependencies.clock.todayLocal())) {
-      return const Result.failure(FrozenOnInFuture());
+    if (command.storedOn.isAfter(_dependencies.clock.todayLocal())) {
+      return const Result.failure(StoredOnInFuture());
     }
     final trimmedNote = command.note?.trim();
     return Result.success(
@@ -123,7 +123,7 @@ final class AddStockBatchUseCase {
         compartmentIdentifier: compartment.identifier,
         initialQuantity: command.quantity,
         quantityRemaining: command.quantity,
-        frozenOn: command.frozenOn,
+        storedOn: command.storedOn,
         bestBeforeOn: command.bestBeforeOn,
         note: trimmedNote == null || trimmedNote.isEmpty ? null : trimmedNote,
         createdAt: _dependencies.clock.nowUtc(),

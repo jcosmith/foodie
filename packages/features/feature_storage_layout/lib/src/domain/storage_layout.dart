@@ -1,54 +1,55 @@
 import 'package:meta/meta.dart';
 
 import 'compartment.dart';
-import 'freezer.dart';
+import 'storage_place.dart';
 
-/// One freezer with its active compartments in the user's order.
+/// One storage place with its active compartments in the user's order.
 @immutable
-final class FreezerLayout {
-  const FreezerLayout({required this.freezer, required this.compartments});
+final class StoragePlaceLayout {
+  const StoragePlaceLayout({required this.storagePlace, required this.compartments});
 
-  final Freezer freezer;
+  final StoragePlace storagePlace;
   final List<Compartment> compartments;
 }
 
-/// The whole layout as a read model: active freezers in order, each with its
+/// The whole layout as a read model: active storage places in order, each with its
 /// active compartments, plus everything archived for historical names.
 @immutable
 final class StorageLayout {
   const StorageLayout._({
-    required this.freezers,
-    required Map<FreezerIdentifier, Freezer> freezerByIdentifier,
+    required this.storagePlaces,
+    required Map<StoragePlaceIdentifier, StoragePlace> storagePlaceByIdentifier,
     required Map<CompartmentIdentifier, Compartment> compartmentByIdentifier,
-  }) : _freezerByIdentifier = freezerByIdentifier,
+  }) : _storagePlaceByIdentifier = storagePlaceByIdentifier,
        _compartmentByIdentifier = compartmentByIdentifier;
 
   /// Builds the read model from flat lists, archived entries included.
   factory StorageLayout.fromEntities({
-    required List<Freezer> freezersIncludingArchived,
+    required List<StoragePlace> storagePlacesIncludingArchived,
     required List<Compartment> compartmentsIncludingArchived,
   }) {
-    final activeFreezers =
-        freezersIncludingArchived.where((freezer) => !freezer.isArchived).toList()
+    final activeStoragePlaces =
+        storagePlacesIncludingArchived.where((storagePlace) => !storagePlace.isArchived).toList()
           ..sort((first, second) => first.sortOrder.compareTo(second.sortOrder));
     return StorageLayout._(
-      freezers: [
-        for (final freezer in activeFreezers)
-          FreezerLayout(
-            freezer: freezer,
+      storagePlaces: [
+        for (final storagePlace in activeStoragePlaces)
+          StoragePlaceLayout(
+            storagePlace: storagePlace,
             compartments:
                 compartmentsIncludingArchived
                     .where(
                       (compartment) =>
-                          compartment.freezerIdentifier == freezer.identifier &&
+                          compartment.storagePlaceIdentifier == storagePlace.identifier &&
                           !compartment.isArchived,
                     )
                     .toList()
                   ..sort((first, second) => first.sortOrder.compareTo(second.sortOrder)),
           ),
       ],
-      freezerByIdentifier: {
-        for (final freezer in freezersIncludingArchived) freezer.identifier: freezer,
+      storagePlaceByIdentifier: {
+        for (final storagePlace in storagePlacesIncludingArchived)
+          storagePlace.identifier: storagePlace,
       },
       compartmentByIdentifier: {
         for (final compartment in compartmentsIncludingArchived)
@@ -58,36 +59,39 @@ final class StorageLayout {
   }
 
   static final StorageLayout empty = StorageLayout.fromEntities(
-    freezersIncludingArchived: const [],
+    storagePlacesIncludingArchived: const [],
     compartmentsIncludingArchived: const [],
   );
 
-  /// Active freezers in the user's order.
-  final List<FreezerLayout> freezers;
-  final Map<FreezerIdentifier, Freezer> _freezerByIdentifier;
+  /// Active storage places in the user's order.
+  final List<StoragePlaceLayout> storagePlaces;
+  final Map<StoragePlaceIdentifier, StoragePlace> _storagePlaceByIdentifier;
   final Map<CompartmentIdentifier, Compartment> _compartmentByIdentifier;
 
-  bool get hasFreezer => freezers.isNotEmpty;
+  bool get hasStoragePlace => storagePlaces.isNotEmpty;
 
-  /// Active compartments of every active freezer, in display order.
+  /// Active compartments of every active storage place, in display order.
   List<Compartment> get activeCompartments => [
-    for (final freezer in freezers) ...freezer.compartments,
+    for (final storagePlace in storagePlaces) ...storagePlace.compartments,
   ];
 
-  /// Archived compartments of the given freezer, for the "removed drawers" note.
-  List<Compartment> archivedCompartmentsOf(FreezerIdentifier freezerIdentifier) => [
+  /// Archived compartments of the given storage place, for the "removed compartments" note.
+  List<Compartment> archivedCompartmentsOf(StoragePlaceIdentifier storagePlaceIdentifier) => [
     for (final compartment in _compartmentByIdentifier.values)
-      if (compartment.isArchived && compartment.freezerIdentifier == freezerIdentifier) compartment,
+      if (compartment.isArchived && compartment.storagePlaceIdentifier == storagePlaceIdentifier)
+        compartment,
   ]..sort((first, second) => first.defaultNumber.compareTo(second.defaultNumber));
 
-  /// Any freezer, archived ones included.
-  Freezer? freezerOf(FreezerIdentifier freezerIdentifier) =>
-      _freezerByIdentifier[freezerIdentifier];
+  /// Any storage place, archived ones included.
+  StoragePlace? storagePlaceOf(StoragePlaceIdentifier storagePlaceIdentifier) =>
+      _storagePlaceByIdentifier[storagePlaceIdentifier];
 
-  /// An active freezer with its active compartments.
-  FreezerLayout? freezerLayoutOf(FreezerIdentifier freezerIdentifier) {
-    for (final freezerLayout in freezers) {
-      if (freezerLayout.freezer.identifier == freezerIdentifier) return freezerLayout;
+  /// An active storage place with its active compartments.
+  StoragePlaceLayout? storagePlaceLayoutOf(StoragePlaceIdentifier storagePlaceIdentifier) {
+    for (final storagePlaceLayout in storagePlaces) {
+      if (storagePlaceLayout.storagePlace.identifier == storagePlaceIdentifier) {
+        return storagePlaceLayout;
+      }
     }
     return null;
   }

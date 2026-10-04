@@ -3,15 +3,15 @@ import 'package:core_events/core_events.dart';
 import 'package:core_foundation/core_foundation.dart';
 
 import '../../domain/compartment_contents_port.dart';
-import '../../domain/freezer.dart';
 import '../../domain/storage_layout_events.dart';
 import '../../domain/storage_layout_failure.dart';
 import '../../domain/storage_layout_repository.dart';
+import '../../domain/storage_place.dart';
 
-/// Removes an empty freezer and its compartments from the layout. Nothing is
+/// Removes an empty storage place and its compartments from the layout. Nothing is
 /// deleted, so statistics keep their names.
-final class ArchiveFreezerUseCase {
-  const ArchiveFreezerUseCase({
+final class ArchiveStoragePlaceUseCase {
+  const ArchiveStoragePlaceUseCase({
     required StorageLayoutRepository repository,
     required CompartmentContentsPort compartmentContents,
     required TransactionRunner transactionRunner,
@@ -29,25 +29,33 @@ final class ArchiveFreezerUseCase {
   final DomainEventBus _domainEventBus;
   final Clock _clock;
 
-  Future<Result<Unit, StorageLayoutFailure>> execute(FreezerIdentifier freezerIdentifier) async {
-    final activeFreezers = await _repository.readActiveFreezers();
-    if (!activeFreezers.any((freezer) => freezer.identifier == freezerIdentifier)) {
-      return const Result.failure(FreezerNotFound());
+  Future<Result<Unit, StorageLayoutFailure>> execute(
+    StoragePlaceIdentifier storagePlaceIdentifier,
+  ) async {
+    final activeStoragePlaces = await _repository.readActiveStoragePlaces();
+    if (!activeStoragePlaces.any(
+      (storagePlace) => storagePlace.identifier == storagePlaceIdentifier,
+    )) {
+      return const Result.failure(StoragePlaceNotFound());
     }
-    if (activeFreezers.length == 1) return const Result.failure(LastFreezerCannotBeRemoved());
+    if (activeStoragePlaces.length == 1) {
+      return const Result.failure(LastStoragePlaceCannotBeRemoved());
+    }
 
-    final compartments = await _repository.readActiveCompartmentsOfFreezer(freezerIdentifier);
+    final compartments = await _repository.readActiveCompartmentsOfStoragePlace(
+      storagePlaceIdentifier,
+    );
     var itemCount = 0;
     for (final compartment in compartments) {
       itemCount += await _compartmentContents.countItemsInCompartment(compartment.identifier);
     }
-    if (itemCount > 0) return Result.failure(FreezerNotEmpty(itemCount: itemCount));
+    if (itemCount > 0) return Result.failure(StoragePlaceNotEmpty(itemCount: itemCount));
 
     await _transactionRunner.runInTransaction(() async {
       for (final compartment in compartments) {
         await _repository.archiveCompartment(compartment.identifier);
       }
-      await _repository.archiveFreezer(freezerIdentifier);
+      await _repository.archiveStoragePlace(storagePlaceIdentifier);
     });
     final occurredAt = _clock.nowUtc();
     for (final compartment in compartments) {

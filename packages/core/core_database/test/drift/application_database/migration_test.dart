@@ -1,6 +1,6 @@
 import 'package:core_database/src/application_database.dart';
 import 'package:core_foundation/core_foundation.dart';
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -76,12 +76,12 @@ void main() {
       )
       ..execute("INSERT INTO categories VALUES ('category-1', 'vegetables', NULL, 365, '🥦', 0)")
       ..execute(
-        "INSERT INTO products (product_identifier, category_identifier, catalog_key, canonical_unit, "
+        'INSERT INTO products (product_identifier, category_identifier, catalog_key, canonical_unit, '
         "is_archived, created_at) VALUES ('product-1', 'category-1', 'leafSpinach', 'gram', 0, '$createdAt')",
       )
       ..execute(
-        "INSERT INTO stock_batches (stock_batch_identifier, product_identifier, compartment_identifier, "
-        "quantity_unit, initial_quantity, quantity_remaining, frozen_on, best_before_on, created_at) "
+        'INSERT INTO stock_batches (stock_batch_identifier, product_identifier, compartment_identifier, '
+        'quantity_unit, initial_quantity, quantity_remaining, frozen_on, best_before_on, created_at) '
         "VALUES ('batch-1', 'product-1', 'drawer-1', 'gram', 1000, 800, '2026-08-01', '2027-08-01', '$createdAt')",
       );
 
@@ -92,12 +92,18 @@ void main() {
     expect(storagePlace.storagePlaceIdentifier, 'freezer-1');
     expect(storagePlace.customName, 'Kitchen');
     expect(storagePlace.storageKind, 'upright');
-    expect((await database.storageLayoutDao.readCompartments()).single.storagePlaceIdentifier, 'freezer-1');
+    expect(
+      (await database.storageLayoutDao.readCompartments()).single.storagePlaceIdentifier,
+      'freezer-1',
+    );
 
     final category = (await database.productCatalogDao.readCategories()).single;
     expect(category.storageDomain, 'freezer');
     expect(category.shelfLifeAfterOpeningDays, isNull);
-    expect((await database.productCatalogDao.readProduct('product-1'))!.shelfLifeAfterOpeningDays, isNull);
+    expect(
+      (await database.productCatalogDao.readProduct('product-1'))!.shelfLifeAfterOpeningDays,
+      isNull,
+    );
 
     final batch = (await database.inventoryDao.readBatch('batch-1'))!;
     expect(batch.storedOn, CalendarDate(2026, 8, 1));

@@ -13,22 +13,22 @@ abstract final class StorageAgePolicy {
   static const double overdueShare = 1;
 
   static double storageShare({
-    required CalendarDate frozenOn,
+    required CalendarDate storedOn,
     required CalendarDate today,
     required int recommendedMaximumStorageDays,
   }) {
     if (recommendedMaximumStorageDays <= 0) return 0;
-    final storedDays = frozenOn.daysUntil(today);
+    final storedDays = storedOn.daysUntil(today);
     return storedDays <= 0 ? 0 : storedDays / recommendedMaximumStorageDays;
   }
 
   static StorageAgeStatus evaluate({
-    required CalendarDate frozenOn,
+    required CalendarDate storedOn,
     required CalendarDate today,
     required int recommendedMaximumStorageDays,
   }) {
     final share = storageShare(
-      frozenOn: frozenOn,
+      storedOn: storedOn,
       today: today,
       recommendedMaximumStorageDays: recommendedMaximumStorageDays,
     );
@@ -41,7 +41,7 @@ abstract final class StorageAgePolicy {
   /// The first day on which a batch frozen on [frozenOn] is at least
   /// [status]; for [StorageAgeStatus.fresh] that is the freezing day.
   static CalendarDate firstDayWithStatus({
-    required CalendarDate frozenOn,
+    required CalendarDate storedOn,
     required int recommendedMaximumStorageDays,
     required StorageAgeStatus status,
   }) {
@@ -60,8 +60,8 @@ abstract final class StorageAgePolicy {
     };
     bool reachesStatusAfter(int storedDays) =>
         evaluate(
-          frozenOn: frozenOn,
-          today: frozenOn.addDays(storedDays),
+          storedOn: storedOn,
+          today: storedOn.addDays(storedDays),
           recommendedMaximumStorageDays: recommendedMaximumStorageDays,
         ).index >=
         status.index;
@@ -74,12 +74,12 @@ abstract final class StorageAgePolicy {
     while (!reachesStatusAfter(storedDays)) {
       storedDays++;
     }
-    return frozenOn.addDays(storedDays);
+    return storedOn.addDays(storedDays);
   }
 
   /// The day the recommended maximum storage time is used up.
   static CalendarDate storageLimitReachedOn({
-    required CalendarDate frozenOn,
+    required CalendarDate storedOn,
     required int recommendedMaximumStorageDays,
-  }) => frozenOn.addDays(recommendedMaximumStorageDays);
+  }) => storedOn.addDays(recommendedMaximumStorageDays);
 }

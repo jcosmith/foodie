@@ -3,12 +3,12 @@ import 'package:meta/meta.dart';
 
 import 'storage_kind.dart';
 
-typedef FreezerIdentifier = TypedIdentifier<Freezer>;
+typedef StoragePlaceIdentifier = TypedIdentifier<StoragePlace>;
 
-/// A freezer (or chest freezer, or the freezer compartment of a fridge).
+/// A storage place (or chest storage place, or the storage place compartment of a fridge).
 @immutable
-final class Freezer {
-  const Freezer({
+final class StoragePlace {
+  const StoragePlace({
     required this.identifier,
     required this.storageKind,
     required this.sortOrder,
@@ -17,7 +17,7 @@ final class Freezer {
     this.isArchived = false,
   });
 
-  final FreezerIdentifier identifier;
+  final StoragePlaceIdentifier identifier;
   final StorageKind storageKind;
 
   /// The name the user typed; `null` shows the translated default name.
@@ -29,7 +29,7 @@ final class Freezer {
 
   @override
   bool operator ==(Object other) =>
-      other is Freezer &&
+      other is StoragePlace &&
       other.identifier == identifier &&
       other.storageKind == storageKind &&
       other.customName == customName &&

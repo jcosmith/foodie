@@ -130,7 +130,7 @@ Future<void> showCsvExportFlow(BuildContext context, WidgetRef ref, CsvExportKin
       localizations.csvColumnCategory,
       localizations.csvColumnAmount,
       localizations.csvColumnUnit,
-      localizations.csvColumnFrozenOn,
+      localizations.csvColumnStoredOn,
       localizations.csvColumnDrawer,
       localizations.csvColumnNote,
     ],
@@ -155,6 +155,8 @@ Future<void> showCsvExportFlow(BuildContext context, WidgetRef ref, CsvExportKin
     discardReasonName: (reason) => switch (reason) {
       DiscardReason.tooOld => localizations.reasonTooOld,
       DiscardReason.freezerBurn => localizations.reasonFreezerBurn,
+      DiscardReason.expired => localizations.reasonExpired,
+      DiscardReason.spoiled => localizations.reasonSpoiled,
       DiscardReason.unwanted => localizations.reasonUnwanted,
       DiscardReason.other => localizations.reasonOther,
     },

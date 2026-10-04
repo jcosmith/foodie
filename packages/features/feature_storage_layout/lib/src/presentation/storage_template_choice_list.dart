@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../domain/freezer_template.dart';
+import '../domain/storage_template.dart';
 import '../l10n/generated/storage_layout_localizations.dart';
 import 'layout_localization.dart';
 
-/// The freezer templates as radio buttons; used when adding a freezer and
+/// The storage place templates as radio buttons; used when adding a storage place and
 /// during onboarding.
-class FreezerTemplateChoiceList extends StatelessWidget {
-  const FreezerTemplateChoiceList({
+class StorageTemplateChoiceList extends StatelessWidget {
+  const StorageTemplateChoiceList({
     required this.selectedTemplate,
     required this.onTemplateSelected,
     super.key,
   });
 
-  final FreezerTemplate selectedTemplate;
-  final ValueChanged<FreezerTemplate> onTemplateSelected;
+  final StorageTemplate selectedTemplate;
+  final ValueChanged<StorageTemplate> onTemplateSelected;
 
   @override
   Widget build(BuildContext context) {
     final localizations = StorageLayoutLocalizations.of(context);
-    return RadioGroup<FreezerTemplate>(
+    return RadioGroup<StorageTemplate>(
       groupValue: selectedTemplate,
       onChanged: (template) {
         if (template != null) onTemplateSelected(template);
       },
       child: Column(
         children: [
-          for (final template in FreezerTemplate.values)
-            RadioListTile<FreezerTemplate>(
+          for (final template in StorageTemplate.values)
+            RadioListTile<StorageTemplate>(
               value: template,
               title: Text(localizations.templateName(template)),
             ),

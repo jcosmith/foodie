@@ -125,11 +125,11 @@ abstract class RestockLocalizations {
   /// **'Added by you'**
   String get originManual;
 
-  /// No description provided for @putTickedInFreezer.
+  /// No description provided for @putTickedInStoragePlace.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{Put 1 ticked item in the freezer} other{Put {count} ticked items in the freezer}}'**
-  String putTickedInFreezer(int count);
+  String putTickedInStoragePlace(int count);
 
   /// No description provided for @nothingTicked.
   ///
@@ -137,11 +137,11 @@ abstract class RestockLocalizations {
   /// **'Tick what you bought'**
   String get nothingTicked;
 
-  /// No description provided for @itemsPutInFreezer.
+  /// No description provided for @itemsPutInStoragePlace.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =0{Ticked items removed from the list} =1{1 item is in the freezer now} other{{count} items are in the freezer now}}'**
-  String itemsPutInFreezer(int count);
+  String itemsPutInStoragePlace(int count);
 
   /// No description provided for @addToListButton.
   ///
@@ -263,11 +263,11 @@ abstract class RestockLocalizations {
   /// **'This must be at least the minimum.'**
   String get targetBelowMinimum;
 
-  /// No description provided for @noFreezerForBoughtItems.
+  /// No description provided for @noStoragePlaceForBoughtItems.
   ///
   /// In en, this message translates to:
   /// **'Set up your freezer first, then put the items in.'**
-  String get noFreezerForBoughtItems;
+  String get noStoragePlaceForBoughtItems;
 
   /// No description provided for @automaticEntryCannotBeRemoved.
   ///

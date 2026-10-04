@@ -173,23 +173,23 @@ abstract class InventoryLocalizations {
   /// **'{percent}% left'**
   String remainingShare(int percent);
 
-  /// No description provided for @noFreezerTitle.
+  /// No description provided for @noStoragePlaceTitle.
   ///
   /// In en, this message translates to:
   /// **'Set up your freezer first'**
-  String get noFreezerTitle;
+  String get noStoragePlaceTitle;
 
-  /// No description provided for @noFreezerMessage.
+  /// No description provided for @noStoragePlaceMessage.
   ///
   /// In en, this message translates to:
   /// **'Tell the app which drawers your freezer has, then add what is inside.'**
-  String get noFreezerMessage;
+  String get noStoragePlaceMessage;
 
-  /// No description provided for @setUpFreezerButton.
+  /// No description provided for @setUpStoragePlaceButton.
   ///
   /// In en, this message translates to:
   /// **'Set up freezer'**
-  String get setUpFreezerButton;
+  String get setUpStoragePlaceButton;
 
   /// No description provided for @emptyTitle.
   ///
@@ -311,6 +311,18 @@ abstract class InventoryLocalizations {
   /// **'Freezer burn'**
   String get reasonFreezerBurn;
 
+  /// No description provided for @reasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Past its date'**
+  String get reasonExpired;
+
+  /// No description provided for @reasonSpoiled.
+  ///
+  /// In en, this message translates to:
+  /// **'Gone off'**
+  String get reasonSpoiled;
+
   /// No description provided for @reasonUnwanted.
   ///
   /// In en, this message translates to:
@@ -419,11 +431,11 @@ abstract class InventoryLocalizations {
   /// **'Package: {amount}'**
   String packageHint(String amount);
 
-  /// No description provided for @frozenOnLabel.
+  /// No description provided for @storedOnLabel.
   ///
   /// In en, this message translates to:
   /// **'Frozen on'**
-  String get frozenOnLabel;
+  String get storedOnLabel;
 
   /// No description provided for @compartmentLabel.
   ///
@@ -473,11 +485,11 @@ abstract class InventoryLocalizations {
   /// **'Choose a drawer.'**
   String get compartmentMissing;
 
-  /// No description provided for @frozenOnInFuture.
+  /// No description provided for @storedOnInFuture.
   ///
   /// In en, this message translates to:
   /// **'The freezing date cannot be in the future.'**
-  String get frozenOnInFuture;
+  String get storedOnInFuture;
 
   /// No description provided for @genericFailure.
   ///

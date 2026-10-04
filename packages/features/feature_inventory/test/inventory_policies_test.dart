@@ -1,8 +1,8 @@
 import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_inventory/domain.dart';
+import 'package:feature_inventory/src/domain/removal_amount_policy.dart';
 import 'package:feature_product_catalog/domain.dart';
 import 'package:feature_storage_layout/domain.dart';
-import 'package:feature_inventory/src/domain/removal_amount_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -140,9 +140,9 @@ void main() {
     });
 
     test('opening a batch records the day and keeps everything else', () {
-      final opened = batch(bestBeforeOn: CalendarDate(2026, 10, 9)).copyWith(
-        openedOn: () => CalendarDate(2026, 10, 3),
-      );
+      final opened = batch(
+        bestBeforeOn: CalendarDate(2026, 10, 9),
+      ).copyWith(openedOn: () => CalendarDate(2026, 10, 3));
       expect(opened.openedOn, CalendarDate(2026, 10, 3));
       expect(opened.isOpened, isTrue);
       expect(opened.bestBeforeOn, CalendarDate(2026, 10, 9));

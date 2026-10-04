@@ -88,10 +88,10 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
     final listedCompartments = layout == null
         ? const <Compartment>[]
         : [
-            for (final freezerLayout in layout.freezers) ...[
-              ...freezerLayout.compartments,
+            for (final storagePlaceLayout in layout.storagePlaces) ...[
+              ...storagePlaceLayout.compartments,
               // Removed drawers still have history (decision D13).
-              ...layout.archivedCompartmentsOf(freezerLayout.freezer.identifier),
+              ...layout.archivedCompartmentsOf(storagePlaceLayout.storagePlace.identifier),
             ],
           ];
 
@@ -232,7 +232,7 @@ class _StatisticsFilterSheetState extends ConsumerState<StatisticsFilterSheet> {
                   avatar: ChartColorSwatch(
                     color: CompartmentColorPalette.colorAt(compartment.colorTagIndex),
                   ),
-                  label: Text(compartmentNames.compartmentNameWithFreezer(compartment)),
+                  label: Text(compartmentNames.compartmentNameWithStoragePlace(compartment)),
                   selected: filter.compartmentIdentifiers.contains(compartment.identifier),
                   onSelected: (_) =>
                       change((current) => current.withCompartmentToggled(compartment.identifier)),

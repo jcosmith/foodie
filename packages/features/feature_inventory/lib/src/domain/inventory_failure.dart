@@ -74,8 +74,8 @@ final class MovementCannotBeUndone extends InventoryFailure {
 }
 
 /// Frozen-on dates in the future are typing mistakes.
-final class FrozenOnInFuture extends InventoryFailure {
-  const FrozenOnInFuture();
+final class StoredOnInFuture extends InventoryFailure {
+  const StoredOnInFuture();
 
   @override
   String get debugDescription => 'The freezing date lies in the future';

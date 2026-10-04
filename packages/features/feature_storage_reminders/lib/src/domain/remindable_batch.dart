@@ -9,7 +9,7 @@ final class RemindableBatch {
   const RemindableBatch({
     required this.stockBatchIdentifier,
     required this.productIdentifier,
-    required this.frozenOn,
+    required this.storedOn,
     required this.storedSince,
     required this.recommendedMaximumStorageDays,
   });
@@ -18,7 +18,7 @@ final class RemindableBatch {
   final ProductIdentifier productIdentifier;
 
   /// The storage age counts from here.
-  final CalendarDate frozenOn;
+  final CalendarDate storedOn;
 
   /// The local day the batch was put into the app. Food entered when it is
   /// already old is due from this day, not from a day in the past.
@@ -29,7 +29,7 @@ final class RemindableBatch {
   /// The first day the batch should be eaten soon, as the badge shows it.
   CalendarDate get eatSoonFrom => _notBefore(
     StorageAgePolicy.firstDayWithStatus(
-      frozenOn: frozenOn,
+      storedOn: storedOn,
       recommendedMaximumStorageDays: recommendedMaximumStorageDays,
       status: StorageAgeStatus.urgent,
     ),
@@ -38,13 +38,13 @@ final class RemindableBatch {
   /// The day its recommended storage time is used up.
   CalendarDate get storageLimitReachedOn => _notBefore(
     StorageAgePolicy.storageLimitReachedOn(
-      frozenOn: frozenOn,
+      storedOn: storedOn,
       recommendedMaximumStorageDays: recommendedMaximumStorageDays,
     ),
   );
 
   double storageShareOn(CalendarDate day) => StorageAgePolicy.storageShare(
-    frozenOn: frozenOn,
+    storedOn: storedOn,
     today: day,
     recommendedMaximumStorageDays: recommendedMaximumStorageDays,
   );

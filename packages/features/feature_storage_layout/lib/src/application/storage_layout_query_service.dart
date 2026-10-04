@@ -5,7 +5,7 @@ import '../domain/compartment_contents_port.dart';
 import '../domain/storage_layout.dart';
 import '../domain/storage_layout_repository.dart';
 
-/// Read-only access to the freezer layout for other features (inventory,
+/// Read-only access to the storage place layout for other features (inventory,
 /// onboarding, statistics).
 final class StorageLayoutQueryService {
   const StorageLayoutQueryService({
@@ -17,12 +17,12 @@ final class StorageLayoutQueryService {
   final StorageLayoutRepository _repository;
   final CompartmentContentsPort _compartmentContents;
 
-  /// The layout, updated whenever a freezer or compartment changes.
+  /// The layout, updated whenever a storage place or compartment changes.
   Stream<StorageLayout> watchStorageLayout() => combineLatestOfTwo(
-    _repository.watchFreezersIncludingArchived(),
+    _repository.watchStoragePlacesIncludingArchived(),
     _repository.watchCompartmentsIncludingArchived(),
-    (freezers, compartments) => StorageLayout.fromEntities(
-      freezersIncludingArchived: freezers,
+    (storagePlaces, compartments) => StorageLayout.fromEntities(
+      storagePlacesIncludingArchived: storagePlaces,
       compartmentsIncludingArchived: compartments,
     ),
   );

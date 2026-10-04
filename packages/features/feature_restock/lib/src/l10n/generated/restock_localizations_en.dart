@@ -24,7 +24,7 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get originManual => 'Added by you';
 
   @override
-  String putTickedInFreezer(int count) {
+  String putTickedInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -38,7 +38,7 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get nothingTicked => 'Tick what you bought';
 
   @override
-  String itemsPutInFreezer(int count) {
+  String itemsPutInStoragePlace(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
@@ -125,7 +125,7 @@ class RestockLocalizationsEn extends RestockLocalizations {
   String get targetBelowMinimum => 'This must be at least the minimum.';
 
   @override
-  String get noFreezerForBoughtItems => 'Set up your freezer first, then put the items in.';
+  String get noStoragePlaceForBoughtItems => 'Set up your freezer first, then put the items in.';
 
   @override
   String get automaticEntryCannotBeRemoved =>

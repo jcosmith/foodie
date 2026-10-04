@@ -342,7 +342,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
-          if (layout != null && layout.hasFreezer) ...[
+          if (layout != null && layout.hasStoragePlace) ...[
             const SizedBox(height: FoodieSpacing.medium),
             _DefaultCompartmentField(
               layout: layout,
@@ -412,7 +412,7 @@ class _DefaultCompartmentField extends StatelessWidget {
                 const SizedBox(width: FoodieSpacing.small),
                 Expanded(
                   child: Text(
-                    nameResolver.compartmentNameWithFreezer(compartment),
+                    nameResolver.compartmentNameWithStoragePlace(compartment),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

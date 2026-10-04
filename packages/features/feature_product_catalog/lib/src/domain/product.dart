@@ -7,7 +7,7 @@ import 'product_icon_image.dart';
 
 typedef ProductIdentifier = TypedIdentifier<Product>;
 
-/// Something that goes into the freezer, such as leaf spinach.
+/// Something the household keeps, such as leaf spinach or dish soap.
 ///
 /// Every quantity of a product is stored in its [canonicalUnit] (decision
 /// D10), so stock of one product can always be added up.
@@ -22,6 +22,7 @@ final class Product {
     this.customName,
     this.defaultPackageQuantity,
     this.recommendedMaximumStorageDays,
+    this.shelfLifeAfterOpeningDays,
     this.iconEmoji,
     this.iconImage,
     this.defaultCompartmentIdentifier,
@@ -42,8 +43,11 @@ final class Product {
   /// Pre-fills the add form, for example 1 kg for a bag of spinach.
   final Quantity? defaultPackageQuantity;
 
-  /// Overrides the category's recommendation when set.
+  /// Overrides the category's shelf life when set.
   final int? recommendedMaximumStorageDays;
+
+  /// Overrides the category's shelf life after opening when set.
+  final int? shelfLifeAfterOpeningDays;
 
   /// Falls back to the category icon when not set.
   final String? iconEmoji;
@@ -69,6 +73,7 @@ final class Product {
     String? Function()? customName,
     Quantity? Function()? defaultPackageQuantity,
     int? Function()? recommendedMaximumStorageDays,
+    int? Function()? shelfLifeAfterOpeningDays,
     String? Function()? iconEmoji,
     ProductIconImage? Function()? iconImage,
     CompartmentIdentifier? Function()? defaultCompartmentIdentifier,
@@ -85,6 +90,9 @@ final class Product {
     recommendedMaximumStorageDays: recommendedMaximumStorageDays == null
         ? this.recommendedMaximumStorageDays
         : recommendedMaximumStorageDays(),
+    shelfLifeAfterOpeningDays: shelfLifeAfterOpeningDays == null
+        ? this.shelfLifeAfterOpeningDays
+        : shelfLifeAfterOpeningDays(),
     iconEmoji: iconEmoji == null ? this.iconEmoji : iconEmoji(),
     iconImage: iconImage == null ? this.iconImage : iconImage(),
     defaultCompartmentIdentifier: defaultCompartmentIdentifier == null
@@ -104,6 +112,7 @@ final class Product {
       other.canonicalUnit == canonicalUnit &&
       other.defaultPackageQuantity == defaultPackageQuantity &&
       other.recommendedMaximumStorageDays == recommendedMaximumStorageDays &&
+      other.shelfLifeAfterOpeningDays == shelfLifeAfterOpeningDays &&
       other.iconEmoji == iconEmoji &&
       other.iconImage == iconImage &&
       other.defaultCompartmentIdentifier == defaultCompartmentIdentifier &&
@@ -119,6 +128,7 @@ final class Product {
     canonicalUnit,
     defaultPackageQuantity,
     recommendedMaximumStorageDays,
+    shelfLifeAfterOpeningDays,
     iconEmoji,
     iconImage,
     defaultCompartmentIdentifier,

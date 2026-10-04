@@ -72,14 +72,14 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get noFreezerTitle => 'Richte zuerst dein Gefriergerät ein';
+  String get noStoragePlaceTitle => 'Richte zuerst dein Gefriergerät ein';
 
   @override
-  String get noFreezerMessage =>
+  String get noStoragePlaceMessage =>
       'Sag der App, welche Schubladen dein Gefriergerät hat, und trage dann ein, was drin ist.';
 
   @override
-  String get setUpFreezerButton => 'Gefriergerät einrichten';
+  String get setUpStoragePlaceButton => 'Gefriergerät einrichten';
 
   @override
   String get emptyTitle => 'Dein Gefrierschrank ist leer';
@@ -151,6 +151,12 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get reasonFreezerBurn => 'Gefrierbrand';
 
   @override
+  String get reasonExpired => 'Abgelaufen';
+
+  @override
+  String get reasonSpoiled => 'Verdorben';
+
+  @override
   String get reasonUnwanted => 'Wollte keiner';
 
   @override
@@ -219,7 +225,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
-  String get frozenOnLabel => 'Eingefroren am';
+  String get storedOnLabel => 'Eingefroren am';
 
   @override
   String get compartmentLabel => 'Schublade';
@@ -248,7 +254,7 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   String get compartmentMissing => 'Wähle eine Schublade.';
 
   @override
-  String get frozenOnInFuture => 'Das Einfrierdatum kann nicht in der Zukunft liegen.';
+  String get storedOnInFuture => 'Das Einfrierdatum kann nicht in der Zukunft liegen.';
 
   @override
   String get genericFailure => 'Das hat nicht geklappt. Bitte versuche es noch einmal.';

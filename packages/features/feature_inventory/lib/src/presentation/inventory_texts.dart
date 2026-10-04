@@ -11,7 +11,7 @@ extension InventoryTexts on InventoryLocalizations {
     QuantityExceedsRemaining() => quantityExceedsRemaining,
     ProductNotAvailable() => productMissing,
     CompartmentNotAvailable() => compartmentMissing,
-    FrozenOnInFuture() => frozenOnInFuture,
+    StoredOnInFuture() => storedOnInFuture,
     QuantityUnitMismatch() ||
     StockBatchNotFound() ||
     AlreadyInCompartment() ||
@@ -22,6 +22,8 @@ extension InventoryTexts on InventoryLocalizations {
   String discardReasonName(DiscardReason discardReason) => switch (discardReason) {
     DiscardReason.tooOld => reasonTooOld,
     DiscardReason.freezerBurn => reasonFreezerBurn,
+    DiscardReason.expired => reasonExpired,
+    DiscardReason.spoiled => reasonSpoiled,
     DiscardReason.unwanted => reasonUnwanted,
     DiscardReason.other => reasonOther,
   };

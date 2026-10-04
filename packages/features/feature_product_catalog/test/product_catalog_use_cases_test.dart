@@ -232,7 +232,7 @@ void main() {
       expect(catalog.storageDomainOf(milk), StorageDomainIdentifier.fridge);
     });
 
-    test('the product\'s shelf life after opening wins over its category's', () {
+    test("the product's shelf life after opening wins over its category's", () {
       final milk = catalog.productOf(const ProductIdentifier('product-milk'))!;
       final yoghurt = catalog.productOf(const ProductIdentifier('product-yoghurt'))!;
       expect(catalog.shelfLifeAfterOpeningDaysOf(milk), 3);
@@ -242,10 +242,9 @@ void main() {
     test('seeded freezer categories belong to the freezer domain', () async {
       await harness.read(seedCatalogUseCaseProvider).execute();
       final seeded = await harness.readCatalog();
-      expect(
-        seeded.categories.map((category) => category.storageDomain).toSet(),
-        {StorageDomainIdentifier.freezer},
-      );
+      expect(seeded.categories.map((category) => category.storageDomain).toSet(), {
+        StorageDomainIdentifier.freezer,
+      });
     });
 
     test('a product\'s shelf life after opening can be set and cleared', () async {
@@ -265,20 +264,25 @@ void main() {
         productIdentifier: butter.identifier,
         settings: ProductSettings(enteredName: '', categoryIdentifier: butter.categoryIdentifier),
       );
-      expect(seededProduct(await harness.readCatalog(), 'butter').shelfLifeAfterOpeningDays, isNull);
+      expect(
+        seededProduct(await harness.readCatalog(), 'butter').shelfLifeAfterOpeningDays,
+        isNull,
+      );
     });
 
     test('a shelf life after opening must be positive', () async {
       await harness.read(seedCatalogUseCaseProvider).execute();
       final butter = seededProduct(await harness.readCatalog(), 'butter');
-      final result = await harness.read(updateProductUseCaseProvider).execute(
-        productIdentifier: butter.identifier,
-        settings: ProductSettings(
-          enteredName: '',
-          categoryIdentifier: butter.categoryIdentifier,
-          shelfLifeAfterOpeningDays: 0,
-        ),
-      );
+      final result = await harness
+          .read(updateProductUseCaseProvider)
+          .execute(
+            productIdentifier: butter.identifier,
+            settings: ProductSettings(
+              enteredName: '',
+              categoryIdentifier: butter.categoryIdentifier,
+              shelfLifeAfterOpeningDays: 0,
+            ),
+          );
       expect(result.failureOrNull, isA<InvalidProductSetting>());
     });
   });

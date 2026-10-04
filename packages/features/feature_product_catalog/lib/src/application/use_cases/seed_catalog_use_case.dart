@@ -42,6 +42,7 @@ final class SeedCatalogUseCase {
           recommendedMaximumStorageDays: seededCategory.recommendedMaximumStorageDays,
           iconEmoji: seededCategory.iconEmoji,
           sortOrder: index,
+          storageDomain: StorageDomainIdentifier.freezer,
         ),
       );
       insertedCount++;

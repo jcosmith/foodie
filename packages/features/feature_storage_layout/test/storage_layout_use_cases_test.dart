@@ -33,7 +33,9 @@ void main() {
 
   group('creating a freezer from a template', () {
     test('creates numbered drawers with differing colour tags', () async {
-      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithFiveDrawers);
+      final storagePlaceIdentifier = await createStoragePlace(
+        StorageTemplate.uprightWithFiveDrawers,
+      );
 
       final compartments = await compartmentsOf(storagePlaceIdentifier);
       expect(compartments.map((compartment) => compartment.defaultNumber), [1, 2, 3, 4, 5]);
@@ -58,17 +60,21 @@ void main() {
 
       expect(duplicate.failureOrNull, isA<LayoutNameAlreadyTaken>());
       final layout = await harness.readLayout();
-      expect(layout.storagePlaces.map((storagePlaceLayout) => storagePlaceLayout.storagePlace.identifier), [
-        kitchen,
-        cellar,
-      ]);
+      expect(
+        layout.storagePlaces.map(
+          (storagePlaceLayout) => storagePlaceLayout.storagePlace.identifier,
+        ),
+        [kitchen, cellar],
+      );
       expect(layout.storagePlaceOf(kitchen)!.customName, 'Kitchen');
     });
   });
 
   group('renaming a compartment', () {
     test('stores a custom name and goes back to the default when cleared', () async {
-      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final storagePlaceIdentifier = await createStoragePlace(
+        StorageTemplate.uprightWithThreeDrawers,
+      );
       final firstDrawer = (await compartmentsOf(storagePlaceIdentifier)).first;
       final renameCompartment = harness.read(renameCompartmentUseCaseProvider);
 
@@ -89,7 +95,9 @@ void main() {
     });
 
     test('refuses the default name another drawer still shows', () async {
-      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final storagePlaceIdentifier = await createStoragePlace(
+        StorageTemplate.uprightWithThreeDrawers,
+      );
       final firstDrawer = (await compartmentsOf(storagePlaceIdentifier)).first;
 
       final result = await harness
@@ -123,7 +131,9 @@ void main() {
   });
 
   test('a new compartment never reuses the number of a removed one', () async {
-    final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+    final storagePlaceIdentifier = await createStoragePlace(
+      StorageTemplate.uprightWithThreeDrawers,
+    );
     final lastDrawer = (await compartmentsOf(storagePlaceIdentifier)).last;
     await harness
         .read(moveContentsAndArchiveCompartmentUseCaseProvider)
@@ -137,7 +147,9 @@ void main() {
   });
 
   test('reorders compartments and rejects an incomplete order', () async {
-    final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+    final storagePlaceIdentifier = await createStoragePlace(
+      StorageTemplate.uprightWithThreeDrawers,
+    );
     final compartments = await compartmentsOf(storagePlaceIdentifier);
     final reorderCompartments = harness.read(reorderCompartmentsUseCaseProvider);
 
@@ -154,7 +166,9 @@ void main() {
 
     expect(incomplete.failureOrNull, isA<InvalidOrder>());
     expect(
-      (await compartmentsOf(storagePlaceIdentifier)).map((compartment) => compartment.defaultNumber),
+      (await compartmentsOf(
+        storagePlaceIdentifier,
+      )).map((compartment) => compartment.defaultNumber),
       [3, 2, 1],
     );
   });
@@ -172,7 +186,9 @@ void main() {
     });
 
     test('asks for a destination when the compartment holds items', () async {
-      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final storagePlaceIdentifier = await createStoragePlace(
+        StorageTemplate.uprightWithThreeDrawers,
+      );
       final [firstDrawer, secondDrawer, _] = await compartmentsOf(storagePlaceIdentifier);
       compartmentContents.setItemCount(firstDrawer.identifier, 4);
       final removeCompartment = harness.read(moveContentsAndArchiveCompartmentUseCaseProvider);
@@ -205,9 +221,13 @@ void main() {
 
   group('removing a freezer', () {
     test('keeps the last freezer', () async {
-      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final storagePlaceIdentifier = await createStoragePlace(
+        StorageTemplate.uprightWithThreeDrawers,
+      );
 
-      final result = await harness.read(archiveStoragePlaceUseCaseProvider).execute(storagePlaceIdentifier);
+      final result = await harness
+          .read(archiveStoragePlaceUseCaseProvider)
+          .execute(storagePlaceIdentifier);
 
       expect(result.failureOrNull, isA<LastStoragePlaceCannotBeRemoved>());
     });

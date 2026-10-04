@@ -238,7 +238,7 @@ class _ScanToAddPanelState extends ConsumerState<ScanToAddPanel> {
             ? null
             : context
                   .compartmentDisplayNameResolver(layout)
-                  .compartmentNameWithFreezer(compartment);
+                  .compartmentNameWithStoragePlace(compartment);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -249,7 +249,7 @@ class _ScanToAddPanelState extends ConsumerState<ScanToAddPanel> {
               isCodeJustLearned: widget.isCodeJustLearned,
               detail: stock == null
                   ? null
-                  : localizations.amountInFreezer(quantityFormatter.format(stock)),
+                  : localizations.amountInStoragePlace(quantityFormatter.format(stock)),
             ),
             if (embeddedWeight != null) ...[
               const SizedBox(height: FoodieSpacing.small),
@@ -320,13 +320,13 @@ class ScanToRemovePanel extends ConsumerWidget {
         _RecognizedProductHeader(
           recognizedBarcode: recognizedBarcode,
           isCodeJustLearned: isCodeJustLearned,
-          detail: items.isEmpty ? localizations.notInFreezer : null,
+          detail: items.isEmpty ? localizations.notInStoragePlace : null,
         ),
         if (items.isEmpty)
           TextButton(onPressed: onDone, child: Text(localizations.scanNext))
         else ...[
           const SizedBox(height: FoodieSpacing.medium),
-          Text(localizations.bagsInFreezer(items.length)),
+          Text(localizations.bagsInStoragePlace(items.length)),
           StockItemTile(item: items.first, today: overview.today),
           FilledButton(
             onPressed: () => _take(context, items.first),

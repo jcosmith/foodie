@@ -5,24 +5,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../application/storage_layout_providers.dart';
-import '../domain/freezer_template.dart';
 import '../domain/layout_name_policy.dart';
+import '../domain/storage_template.dart';
 import '../l10n/generated/storage_layout_localizations.dart';
-import 'freezer_template_choice_list.dart';
 import 'layout_localization.dart';
 import 'storage_layout_routes.dart';
+import 'storage_template_choice_list.dart';
 
-/// Adds a freezer from a template, then opens its editor.
-class FreezerTemplatePickerScreen extends ConsumerStatefulWidget {
-  const FreezerTemplatePickerScreen({super.key});
+/// Adds a storage place from a template, then opens its editor.
+class StorageTemplatePickerScreen extends ConsumerStatefulWidget {
+  const StorageTemplatePickerScreen({super.key});
 
   @override
-  ConsumerState<FreezerTemplatePickerScreen> createState() => _FreezerTemplatePickerScreenState();
+  ConsumerState<StorageTemplatePickerScreen> createState() => _StorageTemplatePickerScreenState();
 }
 
-class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePickerScreen> {
+class _StorageTemplatePickerScreenState extends ConsumerState<StorageTemplatePickerScreen> {
   final TextEditingController _nameController = TextEditingController();
-  FreezerTemplate _selectedTemplate = FreezerTemplate.uprightWithThreeDrawers;
+  StorageTemplate _selectedTemplate = StorageTemplate.uprightWithThreeDrawers;
   String? _nameError;
   bool _isSaving = false;
 
@@ -32,11 +32,11 @@ class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePic
     super.dispose();
   }
 
-  Future<void> _createFreezer() async {
+  Future<void> _createStoragePlace() async {
     setState(() => _isSaving = true);
     final localizations = StorageLayoutLocalizations.of(context);
     final result = await ref
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
           template: _selectedTemplate,
           enteredName: _nameController.text,
@@ -44,11 +44,11 @@ class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePic
         );
     if (!mounted) return;
     result.fold(
-      onSuccess: (freezerIdentifier) =>
-          context.pushReplacement(StorageLayoutRoutes.freezerEditor(freezerIdentifier)),
+      onSuccess: (storagePlaceIdentifier) =>
+          context.pushReplacement(StorageLayoutRoutes.storagePlaceEditor(storagePlaceIdentifier)),
       onFailure: (failure) => setState(() {
         _isSaving = false;
-        _nameError = localizations.describeFailure(failure, isAboutFreezer: true);
+        _nameError = localizations.describeFailure(failure, isAboutStoragePlace: true);
       }),
     );
   }
@@ -56,15 +56,15 @@ class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePic
   @override
   Widget build(BuildContext context) {
     final localizations = StorageLayoutLocalizations.of(context);
-    final defaultName = context.layoutDefaultNames.freezerName(_selectedTemplate.storageKind);
+    final defaultName = context.layoutDefaultNames.storagePlaceName(_selectedTemplate.storageKind);
     return Scaffold(
-      appBar: AppBar(title: Text(localizations.newFreezerTitle)),
+      appBar: AppBar(title: Text(localizations.newStoragePlaceTitle)),
       body: ListView(
         padding: const EdgeInsets.all(FoodieSpacing.screenGutter),
         children: [
           Text(localizations.templatePrompt, style: Theme.of(context).textTheme.bodyLarge),
           const SizedBox(height: FoodieSpacing.small),
-          FreezerTemplateChoiceList(
+          StorageTemplateChoiceList(
             selectedTemplate: _selectedTemplate,
             onTemplateSelected: (template) => setState(() => _selectedTemplate = template),
           ),
@@ -74,9 +74,9 @@ class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePic
             maxLength: LayoutNamePolicy.maximumNameLength,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
-              labelText: localizations.freezerNameLabel,
+              labelText: localizations.storagePlaceNameLabel,
               hintText: defaultName,
-              helperText: localizations.freezerNameHelper(defaultName),
+              helperText: localizations.storagePlaceNameHelper(defaultName),
               helperMaxLines: 2,
               errorText: _nameError,
             ),
@@ -86,8 +86,8 @@ class _FreezerTemplatePickerScreenState extends ConsumerState<FreezerTemplatePic
           ),
           const SizedBox(height: FoodieSpacing.large),
           FilledButton(
-            onPressed: _isSaving ? null : _createFreezer,
-            child: Text(localizations.addFreezerButton),
+            onPressed: _isSaving ? null : _createStoragePlace,
+            child: Text(localizations.addStoragePlaceButton),
           ),
           TextButton(
             onPressed: () => context.pop(),
