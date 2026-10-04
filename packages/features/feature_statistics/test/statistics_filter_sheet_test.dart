@@ -69,7 +69,7 @@ void main() {
   /// and pizza (1) have history in the last three months; mango was only
   /// added before that.
   Future<void> recordHistory() async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     peas = await harness.productWithKey('gardenPeas');
     chicken = await harness.productWithKey('chickenBreast');
     pizza = await harness.productWithKey('pizzaMargherita');
@@ -164,7 +164,7 @@ void main() {
 
   /// Twelve products with history; the first was also eaten from.
   Future<List<Product>> recordTwelveProducts() async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     final catalog = await harness.read(productCatalogQueryServiceProvider).readCatalog();
     final products = catalog.activeProducts.take(12).toList();
     for (final product in products) {
