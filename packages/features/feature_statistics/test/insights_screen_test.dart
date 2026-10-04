@@ -127,7 +127,7 @@ void main() {
     await _pumpInsights(tester, harness);
 
     expect(find.text('Jul 5, 2026 – Oct 2, 2026'), findsOneWidget);
-    expect(find.text('Filters · 0'), findsOneWidget);
+    expect(find.text('Filters'), findsOneWidget);
     expect(find.bySemanticsLabel('Used: 0.5 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Added: 1.8 kg, no comparison'), findsOneWidget);
     expect(find.bySemanticsLabel('Thrown away: 44.4%, no comparison'), findsOneWidget);
@@ -161,7 +161,7 @@ void main() {
 
     await tester.tap(find.widgetWithText(ActionChip, 'Reset'));
     await _settle(tester);
-    expect(find.text('Filters · 0'), findsOneWidget);
+    expect(find.text('Filters'), findsOneWidget);
     expect(find.bySemanticsLabel('Used: 0.5 kg, no comparison'), findsOneWidget);
   });
 
@@ -169,7 +169,7 @@ void main() {
     await tester.runAsync(() => _recordHistory(harness));
     await _pumpInsights(tester, harness);
 
-    await tester.tap(find.text('Filters · 0'));
+    await tester.tap(find.text('Filters'));
     await _settle(tester);
     expect(find.text('1 product uses another unit and is left out.'), findsOneWidget);
 
@@ -189,7 +189,7 @@ void main() {
     await _pumpInsights(tester, harness, locale: const Locale('de'));
 
     expect(find.text('Auswertung'), findsOneWidget);
-    expect(find.text('Filter · 0'), findsOneWidget);
+    expect(find.text('Filter'), findsOneWidget);
     expect(find.bySemanticsLabel('Verbraucht: 0,5 kg, kein Vergleich'), findsOneWidget);
   });
 
@@ -206,7 +206,7 @@ void main() {
     await tester.runAsync(() => _recordHistory(twoDomains));
     await _pumpInsights(tester, twoDomains);
 
-    await tester.tap(find.text('Filters · 0'));
+    await tester.tap(find.text('Filters'));
     await _settle(tester);
     expect(find.text('Storage'), findsOneWidget);
     await tester.ensureVisible(find.widgetWithText(FilterChip, '🥫 Pantry'));

@@ -128,7 +128,7 @@ void main() {
     await tester.runAsync(() => _recordHistory(harness));
     await _pumpDetails(tester, harness);
 
-    await tester.tap(find.text('Filters · 0'));
+    await tester.tap(find.text('Filters'));
     await _settle(tester);
     await tester.tap(find.widgetWithText(ActionChip, 'Waste check'));
     await _settle(tester);
