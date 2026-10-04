@@ -252,6 +252,8 @@ void main() {
           .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
           .first,
     );
+    await tester.ensureVisible(find.text('Deutsch'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Deutsch'));
     await _settle(tester);
 
@@ -265,6 +267,8 @@ void main() {
           .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
           .first,
     );
+    await tester.ensureVisible(find.text('Dunkel'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Dunkel'));
     await _settle(tester);
     expect(Theme.of(tester.element(find.text('Optionen'))).brightness, Brightness.dark);

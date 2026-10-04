@@ -7,6 +7,7 @@ import 'package:feature_fridge/feature_fridge.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_item_pictures/feature_item_pictures.dart';
 import 'package:feature_onboarding/feature_onboarding.dart';
+import 'package:feature_pantry/feature_pantry.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_restock/feature_restock.dart';
 import 'package:feature_statistics/feature_statistics.dart';
@@ -22,6 +23,7 @@ List<FeatureModule> createRegisteredFeatureModules() => [
   const StorageLayoutFeatureModule(),
   const FreezerFeatureModule(),
   const FridgeFeatureModule(),
+  const PantryFeatureModule(),
   const ProductCatalogFeatureModule(),
   const InventoryFeatureModule(),
   const StorageRemindersFeatureModule(),
