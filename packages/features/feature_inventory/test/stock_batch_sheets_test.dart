@@ -31,18 +31,23 @@ void main() {
   }
 
   /// Bread bought five days ago on a cupboard shelf, shown in the shelves tab.
-  Future<void> showShelvesTab(WidgetTester tester) async {
+  Future<void> showShelvesTab(
+    WidgetTester tester, {
+    int amountInBaseUnits = 1000,
+    Future<void> Function(StockBatchIdentifier batch)? beforeShowing,
+  }) async {
     breadIdentifier = (await tester.runAsync(() async {
       await harness.setUpCatalogAndStoragePlace();
       final shelves = await harness.addStoragePlace(ShelvesModule.cupboard);
       return harness.addBatch(
         product: await harness.seededProduct('wholegrainBread'),
         compartment: shelves.first,
-        amountInBaseUnits: 1000,
+        amountInBaseUnits: amountInBaseUnits,
         storedOn: today.addDays(-5),
         bestBeforeOn: today.addDays(3),
       );
     }))!;
+    if (beforeShowing != null) await tester.runAsync(() => beforeShowing(breadIdentifier));
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: harness.container,
@@ -78,6 +83,32 @@ void main() {
     await tester.tap(find.text('Mark as not opened'));
     await settle(tester);
     expect((await tester.runAsync(() => harness.readBatch(breadIdentifier)))!.openedOn, isNull);
+  });
+
+  testWidgets('taking out starts with the usual amount of the product', (tester) async {
+    await showShelvesTab(
+      tester,
+      amountInBaseUnits: 8000,
+      beforeShowing: (batch) async {
+        final consume = harness.read(consumeStockUseCaseProvider);
+        for (final thousandths in [2000, 3000]) {
+          await consume.execute(
+            stockBatchIdentifier: batch,
+            quantity: Quantity(amountInBaseUnits: thousandths, unit: QuantityUnit.piece),
+          );
+        }
+      },
+    );
+
+    expect(find.text('Usually 2.5 pcs'), findsOneWidget);
+    expect(find.text('Take 2.5 pcs'), findsOneWidget);
+  });
+
+  testWidgets('without earlier removals the take sheet starts at about a fifth', (tester) async {
+    await showShelvesTab(tester, amountInBaseUnits: 10000);
+
+    expect(find.textContaining('Usually'), findsNothing);
+    expect(find.text('Take 2 pcs'), findsOneWidget);
   });
 
   testWidgets('moving into the freezer offers "Frozen today", switched on', (tester) async {

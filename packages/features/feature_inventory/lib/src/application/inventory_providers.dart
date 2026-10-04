@@ -111,3 +111,9 @@ final correctRemainingQuantityUseCaseProvider = Provider<CorrectRemainingQuantit
     dependencies: ref.watch(inventoryUseCaseDependenciesProvider),
   ),
 );
+
+/// How much of a product is usually taken out at once, for the take sheet.
+final usualConsumedAmountProvider = FutureProvider.autoDispose.family<Quantity?, ProductIdentifier>(
+  (ref, productIdentifier) =>
+      ref.watch(inventoryQueryServiceProvider).readUsualConsumedAmount(productIdentifier),
+);

@@ -256,5 +256,13 @@
   "compartmentMissing": "Choose where it goes.",
   "storedOnInFuture": "The date cannot be in the future.",
   "genericFailure": "That did not work. Please try again.",
-  "batchPhotoButton": "Photo of this bag"
+  "batchPhotoButton": "Photo of this bag",
+  "usualAmountHint": "Usually {amount}",
+  "@usualAmountHint": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  }
 }

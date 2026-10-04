@@ -313,4 +313,9 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
 
   @override
   String get batchPhotoButton => 'Foto dieser Packung';
+
+  @override
+  String usualAmountHint(String amount) {
+    return 'Üblich: $amount';
+  }
 }

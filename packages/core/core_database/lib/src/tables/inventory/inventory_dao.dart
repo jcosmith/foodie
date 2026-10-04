@@ -110,6 +110,18 @@ class InventoryDao extends DatabaseAccessor<ApplicationDatabase> with _$Inventor
     );
   }
 
+  /// The movements of one product, oldest first, with their unit.
+  Future<List<(InventoryMovementRow, String)>> readMovementsWithUnitsOfProduct(
+    String productIdentifier,
+  ) async {
+    final query = _movementsWithUnitsQuery()
+      ..where(inventoryMovements.productIdentifier.equals(productIdentifier));
+    return [
+      for (final row in await query.get())
+        (row.readTable(inventoryMovements), row.readTable(stockBatches).quantityUnit),
+    ];
+  }
+
   JoinedSelectStatement<HasResultSet, dynamic> _movementsWithUnitsQuery() =>
       select(inventoryMovements).join([
         innerJoin(

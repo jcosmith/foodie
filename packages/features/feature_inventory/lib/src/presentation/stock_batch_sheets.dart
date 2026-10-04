@@ -117,9 +117,37 @@ class _TakeOrDiscardSheet extends ConsumerStatefulWidget {
 class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
   late Quantity _amount = widget.isDiscarding
       ? widget.item.batch.quantityRemaining
-      : RemovalAmountPolicy.suggestedAmount(widget.item.batch.quantityRemaining);
+      : _suggestedAmount(usualAmount: null);
   DiscardReason _discardReason = DiscardReason.tooOld;
   bool _isSaving = false;
+
+  /// Set once the user picks an amount, so the usual amount arriving later
+  /// does not overwrite it.
+  bool _isAmountChosen = false;
+
+  /// How much of this product is usually taken out, once known.
+  Quantity? _usualAmount;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isDiscarding) return;
+    ref.listenManual(usualConsumedAmountProvider(widget.item.product.identifier), (_, next) {
+      final usualAmount = next.value;
+      if (usualAmount == null || !mounted) return;
+      setState(() {
+        _usualAmount = usualAmount;
+        if (!_isAmountChosen) _amount = _suggestedAmount(usualAmount: usualAmount);
+      });
+    }, fireImmediately: true);
+  }
+
+  Quantity _suggestedAmount({required Quantity? usualAmount}) =>
+      RemovalAmountPolicy.suggestedAmount(
+        widget.item.batch.quantityRemaining,
+        packageSize: widget.item.batch.initialQuantity,
+        usualAmount: usualAmount,
+      );
 
   Future<void> _confirm() async {
     setState(() => _isSaving = true);
@@ -220,8 +248,18 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
         RemovalAmountPicker(
           batch: widget.item.batch,
           amount: _amount,
-          onAmountChanged: (amount) => setState(() => _amount = amount),
+          onAmountChanged: (amount) => setState(() {
+            _amount = amount;
+            _isAmountChosen = true;
+          }),
         ),
+        if (_usualAmount case final usualAmount?) ...[
+          const SizedBox(height: FoodieSpacing.extraSmall),
+          Text(
+            localizations.usualAmountHint(context.quantityFormatter.format(usualAmount)),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
         if (widget.isDiscarding) ...[
           const SizedBox(height: FoodieSpacing.medium),
           Text(localizations.discardReasonLabel, style: Theme.of(context).textTheme.titleSmall),

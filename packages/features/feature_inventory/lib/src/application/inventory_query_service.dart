@@ -1,8 +1,10 @@
+import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 
 import '../domain/inventory_movement.dart';
 import '../domain/inventory_repository.dart';
+import '../domain/removal_amount_policy.dart';
 import '../domain/stock_batch.dart';
 
 /// Read-only access to stock for other features (reminders, restock,
@@ -26,6 +28,13 @@ final class InventoryQueryService {
 
   /// Every addition, removal, move and correction, oldest first.
   Future<List<InventoryMovement>> readMovementHistory() => _repository.readMovementHistory();
+
+  /// How much of [productIdentifier] is usually taken out at once (the take
+  /// sheet's starting amount); `null` before the first removal.
+  Future<Quantity?> readUsualConsumedAmount(ProductIdentifier productIdentifier) async =>
+      RemovalAmountPolicy.usualConsumedAmount(
+        await _repository.readMovementsOfProduct(productIdentifier),
+      );
 
   /// Movements at or after [occurredFrom], oldest first, kept up to date
   /// (restock's "runs out in" forecast).

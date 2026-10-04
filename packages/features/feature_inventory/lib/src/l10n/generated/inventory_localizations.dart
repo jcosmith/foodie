@@ -592,6 +592,12 @@ abstract class InventoryLocalizations {
   /// In en, this message translates to:
   /// **'Photo of this bag'**
   String get batchPhotoButton;
+
+  /// No description provided for @usualAmountHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually {amount}'**
+  String usualAmountHint(String amount);
 }
 
 class _InventoryLocalizationsDelegate extends LocalizationsDelegate<InventoryLocalizations> {

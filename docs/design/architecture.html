@@ -682,7 +682,7 @@ details.decision .decision-body p, details.decision .decision-body ul { margin: 
         <li><strong>Use case:</strong> <code>ConsumeStockUseCase(batchId, Quantity)</code> returns a failure if the amount is zero, larger than what is left, or in a different unit. Integer quantities (D10) keep the arithmetic exact.</li>
         <li><strong>Package sizes:</strong> products carry an optional <code>defaultPackageQuantity</code> (1000 g for spinach) that pre-fills the add form.</li>
         <li><strong>Moving part of a batch</strong> to another compartment splits it: a new batch with the same <code>frozenOn</code> and a <code>parentBatchId</code>.</li>
-        <li><strong>Interaction:</strong> quick buttons for ¼, ½, ¾ and "all", a slider that snaps to sensible steps (50 g, 50 ml, ½ piece), exact entry, and an undo snackbar. Undo appends a compensating movement, so the log stays append-only.</li>
+        <li><strong>Interaction:</strong> quick buttons for ¼, ½, ¾ and "all", a slider that snaps to steps that suit the package (1 g or ml for packages under 50, 10 up to 200, 50 above, ½ piece), exact entry, and an undo snackbar. The take sheet starts with the amount usually taken of that product (the average of earlier removals), or about a fifth before the first one. Undo appends a compensating movement, so the log stays append-only.</li>
         <li><strong>Questioning it:</strong> people rarely weigh what they take. The quick fractions accept estimates, and a later "correct remaining amount" action records the difference as a <code>corrected</code> movement instead of forcing precision up front.</li>
       </ul>
 

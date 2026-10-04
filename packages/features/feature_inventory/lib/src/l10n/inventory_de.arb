@@ -82,5 +82,6 @@
   "compartmentMissing": "Wähle, wohin es kommt.",
   "storedOnInFuture": "Das Datum kann nicht in der Zukunft liegen.",
   "genericFailure": "Das hat nicht geklappt. Bitte versuche es noch einmal.",
-  "batchPhotoButton": "Foto dieser Packung"
+  "batchPhotoButton": "Foto dieser Packung",
+  "usualAmountHint": "Üblich: {amount}"
 }
