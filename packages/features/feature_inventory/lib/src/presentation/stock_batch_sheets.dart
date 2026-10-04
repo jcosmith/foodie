@@ -1,5 +1,6 @@
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_foundation/core_foundation.dart';
+import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_localization/core_localization.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
@@ -93,9 +94,11 @@ class _SheetHeader extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                context.productDisplayNameResolver.productName(item.product),
+              // The whole note here; the list shortens it.
+              StockItemTitle(
+                item: item,
                 style: Theme.of(context).textTheme.titleMedium,
+                maxLines: null,
               ),
               Text(details.join(' · '), style: Theme.of(context).textTheme.bodySmall),
             ],
@@ -322,6 +325,13 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
                 ),
                 icon: const Icon(Icons.edit_outlined),
                 label: Text(localizations.correctAction),
+              ),
+              TextButton.icon(
+                onPressed: () => _switchTo(
+                  (context, item) => _showSheet(context, (sheetContext) => _DatesSheet(item: item)),
+                ),
+                icon: const Icon(Icons.event_outlined),
+                label: Text(localizations.editDatesAction),
               ),
               TextButton.icon(
                 onPressed: _toggleOpened,
@@ -579,6 +589,149 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
           ),
           onSubmitted: (_) => _save(),
         ),
+        const SizedBox(height: FoodieSpacing.large),
+        FilledButton(
+          onPressed: _isSaving ? null : _save,
+          child: Text(context.commonLocalizations.actionSave),
+        ),
+      ],
+    );
+  }
+}
+
+/// "Edit dates": the stored-on date, and the best-before and opened-on
+/// dates, which can also be removed.
+class _DatesSheet extends ConsumerStatefulWidget {
+  const _DatesSheet({required this.item});
+
+  final InventoryItem item;
+
+  @override
+  ConsumerState<_DatesSheet> createState() => _DatesSheetState();
+}
+
+class _DatesSheetState extends ConsumerState<_DatesSheet> {
+  late CalendarDate _storedOn = widget.item.batch.storedOn;
+  late CalendarDate? _bestBeforeOn = widget.item.batch.bestBeforeOn;
+  late CalendarDate? _openedOn = widget.item.batch.openedOn;
+  String? _error;
+  bool _isSaving = false;
+
+  Future<CalendarDate?> _pickDate(
+    CalendarDate? current, {
+    required int daysBack,
+    required int daysAhead,
+  }) async {
+    final today = ref.read(clockProvider).todayLocal();
+    final chosenDate = await showDatePicker(
+      context: context,
+      initialDate: (current ?? today).toLocalDateTime(),
+      firstDate: today.addDays(-daysBack).toLocalDateTime(),
+      lastDate: today.addDays(daysAhead).toLocalDateTime(),
+    );
+    return chosenDate == null ? null : CalendarDate.fromDateTime(chosenDate);
+  }
+
+  Future<void> _save() async {
+    final localizations = InventoryLocalizations.of(context);
+    final batch = widget.item.batch;
+    if (_storedOn == batch.storedOn &&
+        _bestBeforeOn == batch.bestBeforeOn &&
+        _openedOn == batch.openedOn) {
+      Navigator.of(context).pop();
+      return;
+    }
+    setState(() => _isSaving = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final productName = context.productDisplayNameResolver.productName(widget.item.product);
+    final result = await ref
+        .read(changeStockBatchDatesUseCaseProvider)
+        .execute(
+          batch.identifier,
+          storedOn: _storedOn,
+          bestBeforeOn: _bestBeforeOn,
+          openedOn: _openedOn,
+        );
+    if (!mounted) return;
+    switch (result) {
+      case SuccessfulResult():
+        navigator.pop();
+        messenger.showSnackBar(
+          SnackBar(content: Text(localizations.datesChangedSnackbar(productName))),
+        );
+      case FailedResult(:final failure):
+        setState(() {
+          _isSaving = false;
+          _error = localizations.describeFailure(failure);
+        });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = InventoryLocalizations.of(context);
+    final dateFormatter = context.dateDisplayFormatter;
+    String format(CalendarDate? date) =>
+        date == null ? localizations.dateNotSet : dateFormatter.formatMediumDate(date);
+    Widget dateTile({
+      required String label,
+      required CalendarDate? date,
+      required VoidCallback onTap,
+      VoidCallback? onRemove,
+    }) => ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.event_outlined),
+      title: Text(label),
+      subtitle: Text(format(date)),
+      onTap: onTap,
+      trailing: onRemove == null || date == null
+          ? null
+          : IconButton(
+              tooltip: localizations.removeDate,
+              icon: const Icon(Icons.clear),
+              onPressed: onRemove,
+            ),
+    );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _SheetHeader(item: widget.item),
+        const SizedBox(height: FoodieSpacing.large),
+        Text(localizations.editDatesTitle, style: Theme.of(context).textTheme.titleSmall),
+        dateTile(
+          label: localizations.storedOnLabel,
+          date: _storedOn,
+          onTap: () async {
+            final chosen = await _pickDate(_storedOn, daysBack: 5 * 366, daysAhead: 0);
+            if (chosen != null) setState(() => _storedOn = chosen);
+          },
+        ),
+        dateTile(
+          label: localizations.bestBeforeLabel,
+          date: _bestBeforeOn,
+          onTap: () async {
+            final chosen = await _pickDate(_bestBeforeOn, daysBack: 5 * 366, daysAhead: 5 * 366);
+            if (chosen != null) setState(() => _bestBeforeOn = chosen);
+          },
+          onRemove: () => setState(() => _bestBeforeOn = null),
+        ),
+        dateTile(
+          label: localizations.openedOnLabel,
+          date: _openedOn,
+          onTap: () async {
+            final chosen = await _pickDate(_openedOn, daysBack: 5 * 366, daysAhead: 0);
+            if (chosen != null) setState(() => _openedOn = chosen);
+          },
+          onRemove: () => setState(() => _openedOn = null),
+        ),
+        if (_error case final error?)
+          Padding(
+            padding: const EdgeInsets.only(top: FoodieSpacing.small),
+            child: Text(error, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          ),
         const SizedBox(height: FoodieSpacing.large),
         FilledButton(
           onPressed: _isSaving ? null : _save,

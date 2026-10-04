@@ -36,6 +36,7 @@ void main() {
   Future<void> showShelvesTab(
     WidgetTester tester, {
     int amountInBaseUnits = 1000,
+    String? note,
     Future<void> Function(StockBatchIdentifier batch)? beforeShowing,
   }) async {
     breadIdentifier = (await tester.runAsync(() async {
@@ -47,6 +48,7 @@ void main() {
         amountInBaseUnits: amountInBaseUnits,
         storedOn: today.addDays(-5),
         bestBeforeOn: today.addDays(3),
+        note: note,
       );
     }))!;
     if (beforeShowing != null) await tester.runAsync(() => beforeShowing(breadIdentifier));
@@ -64,7 +66,7 @@ void main() {
       ),
     );
     await settle(tester);
-    await tester.tap(find.text('Wholegrain bread'));
+    await tester.tap(find.textContaining('Wholegrain bread'));
     await settle(tester);
   }
 
@@ -111,6 +113,33 @@ void main() {
 
     expect(find.textContaining('Usually'), findsNothing);
     expect(find.text('Take 2 pcs'), findsOneWidget);
+  });
+
+  testWidgets('removing the best-before date and fixing the stored-on date', (tester) async {
+    await showShelvesTab(tester);
+    await tester.tap(find.text('Edit dates'));
+    await settle(tester);
+
+    expect(find.text('Best before'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(ListTile, 'Best before'),
+        matching: find.byTooltip('Remove date'),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.text('Save'));
+    await settle(tester);
+
+    expect(find.text('Dates of Wholegrain bread changed'), findsOneWidget);
+    final batch = (await tester.runAsync(() => harness.readBatch(breadIdentifier)))!;
+    expect(batch.bestBeforeOn, isNull);
+    expect(batch.storedOn, today.addDays(-5));
+  });
+
+  testWidgets('the sheet shows the whole note after the name', (tester) async {
+    await showShelvesTab(tester, note: 'from the baker');
+    expect(find.text('Wholegrain bread (from the baker)', findRichText: true), findsWidgets);
   });
 
   group('undo time from Options', () {

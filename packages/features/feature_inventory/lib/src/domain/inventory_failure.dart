@@ -80,3 +80,19 @@ final class StoredOnInFuture extends InventoryFailure {
   @override
   String get debugDescription => 'The stored-on date lies in the future';
 }
+
+/// An opened-on date in the future is a typing mistake.
+final class OpenedOnInFuture extends InventoryFailure {
+  const OpenedOnInFuture();
+
+  @override
+  String get debugDescription => 'The opened-on date lies in the future';
+}
+
+/// A package cannot be opened before it was put away.
+final class OpenedBeforeStored extends InventoryFailure {
+  const OpenedBeforeStored();
+
+  @override
+  String get debugDescription => 'The opened-on date lies before the stored-on date';
+}

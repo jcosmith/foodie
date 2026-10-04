@@ -99,6 +99,16 @@ final class StockBatchOpened extends StockBatchEvent {
   final CalendarDate? openedOn;
 }
 
+/// The stored-on, best-before or opened-on date was corrected; the
+/// storage age and use-by date may have moved.
+final class StockBatchDatesChanged extends StockBatchEvent {
+  const StockBatchDatesChanged({
+    required super.stockBatchIdentifier,
+    required super.productIdentifier,
+    required super.occurredAt,
+  });
+}
+
 /// The remaining amount was set to what is really left, or a removal was undone.
 final class StockBatchCorrected extends StockBatchEvent {
   const StockBatchCorrected({

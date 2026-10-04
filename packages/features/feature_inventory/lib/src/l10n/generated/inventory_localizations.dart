@@ -628,6 +628,60 @@ abstract class InventoryLocalizations {
   /// In en, this message translates to:
   /// **'After taking out, throwing away or opening something.'**
   String get undoTimeLimitHint;
+
+  /// No description provided for @editDatesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit dates'**
+  String get editDatesAction;
+
+  /// No description provided for @editDatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get editDatesTitle;
+
+  /// No description provided for @bestBeforeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best before'**
+  String get bestBeforeLabel;
+
+  /// No description provided for @openedOnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened on'**
+  String get openedOnLabel;
+
+  /// No description provided for @dateNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get dateNotSet;
+
+  /// No description provided for @removeDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove date'**
+  String get removeDate;
+
+  /// No description provided for @datesChangedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates of {product} changed'**
+  String datesChangedSnackbar(String product);
+
+  /// No description provided for @openedOnInFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'The opened date cannot be in the future.'**
+  String get openedOnInFuture;
+
+  /// No description provided for @openedBeforeStored.
+  ///
+  /// In en, this message translates to:
+  /// **'It cannot be opened before it was stored.'**
+  String get openedBeforeStored;
 }
 
 class _InventoryLocalizationsDelegate extends LocalizationsDelegate<InventoryLocalizations> {

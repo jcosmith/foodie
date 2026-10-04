@@ -11,6 +11,7 @@ import '../domain/inventory_repository.dart';
 import 'inventory_overview.dart';
 import 'inventory_query_service.dart';
 import 'use_cases/add_stock_batch_use_case.dart';
+import 'use_cases/change_stock_batch_dates_use_case.dart';
 import 'use_cases/correct_remaining_quantity_use_case.dart';
 import 'use_cases/inventory_use_case_dependencies.dart';
 import 'use_cases/mark_stock_batch_opened_use_case.dart';
@@ -99,6 +100,11 @@ final moveStockBatchUseCaseProvider = Provider<MoveStockBatchUseCase>(
 /// Moves without checking the destination, for emptying a compartment.
 final stockBatchMoverProvider = Provider<StockBatchMover>(
   (ref) => StockBatchMover(ref.watch(inventoryUseCaseDependenciesProvider)),
+);
+
+final changeStockBatchDatesUseCaseProvider = Provider<ChangeStockBatchDatesUseCase>(
+  (ref) =>
+      ChangeStockBatchDatesUseCase(dependencies: ref.watch(inventoryUseCaseDependenciesProvider)),
 );
 
 final markStockBatchOpenedUseCaseProvider = Provider<MarkStockBatchOpenedUseCase>(

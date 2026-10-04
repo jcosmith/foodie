@@ -112,7 +112,8 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
     final matchingItems = [
       for (final item in overview.items)
         if (searchQuery.isEmpty ||
-            productNames.productName(item.product).toLowerCase().contains(searchQuery))
+            productNames.productName(item.product).toLowerCase().contains(searchQuery) ||
+            (item.batch.note?.toLowerCase().contains(searchQuery) ?? false))
           item,
     ];
     return CustomScrollView(

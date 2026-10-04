@@ -276,5 +276,21 @@
   },
   "undoOff": "No undo",
   "undoUntilDismissed": "Undo stays until you close the message",
-  "undoTimeLimitHint": "After taking out, throwing away or opening something."
+  "undoTimeLimitHint": "After taking out, throwing away or opening something.",
+  "editDatesAction": "Edit dates",
+  "editDatesTitle": "Dates",
+  "bestBeforeLabel": "Best before",
+  "openedOnLabel": "Opened on",
+  "dateNotSet": "Not set",
+  "removeDate": "Remove date",
+  "datesChangedSnackbar": "Dates of {product} changed",
+  "@datesChangedSnackbar": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
+  "openedOnInFuture": "The opened date cannot be in the future.",
+  "openedBeforeStored": "It cannot be opened before it was stored."
 }

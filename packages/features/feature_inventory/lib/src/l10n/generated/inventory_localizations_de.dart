@@ -335,4 +335,33 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
 
   @override
   String get undoTimeLimitHint => 'Nach dem Entnehmen, Wegwerfen oder Öffnen.';
+
+  @override
+  String get editDatesAction => 'Daten ändern';
+
+  @override
+  String get editDatesTitle => 'Daten';
+
+  @override
+  String get bestBeforeLabel => 'Mindestens haltbar bis';
+
+  @override
+  String get openedOnLabel => 'Geöffnet am';
+
+  @override
+  String get dateNotSet => 'Nicht gesetzt';
+
+  @override
+  String get removeDate => 'Datum entfernen';
+
+  @override
+  String datesChangedSnackbar(String product) {
+    return 'Daten von $product geändert';
+  }
+
+  @override
+  String get openedOnInFuture => 'Das Öffnungsdatum kann nicht in der Zukunft liegen.';
+
+  @override
+  String get openedBeforeStored => 'Es kann nicht vor dem Einlagern geöffnet worden sein.';
 }
