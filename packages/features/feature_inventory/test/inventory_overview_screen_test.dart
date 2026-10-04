@@ -302,7 +302,8 @@ void main() {
     });
 
     testWidgets('the two orders stay side by side on a narrow phone', (tester) async {
-      tester.view.physicalSize = const Size(360, 1600);
+      // The test font is wider than a phone's, so 400 here is narrow.
+      tester.view.physicalSize = const Size(400, 1600);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
       await showTwoDrawers(tester);

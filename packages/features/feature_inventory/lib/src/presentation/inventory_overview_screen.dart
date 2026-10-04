@@ -142,24 +142,21 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                 ],
               ),
               const SizedBox(height: FoodieSpacing.small),
-              Row(
+              // The orders stay together; "Collapse all" moves to the next
+              // line when the row is too narrow, as in German.
+              Wrap(
+                spacing: FoodieSpacing.small,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: FoodieSpacing.small,
-                      children: [
-                        for (final (listOrder, label) in [
-                          (InventoryListOrder.byCompartment, localizations.sortByDrawer),
-                          (InventoryListOrder.eatFirst, localizations.sortByEatBefore),
-                        ])
-                          ChoiceChip(
-                            label: Text(label),
-                            selected: _listOrder == listOrder,
-                            onSelected: (_) => setState(() => _listOrder = listOrder),
-                          ),
-                      ],
+                  for (final (listOrder, label) in [
+                    (InventoryListOrder.byCompartment, localizations.sortByDrawer),
+                    (InventoryListOrder.eatFirst, localizations.sortByEatBefore),
+                  ])
+                    ChoiceChip(
+                      label: Text(label),
+                      selected: _listOrder == listOrder,
+                      onSelected: (_) => setState(() => _listOrder = listOrder),
                     ),
-                  ),
                   if (_listOrder == InventoryListOrder.byCompartment && searchQuery.isEmpty)
                     _buildExpandAllButton(localizations, overview),
                 ],
