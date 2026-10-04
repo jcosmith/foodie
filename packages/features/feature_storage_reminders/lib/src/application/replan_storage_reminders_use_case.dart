@@ -43,14 +43,17 @@ final class ReplanStorageRemindersUseCase {
     final remindableBatches = [
       for (final batch in activeBatches)
         if (catalog.productOf(batch.productIdentifier) case final product?)
-          if (catalog.recommendedMaximumStorageDaysOf(product) case final storageDays?
-              when storageDays > 0)
+          if (UseByPolicy.deadlineOfBatch(
+                batch,
+                shelfLifeDays: catalog.recommendedMaximumStorageDaysOf(product),
+                shelfLifeAfterOpeningDays: catalog.shelfLifeAfterOpeningDaysOf(product),
+              )
+              case final deadline?)
             RemindableBatch(
               stockBatchIdentifier: batch.identifier,
               productIdentifier: batch.productIdentifier,
-              storedOn: batch.storedOn,
               storedSince: CalendarDate.fromDateTime(batch.createdAt.toLocal()),
-              recommendedMaximumStorageDays: storageDays,
+              deadline: deadline,
             ),
     ];
     final plannedDigests = StorageReminderPlanner.plan(

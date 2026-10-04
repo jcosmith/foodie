@@ -35,7 +35,10 @@ class StockItemTile extends StatelessWidget {
         spacing: FoodieSpacing.small,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          StorageAgeBadge(level: item.storageAgeStatus.level),
+          StorageAgeBadge(
+            level: item.useByStatus.level,
+            label: localizations.useByBadgeLabel(item, today),
+          ),
           Text(
             localizations.frozenAgo(
               context.storageAgeFormatter.formatRelativeAge(since: batch.storedOn, today: today),

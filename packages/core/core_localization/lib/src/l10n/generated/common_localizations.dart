@@ -349,7 +349,7 @@ abstract class CommonLocalizations {
   /// No description provided for @storageAgeUrgent.
   ///
   /// In en, this message translates to:
-  /// **'Eat now'**
+  /// **'Use now'**
   String get storageAgeUrgent;
 
   /// No description provided for @storageAgeOverdue.

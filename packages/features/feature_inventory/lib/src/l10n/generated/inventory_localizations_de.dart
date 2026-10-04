@@ -59,6 +59,20 @@ class InventoryLocalizationsDe extends InventoryLocalizations {
   }
 
   @override
+  String get useToday => 'Heute verbrauchen';
+
+  @override
+  String get useByTomorrow => 'Bis morgen verbrauchen';
+
+  @override
+  String useByWeekday(String weekday) {
+    return 'Bis $weekday verbrauchen';
+  }
+
+  @override
+  String get pastBestBefore => 'Mindesthaltbarkeit vorbei';
+
+  @override
   String ofInitial(String remaining, String initial) {
     return '$remaining von $initial';
   }

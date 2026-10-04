@@ -3,53 +3,33 @@ import 'package:feature_inventory/domain.dart';
 import 'package:feature_product_catalog/domain.dart';
 import 'package:meta/meta.dart';
 
-/// A batch at home that has a storage limit, as the planner sees it.
+/// A batch at home that has a use-by deadline, as the planner sees it.
 @immutable
 final class RemindableBatch {
   const RemindableBatch({
     required this.stockBatchIdentifier,
     required this.productIdentifier,
-    required this.storedOn,
     required this.storedSince,
-    required this.recommendedMaximumStorageDays,
+    required this.deadline,
   });
 
   final StockBatchIdentifier stockBatchIdentifier;
   final ProductIdentifier productIdentifier;
 
-  /// The storage age counts from here.
-  final CalendarDate storedOn;
-
   /// The local day the batch was put into the app. Food entered when it is
   /// already old is due from this day, not from a day in the past.
   final CalendarDate storedSince;
 
-  final int recommendedMaximumStorageDays;
+  /// The earliest of shelf life, best-before and opened dates.
+  final UseByDeadline deadline;
 
-  /// The first day the batch should be used soon, as the badge shows it.
-  CalendarDate get eatSoonFrom => _notBefore(
-    StorageAgePolicy.firstDayWithStatus(
-      storedOn: storedOn,
-      recommendedMaximumStorageDays: recommendedMaximumStorageDays,
-      status: StorageAgeStatus.urgent,
-    ),
-  );
+  /// The first day the batch should be used now, as the badge shows it.
+  CalendarDate get useSoonFrom => _notBefore(deadline.firstDayWithStatus(UseByStatus.urgent));
 
-  /// The day its recommended storage time is used up.
-  CalendarDate get storageLimitReachedOn => _notBefore(
-    StorageAgePolicy.storageLimitReachedOn(
-      storedOn: storedOn,
-      recommendedMaximumStorageDays: recommendedMaximumStorageDays,
-    ),
-  );
+  /// The first day the batch is overdue.
+  CalendarDate get overdueFrom => _notBefore(deadline.overdueFrom);
 
-  double storageShareOn(CalendarDate day) => StorageAgePolicy.storageShare(
-    storedOn: storedOn,
-    today: day,
-    recommendedMaximumStorageDays: recommendedMaximumStorageDays,
-  );
-
-  bool isEatSoonOn(CalendarDate day) => !day.isBefore(eatSoonFrom);
+  bool isDueOn(CalendarDate day) => !day.isBefore(useSoonFrom);
 
   CalendarDate _notBefore(CalendarDate day) => day.isBefore(storedSince) ? storedSince : day;
 }

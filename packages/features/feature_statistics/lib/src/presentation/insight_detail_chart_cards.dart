@@ -200,7 +200,7 @@ class StorageMapChartCard extends ConsumerWidget {
               ),
               itemAgeLevels: [
                 for (final item in itemsByCompartment[compartment.identifier]!)
-                  StorageAgeLevel.values.byName(item.storageAgeStatus.name),
+                  StorageAgeLevel.values.byName(item.useByStatus.name),
               ],
               isSelected: filter.compartmentIdentifiers.contains(compartment.identifier),
             ),

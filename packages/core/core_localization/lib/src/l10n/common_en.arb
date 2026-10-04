@@ -150,7 +150,7 @@
   "shelfLifeOutOfRange": "Enter between 1 day and 36 months.",
   "storageAgeFresh": "Fresh",
   "storageAgeAging": "Use soon",
-  "storageAgeUrgent": "Eat now",
+  "storageAgeUrgent": "Use now",
   "storageAgeOverdue": "Overdue",
   "emptyStateNothingHereYet": "Nothing here yet",
   "privacyPromise": "Your data never leaves this phone",

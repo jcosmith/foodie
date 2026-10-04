@@ -10,15 +10,18 @@ enum StorageAgeLevel { fresh, aging, urgent, overdue }
 /// A pill showing the storage age level with a symbol, a colour and a word,
 /// so it never relies on colour alone.
 class StorageAgeBadge extends StatelessWidget {
-  const StorageAgeBadge({required this.level, super.key});
+  const StorageAgeBadge({required this.level, this.label, super.key});
 
   final StorageAgeLevel level;
+
+  /// Replaces the level's word, such as "Use today" for "Use now".
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.foodieColors;
     final localizations = context.commonLocalizations;
-    final (symbol, label, foreground, background) = switch (level) {
+    final (symbol, levelLabel, foreground, background) = switch (level) {
       StorageAgeLevel.fresh => (
         '●',
         localizations.storageAgeFresh,
@@ -38,7 +41,7 @@ class StorageAgeBadge extends StatelessWidget {
         colors.statusUrgentSoft,
       ),
       // The strongest signal: the urgent colours swapped, so it stands out
-      // from "Eat now" by more than its word and symbol.
+      // from "Use now" by more than its word and symbol.
       StorageAgeLevel.overdue => (
         '✕',
         localizations.storageAgeOverdue,
@@ -46,6 +49,7 @@ class StorageAgeBadge extends StatelessWidget {
         colors.statusUrgent,
       ),
     };
+    final label = this.label ?? levelLabel;
     return Semantics(
       label: label,
       excludeSemantics: true,

@@ -31,8 +31,8 @@ final class PlannedStorageDigest {
 /// Plans the rolling daily digest (decision D9).
 ///
 /// A digest is planned for each of the next [planningHorizonDays] days on
-/// which at least one batch becomes due: it reaches "use soon" (the urgent
-/// badge) or uses up its storage time. Days on which nothing changes stay
+/// which at least one batch becomes due: it reaches "use now" (the urgent
+/// badge) or its last good day passes. Days on which nothing changes stay
 /// quiet, so the user is not reminded of the same food every evening. The
 /// plan is recomputed whenever the inventory, the catalog or the settings
 /// change and at every start, so it always reaches 14 days ahead of the last
@@ -60,12 +60,12 @@ abstract final class StorageReminderPlanner {
       if (!scheduledForLocalTime.isAfter(nowLocal)) continue;
 
       bool becomesDueOn(RemindableBatch batch) =>
-          batch.eatSoonFrom == day || batch.storageLimitReachedOn == day;
+          batch.useSoonFrom == day || batch.overdueFrom == day;
       final newlyDueBatches = batches.where(becomesDueOn).toList();
       if (newlyDueBatches.isEmpty) continue;
       final otherDueBatches =
-          batches.where((batch) => batch.isEatSoonOn(day) && !becomesDueOn(batch)).toList()..sort(
-            (first, second) => second.storageShareOn(day).compareTo(first.storageShareOn(day)),
+          batches.where((batch) => batch.isDueOn(day) && !becomesDueOn(batch)).toList()..sort(
+            (first, second) => first.deadline.lastGoodDay.compareTo(second.deadline.lastGoodDay),
           );
       plannedDigests.add(
         PlannedStorageDigest(

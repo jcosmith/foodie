@@ -155,6 +155,30 @@ abstract class InventoryLocalizations {
   /// **'added {age}'**
   String frozenAgo(String age);
 
+  /// No description provided for @useToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Use today'**
+  String get useToday;
+
+  /// No description provided for @useByTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Use by tomorrow'**
+  String get useByTomorrow;
+
+  /// No description provided for @useByWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'Use by {weekday}'**
+  String useByWeekday(String weekday);
+
+  /// No description provided for @pastBestBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Past best before'**
+  String get pastBestBefore;
+
   /// No description provided for @ofInitial.
   ///
   /// In en, this message translates to:

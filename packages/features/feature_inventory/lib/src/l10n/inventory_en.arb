@@ -41,6 +41,17 @@
       }
     }
   },
+  "useToday": "Use today",
+  "useByTomorrow": "Use by tomorrow",
+  "useByWeekday": "Use by {weekday}",
+  "@useByWeekday": {
+    "placeholders": {
+      "weekday": {
+        "type": "String"
+      }
+    }
+  },
+  "pastBestBefore": "Past best before",
   "ofInitial": "{remaining} of {initial}",
   "@ofInitial": {
     "placeholders": {

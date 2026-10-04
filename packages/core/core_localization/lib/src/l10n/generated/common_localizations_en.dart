@@ -225,7 +225,7 @@ class CommonLocalizationsEn extends CommonLocalizations {
   String get storageAgeAging => 'Use soon';
 
   @override
-  String get storageAgeUrgent => 'Eat now';
+  String get storageAgeUrgent => 'Use now';
 
   @override
   String get storageAgeOverdue => 'Overdue';

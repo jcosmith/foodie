@@ -59,6 +59,20 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
+  String get useToday => 'Use today';
+
+  @override
+  String get useByTomorrow => 'Use by tomorrow';
+
+  @override
+  String useByWeekday(String weekday) {
+    return 'Use by $weekday';
+  }
+
+  @override
+  String get pastBestBefore => 'Past best before';
+
+  @override
   String ofInitial(String remaining, String initial) {
     return '$remaining of $initial';
   }

@@ -195,9 +195,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
 
     if (_listOrder == InventoryListOrder.eatFirst) {
       return [
-        SliverList.list(
-          children: [for (final item in sortedByEatBefore(matchingItems)) tileFor(item)],
-        ),
+        SliverList.list(children: [for (final item in sortedByUseBy(matchingItems)) tileFor(item)]),
       ];
     }
     final nameResolver = context.compartmentDisplayNameResolver(overview.layout);
@@ -229,7 +227,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                     }),
             ),
             if (isExpanded)
-              for (final item in sortedByEatBefore(itemsInCompartment)) tileFor(item),
+              for (final item in sortedByUseBy(itemsInCompartment)) tileFor(item),
           ],
         ),
       );

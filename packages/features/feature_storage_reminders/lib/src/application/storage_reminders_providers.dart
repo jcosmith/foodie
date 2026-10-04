@@ -72,19 +72,13 @@ final storageReminderReplanningCoordinatorProvider = Provider<RecomputationCoord
   return coordinator;
 });
 
-/// What the "Use soon" card and screen list: batches past 60 % of their
-/// storage time, most urgent first; `null` while loading.
+/// What the "Use soon" card and screen list: batches that are no longer
+/// fresh, the earliest last good day first; `null` while loading.
 final eatSoonItemsProvider = Provider<List<InventoryItem>?>((ref) {
   final overview = ref.watch(inventoryOverviewProvider).value;
   if (overview == null) return null;
-  double storageShareOf(InventoryItem item) => StorageAgePolicy.storageShare(
-    storedOn: item.batch.storedOn,
-    today: overview.today,
-    recommendedMaximumStorageDays:
-        overview.catalog.recommendedMaximumStorageDaysOf(item.product) ?? 0,
-  );
-  return [
+  return sortedByUseBy([
     for (final item in overview.items)
-      if (item.storageAgeStatus != StorageAgeStatus.fresh) item,
-  ]..sort((first, second) => storageShareOf(second).compareTo(storageShareOf(first)));
+      if (item.useByStatus != UseByStatus.fresh) item,
+  ]);
 });

@@ -4,7 +4,7 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:meta/meta.dart';
 
 import '../domain/stock_batch.dart';
-import '../domain/storage_age_policy.dart';
+import '../domain/use_by_policy.dart';
 
 /// A batch with everything a list row shows about it.
 @immutable
@@ -15,8 +15,8 @@ final class InventoryItem {
     required this.category,
     required this.compartment,
     required this.iconEmoji,
-    required this.storageAgeStatus,
-    this.eatBefore,
+    required this.useByStatus,
+    this.useBy,
   });
 
   final StockBatch batch;
@@ -24,35 +24,31 @@ final class InventoryItem {
   final Category? category;
   final Compartment? compartment;
   final String iconEmoji;
-  final StorageAgeStatus storageAgeStatus;
+  final UseByStatus useByStatus;
 
-  /// The day the recommended maximum storage time is used up; `null` when
-  /// there is no recommendation.
-  final CalendarDate? eatBefore;
+  /// When the batch should be used; `null` when nothing says so.
+  final UseByDeadline? useBy;
 
-  /// Orders by the freshness time left, least first: the earliest
-  /// [eatBefore] first, items without one last, and otherwise the oldest
-  /// frozen first.
-  static int compareByEatBefore(InventoryItem first, InventoryItem second) {
-    final firstEatBefore = first.eatBefore;
-    final secondEatBefore = second.eatBefore;
-    final byEatBefore = switch ((firstEatBefore, secondEatBefore)) {
+  /// Orders by the time left, least first: the earliest last good day
+  /// first, items without one last, and otherwise the oldest stored first.
+  static int compareByUseBy(InventoryItem first, InventoryItem second) {
+    final byUseBy = switch ((first.useBy?.lastGoodDay, second.useBy?.lastGoodDay)) {
       (null, null) => 0,
       (null, _) => 1,
       (_, null) => -1,
       (final firstDay?, final secondDay?) => firstDay.compareTo(secondDay),
     };
-    return byEatBefore != 0 ? byEatBefore : first.batch.storedOn.compareTo(second.batch.storedOn);
+    return byUseBy != 0 ? byUseBy : first.batch.storedOn.compareTo(second.batch.storedOn);
   }
 }
 
-/// [items] ordered by the freshness time left, least first
-/// ([InventoryItem.compareByEatBefore]); the order is stable.
-List<InventoryItem> sortedByEatBefore(Iterable<InventoryItem> items) {
+/// [items] ordered by the time left, least first
+/// ([InventoryItem.compareByUseBy]); the order is stable.
+List<InventoryItem> sortedByUseBy(Iterable<InventoryItem> items) {
   final indexedItems = items.indexed.toList()
     ..sort((first, second) {
-      final byEatBefore = InventoryItem.compareByEatBefore(first.$2, second.$2);
-      return byEatBefore != 0 ? byEatBefore : first.$1.compareTo(second.$1);
+      final byUseBy = InventoryItem.compareByUseBy(first.$2, second.$2);
+      return byUseBy != 0 ? byUseBy : first.$1.compareTo(second.$1);
     });
   return [for (final (_, item) in indexedItems) item];
 }
@@ -91,28 +87,23 @@ final class InventoryOverview {
     required StorageLayout layout,
     required CalendarDate today,
   }) {
-    final recommendedMaximumStorageDays = catalog.recommendedMaximumStorageDaysOf(product) ?? 0;
+    final useBy = UseByPolicy.deadlineOfBatch(
+      batch,
+      shelfLifeDays: catalog.recommendedMaximumStorageDaysOf(product),
+      shelfLifeAfterOpeningDays: catalog.shelfLifeAfterOpeningDaysOf(product),
+    );
     return InventoryItem(
       batch: batch,
       product: product,
       category: catalog.categoryOfProduct(product),
       compartment: layout.compartmentOf(batch.compartmentIdentifier),
       iconEmoji: catalog.iconEmojiOf(product),
-      storageAgeStatus: StorageAgePolicy.evaluate(
-        storedOn: batch.storedOn,
-        today: today,
-        recommendedMaximumStorageDays: recommendedMaximumStorageDays,
-      ),
-      eatBefore: recommendedMaximumStorageDays <= 0
-          ? null
-          : StorageAgePolicy.storageLimitReachedOn(
-              storedOn: batch.storedOn,
-              recommendedMaximumStorageDays: recommendedMaximumStorageDays,
-            ),
+      useByStatus: useBy?.statusOn(today) ?? UseByStatus.fresh,
+      useBy: useBy,
     );
   }
 
-  /// Oldest frozen first.
+  /// Oldest stored first.
   final List<InventoryItem> items;
   final ProductCatalog catalog;
   final StorageLayout layout;
