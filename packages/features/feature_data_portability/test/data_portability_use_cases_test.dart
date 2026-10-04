@@ -15,6 +15,7 @@ import 'package:feature_data_portability/src/application/backup_file_store.dart'
 import 'package:feature_data_portability/src/application/csv_export_use_case.dart';
 import 'package:feature_data_portability/src/application/data_portability_providers.dart';
 import 'package:feature_data_portability/src/domain/data_portability_failure.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -114,6 +115,7 @@ void main() {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
+        registeredFeatureModulesProvider.overrideWithValue(const [FreezerFeatureModule()]),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -264,7 +266,7 @@ void main() {
     final storagePlaceCreation = await container
         .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: StorageTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
     expect(storagePlaceCreation.isSuccess, isTrue);
@@ -333,7 +335,7 @@ void main() {
     await container
         .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: StorageTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
     await const DataPortabilityFeatureModule().initializeModule(

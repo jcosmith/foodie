@@ -6,6 +6,7 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:core_preferences/core_preferences.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_onboarding/feature_onboarding.dart';
 import 'package:feature_onboarding/src/application/onboarding_completion.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -60,6 +61,7 @@ void main() {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
+        registeredFeatureModulesProvider.overrideWithValue(const [FreezerFeatureModule()]),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -82,7 +84,7 @@ void main() {
     await container
         .read(completeOnboardingUseCaseProvider)
         .execute(
-          storageTemplate: StorageTemplate.uprightWithFiveDrawers,
+          storageTemplate: FreezerStorageTemplates.uprightWithFiveDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
 
@@ -98,8 +100,8 @@ void main() {
   test('never adds a second freezer', () async {
     final completeOnboarding = container.read(completeOnboardingUseCaseProvider);
     for (final template in [
-      StorageTemplate.chestWithBaskets,
-      StorageTemplate.uprightWithThreeDrawers,
+      FreezerStorageTemplates.chestWithBaskets,
+      FreezerStorageTemplates.uprightWithThreeDrawers,
     ]) {
       await completeOnboarding.execute(
         storageTemplate: template,

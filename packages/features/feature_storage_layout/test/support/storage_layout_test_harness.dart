@@ -7,6 +7,7 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
@@ -16,17 +17,18 @@ final class EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const EnglishLayoutDefaultNames();
 
   @override
-  String storagePlaceName(StorageKind storageKind) => switch (storageKind) {
-    StorageKind.upright => 'Freezer',
-    StorageKind.chest => 'Chest freezer',
-    StorageKind.fridgeFreezerCompartment => 'Fridge freezer',
+  String storagePlaceName(StorageKind storageKind) => switch (storageKind.storageName) {
+    'upright' => 'Freezer',
+    'chest' => 'Chest freezer',
+    'fridgeFreezerCompartment' => 'Fridge freezer',
+    _ => 'Storage place',
   };
 
   @override
-  String compartmentName(StorageKind storageKind, int number) => switch (storageKind) {
-    StorageKind.upright => 'Drawer $number',
-    StorageKind.chest => 'Basket $number',
-    StorageKind.fridgeFreezerCompartment => 'Compartment $number',
+  String compartmentName(StorageKind storageKind, int number) => switch (storageKind.storageName) {
+    'upright' => 'Drawer $number',
+    'chest' => 'Basket $number',
+    _ => 'Compartment $number',
   };
 
   @override
@@ -78,8 +80,10 @@ final class FakeCompartmentContents implements CompartmentContentsPort {
 
 /// A provider container on an in-memory database with the module wired in.
 final class StorageLayoutTestHarness {
-  StorageLayoutTestHarness({CompartmentContentsPort? compartmentContents})
-    : database = createInMemoryApplicationDatabase(clock: clock) {
+  StorageLayoutTestHarness({
+    CompartmentContentsPort? compartmentContents,
+    this.registeredModules = const [StorageLayoutFeatureModule(), FreezerFeatureModule()],
+  }) : database = createInMemoryApplicationDatabase(clock: clock) {
     final eventBus = InProcessDomainEventBus(logger: RecordingLogger());
     eventBus.subscribe<DomainEvent>(publishedEvents.add);
     final dependencies = ModuleDependencies(
@@ -93,6 +97,9 @@ final class StorageLayoutTestHarness {
 
   static final FixedClock clock = FixedClock(DateTime.utc(2026, 10, 2, 12));
 
+  /// The storage kinds and templates come from these modules.
+  final List<FeatureModule> registeredModules;
+
   final ApplicationDatabase database;
   final SequentialIdentifierGenerator identifierGenerator = SequentialIdentifierGenerator();
   final List<DomainEvent> publishedEvents = [];
@@ -103,6 +110,7 @@ final class StorageLayoutTestHarness {
     CompartmentContentsPort? compartmentContents,
   ) => [
     applicationDatabaseProvider.overrideWithValue(database),
+    registeredFeatureModulesProvider.overrideWithValue(registeredModules),
     clockProvider.overrideWithValue(dependencies.clock),
     identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
     domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -112,6 +120,11 @@ final class StorageLayoutTestHarness {
   ];
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
+
+  /// A registered template by its identifier, such as `freezer.upright_three`.
+  StorageTemplate template(String identifier) => container
+      .read(registeredStorageTemplatesProvider)
+      .singleWhere((template) => template.identifier == identifier);
 
   Future<StorageLayout> readLayout() =>
       container.read(storageLayoutQueryServiceProvider).readStorageLayout();

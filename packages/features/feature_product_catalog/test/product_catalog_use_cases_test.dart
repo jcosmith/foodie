@@ -2,10 +2,51 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_product_catalog/src/application/product_catalog_providers.dart';
 import 'package:feature_product_catalog/src/application/use_cases/product_settings.dart';
-import 'package:feature_product_catalog/src/domain/seeded_catalog.dart';
+import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/product_catalog_test_harness.dart';
+
+final class _DairyCatalogModule extends FeatureModuleBase {
+  const _DairyCatalogModule();
+
+  @override
+  String get moduleIdentifier => 'test_dairy';
+
+  @override
+  CatalogContribution get catalog => CatalogContribution(
+    categories: const [
+      SeededCategoryContribution(
+        catalogKey: 'testDairy',
+        domainIdentifier: StorageDomainIdentifier.fridge,
+        shelfLifeDays: 7,
+        shelfLifeAfterOpeningDays: 4,
+        iconEmoji: '🥛',
+      ),
+    ],
+    products: const [
+      SeededProductContribution(
+        catalogKey: 'testMilk',
+        categoryCatalogKey: 'testDairy',
+        canonicalUnit: QuantityUnit.milliliter,
+        defaultPackageDisplayAmount: 1000,
+        iconEmoji: '🥛',
+        shelfLifeDays: 10,
+        shelfLifeAfterOpeningDays: 3,
+      ),
+      SeededProductContribution(
+        catalogKey: 'testIceCubes',
+        categoryCatalogKey: 'other',
+        canonicalUnit: QuantityUnit.piece,
+        defaultPackageDisplayAmount: 20,
+        iconEmoji: '🧊',
+      ),
+    ],
+    categoryNameBuilder: (context, catalogKey) => null,
+    productNameBuilder: (context, catalogKey) => null,
+  );
+}
 
 void main() {
   late ProductCatalogTestHarness harness;
@@ -23,7 +64,9 @@ void main() {
       final firstRun = await seedCatalog.execute();
       final secondRun = await seedCatalog.execute();
 
-      expect(firstRun, SeededCatalog.categories.length + SeededCatalog.products.length);
+      final seeded = harness.read(seededCatalogProvider);
+      expect(seeded.products, hasLength(24));
+      expect(firstRun, seeded.categories.length + seeded.products.length);
       expect(secondRun, 0);
       final catalog = await harness.readCatalog();
       expect(catalog.categories.map((category) => category.catalogKey), [
@@ -49,16 +92,63 @@ void main() {
 
     test('adds entries of a later version but keeps archived ones archived', () async {
       final seedCatalog = harness.read(seedCatalogUseCaseProvider);
-      await seedCatalog.execute(seededProducts: SeededCatalog.products.take(2).toList());
+      final seeded = harness.read(seededCatalogProvider);
+      await seedCatalog.execute(
+        catalog: SeededCatalog(
+          categories: seeded.categories,
+          products: seeded.products.take(2).toList(),
+        ),
+      );
       final peas = seededProduct(await harness.readCatalog(), 'gardenPeas');
       await harness.read(archiveProductUseCaseProvider).execute(peas.identifier);
 
       final addedLater = await seedCatalog.execute();
 
-      expect(addedLater, SeededCatalog.products.length - 2);
+      expect(addedLater, seeded.products.length - 2);
       final catalog = await harness.readCatalog();
       expect(catalog.productOf(peas.identifier)!.isArchived, isTrue);
-      expect(catalog.activeProducts, hasLength(SeededCatalog.products.length - 1));
+      expect(catalog.activeProducts, hasLength(seeded.products.length - 1));
+    });
+
+    test('every module\'s catalog is seeded, after the categories that exist', () async {
+      final twoModules = ProductCatalogTestHarness(
+        registeredModules: const [FreezerFeatureModule(), _DairyCatalogModule()],
+      );
+      addTearDown(twoModules.dispose);
+      await twoModules.read(seedCatalogUseCaseProvider).execute();
+
+      final catalog = await twoModules.readCatalog();
+      final dairy = catalog.categories.last;
+      expect(dairy.catalogKey, 'testDairy');
+      expect(
+        dairy.sortOrder,
+        greaterThan(catalog.categories[catalog.categories.length - 2].sortOrder),
+      );
+      expect(dairy.storageDomain, StorageDomainIdentifier.fridge);
+      expect(dairy.recommendedMaximumStorageDays, 7);
+      expect(dairy.shelfLifeAfterOpeningDays, 4);
+      final milk = seededProduct(catalog, 'testMilk');
+      expect(milk.categoryIdentifier, dairy.identifier);
+      expect(milk.recommendedMaximumStorageDays, 10);
+      expect(milk.shelfLifeAfterOpeningDays, 3);
+      expect(
+        milk.defaultPackageQuantity,
+        const Quantity(amountInBaseUnits: 1000, unit: QuantityUnit.milliliter),
+      );
+      // A product may live in another module's category.
+      expect(seededProduct(catalog, 'testIceCubes').categoryIdentifier, isNot(dairy.identifier));
+    });
+
+    test('a category added by a later version goes after the user\'s own sort order', () async {
+      final seedCatalog = harness.read(seedCatalogUseCaseProvider);
+      final seeded = harness.read(seededCatalogProvider);
+      await seedCatalog.execute(
+        catalog: SeededCatalog(categories: seeded.categories.take(3).toList(), products: const []),
+      );
+      await seedCatalog.execute();
+      final sortOrders = (await harness.readCatalog()).categories.map((c) => c.sortOrder).toList();
+      expect(sortOrders.toSet(), hasLength(sortOrders.length));
+      expect(sortOrders, orderedEquals([...sortOrders]..sort()));
     });
   });
 

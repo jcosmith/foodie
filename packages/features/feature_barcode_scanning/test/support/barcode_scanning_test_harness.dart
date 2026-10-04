@@ -6,6 +6,7 @@ import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_barcode_scanning/feature_barcode_scanning.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -82,6 +83,7 @@ final class BarcodeScanningTestHarness {
     const StorageLayoutFeatureModule(),
     const ProductCatalogFeatureModule(),
     const InventoryFeatureModule(),
+    const FreezerFeatureModule(),
     scanningModule,
   ];
 
@@ -92,7 +94,7 @@ final class BarcodeScanningTestHarness {
     await container
         .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: StorageTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
   }

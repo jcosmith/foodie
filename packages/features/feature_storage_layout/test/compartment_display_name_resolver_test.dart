@@ -7,13 +7,13 @@ void main() {
   final createdAt = DateTime.utc(2026);
   final kitchenFreezer = StoragePlace(
     identifier: const StoragePlaceIdentifier('kitchen'),
-    storageKind: StorageKind.upright,
+    storageKind: const StorageKind('upright'),
     sortOrder: 0,
     createdAt: createdAt,
   );
   final cellarFreezer = StoragePlace(
     identifier: const StoragePlaceIdentifier('cellar'),
-    storageKind: StorageKind.chest,
+    storageKind: const StorageKind('chest'),
     customName: 'Cellar',
     sortOrder: 1,
     createdAt: createdAt,

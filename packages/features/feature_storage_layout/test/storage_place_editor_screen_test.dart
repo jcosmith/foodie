@@ -25,7 +25,7 @@ void main() {
       () => harness
           .read(createStoragePlaceFromTemplateUseCaseProvider)
           .execute(
-            template: StorageTemplate.uprightWithThreeDrawers,
+            template: harness.template('freezer.upright_three'),
             defaultNames: const EnglishLayoutDefaultNames(),
           ),
     ))!.valueOrNull!;

@@ -34,7 +34,7 @@ void main() {
   group('creating a freezer from a template', () {
     test('creates numbered drawers with differing colour tags', () async {
       final storagePlaceIdentifier = await createStoragePlace(
-        StorageTemplate.uprightWithFiveDrawers,
+        harness.template('freezer.upright_five'),
       );
 
       final compartments = await compartmentsOf(storagePlaceIdentifier);
@@ -45,15 +45,15 @@ void main() {
 
     test('appends further freezers and refuses a duplicate name', () async {
       final kitchen = await createStoragePlace(
-        StorageTemplate.uprightWithThreeDrawers,
+        harness.template('freezer.upright_three'),
         enteredName: 'Kitchen',
       );
-      final cellar = await createStoragePlace(StorageTemplate.chestWithBaskets);
+      final cellar = await createStoragePlace(harness.template('freezer.chest_baskets'));
 
       final duplicate = await harness
           .read(createStoragePlaceFromTemplateUseCaseProvider)
           .execute(
-            template: StorageTemplate.empty,
+            template: harness.template('freezer.empty'),
             enteredName: 'KITCHEN',
             defaultNames: _defaultNames,
           );
@@ -73,7 +73,7 @@ void main() {
   group('renaming a compartment', () {
     test('stores a custom name and goes back to the default when cleared', () async {
       final storagePlaceIdentifier = await createStoragePlace(
-        StorageTemplate.uprightWithThreeDrawers,
+        harness.template('freezer.upright_three'),
       );
       final firstDrawer = (await compartmentsOf(storagePlaceIdentifier)).first;
       final renameCompartment = harness.read(renameCompartmentUseCaseProvider);
@@ -96,7 +96,7 @@ void main() {
 
     test('refuses the default name another drawer still shows', () async {
       final storagePlaceIdentifier = await createStoragePlace(
-        StorageTemplate.uprightWithThreeDrawers,
+        harness.template('freezer.upright_three'),
       );
       final firstDrawer = (await compartmentsOf(storagePlaceIdentifier)).first;
 
@@ -112,9 +112,9 @@ void main() {
     });
 
     test('allows the same name in different freezers', () async {
-      final kitchen = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final kitchen = await createStoragePlace(harness.template('freezer.upright_three'));
       final cellar = await createStoragePlace(
-        StorageTemplate.uprightWithThreeDrawers,
+        harness.template('freezer.upright_three'),
         enteredName: 'Cellar',
       );
       final renameCompartment = harness.read(renameCompartmentUseCaseProvider);
@@ -132,7 +132,7 @@ void main() {
 
   test('a new compartment never reuses the number of a removed one', () async {
     final storagePlaceIdentifier = await createStoragePlace(
-      StorageTemplate.uprightWithThreeDrawers,
+      harness.template('freezer.upright_three'),
     );
     final lastDrawer = (await compartmentsOf(storagePlaceIdentifier)).last;
     await harness
@@ -148,7 +148,7 @@ void main() {
 
   test('reorders compartments and rejects an incomplete order', () async {
     final storagePlaceIdentifier = await createStoragePlace(
-      StorageTemplate.uprightWithThreeDrawers,
+      harness.template('freezer.upright_three'),
     );
     final compartments = await compartmentsOf(storagePlaceIdentifier);
     final reorderCompartments = harness.read(reorderCompartmentsUseCaseProvider);
@@ -175,7 +175,7 @@ void main() {
 
   group('removing a compartment', () {
     test('keeps the last compartment of a freezer', () async {
-      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.empty);
+      final storagePlaceIdentifier = await createStoragePlace(harness.template('freezer.empty'));
       final onlyDrawer = (await compartmentsOf(storagePlaceIdentifier)).single;
 
       final result = await harness
@@ -187,7 +187,7 @@ void main() {
 
     test('asks for a destination when the compartment holds items', () async {
       final storagePlaceIdentifier = await createStoragePlace(
-        StorageTemplate.uprightWithThreeDrawers,
+        harness.template('freezer.upright_three'),
       );
       final [firstDrawer, secondDrawer, _] = await compartmentsOf(storagePlaceIdentifier);
       compartmentContents.setItemCount(firstDrawer.identifier, 4);
@@ -222,7 +222,7 @@ void main() {
   group('removing a freezer', () {
     test('keeps the last freezer', () async {
       final storagePlaceIdentifier = await createStoragePlace(
-        StorageTemplate.uprightWithThreeDrawers,
+        harness.template('freezer.upright_three'),
       );
 
       final result = await harness
@@ -233,8 +233,8 @@ void main() {
     });
 
     test('only removes an empty freezer, together with its compartments', () async {
-      await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
-      final cellar = await createStoragePlace(StorageTemplate.chestWithBaskets);
+      await createStoragePlace(harness.template('freezer.upright_three'));
+      final cellar = await createStoragePlace(harness.template('freezer.chest_baskets'));
       final firstBasket = (await compartmentsOf(cellar)).first;
       compartmentContents.setItemCount(firstBasket.identifier, 2);
       final archiveStoragePlace = harness.read(archiveStoragePlaceUseCaseProvider);

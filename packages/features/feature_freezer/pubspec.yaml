@@ -1,5 +1,5 @@
-name: feature_restock
-description: Restock rules, low-stock detection, the shopping list with manual and automatic entries, and putting bought items into the freezer in one step.
+name: feature_freezer
+description: The Freezer domain - its tab, the upright, chest and fridge freezer kinds with their templates, and the seeded frozen-food catalog.
 publish_to: none
 version: 0.1.0
 resolution: workspace
@@ -9,24 +9,17 @@ environment:
   flutter: ">=3.38.0"
 
 dependencies:
-  core_database: any
   core_design_system: any
-  core_events: any
   core_foundation: any
   core_localization: any
   core_module_contract: any
-  feature_inventory: any
-  feature_product_catalog: any
-  feature_storage_layout: any
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.4.0
   go_router: ^18.0.0
   intl: ^0.20.2
-  meta: ^1.16.0
 
 dev_dependencies:
-  feature_freezer: any
   flutter_test:
     sdk: flutter
 

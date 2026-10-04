@@ -24,6 +24,7 @@ StorageKindContribution _kind(String storageName, StorageDomainIdentifier domain
       templates: [
         StorageTemplateContribution(
           identifier: '$storageName.default',
+          sortOrder: 10,
           compartmentCount: 2,
           labelBuilder: _label,
         ),

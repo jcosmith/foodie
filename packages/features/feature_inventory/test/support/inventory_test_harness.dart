@@ -5,6 +5,7 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_inventory/src/application/inventory_providers.dart';
 import 'package:feature_inventory/src/domain/inventory_repository.dart';
@@ -51,6 +52,7 @@ final class InventoryTestHarness {
 
   List<Override> buildOverrides(ModuleDependencies dependencies) => [
     applicationDatabaseProvider.overrideWithValue(database),
+    registeredFeatureModulesProvider.overrideWithValue(const [FreezerFeatureModule()]),
     clockProvider.overrideWithValue(dependencies.clock),
     identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
     domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),
@@ -68,7 +70,7 @@ final class InventoryTestHarness {
   Future<List<Compartment>> setUpCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(_ModuleInitializationContext(this));
     await read(createStoragePlaceFromTemplateUseCaseProvider).execute(
-      template: StorageTemplate.uprightWithThreeDrawers,
+      template: FreezerStorageTemplates.uprightWithThreeDrawers,
       enteredName: '',
       defaultNames: const _EnglishLayoutDefaultNames(),
     );

@@ -5,6 +5,7 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_statistics/feature_statistics.dart';
@@ -45,6 +46,7 @@ final class StatisticsTestHarness {
         localLoggerProvider.overrideWithValue(logger),
         registeredFeatureModulesProvider.overrideWithValue([
           const StatisticsFeatureModule(),
+          const FreezerFeatureModule(),
           ...registeredModules,
         ]),
         for (final module in const [
@@ -74,7 +76,7 @@ final class StatisticsTestHarness {
     await container
         .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: StorageTemplate.uprightWithThreeDrawers,
+          template: FreezerStorageTemplates.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
   }
