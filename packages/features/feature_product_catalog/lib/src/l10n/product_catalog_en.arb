@@ -79,5 +79,8 @@
   "nameTooLong": "At most 40 characters.",
   "invalidSetting": "Amounts must be more than zero.",
   "invalidNumber": "Please enter a number.",
-  "genericFailure": "That did not work. Please try again."
+  "genericFailure": "That did not work. Please try again.",
+  "pieceLabelLabel": "Name for one piece (optional)",
+  "pieceLabelHint": "Shown instead of “pcs”, for example slices",
+  "pieceLabelSuggestions": "slices,whole,halves,quarters,portions"
 }

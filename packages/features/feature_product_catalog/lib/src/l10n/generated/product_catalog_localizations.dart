@@ -322,6 +322,24 @@ abstract class ProductCatalogLocalizations {
   /// In en, this message translates to:
   /// **'That did not work. Please try again.'**
   String get genericFailure;
+
+  /// No description provided for @pieceLabelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name for one piece (optional)'**
+  String get pieceLabelLabel;
+
+  /// No description provided for @pieceLabelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown instead of “pcs”, for example slices'**
+  String get pieceLabelHint;
+
+  /// No description provided for @pieceLabelSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'slices,whole,halves,quarters,portions'**
+  String get pieceLabelSuggestions;
 }
 
 class _ProductCatalogLocalizationsDelegate

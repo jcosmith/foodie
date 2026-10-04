@@ -272,6 +272,36 @@ void main() {
     expect(harness.publishedEvents.whereType<ProductUpdated>(), hasLength(2));
   });
 
+  test('a name for one piece is kept for products in pieces only', () async {
+    await harness.read(seedCatalogUseCaseProvider).execute();
+    final catalog = await harness.readCatalog();
+    final bread = seededProduct(catalog, 'wholegrainBread');
+    final spinach = seededProduct(catalog, 'leafSpinach');
+    final updateProduct = harness.read(updateProductUseCaseProvider);
+
+    for (final product in [bread, spinach]) {
+      await updateProduct.execute(
+        productIdentifier: product.identifier,
+        settings: ProductSettings(
+          enteredName: '',
+          categoryIdentifier: product.categoryIdentifier,
+          pieceLabel: ' slices ',
+        ),
+      );
+    }
+    final updated = await harness.readCatalog();
+    expect(updated.productOf(bread.identifier)!.pieceLabel, 'slices');
+    expect(updated.productOf(bread.identifier)!.displayPieceLabel, 'slices');
+    expect(updated.productOf(bread.identifier)!.canonicalUnit, QuantityUnit.piece);
+    expect(updated.productOf(spinach.identifier)!.pieceLabel, isNull);
+
+    await updateProduct.execute(
+      productIdentifier: bread.identifier,
+      settings: ProductSettings(enteredName: '', categoryIdentifier: bread.categoryIdentifier),
+    );
+    expect((await harness.readCatalog()).productOf(bread.identifier)!.pieceLabel, isNull);
+  });
+
   test('remembers a default drawer until it is cleared', () async {
     await harness.read(seedCatalogUseCaseProvider).execute();
     final drawers = await harness.setUpStoragePlace();

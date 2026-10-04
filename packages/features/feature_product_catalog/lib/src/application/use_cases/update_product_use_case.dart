@@ -62,6 +62,7 @@ final class UpdateProductUseCase {
         iconEmoji: () => settings.trimmedIconEmoji,
         iconImage: () => settings.iconImage,
         defaultCompartmentIdentifier: () => settings.defaultCompartmentIdentifier,
+        pieceLabel: () => settings.pieceLabelFor(product.canonicalUnit),
       ),
     );
     await _domainEventBus.publish(

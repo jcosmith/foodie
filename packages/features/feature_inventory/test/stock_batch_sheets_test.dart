@@ -1,3 +1,4 @@
+import 'package:core_database/core_database.dart';
 import 'package:core_design_system/testing.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_preferences/core_preferences.dart';
@@ -190,6 +191,32 @@ void main() {
 
     expect(find.text('Editor of ${product.identifier.value}'), findsOneWidget);
     expect(find.text('Edit product'), findsNothing, reason: 'the sheet is closed');
+  });
+
+  testWidgets('amounts use the product\'s name for one piece', (tester) async {
+    await showShelvesTab(
+      tester,
+      amountInBaseUnits: 6000,
+      beforeShowing: (_) async {
+        final bread = await harness.seededProduct('wholegrainBread');
+        final dao = harness.read(productCatalogDaoProvider);
+        final row = (await dao.readProduct(bread.identifier.value))!;
+        await dao.replaceProduct(
+          ProductRow(
+            productIdentifier: row.productIdentifier,
+            categoryIdentifier: row.categoryIdentifier,
+            catalogKey: row.catalogKey,
+            canonicalUnit: row.canonicalUnit,
+            isArchived: row.isArchived,
+            createdAt: row.createdAt,
+            pieceLabel: 'slices',
+          ),
+        );
+      },
+    );
+
+    expect(find.textContaining('6 slices'), findsWidgets);
+    expect(find.textContaining('pcs'), findsNothing);
   });
 
   group('undo time from Options', () {

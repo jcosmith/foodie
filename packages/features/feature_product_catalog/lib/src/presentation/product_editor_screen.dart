@@ -35,9 +35,14 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
   final TextEditingController _packageSizeController = TextEditingController();
   final ShelfLifeFieldController _shelfLifeController = ShelfLifeFieldController();
   final TextEditingController _iconController = TextEditingController();
+  final TextEditingController _pieceLabelController = TextEditingController();
   bool _hasLoadedInitialValues = false;
   CategoryIdentifier? _categoryIdentifier;
   CompartmentIdentifier? _defaultCompartmentIdentifier;
+
+  /// Not edited here (set from the category or the opened-package flow),
+  /// but kept when saving.
+  int? _shelfLifeAfterOpeningDays;
   ProductIconImage? _iconImage;
   bool _isChoosingIconImage = false;
   QuantityUnit _unit = QuantityUnit.gram;
@@ -57,6 +62,7 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
     _packageSizeController.dispose();
     _shelfLifeController.dispose();
     _iconController.dispose();
+    _pieceLabelController.dispose();
     _pictureDraft.dispose();
     super.dispose();
   }
@@ -84,7 +90,9 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
         ..unit = shelfLife.unit;
     }
     _iconController.text = product.iconEmoji ?? '';
+    _pieceLabelController.text = product.pieceLabel ?? '';
     _defaultCompartmentIdentifier = product.defaultCompartmentIdentifier;
+    _shelfLifeAfterOpeningDays = product.shelfLifeAfterOpeningDays;
     _iconImage = product.iconImage;
   }
 
@@ -133,8 +141,10 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
       categoryIdentifier: _categoryIdentifier!,
       defaultPackageQuantity: packageQuantity,
       recommendedMaximumStorageDays: _shelfLifeController.inDays,
+      shelfLifeAfterOpeningDays: _shelfLifeAfterOpeningDays,
       iconEmoji: _iconController.text,
       iconImage: _iconImage,
+      pieceLabel: _pieceLabelController.text,
       defaultCompartmentIdentifier: _activeDefaultCompartmentIdentifier(
         ref.read(storageLayoutProvider).value,
       ),
@@ -304,6 +314,29 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
+          if (_unit == QuantityUnit.piece) ...[
+            const SizedBox(height: FoodieSpacing.medium),
+            TextField(
+              controller: _pieceLabelController,
+              maxLength: 30,
+              decoration: InputDecoration(
+                labelText: localizations.pieceLabelLabel,
+                helperText: localizations.pieceLabelHint,
+              ),
+              onChanged: (_) => setState(() {}),
+            ),
+            Wrap(
+              spacing: FoodieSpacing.small,
+              children: [
+                for (final suggestion in localizations.pieceLabelSuggestions.split(','))
+                  ChoiceChip(
+                    label: Text(suggestion),
+                    selected: _pieceLabelController.text.trim() == suggestion,
+                    onSelected: (_) => setState(() => _pieceLabelController.text = suggestion),
+                  ),
+              ],
+            ),
+          ],
           const SizedBox(height: FoodieSpacing.large),
           TextField(
             controller: _packageSizeController,

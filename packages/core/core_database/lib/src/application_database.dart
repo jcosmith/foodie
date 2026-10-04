@@ -83,7 +83,7 @@ class ApplicationDatabase extends _$ApplicationDatabase {
   final String _applicationVersion;
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -155,6 +155,10 @@ class ApplicationDatabase extends _$ApplicationDatabase {
         await migrator.createIndex(schema.receiptLinesByReceipt);
         await migrator.createTable(schema.receiptTextMappings);
         await migrator.create(schema.receiptSearchIndex);
+      },
+      from9To10: (migrator, schema) async {
+        // Issue #9: a name for one piece, such as "slices".
+        await migrator.addColumn(schema.products, schema.products.pieceLabel);
       },
     ),
     beforeOpen: (openingDetails) async {

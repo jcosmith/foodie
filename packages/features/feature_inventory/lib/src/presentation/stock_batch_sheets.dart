@@ -58,8 +58,11 @@ class _SheetHeader extends ConsumerWidget {
     final layout = ref.watch(storageLayoutProvider).value ?? StorageLayout.empty;
     final details = [
       localizations.ofInitial(
-        quantityFormatter.format(batch.quantityRemaining),
-        quantityFormatter.format(batch.initialQuantity),
+        quantityFormatter.format(
+          batch.quantityRemaining,
+          pieceLabel: item.product.displayPieceLabel,
+        ),
+        quantityFormatter.format(batch.initialQuantity, pieceLabel: item.product.displayPieceLabel),
       ),
       context.dateDisplayFormatter.formatMediumDate(batch.storedOn),
       context.compartmentDisplayNameResolver(layout).compartmentNameOf(batch.compartmentIdentifier),
@@ -183,7 +186,10 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     switch (result) {
       case SuccessfulResult(value: final recordedRemoval):
         navigator.pop();
-        final amountText = quantityFormatter.format(recordedRemoval.quantity);
+        final amountText = quantityFormatter.format(
+          recordedRemoval.quantity,
+          pieceLabel: widget.item.product.displayPieceLabel,
+        );
         messenger.showSnackBar(
           buildUndoableSnackBar(
             undoSeconds: undoSeconds,
@@ -249,7 +255,10 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     // Kept loaded, so the snackbar knows the undo time straight away.
     ref.watch(undoTimeLimitSecondsProvider);
     final localizations = InventoryLocalizations.of(context);
-    final amountText = context.quantityFormatter.format(_amount);
+    final amountText = context.quantityFormatter.format(
+      _amount,
+      pieceLabel: widget.item.product.displayPieceLabel,
+    );
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -263,6 +272,7 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
         const SizedBox(height: FoodieSpacing.small),
         RemovalAmountPicker(
           batch: widget.item.batch,
+          pieceLabel: widget.item.product.displayPieceLabel,
           amount: _amount,
           onAmountChanged: (amount) => setState(() {
             _amount = amount;
@@ -272,7 +282,12 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
         if (_usualAmount case final usualAmount?) ...[
           const SizedBox(height: FoodieSpacing.extraSmall),
           Text(
-            localizations.usualAmountHint(context.quantityFormatter.format(usualAmount)),
+            localizations.usualAmountHint(
+              context.quantityFormatter.format(
+                usualAmount,
+                pieceLabel: widget.item.product.displayPieceLabel,
+              ),
+            ),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
@@ -389,7 +404,10 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
   }) async {
     setState(() => _isSaving = true);
     final localizations = InventoryLocalizations.of(context);
-    final amountText = context.quantityFormatter.format(_amount);
+    final amountText = context.quantityFormatter.format(
+      _amount,
+      pieceLabel: widget.item.product.displayPieceLabel,
+    );
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
@@ -482,6 +500,7 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
           const SizedBox(height: FoodieSpacing.small),
           RemovalAmountPicker(
             batch: widget.item.batch,
+            pieceLabel: widget.item.product.displayPieceLabel,
             amount: _amount,
             onAmountChanged: (amount) => setState(() => _amount = amount),
           ),
@@ -501,7 +520,14 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
                     nameResolver.compartmentNameOf(selectedDestination),
                     startsFreshToday: storedTodayLabel != null && _startsFreshToday,
                   ),
-            child: Text(localizations.moveAmountButton(context.quantityFormatter.format(_amount))),
+            child: Text(
+              localizations.moveAmountButton(
+                context.quantityFormatter.format(
+                  _amount,
+                  pieceLabel: widget.item.product.displayPieceLabel,
+                ),
+              ),
+            ),
           ),
         ],
       ],
@@ -557,7 +583,10 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     final productName = context.productDisplayNameResolver.productName(widget.item.product);
-    final amountText = context.quantityFormatter.format(actualRemaining);
+    final amountText = context.quantityFormatter.format(
+      actualRemaining,
+      pieceLabel: widget.item.product.displayPieceLabel,
+    );
     final result = await ref
         .read(correctRemainingQuantityUseCaseProvider)
         .execute(
@@ -597,7 +626,10 @@ class _CorrectSheetState extends ConsumerState<_CorrectSheet> {
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: InputDecoration(
             labelText: localizations.quantityLabel,
-            suffixText: context.quantityFormatter.unitSymbol(widget.item.batch.unit),
+            suffixText: context.quantityFormatter.unitSymbol(
+              widget.item.batch.unit,
+              pieceLabel: widget.item.product.displayPieceLabel,
+            ),
             errorText: _amountError,
           ),
           onSubmitted: (_) => _save(),

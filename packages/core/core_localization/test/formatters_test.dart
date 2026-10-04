@@ -67,6 +67,24 @@ void main() {
       expect(QuantityFormatter(german).unitSymbol(QuantityUnit.piece), 'Stück');
     });
 
+    test('a product\'s name for one piece replaces "pcs", and only for pieces', () {
+      final englishFormatter = QuantityFormatter(english);
+      final germanFormatter = QuantityFormatter(german);
+      const twoAndAHalf = Quantity(amountInBaseUnits: 2500, unit: QuantityUnit.piece);
+      expect(englishFormatter.format(twoAndAHalf, pieceLabel: 'slices'), '2.5 slices');
+      expect(germanFormatter.format(twoAndAHalf, pieceLabel: 'Scheiben'), '2,5 Scheiben');
+      expect(englishFormatter.format(twoAndAHalf, pieceLabel: '  '), '2.5 pcs');
+      expect(
+        englishFormatter.format(
+          const Quantity(amountInBaseUnits: 200, unit: QuantityUnit.gram),
+          pieceLabel: 'slices',
+        ),
+        '200 g',
+      );
+      expect(englishFormatter.unitSymbol(QuantityUnit.piece, pieceLabel: 'slices'), 'slices');
+      expect(englishFormatter.unitSymbol(QuantityUnit.gram, pieceLabel: 'slices'), 'g');
+    });
+
     test('reads typed amounts with a decimal point or comma', () {
       expect(
         QuantityFormatter.parseDisplayAmount('1,5', QuantityUnit.piece),

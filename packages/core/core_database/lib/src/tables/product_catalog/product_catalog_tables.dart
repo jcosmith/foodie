@@ -74,6 +74,11 @@ class Products extends Table {
 
   DateTimeColumn get createdAt => dateTime()();
 
+  /// What one piece is called for this product, such as "slices", shown
+  /// instead of "pcs"; only for products counted in pieces (schema
+  /// version 10).
+  TextColumn get pieceLabel => text().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {productIdentifier};
 }

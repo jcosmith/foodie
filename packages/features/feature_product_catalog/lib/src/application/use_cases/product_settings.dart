@@ -18,6 +18,7 @@ final class ProductSettings {
     this.iconEmoji,
     this.iconImage,
     this.defaultCompartmentIdentifier,
+    this.pieceLabel,
   });
 
   final String enteredName;
@@ -39,6 +40,10 @@ final class ProductSettings {
   /// `null` suggests the compartment used last time.
   final CompartmentIdentifier? defaultCompartmentIdentifier;
 
+  /// What one piece is called, such as "slices"; kept only for products
+  /// counted in pieces.
+  final String? pieceLabel;
+
   /// Checks the numbers; names are checked by the use cases.
   ProductCatalogFailure? validateNumbers() {
     final packageQuantity = defaultPackageQuantity;
@@ -50,6 +55,13 @@ final class ProductSettings {
       return const InvalidProductSetting();
     }
     return null;
+  }
+
+  /// [pieceLabel] trimmed, for a product counted in [unit]; `null` when
+  /// empty or the product is not counted in pieces.
+  String? pieceLabelFor(QuantityUnit unit) {
+    final trimmed = pieceLabel?.trim();
+    return unit != QuantityUnit.piece || trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
 
   String? get trimmedIconEmoji {

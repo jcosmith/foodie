@@ -99,6 +99,7 @@ final class DriftProductCatalogRepository implements ProductCatalogRepository {
         final compartmentIdentifier? => CompartmentIdentifier(compartmentIdentifier),
         null => null,
       },
+      pieceLabel: row.pieceLabel,
       isArchived: row.isArchived,
       createdAt: row.createdAt,
     );
@@ -116,6 +117,7 @@ final class DriftProductCatalogRepository implements ProductCatalogRepository {
     iconEmoji: product.iconEmoji,
     iconImage: product.iconImage?.pngBytes,
     defaultCompartmentIdentifier: product.defaultCompartmentIdentifier?.value,
+    pieceLabel: product.pieceLabel,
     isArchived: product.isArchived,
     createdAt: product.createdAt,
   );

@@ -1,0 +1,2289 @@
+{
+  "_meta": {
+    "description": "This file contains a serialized version of schema entities for drift.",
+    "version": "1.3.0"
+  },
+  "options": {
+    "store_date_time_values_as_text": true
+  },
+  "entities": [
+    {
+      "id": 0,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "receipt_search_index",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "receipt_identifier",
+            "getter_name": "receiptIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "receipt_line_identifier",
+            "getter_name": "receiptLineIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "body",
+            "getter_name": "body",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": true,
+        "create_virtual_stmt": "CREATE VIRTUAL TABLE \"receipt_search_index\" USING fts5(receipt_identifier UNINDEXED, receipt_line_identifier UNINDEXED, body, tokenize = 'unicode61 remove_diacritics 2')",
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 1,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "preference_entries",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "preference_key",
+            "getter_name": "preferenceKey",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "encoded_value",
+            "getter_name": "encodedValue",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "preference_key"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "schema_metadata",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "singleton_identifier",
+            "getter_name": "singletonIdentifier",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "schema_version",
+            "getter_name": "schemaVersion",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "last_migrated_by_application_version",
+            "getter_name": "lastMigratedByApplicationVersion",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "migrated_at",
+            "getter_name": "migratedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "singleton_identifier"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "storage_places",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "storage_place_identifier",
+            "getter_name": "storagePlaceIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "default_name_key",
+            "getter_name": "defaultNameKey",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "custom_name",
+            "getter_name": "customName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "storage_kind",
+            "getter_name": "storageKind",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "sort_order",
+            "getter_name": "sortOrder",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_archived",
+            "getter_name": "isArchived",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_archived\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_archived\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "storage_place_identifier"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "references": [
+        3
+      ],
+      "type": "table",
+      "data": {
+        "name": "compartments",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "compartment_identifier",
+            "getter_name": "compartmentIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "storage_place_identifier",
+            "getter_name": "storagePlaceIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES storage_places (storage_place_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES storage_places (storage_place_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "storage_places",
+                    "column": "storage_place_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "default_number",
+            "getter_name": "defaultNumber",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "custom_name",
+            "getter_name": "customName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "color_tag_index",
+            "getter_name": "colorTagIndex",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "sort_order",
+            "getter_name": "sortOrder",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_archived",
+            "getter_name": "isArchived",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_archived\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_archived\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "compartment_identifier"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "categories",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "category_identifier",
+            "getter_name": "categoryIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "catalog_key",
+            "getter_name": "catalogKey",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "unique"
+            ]
+          },
+          {
+            "name": "custom_name",
+            "getter_name": "customName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "recommended_maximum_storage_days",
+            "getter_name": "recommendedMaximumStorageDays",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "shelf_life_after_opening_days",
+            "getter_name": "shelfLifeAfterOpeningDays",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "icon_emoji",
+            "getter_name": "iconEmoji",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "sort_order",
+            "getter_name": "sortOrder",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "storage_domain",
+            "getter_name": "storageDomain",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": "const CustomExpression('\\'freezer\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "category_identifier"
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "references": [
+        5,
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "products",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "category_identifier",
+            "getter_name": "categoryIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES categories (category_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES categories (category_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "categories",
+                    "column": "category_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "catalog_key",
+            "getter_name": "catalogKey",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "UNIQUE",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "UNIQUE"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "unique"
+            ]
+          },
+          {
+            "name": "custom_name",
+            "getter_name": "customName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "canonical_unit",
+            "getter_name": "canonicalUnit",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "default_package_quantity",
+            "getter_name": "defaultPackageQuantity",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "recommended_maximum_storage_days",
+            "getter_name": "recommendedMaximumStorageDays",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "shelf_life_after_opening_days",
+            "getter_name": "shelfLifeAfterOpeningDays",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "icon_emoji",
+            "getter_name": "iconEmoji",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "icon_image",
+            "getter_name": "iconImage",
+            "moor_type": "blob",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "default_compartment_identifier",
+            "getter_name": "defaultCompartmentIdentifier",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES compartments (compartment_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES compartments (compartment_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "compartments",
+                    "column": "compartment_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "is_archived",
+            "getter_name": "isArchived",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_archived\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_archived\" IN (0, 1))"
+            },
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "piece_label",
+            "getter_name": "pieceLabel",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "product_identifier"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "references": [
+        6,
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "stock_batches",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "stock_batch_identifier",
+            "getter_name": "stockBatchIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES products (product_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES products (product_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "products",
+                    "column": "product_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "compartment_identifier",
+            "getter_name": "compartmentIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES compartments (compartment_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES compartments (compartment_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "compartments",
+                    "column": "compartment_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "quantity_unit",
+            "getter_name": "quantityUnit",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "initial_quantity",
+            "getter_name": "initialQuantity",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "quantity_remaining",
+            "getter_name": "quantityRemaining",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "parent_batch_identifier",
+            "getter_name": "parentBatchIdentifier",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "stored_on",
+            "getter_name": "storedOn",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [],
+            "type_converter": {
+              "dart_expr": "const CalendarDateTextConverter()",
+              "dart_type_name": "CalendarDate"
+            }
+          },
+          {
+            "name": "best_before_on",
+            "getter_name": "bestBeforeOn",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [],
+            "type_converter": {
+              "dart_expr": "const CalendarDateTextConverter()",
+              "dart_type_name": "CalendarDate"
+            }
+          },
+          {
+            "name": "opened_on",
+            "getter_name": "openedOn",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [],
+            "type_converter": {
+              "dart_expr": "const CalendarDateTextConverter()",
+              "dart_type_name": "CalendarDate"
+            }
+          },
+          {
+            "name": "note",
+            "getter_name": "note",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "stock_batch_identifier"
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "references": [
+        7,
+        6,
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "inventory_movements",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "movement_identifier",
+            "getter_name": "movementIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "stock_batch_identifier",
+            "getter_name": "stockBatchIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES stock_batches (stock_batch_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES stock_batches (stock_batch_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "stock_batches",
+                    "column": "stock_batch_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES products (product_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES products (product_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "products",
+                    "column": "product_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "compartment_identifier",
+            "getter_name": "compartmentIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES compartments (compartment_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES compartments (compartment_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "compartments",
+                    "column": "compartment_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "movement_kind",
+            "getter_name": "movementKind",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "quantity_delta",
+            "getter_name": "quantityDelta",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "discard_reason",
+            "getter_name": "discardReason",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "reverses_movement_identifier",
+            "getter_name": "reversesMovementIdentifier",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "occurred_at",
+            "getter_name": "occurredAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "movement_identifier"
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "scheduled_notification_records",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "notification_identifier",
+            "getter_name": "notificationIdentifier",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "purpose",
+            "getter_name": "purpose",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "scheduled_for",
+            "getter_name": "scheduledFor",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "notification_identifier"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "references": [
+        6
+      ],
+      "type": "table",
+      "data": {
+        "name": "restock_rules",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES products (product_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES products (product_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "products",
+                    "column": "product_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "quantity_unit",
+            "getter_name": "quantityUnit",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "minimum_quantity",
+            "getter_name": "minimumQuantity",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "target_quantity",
+            "getter_name": "targetQuantity",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_active",
+            "getter_name": "isActive",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_active\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_active\" IN (0, 1))"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_at",
+            "getter_name": "updatedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "product_identifier"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "references": [
+        6
+      ],
+      "type": "table",
+      "data": {
+        "name": "shopping_list_entries",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "shopping_list_entry_identifier",
+            "getter_name": "shoppingListEntryIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES products (product_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES products (product_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "products",
+                    "column": "product_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "free_text_name",
+            "getter_name": "freeTextName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "quantity_unit",
+            "getter_name": "quantityUnit",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "requested_quantity",
+            "getter_name": "requestedQuantity",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "origin",
+            "getter_name": "origin",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "checked_at",
+            "getter_name": "checkedAt",
+            "moor_type": "dateTime",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "shopping_list_entry_identifier"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "item_pictures",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "item_picture_identifier",
+            "getter_name": "itemPictureIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "owner_kind",
+            "getter_name": "ownerKind",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "owner_identifier",
+            "getter_name": "ownerIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "encrypted_file_name",
+            "getter_name": "encryptedFileName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "thumbnail_file_name",
+            "getter_name": "thumbnailFileName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "width_pixels",
+            "getter_name": "widthPixels",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "height_pixels",
+            "getter_name": "heightPixels",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "byte_size",
+            "getter_name": "byteSize",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "item_picture_identifier"
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "references": [
+        6
+      ],
+      "type": "table",
+      "data": {
+        "name": "product_barcodes",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "barcode_value",
+            "getter_name": "barcodeValue",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES products (product_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES products (product_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "products",
+                    "column": "product_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "symbology",
+            "getter_name": "symbology",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "is_variable_measure",
+            "getter_name": "isVariableMeasure",
+            "moor_type": "bool",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "CHECK (\"is_variable_measure\" IN (0, 1))",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "CHECK (\"is_variable_measure\" IN (0, 1))"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "learned_at",
+            "getter_name": "learnedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "barcode_value"
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "receipts",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "receipt_identifier",
+            "getter_name": "receiptIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "store_name",
+            "getter_name": "storeName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "purchased_on",
+            "getter_name": "purchasedOn",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [],
+            "type_converter": {
+              "dart_expr": "const CalendarDateTextConverter()",
+              "dart_type_name": "CalendarDate"
+            }
+          },
+          {
+            "name": "total_in_cents",
+            "getter_name": "totalInCents",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "page_count",
+            "getter_name": "pageCount",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "recognized_text",
+            "getter_name": "recognizedText",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_at",
+            "getter_name": "createdAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "receipt_identifier"
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "references": [
+        14
+      ],
+      "type": "table",
+      "data": {
+        "name": "receipt_pages",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "receipt_identifier",
+            "getter_name": "receiptIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES receipts (receipt_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES receipts (receipt_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "receipts",
+                    "column": "receipt_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "page_number",
+            "getter_name": "pageNumber",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "picture_reference",
+            "getter_name": "pictureReference",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "raw_recognized_text",
+            "getter_name": "rawRecognizedText",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "receipt_identifier",
+          "page_number"
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "references": [
+        14,
+        6,
+        7
+      ],
+      "type": "table",
+      "data": {
+        "name": "receipt_lines",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "receipt_line_identifier",
+            "getter_name": "receiptLineIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "receipt_identifier",
+            "getter_name": "receiptIdentifier",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES receipts (receipt_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES receipts (receipt_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "receipts",
+                    "column": "receipt_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "position",
+            "getter_name": "position",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "kind",
+            "getter_name": "kind",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "recognized_text",
+            "getter_name": "recognizedText",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "corrected_text",
+            "getter_name": "correctedText",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "quantity",
+            "getter_name": "quantity",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "unit_price_in_cents",
+            "getter_name": "unitPriceInCents",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "line_total_in_cents",
+            "getter_name": "lineTotalInCents",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "weight_in_grams",
+            "getter_name": "weightInGrams",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "status",
+            "getter_name": "status",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES products (product_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES products (product_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "products",
+                    "column": "product_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "stock_batch_identifier",
+            "getter_name": "stockBatchIdentifier",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES stock_batches (stock_batch_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES stock_batches (stock_batch_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "stock_batches",
+                    "column": "stock_batch_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "receipt_line_identifier"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "references": [
+        6
+      ],
+      "type": "table",
+      "data": {
+        "name": "receipt_text_mappings",
+        "was_declared_in_moor": false,
+        "columns": [
+          {
+            "name": "store_name",
+            "getter_name": "storeName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "line_text",
+            "getter_name": "lineText",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "product_identifier",
+            "getter_name": "productIdentifier",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": null,
+            "defaultConstraints": "REFERENCES products (product_identifier)",
+            "dialectAwareDefaultConstraints": {
+              "sqlite": "REFERENCES products (product_identifier)"
+            },
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "products",
+                    "column": "product_identifier"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "learned_at",
+            "getter_name": "learnedAt",
+            "moor_type": "dateTime",
+            "nullable": false,
+            "customConstraints": null,
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [],
+        "explicit_pk": [
+          "store_name",
+          "line_text"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "references": [
+        8
+      ],
+      "type": "index",
+      "data": {
+        "on": 8,
+        "name": "inventory_movements_by_time",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "occurred_at",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "references": [
+        8
+      ],
+      "type": "index",
+      "data": {
+        "on": 8,
+        "name": "inventory_movements_by_product_and_time",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "product_identifier",
+            "order_by": null
+          },
+          {
+            "column": "occurred_at",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "references": [
+        8
+      ],
+      "type": "index",
+      "data": {
+        "on": 8,
+        "name": "inventory_movements_by_batch",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "stock_batch_identifier",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "references": [
+        12
+      ],
+      "type": "index",
+      "data": {
+        "on": 12,
+        "name": "item_pictures_by_owner",
+        "sql": null,
+        "unique": true,
+        "columns": [
+          {
+            "column": "owner_kind",
+            "order_by": null
+          },
+          {
+            "column": "owner_identifier",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "references": [
+        13
+      ],
+      "type": "index",
+      "data": {
+        "on": 13,
+        "name": "product_barcodes_by_product",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "product_identifier",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "references": [
+        14
+      ],
+      "type": "index",
+      "data": {
+        "on": 14,
+        "name": "receipts_by_creation",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "created_at",
+            "order_by": null
+          }
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "references": [
+        16
+      ],
+      "type": "index",
+      "data": {
+        "on": 16,
+        "name": "receipt_lines_by_receipt",
+        "sql": null,
+        "unique": false,
+        "columns": [
+          {
+            "column": "receipt_identifier",
+            "order_by": null
+          },
+          {
+            "column": "position",
+            "order_by": null
+          }
+        ]
+      }
+    }
+  ],
+  "fixed_sql": [
+    {
+      "name": "receipt_search_index",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE VIRTUAL TABLE IF NOT EXISTS \"receipt_search_index\" USING fts5(receipt_identifier UNINDEXED, receipt_line_identifier UNINDEXED, body, tokenize = 'unicode61 remove_diacritics 2');"
+        }
+      ]
+    },
+    {
+      "name": "preference_entries",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"preference_entries\" (\"preference_key\" TEXT NOT NULL, \"encoded_value\" TEXT NOT NULL, \"updated_at\" TEXT NOT NULL, PRIMARY KEY (\"preference_key\"));"
+        }
+      ]
+    },
+    {
+      "name": "schema_metadata",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"schema_metadata\" (\"singleton_identifier\" INTEGER NOT NULL, \"schema_version\" INTEGER NOT NULL, \"last_migrated_by_application_version\" TEXT NOT NULL, \"migrated_at\" TEXT NOT NULL, PRIMARY KEY (\"singleton_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "storage_places",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"storage_places\" (\"storage_place_identifier\" TEXT NOT NULL, \"default_name_key\" TEXT NOT NULL, \"custom_name\" TEXT NULL, \"storage_kind\" TEXT NOT NULL, \"sort_order\" INTEGER NOT NULL, \"is_archived\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_archived\" IN (0, 1)), \"created_at\" TEXT NOT NULL, PRIMARY KEY (\"storage_place_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "compartments",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"compartments\" (\"compartment_identifier\" TEXT NOT NULL, \"storage_place_identifier\" TEXT NOT NULL REFERENCES storage_places (storage_place_identifier), \"default_number\" INTEGER NOT NULL, \"custom_name\" TEXT NULL, \"color_tag_index\" INTEGER NOT NULL, \"sort_order\" INTEGER NOT NULL, \"is_archived\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_archived\" IN (0, 1)), \"created_at\" TEXT NOT NULL, PRIMARY KEY (\"compartment_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "categories",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"categories\" (\"category_identifier\" TEXT NOT NULL, \"catalog_key\" TEXT NULL UNIQUE, \"custom_name\" TEXT NULL, \"recommended_maximum_storage_days\" INTEGER NULL, \"shelf_life_after_opening_days\" INTEGER NULL, \"icon_emoji\" TEXT NOT NULL, \"sort_order\" INTEGER NOT NULL, \"storage_domain\" TEXT NOT NULL DEFAULT 'freezer', PRIMARY KEY (\"category_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"products\" (\"product_identifier\" TEXT NOT NULL, \"category_identifier\" TEXT NOT NULL REFERENCES categories (category_identifier), \"catalog_key\" TEXT NULL UNIQUE, \"custom_name\" TEXT NULL, \"canonical_unit\" TEXT NOT NULL, \"default_package_quantity\" INTEGER NULL, \"recommended_maximum_storage_days\" INTEGER NULL, \"shelf_life_after_opening_days\" INTEGER NULL, \"icon_emoji\" TEXT NULL, \"icon_image\" BLOB NULL, \"default_compartment_identifier\" TEXT NULL REFERENCES compartments (compartment_identifier), \"is_archived\" INTEGER NOT NULL DEFAULT 0 CHECK (\"is_archived\" IN (0, 1)), \"created_at\" TEXT NOT NULL, \"piece_label\" TEXT NULL, PRIMARY KEY (\"product_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "stock_batches",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"stock_batches\" (\"stock_batch_identifier\" TEXT NOT NULL, \"product_identifier\" TEXT NOT NULL REFERENCES products (product_identifier), \"compartment_identifier\" TEXT NOT NULL REFERENCES compartments (compartment_identifier), \"quantity_unit\" TEXT NOT NULL, \"initial_quantity\" INTEGER NOT NULL, \"quantity_remaining\" INTEGER NOT NULL, \"parent_batch_identifier\" TEXT NULL, \"stored_on\" TEXT NOT NULL, \"best_before_on\" TEXT NULL, \"opened_on\" TEXT NULL, \"note\" TEXT NULL, \"created_at\" TEXT NOT NULL, PRIMARY KEY (\"stock_batch_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "inventory_movements",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"inventory_movements\" (\"movement_identifier\" TEXT NOT NULL, \"stock_batch_identifier\" TEXT NOT NULL REFERENCES stock_batches (stock_batch_identifier), \"product_identifier\" TEXT NOT NULL REFERENCES products (product_identifier), \"compartment_identifier\" TEXT NOT NULL REFERENCES compartments (compartment_identifier), \"movement_kind\" TEXT NOT NULL, \"quantity_delta\" INTEGER NOT NULL, \"discard_reason\" TEXT NULL, \"reverses_movement_identifier\" TEXT NULL, \"occurred_at\" TEXT NOT NULL, PRIMARY KEY (\"movement_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "scheduled_notification_records",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"scheduled_notification_records\" (\"notification_identifier\" INTEGER NOT NULL, \"purpose\" TEXT NOT NULL, \"scheduled_for\" TEXT NOT NULL, PRIMARY KEY (\"notification_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "restock_rules",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"restock_rules\" (\"product_identifier\" TEXT NOT NULL REFERENCES products (product_identifier), \"quantity_unit\" TEXT NOT NULL, \"minimum_quantity\" INTEGER NOT NULL, \"target_quantity\" INTEGER NULL, \"is_active\" INTEGER NOT NULL CHECK (\"is_active\" IN (0, 1)), \"updated_at\" TEXT NOT NULL, PRIMARY KEY (\"product_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "shopping_list_entries",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"shopping_list_entries\" (\"shopping_list_entry_identifier\" TEXT NOT NULL, \"product_identifier\" TEXT NULL REFERENCES products (product_identifier), \"free_text_name\" TEXT NULL, \"quantity_unit\" TEXT NULL, \"requested_quantity\" INTEGER NULL, \"origin\" TEXT NOT NULL, \"created_at\" TEXT NOT NULL, \"checked_at\" TEXT NULL, PRIMARY KEY (\"shopping_list_entry_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "item_pictures",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"item_pictures\" (\"item_picture_identifier\" TEXT NOT NULL, \"owner_kind\" TEXT NOT NULL, \"owner_identifier\" TEXT NOT NULL, \"encrypted_file_name\" TEXT NOT NULL, \"thumbnail_file_name\" TEXT NOT NULL, \"width_pixels\" INTEGER NOT NULL, \"height_pixels\" INTEGER NOT NULL, \"byte_size\" INTEGER NOT NULL, \"created_at\" TEXT NOT NULL, PRIMARY KEY (\"item_picture_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "product_barcodes",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"product_barcodes\" (\"barcode_value\" TEXT NOT NULL, \"product_identifier\" TEXT NOT NULL REFERENCES products (product_identifier), \"symbology\" TEXT NOT NULL, \"is_variable_measure\" INTEGER NOT NULL CHECK (\"is_variable_measure\" IN (0, 1)), \"learned_at\" TEXT NOT NULL, PRIMARY KEY (\"barcode_value\"));"
+        }
+      ]
+    },
+    {
+      "name": "receipts",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"receipts\" (\"receipt_identifier\" TEXT NOT NULL, \"store_name\" TEXT NULL, \"purchased_on\" TEXT NULL, \"total_in_cents\" INTEGER NULL, \"page_count\" INTEGER NOT NULL, \"recognized_text\" TEXT NOT NULL, \"created_at\" TEXT NOT NULL, PRIMARY KEY (\"receipt_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "receipt_pages",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"receipt_pages\" (\"receipt_identifier\" TEXT NOT NULL REFERENCES receipts (receipt_identifier), \"page_number\" INTEGER NOT NULL, \"picture_reference\" TEXT NULL, \"raw_recognized_text\" TEXT NOT NULL, PRIMARY KEY (\"receipt_identifier\", \"page_number\"));"
+        }
+      ]
+    },
+    {
+      "name": "receipt_lines",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"receipt_lines\" (\"receipt_line_identifier\" TEXT NOT NULL, \"receipt_identifier\" TEXT NOT NULL REFERENCES receipts (receipt_identifier), \"position\" INTEGER NOT NULL, \"kind\" TEXT NOT NULL, \"recognized_text\" TEXT NOT NULL, \"corrected_text\" TEXT NULL, \"quantity\" INTEGER NOT NULL, \"unit_price_in_cents\" INTEGER NULL, \"line_total_in_cents\" INTEGER NOT NULL, \"weight_in_grams\" INTEGER NULL, \"status\" TEXT NOT NULL, \"product_identifier\" TEXT NULL REFERENCES products (product_identifier), \"stock_batch_identifier\" TEXT NULL REFERENCES stock_batches (stock_batch_identifier), PRIMARY KEY (\"receipt_line_identifier\"));"
+        }
+      ]
+    },
+    {
+      "name": "receipt_text_mappings",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"receipt_text_mappings\" (\"store_name\" TEXT NOT NULL, \"line_text\" TEXT NOT NULL, \"product_identifier\" TEXT NULL REFERENCES products (product_identifier), \"learned_at\" TEXT NOT NULL, PRIMARY KEY (\"store_name\", \"line_text\"));"
+        }
+      ]
+    },
+    {
+      "name": "inventory_movements_by_time",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX inventory_movements_by_time ON inventory_movements (occurred_at)"
+        }
+      ]
+    },
+    {
+      "name": "inventory_movements_by_product_and_time",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX inventory_movements_by_product_and_time ON inventory_movements (product_identifier, occurred_at)"
+        }
+      ]
+    },
+    {
+      "name": "inventory_movements_by_batch",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX inventory_movements_by_batch ON inventory_movements (stock_batch_identifier)"
+        }
+      ]
+    },
+    {
+      "name": "item_pictures_by_owner",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE UNIQUE INDEX item_pictures_by_owner ON item_pictures (owner_kind, owner_identifier)"
+        }
+      ]
+    },
+    {
+      "name": "product_barcodes_by_product",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX product_barcodes_by_product ON product_barcodes (product_identifier)"
+        }
+      ]
+    },
+    {
+      "name": "receipts_by_creation",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX receipts_by_creation ON receipts (created_at)"
+        }
+      ]
+    },
+    {
+      "name": "receipt_lines_by_receipt",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE INDEX receipt_lines_by_receipt ON receipt_lines (receipt_identifier, position)"
+        }
+      ]
+    }
+  ]
+}

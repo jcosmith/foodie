@@ -97,7 +97,8 @@ class _ShoppingListEntryTile extends ConsumerWidget {
         : context.productDisplayNameResolver.productName(product);
     final origin = entry.isAutomatic ? localizations.originRestock : localizations.originManual;
     final detail = switch (entry.requestedQuantity) {
-      final quantity? => '${context.quantityFormatter.format(quantity)} · $origin',
+      final quantity? =>
+        '${context.quantityFormatter.format(quantity, pieceLabel: product?.displayPieceLabel)} · $origin',
       null => origin,
     };
     final textTheme = Theme.of(context).textTheme;

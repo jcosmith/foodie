@@ -143,4 +143,13 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
 
   @override
   String get genericFailure => 'That did not work. Please try again.';
+
+  @override
+  String get pieceLabelLabel => 'Name for one piece (optional)';
+
+  @override
+  String get pieceLabelHint => 'Shown instead of “pcs”, for example slices';
+
+  @override
+  String get pieceLabelSuggestions => 'slices,whole,halves,quarters,portions';
 }

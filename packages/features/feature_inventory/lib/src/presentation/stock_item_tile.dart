@@ -57,9 +57,18 @@ class StockItemTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                quantityFormatter.format(batch.quantityRemaining),
-                style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+              // Shrinks a long name for one piece ("12 quarters") to one line.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  quantityFormatter.format(
+                    batch.quantityRemaining,
+                    pieceLabel: item.product.displayPieceLabel,
+                  ),
+                  maxLines: 1,
+                  style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
               ),
               const SizedBox(height: FoodieSpacing.extraSmall),
               ClipRRect(
