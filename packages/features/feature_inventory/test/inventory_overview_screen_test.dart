@@ -301,6 +301,19 @@ void main() {
       expect(find.text('Expand all'), findsOneWidget);
     });
 
+    testWidgets('the two orders stay side by side on a narrow phone', (tester) async {
+      tester.view.physicalSize = const Size(360, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await showTwoDrawers(tester);
+
+      expect(
+        tester.getCenter(find.text('Use first')).dy,
+        tester.getCenter(find.text('By place')).dy,
+      );
+      expect(find.text('Collapse all'), findsOneWidget);
+    });
+
     testWidgets('open while searching, so no match hides', (tester) async {
       await showTwoDrawers(tester);
       await tester.tap(find.text('Drawer 2'));
