@@ -128,7 +128,9 @@ abstract final class FoodieTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: tokens.surfaceMuted,
-        border: OutlineInputBorder(
+        // The filled style: an outline border would float the label onto
+        // the field's top edge. Focus shows as a line along the bottom.
+        border: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(FoodieSpacing.tileRadius),
           borderSide: BorderSide.none,
         ),
