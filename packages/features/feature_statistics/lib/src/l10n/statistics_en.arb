@@ -20,7 +20,7 @@
   "periodThisYear": "This year",
   "periodAllTime": "All time",
   "periodCustom": "Custom",
-  "filtersButton": "Filters · {count}",
+  "filtersButton": "{count, plural, =0{Filters} other{Filters · {count}}}",
   "@filtersButton": {
     "placeholders": {
       "count": {

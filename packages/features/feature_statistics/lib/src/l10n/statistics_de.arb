@@ -10,7 +10,7 @@
   "periodThisYear": "Dieses Jahr",
   "periodAllTime": "Gesamt",
   "periodCustom": "Eigener",
-  "filtersButton": "Filter · {count}",
+  "filtersButton": "{count, plural, =0{Filter} other{Filter · {count}}}",
   "resetFilters": "Zurücksetzen",
   "kpiEaten": "Verbraucht",
   "kpiAdded": "Eingelagert",

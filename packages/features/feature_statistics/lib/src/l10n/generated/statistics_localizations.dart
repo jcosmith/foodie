@@ -158,7 +158,7 @@ abstract class StatisticsLocalizations {
   /// No description provided for @filtersButton.
   ///
   /// In en, this message translates to:
-  /// **'Filters · {count}'**
+  /// **'{count, plural, =0{Filters} other{Filters · {count}}}'**
   String filtersButton(int count);
 
   /// No description provided for @resetFilters.

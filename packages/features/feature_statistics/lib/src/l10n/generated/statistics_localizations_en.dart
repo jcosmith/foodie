@@ -42,7 +42,13 @@ class StatisticsLocalizationsEn extends StatisticsLocalizations {
 
   @override
   String filtersButton(int count) {
-    return 'Filters · $count';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Filters · $count',
+      zero: 'Filters',
+    );
+    return '$_temp0';
   }
 
   @override

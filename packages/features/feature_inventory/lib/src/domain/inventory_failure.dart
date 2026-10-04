@@ -78,5 +78,5 @@ final class StoredOnInFuture extends InventoryFailure {
   const StoredOnInFuture();
 
   @override
-  String get debugDescription => 'The freezing date lies in the future';
+  String get debugDescription => 'The stored-on date lies in the future';
 }
