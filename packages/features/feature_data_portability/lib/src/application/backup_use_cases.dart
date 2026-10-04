@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:core_database/core_database.dart';
 import 'package:core_foundation/core_foundation.dart';
@@ -48,6 +49,25 @@ final class CreateBackupUseCase {
     required String repeatedPassword,
     bool includesPictures = true,
   }) async {
+    final preparation = await prepare(
+      password: password,
+      repeatedPassword: repeatedPassword,
+      includesPictures: includesPictures,
+    );
+    return switch (preparation) {
+      SuccessfulResult(value: final backup) => save(backup),
+      FailedResult(:final failure) => Result.failure(failure),
+    };
+  }
+
+  /// Builds the encrypted backup file; [save] then hands it to the save
+  /// dialog. Two steps, so the app shows its progress while the file is
+  /// built but not while the system's dialog is open (issue #4).
+  Future<Result<PreparedBackup, DataPortabilityFailure>> prepare({
+    required String password,
+    required String repeatedPassword,
+    bool includesPictures = true,
+  }) async {
     final passwordProblem = BackupPasswordPolicy.check(
       password: password,
       repeatedPassword: repeatedPassword,
@@ -68,19 +88,45 @@ final class CreateBackupUseCase {
         createdAt: createdAt,
         pictureFiles: includesPictures ? _pictureFiles : null,
       );
-      final isSaved = await _fileStore.saveFile(
-        fileName: fileName,
-        bytes: await File(snapshotPath).readAsBytes(),
-        mimeType: 'application/octet-stream',
+      return Result.success(
+        PreparedBackup._(
+          fileName: fileName,
+          bytes: await File(snapshotPath).readAsBytes(),
+          createdAt: createdAt,
+        ),
       );
-      if (isSaved) {
-        await _preferencesStore.write(DataPortabilityPreferenceKeys.lastBackupAt, createdAt);
-      }
-      return Result.success(isSaved);
     } finally {
       await scratchDirectory.delete(recursive: true);
     }
   }
+
+  /// Opens the save dialog and returns whether the backup was saved. An
+  /// error of the dialog is a [BackupNotSaved] failure.
+  Future<Result<bool, DataPortabilityFailure>> save(PreparedBackup backup) async {
+    final bool isSaved;
+    try {
+      isSaved = await _fileStore.saveFile(
+        fileName: backup.fileName,
+        bytes: backup.bytes,
+        mimeType: 'application/octet-stream',
+      );
+    } on Exception {
+      return const Result.failure(BackupNotSaved());
+    }
+    if (isSaved) {
+      await _preferencesStore.write(DataPortabilityPreferenceKeys.lastBackupAt, backup.createdAt);
+    }
+    return Result.success(isSaved);
+  }
+}
+
+/// A backup file built by [CreateBackupUseCase.prepare], not saved yet.
+final class PreparedBackup {
+  const PreparedBackup._({required this.fileName, required this.bytes, required this.createdAt});
+
+  final String fileName;
+  final Uint8List bytes;
+  final DateTime createdAt;
 }
 
 /// Replaces everything in the app with the contents of a backup.

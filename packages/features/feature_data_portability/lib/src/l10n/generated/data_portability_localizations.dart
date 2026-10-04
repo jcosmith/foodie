@@ -185,6 +185,12 @@ abstract class DataPortabilityLocalizations {
   /// **'Backup saved'**
   String get backupSaved;
 
+  /// No description provided for @backupNotSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup could not be saved.'**
+  String get backupNotSaved;
+
   /// No description provided for @workingOnBackup.
   ///
   /// In en, this message translates to:

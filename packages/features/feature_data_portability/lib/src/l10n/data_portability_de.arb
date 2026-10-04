@@ -15,6 +15,7 @@
   "passwordTooShort": "Mindestens {count} Zeichen.",
   "passwordsDoNotMatch": "Die Passwörter sind verschieden.",
   "backupSaved": "Sicherung gespeichert",
+  "backupNotSaved": "Die Sicherung konnte nicht gespeichert werden.",
   "workingOnBackup": "Sicherung wird bearbeitet …",
   "restorePasswordTitle": "Sicherung öffnen",
   "restorePasswordMessage": "Gib das Passwort ein, das du beim Speichern dieser Sicherung gewählt hast.",

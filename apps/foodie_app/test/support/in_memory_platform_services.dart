@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:core_database/core_database.dart';
 import 'package:core_database/testing.dart';
 import 'package:core_foundation/core_foundation.dart';
@@ -13,9 +15,16 @@ final class InMemoryPlatformServices implements ApplicationPlatformServices {
     this.databaseOpeningError,
     this.isOnboardingCompleted = true,
     this.perAppLanguageCode,
+    this.databaseDirectory,
   });
 
   final Object? databaseOpeningError;
+
+  /// When set, the database is an encrypted file in this folder, as on a
+  /// phone, and keeps its data across restarts; restoring a backup needs
+  /// one.
+  final Directory? databaseDirectory;
+  final DatabaseEncryptionKeyStore _databaseKeyStore = InMemoryDatabaseEncryptionKeyStore();
 
   /// Most tests start on Home; onboarding tests start fresh.
   final bool isOnboardingCompleted;
@@ -32,8 +41,20 @@ final class InMemoryPlatformServices implements ApplicationPlatformServices {
   }) async {
     final error = databaseOpeningError;
     if (error != null) throw error;
-    final database = createInMemoryApplicationDatabase(clock: clock);
-    if (isOnboardingCompleted) {
+    final directory = databaseDirectory;
+    final database = directory == null
+        ? createInMemoryApplicationDatabase(clock: clock)
+        : await EncryptedDatabaseOpener(
+            keyStore: _databaseKeyStore,
+            clock: clock,
+            applicationVersion: applicationVersion,
+            privateDirectoryProvider: () async => directory,
+          ).open();
+    if (isOnboardingCompleted &&
+        await database.preferencesDao.readEncodedValue(
+              OnboardingPreferenceKeys.isCompleted.storageKey,
+            ) ==
+            null) {
       await database.preferencesDao.writeEncodedValue(
         preferenceKey: OnboardingPreferenceKeys.isCompleted.storageKey,
         encodedValue: 'true',

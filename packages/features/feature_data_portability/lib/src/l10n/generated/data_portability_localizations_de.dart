@@ -61,6 +61,9 @@ class DataPortabilityLocalizationsDe extends DataPortabilityLocalizations {
   String get backupSaved => 'Sicherung gespeichert';
 
   @override
+  String get backupNotSaved => 'Die Sicherung konnte nicht gespeichert werden.';
+
+  @override
   String get workingOnBackup => 'Sicherung wird bearbeitet …';
 
   @override

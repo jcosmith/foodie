@@ -61,6 +61,9 @@ class DataPortabilityLocalizationsEn extends DataPortabilityLocalizations {
   String get backupSaved => 'Backup saved';
 
   @override
+  String get backupNotSaved => 'The backup could not be saved.';
+
+  @override
   String get workingOnBackup => 'Working on your backup…';
 
   @override

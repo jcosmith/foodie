@@ -29,14 +29,20 @@ Future<void> showCreateBackupFlow(BuildContext context, WidgetRef ref) async {
     builder: (dialogContext) => _NewBackupPasswordDialog(pictureCount: pictureCount),
   );
   if (choice == null || !context.mounted) return;
-  final result = await _whileShowingProgress(
+  final preparation = await _whileShowingProgress(
     context,
-    createBackup.execute(
+    createBackup.prepare(
       password: choice.password,
       repeatedPassword: choice.password,
       includesPictures: choice.includesPictures,
     ),
   );
+  // The progress dialog is closed before the system's save dialog opens, so
+  // it can never outlive a save dialog that does not answer (issue #4).
+  final result = switch (preparation) {
+    SuccessfulResult(value: final backup) => await createBackup.save(backup),
+    FailedResult(:final failure) => Result<bool, DataPortabilityFailure>.failure(failure),
+  };
   switch (result) {
     case SuccessfulResult(value: true):
       messenger.showSnackBar(SnackBar(content: Text(localizations.backupSaved)));
@@ -109,11 +115,16 @@ Future<void> showRestoreBackupFlow(BuildContext context, WidgetRef ref) async {
           ),
         );
         if (isConfirmed != true || !context.mounted) return;
-        // On success the app restarts and this screen goes away.
-        await _whileShowingProgress(
+        final messenger = ScaffoldMessenger.of(context);
+        // On success the app restarts and this screen, progress dialog
+        // included, goes away.
+        final restoration = await _whileShowingProgress(
           context,
           restoreBackup.restore(backupPath: backupPath, password: password),
         );
+        if (restoration case FailedResult(:final failure)) {
+          messenger.showSnackBar(SnackBar(content: Text(localizations.describeFailure(failure))));
+        }
         return;
     }
   }
@@ -203,6 +214,7 @@ extension DataPortabilityFailureTexts on DataPortabilityLocalizations {
   String describeFailure(DataPortabilityFailure failure) => switch (failure) {
     BackupPasswordTooShort() => passwordTooShort(BackupPasswordPolicy.minimumLength),
     BackupPasswordsDoNotMatch() => passwordsDoNotMatch,
+    BackupNotSaved() => backupNotSaved,
     BackupNotReadable() => backupNotReadable,
     NotABackupOfThisApp() => notABackupOfThisApp,
     BackupNeedsNewerApp(:final applicationVersion) => backupNeedsNewerApp(applicationVersion),

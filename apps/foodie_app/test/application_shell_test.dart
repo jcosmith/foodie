@@ -1,7 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:core_database/core_database.dart';
 import 'package:core_foundation/core_foundation.dart';
+import 'package:core_module_contract/core_module_contract.dart';
+import 'package:core_preferences/core_preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:foodie_app/src/foodie_application.dart';
 import 'package:foodie_app/src/modules/module_registry.dart';
 import 'package:foodie_app/src/startup/application_bootstrapper.dart';
 import 'package:foodie_app/src/startup/application_startup_gate.dart';
@@ -23,11 +30,11 @@ Future<void> _startApplication(
       ),
     ),
   );
-  // The in-memory database opens, and the modules start, in real time
+  // The database opens, and the modules start, in real time
   // outside the fake clock; the startup gate shows a spinner until then.
   // Tabs that are not shown may keep a spinner of their own, because
   // Riverpod pauses them, so only a spinner that can be seen counts.
-  for (var attempt = 0; attempt < 80; attempt++) {
+  for (var attempt = 0; attempt < 400; attempt++) {
     await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 25)));
     await tester.pump(const Duration(milliseconds: 100));
     if (find.byType(CircularProgressIndicator).hitTestable().evaluate().isEmpty) break;
@@ -48,10 +55,14 @@ Future<void> _settle(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-/// Unmounts the app so its database closes before the next test.
+/// Unmounts the app so its database closes before the next test. Closing
+/// waits for drift's stream clean-up timers, which run on the fake clock.
 Future<void> _stopApplication(WidgetTester tester) async {
   await tester.pumpWidget(const SizedBox());
-  await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+  for (var round = 0; round < 3; round++) {
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+    await tester.pump(Duration.zero);
+  }
 }
 
 void main() {
@@ -422,5 +433,87 @@ void main() {
     expect(find.text('Try again'), findsOneWidget);
 
     await _stopApplication(tester);
+  });
+
+  testWidgets('a restore restarts the app on the restored data, from inside the progress dialog', (
+    tester,
+  ) async {
+    tester.platformDispatcher.localesTestValue = const [Locale('en')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    final temporaryDirectory = (await tester.runAsync(
+      () => Directory.systemTemp.createTemp('application_restore_test'),
+    ))!;
+    final platformServices = InMemoryPlatformServices(
+      databaseDirectory: Directory('${temporaryDirectory.path}/phone')..createSync(),
+    );
+    await _startApplication(tester, platformServices: platformServices);
+    expect(find.text('Home'), findsOneWidget);
+
+    // A backup from another phone, where the app was set to German.
+    const password = 'freezer password';
+    final backupPath = '${temporaryDirectory.path}/freezer.freezerbackup';
+    await tester.runAsync(() async {
+      final otherPhoneDirectory = Directory('${temporaryDirectory.path}/other_phone')..createSync();
+      final otherPhone = await EncryptedDatabaseOpener(
+        keyStore: InMemoryDatabaseEncryptionKeyStore(),
+        clock: FixedClock(DateTime.utc(2026, 9, 1)),
+        applicationVersion: '0.1.0',
+        privateDirectoryProvider: () async => otherPhoneDirectory,
+      ).open();
+      await otherPhone.preferencesDao.writeEncodedValue(
+        preferenceKey: ApplicationPreferenceKeys.languageCode.storageKey,
+        encodedValue: 'de',
+        updatedAt: DateTime.utc(2026, 9, 1),
+      );
+      await DatabaseBackupGateway(otherPhone).exportEncryptedSnapshot(
+        destinationPath: backupPath,
+        password: password,
+        applicationVersion: '0.1.0',
+        createdAt: DateTime.utc(2026, 9, 1),
+      );
+      await otherPhone.close();
+    });
+
+    // What the restore flow does: prepare the restore, then restart while
+    // its progress dialog is shown.
+    final container = ProviderScope.containerOf(tester.element(find.byType(FoodieApplication)));
+    final preparation = await tester.runAsync(
+      () => container
+          .read(databaseBackupGatewayProvider)
+          .prepareRestore(backupPath: backupPath, password: password),
+    );
+    expect(preparation!.isSuccess, isTrue);
+    unawaited(
+      showDialog<void>(
+        context: tester.element(find.text('Home')),
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(content: LinearProgressIndicator()),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+
+    var isRestarted = false;
+    unawaited(
+      container.read(applicationRestarterProvider).restart().then((_) => isRestarted = true),
+    );
+    await tester.pump();
+    // The old app leaves the screen at once.
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.text('Home'), findsNothing);
+    for (var attempt = 0; attempt < 200 && !isRestarted; attempt++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 25)));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(isRestarted, isTrue);
+    await _settle(tester);
+
+    expect(find.text('Start'), findsOneWidget);
+    expect(find.text('Guten Morgen'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
+    expect(find.byType(CircularProgressIndicator).hitTestable(), findsNothing);
+
+    await _stopApplication(tester);
+    await tester.runAsync(() => temporaryDirectory.delete(recursive: true));
   });
 }
