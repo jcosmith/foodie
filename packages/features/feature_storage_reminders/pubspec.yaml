@@ -28,6 +28,7 @@ dependencies:
 
 dev_dependencies:
   feature_freezer: any
+  feature_household_supplies: any
   core_database: any
   flutter_test:
     sdk: flutter

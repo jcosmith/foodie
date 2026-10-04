@@ -9,6 +9,7 @@ import 'package:feature_storage_reminders/src/presentation/reminders_config_sect
 import 'package:feature_storage_reminders/src/presentation/storage_limits_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:feature_household_supplies/feature_household_supplies.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/storage_reminders_test_harness.dart';
@@ -98,6 +99,38 @@ void main() {
       await tester.runAsync(() => harness.notificationServices.currentStatus()),
       NotificationPermissionStatus.granted,
     );
+  });
+
+  testWidgets('storage limits are grouped by storage area, without switched-off ones', (
+    tester,
+  ) async {
+    await tester.runAsync(harness.dispose);
+    harness = StorageRemindersTestHarness(
+      registeredModules: const [FreezerFeatureModule(), HouseholdSuppliesFeatureModule()],
+      enabledModules: const [FreezerFeatureModule()],
+    );
+    await tester.runAsync(harness.seedCatalogAndStoragePlace);
+    await show(tester, const StorageLimitsScreen());
+
+    expect(find.text('🧊 Freezer'), findsOneWidget);
+    expect(find.text('Vegetables'), findsOneWidget);
+    expect(find.text('Cleaning'), findsNothing, reason: 'Household is switched off');
+
+    await tester.tap(find.text('Vegetables'));
+    await _settle(tester);
+    await tester.tap(find.text('No shelf life'));
+    await _settle(tester);
+
+    final catalog = await tester.runAsync(
+      () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
+    );
+    expect(
+      catalog!.categories
+          .firstWhere((category) => category.catalogKey == 'vegetables')
+          .recommendedMaximumStorageDays,
+      isNull,
+    );
+    expect(find.text('No shelf life'), findsOneWidget, reason: 'shown on the row');
   });
 
   testWidgets('storage limits are shown and changed in days, weeks or months', (tester) async {

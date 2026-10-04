@@ -317,6 +317,16 @@ void main() {
     expect(refused.failureOrNull, isA<InvalidProductSetting>());
     expect(changedCatalog.recommendedMaximumStorageDaysOf(spinach), 123);
     expect(harness.publishedEvents.whereType<CategoryUpdated>(), hasLength(1));
+
+    await changeStorageLimit.execute(
+      categoryIdentifier: spinach.categoryIdentifier,
+      recommendedMaximumStorageDays: null,
+    );
+    expect(
+      (await harness.readCatalog()).recommendedMaximumStorageDaysOf(spinach),
+      isNull,
+      reason: 'a category may keep no time, like supplies',
+    );
   });
 
   group('storage domain and shelf life after opening', () {
