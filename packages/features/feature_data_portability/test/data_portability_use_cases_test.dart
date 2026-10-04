@@ -295,16 +295,8 @@ void main() {
           quantity: const Quantity(amountInBaseUnits: 250, unit: QuantityUnit.gram),
         );
     final texts = CsvExportTexts(
-      contentsHeader: const [
-        'Product',
-        'Category',
-        'Amount',
-        'Unit',
-        'Frozen on',
-        'Drawer',
-        'Note',
-      ],
-      historyHeader: const ['Time', 'Change', 'Product', 'Amount', 'Unit', 'Drawer', 'Reason'],
+      contentsHeader: const ['Product', 'Category', 'Amount', 'Unit', 'Stored on', 'Where', 'Note'],
+      historyHeader: const ['Time', 'Change', 'Product', 'Amount', 'Unit', 'Where', 'Reason'],
       catalogNames: const _EnglishCatalogNames(),
       layoutDefaultNames: const _EnglishLayoutDefaultNames(),
       movementKindName: (kind) => kind.name,

@@ -91,15 +91,15 @@ void main() {
     await _pumpDetails(tester, harness);
 
     expect(find.text('Insights · details'), findsOneWidget);
-    expect(find.text('Freezer days'), findsOneWidget);
+    expect(find.text('Busy days'), findsOneWidget);
     expect(find.byType(CalendarHeatmap), findsOneWidget);
     expect(find.text('By weekday'), findsOneWidget);
     expect(find.bySemanticsLabel('Sat: 0.3 kg'), findsOneWidget);
     expect(find.bySemanticsLabel('Sun: 0.2 kg'), findsOneWidget);
-    expect(find.text('Time in freezer before eaten'), findsOneWidget);
+    expect(find.text('Time stored before use'), findsOneWidget);
     expect(find.bySemanticsLabel('< 1 mo: 2'), findsOneWidget);
     expect(find.bySemanticsLabel('1–3 mo: 1'), findsOneWidget);
-    expect(find.text('Freezer map'), findsOneWidget);
+    expect(find.text('Storage map'), findsOneWidget);
     expect(find.byType(StorageMap), findsOneWidget);
     // The contributed chart sees the same 90-day period.
     expect(find.text('Contributed: 90 days, 0 categories'), findsOneWidget);

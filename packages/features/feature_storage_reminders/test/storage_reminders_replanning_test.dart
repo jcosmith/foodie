@@ -38,7 +38,7 @@ void main() {
 
     final digest = scheduled()[7102];
     expect(digest, isNotNull);
-    expect(digest!.title, 'Eat soon');
+    expect(digest!.title, 'Use soon');
     expect(digest.body, '1 item in your freezer should be eaten soon.');
     expect(digest.scheduledForLocalTime, DateTime(2026, 10, 4, 18));
     expect(digest.tapRoutePath, StorageRemindersRoutes.eatSoon);

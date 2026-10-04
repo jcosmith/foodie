@@ -61,7 +61,7 @@ void main() {
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await _settle(tester);
 
-    expect(find.text('Another drawer already has this name.'), findsOneWidget);
+    expect(find.text('Another compartment already has this name.'), findsOneWidget);
   });
 
   testWidgets('adds a drawer and asks where the items of a removed drawer go', (tester) async {

@@ -71,7 +71,7 @@ void main() {
       ['Home', 'Freezer', 'Lists', 'More'],
     );
     expect(find.text('Good morning'), findsOneWidget);
-    expect(find.text('Eat soon'), findsOneWidget);
+    expect(find.text('Use soon'), findsOneWidget);
     expect(find.text('Nothing urgent. Well done!'), findsOneWidget);
 
     await _stopApplication(tester);
@@ -128,10 +128,10 @@ void main() {
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     await _startApplication(tester);
 
-    expect(find.text('Add to freezer'), findsOneWidget);
+    expect(find.text('Add item'), findsOneWidget);
     await tester.tap(find.text('Freezer'));
     await _settle(tester);
-    expect(find.text('Set up your freezer first'), findsOneWidget);
+    expect(find.text('Set up a storage place first'), findsOneWidget);
 
     await _openOptions(tester);
     expect(find.text('Tabs'), findsOneWidget);
@@ -139,7 +139,7 @@ void main() {
     final optionsList = find
         .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
         .first;
-    for (final sectionTitle in ['Language', 'Freezer layout', 'Products']) {
+    for (final sectionTitle in ['Language', 'Storage places', 'Products']) {
       await tester.scrollUntilVisible(find.text(sectionTitle), 200, scrollable: optionsList);
       expect(find.text(sectionTitle), findsOneWidget);
     }
@@ -172,7 +172,7 @@ void main() {
     expect(find.text('Guten Morgen'), findsOneWidget);
     await tester.tap(find.text('Tiefkühler'));
     await _settle(tester);
-    expect(find.text('Dein Gefrierschrank ist leer'), findsOneWidget);
+    expect(find.text('Hier ist noch nichts'), findsOneWidget);
 
     await _stopApplication(tester);
   });
@@ -205,7 +205,7 @@ void main() {
     tester.platformDispatcher.localesTestValue = const [Locale('en')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
     await _startApplication(tester);
-    expect(find.text('Add to freezer'), findsOneWidget);
+    expect(find.text('Add item'), findsOneWidget);
 
     await _openOptions(tester);
     final configList = find
@@ -226,7 +226,7 @@ void main() {
     await _settle(tester);
     await tester.tap(find.widgetWithText(FloatingActionButton, 'Add'));
     await _settle(tester);
-    expect(find.text('Add to freezer'), findsOneWidget);
+    expect(find.text('Add item'), findsOneWidget);
     expect(find.text('Scan to add'), findsOneWidget);
     expect(find.text('Scan to remove'), findsOneWidget);
 
@@ -291,7 +291,7 @@ void main() {
     platformServices.notificationServices.simulateTap('/storage_reminders/eat-soon');
     await _settle(tester);
 
-    expect(find.text('Nothing to eat soon'), findsOneWidget);
+    expect(find.text('Nothing to use soon'), findsOneWidget);
 
     await _stopApplication(tester);
   });

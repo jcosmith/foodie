@@ -160,6 +160,7 @@ void main() {
       );
       expect(_module.storageDomain.labelBuilder(context), 'Freezer');
       expect(_module.storageDomain.storedOnLabelBuilder(context), 'Frozen on');
+      expect(_module.storageDomain.addTitleBuilder!(context), 'Add to the freezer');
     });
     await _withContext(tester, const Locale('de'), (context) {
       final upright = _module.storageKinds.first;
@@ -172,6 +173,7 @@ void main() {
       );
       expect(_module.storageDomain.labelBuilder(context), 'Tiefkühler');
       expect(_module.storageDomain.storedOnLabelBuilder(context), 'Eingefroren am');
+      expect(_module.storageDomain.addTitleBuilder!(context), 'In den Tiefkühler legen');
     });
   });
 }

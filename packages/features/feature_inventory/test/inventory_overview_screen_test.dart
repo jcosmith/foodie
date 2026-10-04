@@ -10,47 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/inventory_test_harness.dart';
-
-String _shelfName(BuildContext context, int number) => 'Shelf $number';
-
-/// A pantry-like domain, so the freezer tab has something to leave out.
-final class _ShelvesModule extends FeatureModuleBase {
-  const _ShelvesModule();
-
-  static const StorageTemplate cupboard = StorageTemplate(
-    identifier: 'shelves.cupboard',
-    storageKind: StorageKind('testCupboard'),
-    domainIdentifier: StorageDomainIdentifier.pantry,
-    compartmentCount: 2,
-    sortOrder: 10,
-  );
-
-  @override
-  String get moduleIdentifier => 'shelves';
-
-  @override
-  List<StorageKindContribution> get storageKinds => [
-    StorageKindContribution(
-      storageName: 'testCupboard',
-      domainIdentifier: StorageDomainIdentifier.pantry,
-      sortOrder: 300,
-      iconEmoji: '🗄️',
-      placeNameBuilder: (context) => 'Cupboard',
-      kindDescriptionBuilder: (context) => 'cupboard',
-      compartmentNameBuilder: _shelfName,
-      compartmentCountBuilder: (context, count) => '$count shelves',
-      addCompartmentLabelBuilder: (context) => 'Add shelf',
-      templates: [
-        StorageTemplateContribution(
-          identifier: cupboard.identifier,
-          sortOrder: cupboard.sortOrder,
-          compartmentCount: cupboard.compartmentCount,
-          labelBuilder: (context) => 'Cupboard',
-        ),
-      ],
-    ),
-  ];
-}
+import 'support/shelves_module.dart';
 
 void main() {
   late InventoryTestHarness harness;
@@ -85,12 +45,12 @@ void main() {
 
   testWidgets('a domain tab shows only the places and items of its domain', (tester) async {
     final twoDomains = InventoryTestHarness(
-      registeredModules: const [FreezerFeatureModule(), _ShelvesModule()],
+      registeredModules: const [FreezerFeatureModule(), ShelvesModule()],
     );
     addTearDown(twoDomains.dispose);
     await tester.runAsync(() async {
       final drawers = await twoDomains.setUpCatalogAndStoragePlace();
-      final shelves = await twoDomains.addStoragePlace(_ShelvesModule.cupboard);
+      final shelves = await twoDomains.addStoragePlace(ShelvesModule.cupboard);
       await twoDomains.addBatch(
         product: await twoDomains.seededProduct('mincedMeat'),
         compartment: drawers.first,
@@ -123,11 +83,14 @@ void main() {
     }
 
     await showDomain(StorageDomainIdentifier.freezer);
+    expect(find.text('Freezer'), findsOneWidget, reason: 'the title names the domain');
     expect(find.text('Minced meat'), findsOneWidget);
     expect(find.text('Garden peas'), findsNothing);
     expect(find.text('1 item in 3 drawers'), findsOneWidget);
 
     await showDomain(StorageDomainIdentifier.pantry);
+    expect(find.text('Shelves'), findsOneWidget);
+    expect(find.text('1 item in 2 shelves'), findsOneWidget);
     expect(find.text('Garden peas'), findsOneWidget);
     expect(find.text('Minced meat'), findsNothing);
     expect(find.text('Shelf 2'), findsOneWidget);
@@ -189,7 +152,7 @@ void main() {
     expect(find.textContaining('Eat now'), findsNothing);
   });
 
-  testWidgets('"Eat first" lists the least freshness time left first', (tester) async {
+  testWidgets('"Use first" lists the least freshness time left first', (tester) async {
     await tester.runAsync(() async {
       final drawers = await harness.setUpCatalogAndStoragePlace();
       for (final (catalogKey, storedDays) in [
@@ -221,7 +184,7 @@ void main() {
     await _settle(tester);
     expect(find.text('Oldest first'), findsNothing);
 
-    await tester.tap(find.text('Eat first'));
+    await tester.tap(find.text('Use first'));
     await tester.pumpAndSettle();
 
     double topOf(String productName) => tester.getTopLeft(find.text(productName)).dy;

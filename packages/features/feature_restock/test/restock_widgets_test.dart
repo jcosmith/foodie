@@ -78,15 +78,15 @@ void main() {
     expect(const RestockFeatureModule().navigationDestination, isNull);
   });
 
-  testWidgets('ticked items go into the freezer in one step', (tester) async {
+  testWidgets('ticked items are put away in one step', (tester) async {
     await show(tester, const ShoppingListScreen());
     expect(find.text('Running low', skipOffstage: false), findsNothing);
     expect(find.textContaining('· Running low'), findsOneWidget);
 
     await tester.tap(find.byType(Checkbox));
     await _settle(tester);
-    await tester.tap(find.text('Put 1 ticked item in the freezer'));
-    await _settleUntilFound(tester, find.text('1 item is in the freezer now'));
+    await tester.tap(find.text('Put 1 ticked item away'));
+    await _settleUntilFound(tester, find.text('1 item is put away now'));
 
     expect(find.text('Your shopping list is empty'), findsOneWidget);
     final batches = await tester.runAsync(

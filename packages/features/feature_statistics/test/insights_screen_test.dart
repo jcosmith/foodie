@@ -164,7 +164,7 @@ void main() {
 
     expect(find.text('Auswertung'), findsOneWidget);
     expect(find.text('Filter · 0'), findsOneWidget);
-    expect(find.bySemanticsLabel('Gegessen: 0,5 kg, kein Vergleich'), findsOneWidget);
+    expect(find.bySemanticsLabel('Verbraucht: 0,5 kg, kein Vergleich'), findsOneWidget);
   });
 
   test('the module is wired into the inventory it reads', () {
