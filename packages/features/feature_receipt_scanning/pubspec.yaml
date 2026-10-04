@@ -1,0 +1,20 @@
+name: feature_receipt_scanning
+description: Optional receipt scanning - on-device text recognition, a rule-based receipt parser, matching lines to products with mappings learned per store, and a searchable receipt archive.
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+  flutter: ">=3.38.0"
+
+dependencies:
+  core_foundation: any
+  feature_product_catalog: any
+  flutter:
+    sdk: flutter
+  meta: ^1.16.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

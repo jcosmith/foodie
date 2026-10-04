@@ -54,7 +54,6 @@ void main() {
         ['PAYBACK Karte 3081234567890'],
         ['14.09.2026 18:42 Bon 1234'],
       ]),
-      languageCode: 'de',
     );
 
     test('finds the store, the date and the total', () {
@@ -108,7 +107,6 @@ void main() {
         ['VISA **** **** **** 1234'],
         ['Change', '0.00'],
       ]),
-      languageCode: 'en',
     );
     expect(receipt.storeName, 'Corner Shop');
     expect(receipt.purchasedOn, CalendarDate(2026, 10, 3));
@@ -125,12 +123,11 @@ void main() {
         ['Thank you'],
         ['for shopping'],
       ]),
-      languageCode: 'en',
     );
     expect(receipt.lines, isEmpty);
     expect(receipt.totalInCents, isNull);
     expect(receipt.purchasedOn, isNull);
     expect(receipt.storeName, 'Thank you');
-    expect(ReceiptParser.parse(const [], languageCode: 'de').storeName, isNull);
+    expect(ReceiptParser.parse(const []).storeName, isNull);
   });
 }
