@@ -49,6 +49,12 @@ final class InMemoryPlatformServices implements ApplicationPlatformServices {
   @override
   MediaFileStore createMediaFileStore() => mediaFileStore;
 
+  /// Receipt page images of this run, unencrypted.
+  final InMemoryMediaFileStore receiptMediaFileStore = InMemoryMediaFileStore();
+
+  @override
+  MediaFileStore createReceiptMediaFileStore() => receiptMediaFileStore;
+
   @override
   Future<String?> readPerAppLanguageCode() async => perAppLanguageCode;
 

@@ -105,6 +105,9 @@ final class ApplicationBootstrapper {
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
         mediaFileStoreProvider.overrideWithValue(_platformServices.createMediaFileStore()),
+        receiptMediaFileStoreProvider.overrideWithValue(
+          _platformServices.createReceiptMediaFileStore(),
+        ),
         clockProvider.overrideWithValue(_clock),
         identifierGeneratorProvider.overrideWithValue(_identifierGenerator),
         localLoggerProvider.overrideWithValue(_logger),

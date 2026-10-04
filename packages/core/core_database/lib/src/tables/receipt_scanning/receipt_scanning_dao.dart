@@ -84,6 +84,14 @@ class ReceiptScanningDao extends DatabaseAccessor<ApplicationDatabase>
             ..orderBy([(page) => OrderingTerm.asc(page.pageNumber)]))
           .get();
 
+  /// Every page image still referred to, for the orphan sweep.
+  Future<Set<String>> readPictureReferences() async {
+    final query = selectOnly(receiptPages)
+      ..addColumns([receiptPages.pictureReference])
+      ..where(receiptPages.pictureReference.isNotNull());
+    return {for (final row in await query.get()) row.read(receiptPages.pictureReference)!};
+  }
+
   Future<void> insertReceipt(ReceiptRow receipt) => into(receipts).insert(receipt);
 
   Future<void> insertPage(ReceiptPageRow page) => into(receiptPages).insert(page);

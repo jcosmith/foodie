@@ -266,6 +266,40 @@ void main() {
     await _stopApplication(tester);
   });
 
+  testWidgets('Receipts join the Lists tab once receipt scanning is switched on', (tester) async {
+    tester.platformDispatcher.localesTestValue = const [Locale('en')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    await _startApplication(tester);
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Lists'));
+    await _settle(tester);
+    expect(find.text('Receipts'), findsNothing);
+
+    await _openOptions(tester);
+    final receiptSwitch = find.widgetWithText(SwitchListTile, 'Receipt scanning');
+    await tester.scrollUntilVisible(
+      receiptSwitch,
+      200,
+      scrollable: find
+          .descendant(of: find.byType(ListView), matching: find.byType(Scrollable))
+          .first,
+    );
+    await tester.ensureVisible(receiptSwitch);
+    await _settle(tester);
+    expect(find.text('Read receipts on this phone only'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(receiptSwitch).value, isFalse);
+    await tester.tap(receiptSwitch);
+    await _settle(tester);
+    await tester.tap(find.widgetWithText(NavigationDestination, 'Lists'));
+    await _settle(tester);
+
+    expect(find.text('Receipts'), findsOneWidget);
+    await tester.tap(find.text('Receipts'));
+    await _settle(tester);
+    expect(find.text('No receipts yet. Scan one from the add button.'), findsOneWidget);
+
+    await _stopApplication(tester);
+  });
+
   testWidgets('switches language and theme in Options, in sync with the system', (tester) async {
     tester.platformDispatcher.localesTestValue = const [Locale('en')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);

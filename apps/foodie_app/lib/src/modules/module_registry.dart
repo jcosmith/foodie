@@ -10,6 +10,7 @@ import 'package:feature_item_pictures/feature_item_pictures.dart';
 import 'package:feature_onboarding/feature_onboarding.dart';
 import 'package:feature_pantry/feature_pantry.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
+import 'package:feature_receipt_scanning/feature_receipt_scanning.dart';
 import 'package:feature_restock/feature_restock.dart';
 import 'package:feature_statistics/feature_statistics.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
@@ -33,6 +34,7 @@ List<FeatureModule> createRegisteredFeatureModules() => [
   const StatisticsFeatureModule(),
   const ItemPicturesFeatureModule(),
   const BarcodeScanningFeatureModule(),
+  const ReceiptScanningFeatureModule(),
   const ConfigurationFeatureModule(),
   const DataPortabilityFeatureModule(),
   const OnboardingFeatureModule(),

@@ -26,6 +26,9 @@ abstract interface class ApplicationPlatformServices {
   /// The encrypted store for picture files, next to the database.
   MediaFileStore createMediaFileStore();
 
+  /// The encrypted store for receipt page images, in a folder of its own.
+  MediaFileStore createReceiptMediaFileStore();
+
   /// The language chosen for this app in the system settings (Android 13
   /// and later): a language code, empty when none is set, or `null` where
   /// the platform has no such setting the app can read.
@@ -50,9 +53,18 @@ final class DevicePlatformServices implements ApplicationPlatformServices {
     applicationVersion: applicationVersion,
   ).open();
 
+  /// Shared by both picture stores, so a first start creates one key only.
+  static final MediaEncryptionKeyStore _mediaKeyStore = SecureStorageMediaEncryptionKeyStore();
+
   @override
   MediaFileStore createMediaFileStore() =>
-      EncryptedDirectoryMediaFileStore(keyStore: SecureStorageMediaEncryptionKeyStore());
+      EncryptedDirectoryMediaFileStore(keyStore: _mediaKeyStore);
+
+  @override
+  MediaFileStore createReceiptMediaFileStore() => EncryptedDirectoryMediaFileStore(
+    keyStore: _mediaKeyStore,
+    folderName: EncryptedDirectoryMediaFileStore.receiptFolderName,
+  );
 
   @override
   Future<NotificationServices> initializeNotificationServices(

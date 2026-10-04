@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:core_database/core_database.dart';
 import 'package:core_foundation/foundation_providers.dart';
+import 'package:core_media_storage/core_media_storage.dart';
 import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
@@ -8,12 +11,53 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/receipt.dart';
 import '../domain/receipt_repository.dart';
+import 'receipt_capture.dart';
+import 'receipt_page_images.dart';
 import 'receipt_query_service.dart';
 import 'receipt_use_cases.dart';
 
 /// Bound to the Drift repository by the module's provider overrides.
 final receiptRepositoryProvider = Provider<ReceiptRepository>(
   (ref) => throw UnimplementedError('receiptRepositoryProvider must be overridden'),
+);
+
+/// Bound to the system camera by the module's provider overrides.
+final receiptPhotoSourceProvider = Provider<ReceiptPhotoSource>(
+  (ref) => throw UnimplementedError('receiptPhotoSourceProvider must be overridden'),
+);
+
+/// Bound to on-device text recognition by the module's provider overrides.
+final receiptTextRecognizerProvider = Provider<ReceiptTextRecognizer>(
+  (ref) => throw UnimplementedError('receiptTextRecognizerProvider must be overridden'),
+);
+
+final receiptPageImagesProvider = Provider<ReceiptPageImages>(
+  (ref) => ReceiptPageImages(
+    store: ref.watch(receiptMediaFileStoreProvider),
+    imageProcessing: ref.watch(imageProcessingServiceProvider),
+  ),
+);
+
+/// A decrypted page image, only loaded when a receipt is opened.
+final receiptPageImageProvider = FutureProvider.autoDispose.family<Uint8List, String>(
+  (ref, reference) => ref.watch(receiptPageImagesProvider).read(reference),
+);
+
+/// One archived receipt; invalidated after its lines change.
+final receiptProvider = FutureProvider.autoDispose.family<Receipt?, ReceiptIdentifier>(
+  (ref, receiptIdentifier) => ref.watch(receiptQueryServiceProvider).readReceipt(receiptIdentifier),
+);
+
+final readReceiptPageUseCaseProvider = Provider<ReadReceiptPageUseCase>(
+  (ref) => ReadReceiptPageUseCase(
+    recognizer: ref.watch(receiptTextRecognizerProvider),
+    photoSource: ref.watch(receiptPhotoSourceProvider),
+    pageImages: ref.watch(receiptPageImagesProvider),
+  ),
+);
+
+final discardReceiptScanUseCaseProvider = Provider<DiscardReceiptScanUseCase>(
+  (ref) => DiscardReceiptScanUseCase(pageImages: ref.watch(receiptPageImagesProvider)),
 );
 
 final receiptQueryServiceProvider = Provider<ReceiptQueryService>(
@@ -60,5 +104,8 @@ final resolveReceiptLineUseCaseProvider = Provider<ResolveReceiptLineUseCase>(
 );
 
 final deleteReceiptUseCaseProvider = Provider<DeleteReceiptUseCase>(
-  (ref) => DeleteReceiptUseCase(repository: ref.watch(receiptRepositoryProvider)),
+  (ref) => DeleteReceiptUseCase(
+    repository: ref.watch(receiptRepositoryProvider),
+    pageImages: ref.watch(receiptPageImagesProvider),
+  ),
 );

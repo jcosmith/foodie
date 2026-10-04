@@ -25,8 +25,13 @@ final class SecureStorageMediaEncryptionKeyStore implements MediaEncryptionKeySt
 
   final FlutterSecureStorage _secureStorage;
 
+  /// One read per instance: stores sharing it can never create two keys.
+  Future<MediaEncryptionKey>? _key;
+
   @override
-  Future<MediaEncryptionKey> readOrCreateKey() async {
+  Future<MediaEncryptionKey> readOrCreateKey() => _key ??= _readOrCreateKey();
+
+  Future<MediaEncryptionKey> _readOrCreateKey() async {
     final storedKey = await _secureStorage.read(key: _storageKey);
     if (storedKey != null) return MediaEncryptionKey.fromBase64(storedKey);
     final newKey = MediaEncryptionKey.generate();

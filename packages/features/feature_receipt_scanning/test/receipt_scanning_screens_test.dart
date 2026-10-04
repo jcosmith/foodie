@@ -30,8 +30,7 @@ void main() {
   setUp(() => harness = ReceiptScanningTestHarness());
   tearDown(() => harness.dispose());
 
-  Future<void> prepare(WidgetTester tester) =>
-      tester.runAsync(harness.seedCatalogAndStoragePlace);
+  Future<void> prepare(WidgetTester tester) => tester.runAsync(harness.seedCatalogAndStoragePlace);
 
   /// The modules' screens behind a router; [home] is the page below.
   Future<GoRouter> showApp(WidgetTester tester, {WidgetBuilder? home, String? push}) async {
@@ -40,10 +39,7 @@ void main() {
     addTearDown(tester.view.reset);
     final router = GoRouter(
       routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => home?.call(context) ?? const Scaffold(),
-        ),
+        GoRoute(path: '/', builder: (context, state) => home?.call(context) ?? const Scaffold()),
         for (final module in harness.modules) ...[
           ...module.buildRoutes(),
           ...?module.navigationDestination?.routes,
@@ -217,7 +213,7 @@ void main() {
       await showApp(tester, home: segment);
 
       expect(find.textContaining('Fresh Market'), findsOneWidget);
-      expect(find.text('3 open'), findsOneWidget);
+      expect(find.text('4 open'), findsOneWidget, reason: 'nothing was added or ignored');
 
       await tester.enterText(find.byType(TextField), 'peas');
       await _settle(tester);
@@ -231,7 +227,7 @@ void main() {
       await tester.tap(find.text('Garden peas · 1.99'));
       await _settle(tester);
 
-      expect(find.text('3 lines still open'), findsOneWidget);
+      expect(find.text('4 lines still open'), findsOneWidget);
       expect(find.text('Magazine'), findsOneWidget);
     });
 
@@ -240,15 +236,13 @@ void main() {
       final receiptIdentifier = await archiveWithOpenLines(tester);
       await showApp(tester, push: ReceiptScanningRoutes.receipt(receiptIdentifier));
 
-      await tester.tap(
-        find.descendant(of: cardOf('Magazine'), matching: find.text('Ignore')),
-      );
+      await tester.tap(find.descendant(of: cardOf('Magazine'), matching: find.text('Ignore')));
       await _settle(tester);
-      expect(find.text('2 lines still open'), findsOneWidget);
+      expect(find.text('3 lines still open'), findsOneWidget);
 
       await tester.tap(find.descendant(of: cardOf('Garden peas'), matching: find.text('Add')));
       await _settle(tester);
-      expect(find.text('1 line still open'), findsOneWidget);
+      expect(find.text('2 lines still open'), findsOneWidget);
       expect(await tester.runAsync(harness.activeBatches), hasLength(1));
     });
 

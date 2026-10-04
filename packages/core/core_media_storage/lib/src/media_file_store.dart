@@ -64,12 +64,19 @@ final class EncryptedDirectoryMediaFileStore implements MediaFileStore {
     MediaFileCipher? cipher,
     Future<Directory> Function()? privateDirectoryProvider,
     Random? random,
+    this.folderName = mediaFolderName,
   }) : _keyStore = keyStore,
        _cipher = cipher ?? MediaFileCipher(),
        _privateDirectoryProvider = privateDirectoryProvider ?? getApplicationSupportDirectory,
        _random = random ?? Random.secure();
 
   static const String mediaFolderName = 'media';
+
+  /// Receipt page images live apart from item pictures, so neither feature's
+  /// orphan sweep can delete the other's files.
+  static const String receiptFolderName = 'receipts';
+
+  final String folderName;
 
   final MediaEncryptionKeyStore _keyStore;
   final MediaFileCipher _cipher;
@@ -82,7 +89,7 @@ final class EncryptedDirectoryMediaFileStore implements MediaFileStore {
 
   Future<Directory> get _directory => _mediaDirectory ??= () async {
     final privateDirectory = await _privateDirectoryProvider();
-    return Directory(path.join(privateDirectory.path, mediaFolderName)).create(recursive: true);
+    return Directory(path.join(privateDirectory.path, folderName)).create(recursive: true);
   }();
 
   Future<File> _fileNamed(String fileName) async {

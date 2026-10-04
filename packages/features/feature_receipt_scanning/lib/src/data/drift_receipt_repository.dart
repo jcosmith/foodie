@@ -110,6 +110,9 @@ final class DriftReceiptRepository implements ReceiptRepository {
       _transactionRunner.runInTransaction(() => _dao.deleteReceipt(receiptIdentifier.value));
 
   @override
+  Future<Set<String>> readPictureReferences() => _dao.readPictureReferences();
+
+  @override
   Future<List<ReceiptSearchHit>> search(List<String> tokens) async {
     final words = [
       for (final token in tokens)

@@ -1,0 +1,6 @@
+arb-dir: lib/src/l10n
+template-arb-file: receipt_scanning_en.arb
+output-dir: lib/src/l10n/generated
+output-localization-file: receipt_scanning_localizations.dart
+output-class: ReceiptScanningLocalizations
+nullable-getter: false

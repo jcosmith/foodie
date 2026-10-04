@@ -29,6 +29,7 @@ dependencies:
   feature_onboarding: any
   feature_pantry: any
   feature_product_catalog: any
+  feature_receipt_scanning: any
   feature_restock: any
   feature_statistics: any
   feature_storage_layout: any

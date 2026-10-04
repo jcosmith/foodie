@@ -93,6 +93,40 @@ final class ImageProcessingService {
     );
   }
 
+  /// The longest edge of a receipt page: long receipts stay readable.
+  static const int maximumDocumentEdgeInPixels = 2400;
+
+  /// Turns a photo of a receipt into what the archive keeps (architecture
+  /// 10.10, step 1): upright, at most [maximumDocumentEdgeInPixels] long,
+  /// greyscale JPEG without any metadata.
+  Future<Result<Uint8List, MediaStorageFailure>> processDocumentPage(Uint8List sourceBytes) async {
+    final pageBytes = await Isolate.run(() => processDocumentPageSynchronously(sourceBytes));
+    return pageBytes == null ? const Result.failure(UnreadableImage()) : Result.success(pageBytes);
+  }
+
+  /// The same work on the calling isolate; `null` when the bytes are no
+  /// picture.
+  static Uint8List? processDocumentPageSynchronously(Uint8List sourceBytes) {
+    final image_codec.Image? decodedImage;
+    try {
+      decodedImage = image_codec.decodeImage(sourceBytes);
+    } on Object {
+      return null;
+    }
+    if (decodedImage == null || decodedImage.width == 0 || decodedImage.height == 0) return null;
+    final uprightImage = image_codec.bakeOrientation(decodedImage);
+    final longestEdge = max(uprightImage.width, uprightImage.height);
+    final resizedImage = longestEdge <= maximumDocumentEdgeInPixels
+        ? uprightImage
+        : image_codec.copyResize(
+            uprightImage,
+            width: uprightImage.width >= uprightImage.height ? maximumDocumentEdgeInPixels : null,
+            height: uprightImage.width < uprightImage.height ? maximumDocumentEdgeInPixels : null,
+            interpolation: image_codec.Interpolation.average,
+          );
+    return _encodeWithoutMetadata(image_codec.grayscale(resizedImage));
+  }
+
   /// The edge of a product icon made by [processIcon]: sharp at 40 logical
   /// pixels on screens with up to 4.8 physical pixels per logical one.
   static const int iconEdgeInPixels = 192;

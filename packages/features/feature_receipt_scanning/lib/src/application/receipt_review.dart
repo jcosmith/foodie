@@ -51,6 +51,20 @@ final class ReceiptReviewLine {
 
   /// Ready to be added without typing anything.
   bool get canAddAsSuggested => product != null && quantity != null && compartment != null;
+
+  /// The suggestion confirmed, or changed by the user.
+  ReceiptReviewLine copyWith({
+    ReceiptLineStatus? status,
+    Quantity? quantity,
+    Compartment? compartment,
+  }) => ReceiptReviewLine(
+    parsed: parsed,
+    status: status ?? this.status,
+    product: product,
+    quantity: quantity ?? this.quantity,
+    compartment: compartment ?? this.compartment,
+    bestBeforeOn: bestBeforeOn,
+  );
 }
 
 /// A scanned receipt before anything is added or archived.

@@ -12,6 +12,8 @@ import '../domain/receipt_repository.dart';
 import '../domain/receipt_rows.dart';
 import '../domain/receipt_scanning_failure.dart';
 import '../domain/receipt_text.dart';
+import 'receipt_capture.dart';
+import 'receipt_page_images.dart';
 import 'receipt_review.dart';
 
 /// Reads, parses and matches the pages of one receipt (architecture 10.10,
@@ -96,21 +98,14 @@ final class PrepareReceiptReviewUseCase {
         );
         continue;
       }
-      final compartment = await _suggestCompartment(product, catalog, layout);
-      final shelfLifeDays = catalog.recommendedMaximumStorageDaysOf(product);
-      final keepsBestBefore =
-          compartment != null &&
-          domainsWithBestBefore.contains(layout.domainOfCompartment(compartment.identifier));
       lines.add(
-        ReceiptReviewLine(
-          parsed: line,
-          status: match.status,
-          product: product,
-          quantity: ReceiptQuantityPolicy.suggest(line, product),
-          compartment: compartment,
-          bestBeforeOn: keepsBestBefore && shelfLifeDays != null
-              ? _clock.todayLocal().addDays(shelfLifeDays)
-              : null,
+        await _suggestedLine(
+          line,
+          product,
+          match.status,
+          catalog: catalog,
+          layout: layout,
+          domainsWithBestBefore: domainsWithBestBefore,
         ),
       );
     }
@@ -124,6 +119,46 @@ final class PrepareReceiptReviewUseCase {
       totalInCents: parsed.totalInCents,
       text: parsed.text,
       lines: List.unmodifiable(ordered),
+    );
+  }
+
+  /// [line] as the user's own pick of [product]: matched, with the same
+  /// suggestions a known name gets.
+  Future<ReceiptReviewLine> withProduct(ReceiptReviewLine line, Product product) async {
+    final catalog = await _productCatalog.readCatalog();
+    final layout = (await _storageLayout.readStorageLayout()).withoutDomains(_readPausedDomains());
+    return _suggestedLine(
+      line.parsed,
+      product,
+      ReceiptLineStatus.matched,
+      catalog: catalog,
+      layout: layout,
+      domainsWithBestBefore: _readDomainsWithBestBefore(),
+    );
+  }
+
+  Future<ReceiptReviewLine> _suggestedLine(
+    ParsedReceiptLine line,
+    Product product,
+    ReceiptLineStatus status, {
+    required ProductCatalog catalog,
+    required StorageLayout layout,
+    required Set<StorageDomainIdentifier> domainsWithBestBefore,
+  }) async {
+    final compartment = await _suggestCompartment(product, catalog, layout);
+    final shelfLifeDays = catalog.recommendedMaximumStorageDaysOf(product);
+    final keepsBestBefore =
+        compartment != null &&
+        domainsWithBestBefore.contains(layout.domainOfCompartment(compartment.identifier));
+    return ReceiptReviewLine(
+      parsed: line,
+      status: status,
+      product: product,
+      quantity: ReceiptQuantityPolicy.suggest(line, product),
+      compartment: compartment,
+      bestBeforeOn: keepsBestBefore && shelfLifeDays != null
+          ? _clock.todayLocal().addDays(shelfLifeDays)
+          : null,
     );
   }
 
@@ -369,12 +404,73 @@ final class ResolveReceiptLineUseCase {
 /// Removes a receipt from the archive and the search. What its lines added
 /// stays in storage.
 final class DeleteReceiptUseCase {
-  const DeleteReceiptUseCase({required ReceiptRepository repository}) : _repository = repository;
+  const DeleteReceiptUseCase({
+    required ReceiptRepository repository,
+    required ReceiptPageImages pageImages,
+  }) : _repository = repository,
+       _pageImages = pageImages;
 
   final ReceiptRepository _repository;
+  final ReceiptPageImages _pageImages;
 
-  Future<void> execute(ReceiptIdentifier receiptIdentifier) =>
-      _repository.deleteReceipt(receiptIdentifier);
+  /// The row goes first; an image left behind by a crash is swept at the
+  /// next start.
+  Future<void> execute(ReceiptIdentifier receiptIdentifier) async {
+    final receipt = await _repository.readReceipt(receiptIdentifier);
+    if (receipt == null) return;
+    await _repository.deleteReceipt(receiptIdentifier);
+    await _pageImages.delete(receipt.pages.map((page) => page.pictureReference).nonNulls);
+  }
+}
+
+/// Reads one photographed page (architecture 10.10, steps 1 and 2): text
+/// recognition on the phone, then the page image is stored encrypted and
+/// the temporary photo deleted.
+final class ReadReceiptPageUseCase {
+  const ReadReceiptPageUseCase({
+    required ReceiptTextRecognizer recognizer,
+    required ReceiptPhotoSource photoSource,
+    required ReceiptPageImages pageImages,
+  }) : _recognizer = recognizer,
+       _photoSource = photoSource,
+       _pageImages = pageImages;
+
+  final ReceiptTextRecognizer _recognizer;
+  final ReceiptPhotoSource _photoSource;
+  final ReceiptPageImages _pageImages;
+
+  Future<Result<RecognizedReceiptPage, ReceiptScanningFailure>> execute(ReceiptPhoto photo) async {
+    try {
+      final List<RecognizedTextLine> lines;
+      try {
+        lines = await _recognizer.recognize(photo);
+      } on Exception {
+        return const Result.failure(UnreadableReceiptPhoto());
+      }
+      if (lines.every((line) => line.text.trim().isEmpty)) {
+        return const Result.failure(NoTextOnReceiptPhoto());
+      }
+      return switch (await _pageImages.store(photo.bytes)) {
+        SuccessfulResult(value: final reference) => Result.success(
+          RecognizedReceiptPage(lines: lines, pictureReference: reference),
+        ),
+        FailedResult() => const Result.failure(UnreadableReceiptPhoto()),
+      };
+    } finally {
+      await _photoSource.discard(photo);
+    }
+  }
+}
+
+/// A scan the user left without confirming: its page images go.
+final class DiscardReceiptScanUseCase {
+  const DiscardReceiptScanUseCase({required ReceiptPageImages pageImages})
+    : _pageImages = pageImages;
+
+  final ReceiptPageImages _pageImages;
+
+  Future<void> execute(List<RecognizedReceiptPage> pages) =>
+      _pageImages.delete(pages.map((page) => page.pictureReference).nonNulls);
 }
 
 AddStockBatchCommand _commandFor(AddReceiptLine decision, CalendarDate today) =>

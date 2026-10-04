@@ -20,6 +20,9 @@ abstract interface class ReceiptRepository {
 
   Future<void> deleteReceipt(ReceiptIdentifier receiptIdentifier);
 
+  /// Every page image a receipt refers to.
+  Future<Set<String>> readPictureReferences();
+
   /// Search hits for [tokens], each a normalised word matched as a prefix;
   /// all of them must occur in the same receipt row or line.
   Future<List<ReceiptSearchHit>> search(List<String> tokens);

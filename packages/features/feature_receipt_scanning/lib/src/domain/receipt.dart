@@ -51,6 +51,17 @@ final class ReceiptLine {
   /// The text shown, indexed and learned.
   String get text => correctedText ?? recognizedText;
 
+  /// The line as the parser saw it, for suggesting what to add later.
+  ParsedReceiptLine get parsed => ParsedReceiptLine(
+    position: position,
+    kind: kind,
+    text: text,
+    lineTotalInCents: lineTotalInCents,
+    quantity: quantity,
+    unitPriceInCents: unitPriceInCents,
+    weightInGrams: weightInGrams,
+  );
+
   /// An item that was neither added nor ignored: flagged on the receipt until
   /// the user resolves it.
   bool get isOpen =>
