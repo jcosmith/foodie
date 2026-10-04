@@ -82,7 +82,7 @@ class StorageRemindersLocalizationsEn extends StorageRemindersLocalizations {
 
   @override
   String get storageLimitsExplanation =>
-      'Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.';
+      'Things are marked “use soon” once 60 % of their storage time has passed and “use now” at 85 %. A product can have its own time in the product editor.';
 
   @override
   String get shelfLifeLabel => 'Keeps for';

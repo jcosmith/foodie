@@ -1,5 +1,7 @@
 import 'package:core_design_system/testing.dart';
 import 'package:core_notifications/core_notifications.dart';
+import 'package:feature_freezer/feature_freezer.dart';
+import 'package:feature_household_supplies/feature_household_supplies.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_reminders/feature_storage_reminders.dart';
@@ -9,7 +11,6 @@ import 'package:feature_storage_reminders/src/presentation/reminders_config_sect
 import 'package:feature_storage_reminders/src/presentation/storage_limits_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:feature_household_supplies/feature_household_supplies.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/storage_reminders_test_harness.dart';
@@ -112,7 +113,7 @@ void main() {
     await tester.runAsync(harness.seedCatalogAndStoragePlace);
     await show(tester, const StorageLimitsScreen());
 
-    expect(find.text('🧊 Freezer'), findsOneWidget);
+    expect(find.text('❄️ Freezer'), findsOneWidget);
     expect(find.text('Vegetables'), findsOneWidget);
     expect(find.text('Cleaning'), findsNothing, reason: 'Household is switched off');
 

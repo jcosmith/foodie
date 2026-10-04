@@ -218,7 +218,7 @@ abstract class StorageRemindersLocalizations {
   /// No description provided for @storageLimitsExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.'**
+  /// **'Things are marked “use soon” once 60 % of their storage time has passed and “use now” at 85 %. A product can have its own time in the product editor.'**
   String get storageLimitsExplanation;
 
   /// No description provided for @shelfLifeLabel.

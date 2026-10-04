@@ -1,5 +1,6 @@
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_localization/core_localization.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,9 @@ class StorageLimitsScreen extends ConsumerWidget {
     final localizations = StorageRemindersLocalizations.of(context);
     final catalog = ref.watch(productCatalogProvider).value;
     final nameResolver = context.productDisplayNameResolver;
+    // Grouped by storage area; switched-off areas are left out.
+    final domains = ref.watch(enabledStorageDomainsProvider);
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: Text(localizations.storageLimitsTitle)),
       body: catalog == null
@@ -29,35 +33,54 @@ class StorageLimitsScreen extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
-                for (final category in catalog.categories)
-                  ListTile(
-                    leading: ProductIcon(emoji: category.iconEmoji, size: 28),
-                    title: Text(nameResolver.categoryName(category)),
-                    trailing: Text(switch (category.recommendedMaximumStorageDays) {
-                      final int days => context.shelfLifeFormatter.formatDays(days),
-                      null => context.commonLocalizations.shelfLifeNone,
-                    }),
-                    onTap: () => _editStorageLimit(context, ref, category),
-                  ),
+                for (final domain in domains) ...[
+                  if (domains.length > 1 ||
+                      catalog.categories.any(
+                        (category) => category.storageDomain != domain.identifier,
+                      ))
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        FoodieSpacing.screenGutter,
+                        FoodieSpacing.large,
+                        FoodieSpacing.screenGutter,
+                        FoodieSpacing.extraSmall,
+                      ),
+                      child: Text(
+                        '${domain.iconEmoji} ${domain.labelBuilder(context)}',
+                        style: textTheme.titleSmall,
+                      ),
+                    ),
+                  for (final category in catalog.categories)
+                    if (category.storageDomain == domain.identifier)
+                      ListTile(
+                        leading: ProductIcon(emoji: category.iconEmoji, size: 28),
+                        title: Text(nameResolver.categoryName(category)),
+                        trailing: Text(switch (category.recommendedMaximumStorageDays) {
+                          final int days => context.shelfLifeFormatter.formatDays(days),
+                          null => context.commonLocalizations.shelfLifeNone,
+                        }),
+                        onTap: () => _editStorageLimit(context, ref, category),
+                      ),
+                ],
               ],
             ),
     );
   }
 
   Future<void> _editStorageLimit(BuildContext context, WidgetRef ref, Category category) async {
-    final chosenDays = await showDialog<int>(
+    final chosen = await showDialog<({int? days})>(
       context: context,
       builder: (dialogContext) => _ShelfLifeDialog(
         title: context.productDisplayNameResolver.categoryName(category),
         initialDays: category.recommendedMaximumStorageDays,
       ),
     );
-    if (chosenDays == null) return;
+    if (chosen == null) return;
     await ref
         .read(changeCategoryStorageLimitUseCaseProvider)
         .execute(
           categoryIdentifier: category.identifier,
-          recommendedMaximumStorageDays: chosenDays,
+          recommendedMaximumStorageDays: chosen.days,
         );
   }
 }
@@ -92,7 +115,7 @@ class _ShelfLifeDialogState extends State<_ShelfLifeDialog> {
       setState(() => _errorText = context.commonLocalizations.shelfLifeOutOfRange);
       return;
     }
-    Navigator.of(context).pop(days);
+    Navigator.of(context).pop((days: days));
   }
 
   @override
@@ -106,6 +129,11 @@ class _ShelfLifeDialogState extends State<_ShelfLifeDialog> {
       onSubmitted: _submit,
     ),
     actions: [
+      // Some things keep no time, such as cleaning supplies.
+      TextButton(
+        onPressed: () => Navigator.of(context).pop((days: null)),
+        child: Text(context.commonLocalizations.shelfLifeNone),
+      ),
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
         child: Text(context.commonLocalizations.actionCancel),

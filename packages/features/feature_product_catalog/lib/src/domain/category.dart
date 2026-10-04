@@ -39,7 +39,8 @@ final class Category {
   /// whether throwing them away counts as waste.
   final StorageDomainIdentifier storageDomain;
 
-  Category withRecommendedMaximumStorageDays(int recommendedMaximumStorageDays) => Category(
+  /// `null` for a category that keeps no time, such as cleaning supplies.
+  Category withRecommendedMaximumStorageDays(int? recommendedMaximumStorageDays) => Category(
     identifier: identifier,
     catalogKey: catalogKey,
     customName: customName,

@@ -29,8 +29,8 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
 /// A provider container over an in-memory database with the catalog seeded,
 /// one freezer and fake notifications. 2 October 2026, 09:00 UTC.
 ///
-/// With [enabledModules] set, the domains of the other [registeredModules]
-/// are switched off.
+/// Every one of [registeredModules] is on, unless [enabledModules] names
+/// the ones that are.
 final class StorageRemindersTestHarness {
   StorageRemindersTestHarness({
     List<FeatureModule> registeredModules = const [FreezerFeatureModule()],
@@ -46,8 +46,9 @@ final class StorageRemindersTestHarness {
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
         registeredFeatureModulesProvider.overrideWithValue(registeredModules),
-        if (enabledModules != null)
-          enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(enabledModules)),
+        enabledFeatureModulesProvider.overrideWith(
+          (ref) => Stream.value(enabledModules ?? registeredModules),
+        ),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),

@@ -83,7 +83,7 @@ class StorageRemindersLocalizationsDe extends StorageRemindersLocalizations {
 
   @override
   String get storageLimitsExplanation =>
-      'Dinge gelten als „bald verbrauchen“, sobald 85 % ihrer Lagerzeit vorbei sind. Ein Produkt kann im Produkteditor eine eigene Zeit haben.';
+      'Dinge gelten als „bald verbrauchen“, sobald 60 % ihrer Lagerzeit vorbei sind, und ab 85 % als „jetzt verbrauchen“. Ein Produkt kann im Produkteditor eine eigene Zeit haben.';
 
   @override
   String get shelfLifeLabel => 'Hält sich';

@@ -37,6 +37,6 @@
   "storageLimitsRow": "Storage limits",
   "storageLimitsDetail": "How long each category keeps",
   "storageLimitsTitle": "Storage limits",
-  "storageLimitsExplanation": "Things are marked “use soon” once 85 % of their storage time has passed. A product can have its own time in the product editor.",
+  "storageLimitsExplanation": "Things are marked “use soon” once 60 % of their storage time has passed and “use now” at 85 %. A product can have its own time in the product editor.",
   "shelfLifeLabel": "Keeps for"
 }
