@@ -100,7 +100,7 @@ void main() {
     );
   });
 
-  testWidgets('storage limits are shown and changed in months', (tester) async {
+  testWidgets('storage limits are shown and changed in days, weeks or months', (tester) async {
     await show(tester, const StorageLimitsScreen());
     final catalog = await tester.runAsync(
       () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
@@ -108,28 +108,39 @@ void main() {
     final vegetables = catalog!.categories.firstWhere(
       (category) => category.catalogKey == 'vegetables',
     );
+    Future<int> vegetableDays() async {
+      final changedCatalog = await tester.runAsync(
+        () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
+      );
+      return changedCatalog!.categories
+          .firstWhere((category) => category.identifier == vegetables.identifier)
+          .recommendedMaximumStorageDays;
+    }
 
     await tester.tap(find.text('Vegetables'));
     await _settle(tester);
     await tester.enterText(find.byType(TextField), '40');
     await tester.tap(find.text('Save'));
     await _settle(tester);
-    expect(find.text('Enter a number from 1 to 36.'), findsOneWidget);
+    expect(find.text('Enter between 1 day and 36 months.'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), '2');
     await tester.tap(find.text('Save'));
     await _settle(tester);
-
-    final changedCatalog = await tester.runAsync(
-      () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
-    );
-    expect(
-      changedCatalog!.categories
-          .firstWhere((category) => category.identifier == vegetables.identifier)
-          .recommendedMaximumStorageDays,
-      61,
-    );
+    expect(await vegetableDays(), 61);
     expect(find.text('2 months'), findsOneWidget);
+
+    await tester.tap(find.text('Vegetables'));
+    await _settle(tester);
+    await tester.enterText(find.byType(TextField), '3');
+    await tester.tap(find.text('months').last);
+    await _settle(tester);
+    await tester.tap(find.text('days').last);
+    await _settle(tester);
+    await tester.tap(find.text('Save'));
+    await _settle(tester);
+    expect(await vegetableDays(), 3);
+    expect(find.text('3 days'), findsOneWidget);
   });
 }
 

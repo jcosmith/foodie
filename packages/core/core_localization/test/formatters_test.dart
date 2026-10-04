@@ -123,4 +123,38 @@ void main() {
     expect(DateDisplayFormatter('en').formatMediumDate(date), 'Mar 3, 2026');
     expect(DateDisplayFormatter('de').formatMediumDate(date), '3. März 2026');
   });
+
+  group('ShelfLifeFormatter', () {
+    test('says how long something keeps in the unit it was entered in', () {
+      expect(ShelfLifeFormatter(english).format(const ShelfLife(1, ShelfLifeUnit.days)), '1 day');
+      expect(
+        ShelfLifeFormatter(english).format(const ShelfLife(2, ShelfLifeUnit.weeks)),
+        '2 weeks',
+      );
+      expect(ShelfLifeFormatter(english).formatDays(91), '3 months');
+      expect(ShelfLifeFormatter(german).format(const ShelfLife(1, ShelfLifeUnit.days)), '1 Tag');
+      expect(ShelfLifeFormatter(german).format(const ShelfLife(1, ShelfLifeUnit.weeks)), '1 Woche');
+      expect(ShelfLifeFormatter(german).formatDays(91), '3 Monate');
+    });
+
+    test('rounds stored days that fit no unit, saying so', () {
+      expect(ShelfLifeFormatter(english).formatDays(10), '10 days');
+      expect(ShelfLifeFormatter(english).formatDays(20), 'about 3 weeks');
+      expect(ShelfLifeFormatter(english).formatDays(270), 'about 9 months');
+      expect(ShelfLifeFormatter(german).formatDays(270), 'etwa 9 Monate');
+    });
+
+    test('names the units for a unit picker', () {
+      expect(ShelfLifeUnit.values.map(ShelfLifeFormatter(english).unitName), [
+        'days',
+        'weeks',
+        'months',
+      ]);
+      expect(ShelfLifeUnit.values.map(ShelfLifeFormatter(german).unitName), [
+        'Tage',
+        'Wochen',
+        'Monate',
+      ]);
+    });
+  });
 }

@@ -81,4 +81,57 @@ void main() {
     );
     expect(resolvedTokens, FoodieColorTokens.dark);
   });
+
+  group('shelf life field', () {
+    testWidgets('shows a stored shelf life in its unit and reads back what is typed', (
+      tester,
+    ) async {
+      final controller = ShelfLifeFieldController(initialDays: 14);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrapInApp(ShelfLifeField(controller: controller, labelText: 'Keeps for')),
+      );
+      expect(find.text('Keeps for'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '2'), findsOneWidget);
+      expect(find.text('weeks'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), '3');
+      await tester.tap(find.text('weeks'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('days').last);
+      await tester.pumpAndSettle();
+      expect(controller.shelfLife, const ShelfLife(3, ShelfLifeUnit.days));
+      expect(controller.inDays, 3);
+      expect(controller.isValid, isTrue);
+    });
+
+    testWidgets('empty means none; out of range or not a number is invalid', (tester) async {
+      final controller = ShelfLifeFieldController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrapInApp(ShelfLifeField(controller: controller, labelText: 'Keeps for')),
+      );
+      expect(find.text('months'), findsOneWidget, reason: 'months unless told otherwise');
+      expect(controller.shelfLife, isNull);
+      expect(controller.isValid, isTrue);
+
+      await tester.enterText(find.byType(TextField), '40');
+      expect(controller.isValid, isFalse);
+      await tester.enterText(find.byType(TextField), '0');
+      expect(controller.isValid, isFalse);
+    });
+
+    testWidgets('the units are translated', (tester) async {
+      final controller = ShelfLifeFieldController(initialDays: 1);
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _wrapInApp(
+          ShelfLifeField(controller: controller, labelText: 'Haltbar'),
+          locale: SupportedLocales.german,
+        ),
+      );
+      expect(find.text('Tage'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '1'), findsOneWidget);
+    });
+  });
 }
