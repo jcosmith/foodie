@@ -4,6 +4,7 @@
   "domainDescription": "Frozen food, drawers and baskets",
   "storedOnLabel": "Frozen on",
   "addTitle": "Add to the freezer",
+  "storedTodayLabel": "Frozen today",
   "uprightName": "Freezer",
   "chestName": "Chest freezer",
   "fridgeFreezerName": "Fridge freezer",

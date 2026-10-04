@@ -12,7 +12,10 @@ import 'inventory_use_case_dependencies.dart';
 /// Moving everything keeps the batch and records two "moved" movements (out
 /// of the old compartment, into the new one). Moving part splits the batch:
 /// a new batch with the same freezing date and a parent reference takes the
-/// moved amount (architecture document, section 10.1).
+/// moved amount (architecture document, section 10.1). With
+/// [execute]'s `startsFreshToday`, the moved batch is dated today and loses
+/// its best-before and opened-on dates: "Frozen today" when food goes from
+/// the fridge into the freezer.
 final class MoveStockBatchUseCase {
   MoveStockBatchUseCase({
     required InventoryUseCaseDependencies dependencies,
@@ -31,14 +34,26 @@ final class MoveStockBatchUseCase {
     required StockBatchIdentifier stockBatchIdentifier,
     required CompartmentIdentifier destinationCompartmentIdentifier,
     required Quantity quantity,
+    bool startsFreshToday = false,
   }) async {
     final destination = await _storageLayout.readCompartment(destinationCompartmentIdentifier);
     if (destination == null || destination.isArchived) {
       return const Result.failure(CompartmentNotAvailable());
     }
-    final result = await _dependencies.transactionRunner.runInTransaction(
-      () => _move(stockBatchIdentifier, destinationCompartmentIdentifier, quantity),
-    );
+    final result = await _dependencies.transactionRunner.runInTransaction(() async {
+      final moved = await _move(stockBatchIdentifier, destinationCompartmentIdentifier, quantity);
+      if (startsFreshToday) {
+        if (moved case SuccessfulResult(value: final event)) {
+          await _dependencies.repository.updateDates(
+            event.splitOffBatchIdentifier ?? event.stockBatchIdentifier,
+            storedOn: _dependencies.clock.todayLocal(),
+            bestBeforeOn: null,
+            openedOn: null,
+          );
+        }
+      }
+      return moved;
+    });
     if (result case SuccessfulResult(value: final event)) {
       await _dependencies.domainEventBus.publish(event);
     }
@@ -122,6 +137,7 @@ final class StockBatchMover {
       parentBatchIdentifier: batch.identifier,
       storedOn: batch.storedOn,
       bestBeforeOn: batch.bestBeforeOn,
+      openedOn: batch.openedOn,
       note: batch.note,
       createdAt: occurredAt,
     );

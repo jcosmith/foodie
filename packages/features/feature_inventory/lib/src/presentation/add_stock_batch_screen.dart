@@ -16,8 +16,8 @@ import '../l10n/generated/inventory_localizations.dart';
 import 'inventory_texts.dart';
 
 /// The add form (UI example phones 3 and 13): product, amount pre-filled from
-/// the package size, the day it was put away, the compartment it goes into
-/// and a note. Opened in a domain tab, it offers only that domain's
+/// the package size, the day it was put away, a best-before date where the
+/// domain asks for one, the compartment it goes into and a note. Opened in a domain tab, it offers only that domain's
 /// compartments and speaks its words ("Add to the freezer", "Frozen on").
 class AddStockBatchScreen extends ConsumerStatefulWidget {
   const AddStockBatchScreen({
@@ -47,6 +47,11 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
   ProductIdentifier? _productIdentifier;
   CompartmentIdentifier? _compartmentIdentifier;
   late CalendarDate _storedOn = ref.read(clockProvider).todayLocal();
+
+  /// Whether the user picked a best-before date (or none); until then it
+  /// follows the product's shelf life.
+  bool _isBestBeforeChosen = false;
+  CalendarDate? _chosenBestBeforeOn;
   String? _amountError;
   String? _productError;
   bool _isSaving = false;
@@ -143,10 +148,35 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
     if (chosenDate != null) setState(() => _storedOn = CalendarDate.fromDateTime(chosenDate));
   }
 
+  /// The last good day by the product's shelf life, when it has one.
+  CalendarDate? _suggestedBestBeforeOn(Product? product, ProductCatalog catalog) {
+    if (product == null) return null;
+    final shelfLifeDays = catalog.recommendedMaximumStorageDaysOf(product);
+    if (shelfLifeDays == null || shelfLifeDays <= 0) return null;
+    return _storedOn.addDays(shelfLifeDays - 1);
+  }
+
+  void _chooseBestBeforeOn(CalendarDate? bestBeforeOn) => setState(() {
+    _isBestBeforeChosen = true;
+    _chosenBestBeforeOn = bestBeforeOn;
+  });
+
+  Future<void> _pickBestBeforeOn(CalendarDate? current) async {
+    final today = ref.read(clockProvider).todayLocal();
+    final chosenDate = await showDatePicker(
+      context: context,
+      initialDate: (current ?? today).toLocalDateTime(),
+      firstDate: today.addDays(-366).toLocalDateTime(),
+      lastDate: today.addDays(5 * 366).toLocalDateTime(),
+    );
+    if (chosenDate != null) _chooseBestBeforeOn(CalendarDate.fromDateTime(chosenDate));
+  }
+
   Future<void> _save({
     required Product? product,
     required CompartmentIdentifier? compartmentIdentifier,
     required String compartmentName,
+    required CalendarDate? bestBeforeOn,
   }) async {
     final localizations = InventoryLocalizations.of(context);
     if (product == null) {
@@ -180,6 +210,7 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
             compartmentIdentifier: compartmentIdentifier,
             quantity: quantity,
             storedOn: _storedOn,
+            bestBeforeOn: bestBeforeOn,
             note: _noteController.text,
           ),
         );
@@ -252,11 +283,16 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
           orElse: () => compartments.first.identifier,
         );
     final nameResolver = context.compartmentDisplayNameResolver(layout);
+    final selectedDomain = _domainOf(layout.domainOfCompartment(compartmentIdentifier));
     final storedOnLabel =
-        _domainOf(
-          layout.domainOfCompartment(compartmentIdentifier),
-        )?.storedOnLabelBuilder(context) ??
-        localizations.storedOnLabel;
+        selectedDomain?.storedOnLabelBuilder(context) ?? localizations.storedOnLabel;
+    final bestBeforeLabel = selectedDomain?.bestBeforeLabelBuilder?.call(context);
+    final bestBeforeOn = bestBeforeLabel == null
+        ? null
+        : _isBestBeforeChosen
+        ? _chosenBestBeforeOn
+        : _suggestedBestBeforeOn(product, catalog);
+    final shelfLifeDays = product == null ? null : catalog.recommendedMaximumStorageDaysOf(product);
     final quantityFormatter = context.quantityFormatter;
     final textTheme = Theme.of(context).textTheme;
     // Only while item pictures are switched on (UI examples document, phone 5).
@@ -326,6 +362,21 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
               child: Text(context.dateDisplayFormatter.formatMediumDate(_storedOn)),
             ),
           ),
+          if (bestBeforeLabel != null) ...[
+            const SizedBox(height: FoodieSpacing.large),
+            _BestBeforeField(
+              label: bestBeforeLabel,
+              bestBeforeOn: bestBeforeOn,
+              today: ref.watch(clockProvider).todayLocal(),
+              hint: shelfLifeDays == null || shelfLifeDays <= 0
+                  ? null
+                  : localizations.bestBeforeHint(
+                      context.shelfLifeFormatter.formatDays(shelfLifeDays),
+                    ),
+              onChosen: _chooseBestBeforeOn,
+              onPickDate: () => _pickBestBeforeOn(bestBeforeOn),
+            ),
+          ],
           const SizedBox(height: FoodieSpacing.large),
           Text(localizations.compartmentLabel, style: textTheme.titleSmall),
           const SizedBox(height: FoodieSpacing.small),
@@ -362,11 +413,86 @@ class _AddStockBatchScreenState extends ConsumerState<AddStockBatchScreen> {
                     product: product,
                     compartmentIdentifier: compartmentIdentifier,
                     compartmentName: nameResolver.compartmentNameOf(compartmentIdentifier),
+                    bestBeforeOn: bestBeforeOn,
                   ),
             child: Text(context.commonLocalizations.actionSave),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// The date printed on the package (UI example phone 13): the date, how
+/// long the product usually keeps, and chips for the usual cases.
+class _BestBeforeField extends StatelessWidget {
+  const _BestBeforeField({
+    required this.label,
+    required this.bestBeforeOn,
+    required this.today,
+    required this.hint,
+    required this.onChosen,
+    required this.onPickDate,
+  });
+
+  final String label;
+  final CalendarDate? bestBeforeOn;
+  final CalendarDate today;
+  final String? hint;
+  final ValueChanged<CalendarDate?> onChosen;
+  final VoidCallback onPickDate;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = InventoryLocalizations.of(context);
+    final quickChoices = [
+      (localizations.bestBeforeToday, today),
+      (localizations.bestBeforePlusOneDay, today.addDays(1)),
+      (localizations.bestBeforePlusThreeDays, today.addDays(3)),
+      (localizations.bestBeforePlusOneWeek, today.addDays(7)),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        InkWell(
+          onTap: onPickDate,
+          borderRadius: BorderRadius.circular(8),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              labelText: label,
+              helperText: hint,
+              suffixIcon: const Icon(Icons.event_outlined),
+            ),
+            child: Text(switch (bestBeforeOn) {
+              final date? => context.dateDisplayFormatter.formatMediumDate(date),
+              null => localizations.noBestBefore,
+            }),
+          ),
+        ),
+        const SizedBox(height: FoodieSpacing.small),
+        Wrap(
+          spacing: FoodieSpacing.small,
+          runSpacing: FoodieSpacing.small,
+          children: [
+            for (final (choiceLabel, date) in quickChoices)
+              ChoiceChip(
+                label: Text(choiceLabel),
+                selected: bestBeforeOn == date,
+                onSelected: (_) => onChosen(date),
+              ),
+            ChoiceChip(
+              label: Text(localizations.bestBeforeNone),
+              selected: bestBeforeOn == null,
+              onSelected: (_) => onChosen(null),
+            ),
+            ActionChip(
+              avatar: const Icon(Icons.calendar_month_outlined, size: 18),
+              label: Text(localizations.bestBeforePickDate),
+              onPressed: onPickDate,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

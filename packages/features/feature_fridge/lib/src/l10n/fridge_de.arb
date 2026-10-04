@@ -4,6 +4,7 @@
   "domainDescription": "Frisches, das sich Tage hält",
   "storedOnLabel": "Gekauft am",
   "addTitle": "In den Kühlschrank legen",
+  "bestBeforeLabel": "Mindestens haltbar bis",
   "fridgeName": "Kühlschrank",
   "drinksFridgeName": "Getränkekühlschrank",
   "wineFridgeName": "Weinkühlschrank",

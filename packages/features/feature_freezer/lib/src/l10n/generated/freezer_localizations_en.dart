@@ -21,6 +21,9 @@ class FreezerLocalizationsEn extends FreezerLocalizations {
   String get addTitle => 'Add to the freezer';
 
   @override
+  String get storedTodayLabel => 'Frozen today';
+
+  @override
   String get uprightName => 'Freezer';
 
   @override

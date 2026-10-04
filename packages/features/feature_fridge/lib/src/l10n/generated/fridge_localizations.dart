@@ -118,6 +118,12 @@ abstract class FridgeLocalizations {
   /// **'Add to the fridge'**
   String get addTitle;
 
+  /// No description provided for @bestBeforeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best before'**
+  String get bestBeforeLabel;
+
   /// No description provided for @fridgeName.
   ///
   /// In en, this message translates to:

@@ -56,6 +56,7 @@ final class PantryFeatureModule extends FeatureModuleBase {
     descriptionBuilder: (context) => _texts(context).domainDescription,
     storedOnLabelBuilder: (context) => _texts(context).storedOnLabel,
     addTitleBuilder: (context) => _texts(context).addTitle,
+    bestBeforeLabelBuilder: (context) => _texts(context).bestBeforeLabel,
     countsDiscardsAsWaste: true,
   );
 

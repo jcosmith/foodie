@@ -119,6 +119,12 @@ abstract class FreezerLocalizations {
   /// **'Add to the freezer'**
   String get addTitle;
 
+  /// No description provided for @storedTodayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Frozen today'**
+  String get storedTodayLabel;
+
   /// No description provided for @uprightName.
   ///
   /// In en, this message translates to:

@@ -41,6 +41,39 @@
       }
     }
   },
+  "openedAgo": "opened {age}",
+  "@openedAgo": {
+    "placeholders": {
+      "age": {
+        "type": "String"
+      }
+    }
+  },
+  "bestBeforeHint": "Usually keeps {shelfLife}",
+  "@bestBeforeHint": {
+    "placeholders": {
+      "shelfLife": {
+        "type": "String"
+      }
+    }
+  },
+  "bestBeforeToday": "Today",
+  "bestBeforePlusOneDay": "+1 day",
+  "bestBeforePlusThreeDays": "+3 days",
+  "bestBeforePlusOneWeek": "+1 week",
+  "bestBeforeNone": "None",
+  "bestBeforePickDate": "Date",
+  "noBestBefore": "No date",
+  "markOpenedAction": "Mark as opened",
+  "markNotOpenedAction": "Mark as not opened",
+  "markedOpenedSnackbar": "{product} marked as opened",
+  "@markedOpenedSnackbar": {
+    "placeholders": {
+      "product": {
+        "type": "String"
+      }
+    }
+  },
   "useToday": "Use today",
   "useByTomorrow": "Use by tomorrow",
   "useByWeekday": "Use by {weekday}",

@@ -21,6 +21,9 @@ class PantryLocalizationsDe extends PantryLocalizations {
   String get addTitle => 'In den Vorrat legen';
 
   @override
+  String get bestBeforeLabel => 'Mindestens haltbar bis';
+
+  @override
   String get pantryName => 'Vorratskammer';
 
   @override

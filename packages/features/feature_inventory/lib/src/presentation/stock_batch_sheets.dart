@@ -165,6 +165,37 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
     }
   }
 
+  /// "Mark as opened" (or not opened again): one tap, with undo.
+  Future<void> _toggleOpened() async {
+    final localizations = InventoryLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final markOpened = ref.read(markStockBatchOpenedUseCaseProvider);
+    final batch = widget.item.batch;
+    final productName = context.productDisplayNameResolver.productName(widget.item.product);
+    final undoLabel = context.commonLocalizations.actionUndo;
+    final isOpening = !batch.isOpened;
+    final result = await markOpened.execute(batch.identifier, isOpened: isOpening);
+    if (!mounted) return;
+    switch (result) {
+      case SuccessfulResult():
+        navigator.pop();
+        if (isOpening) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(localizations.markedOpenedSnackbar(productName)),
+              action: SnackBarAction(
+                label: undoLabel,
+                onPressed: () => markOpened.execute(batch.identifier, isOpened: false),
+              ),
+            ),
+          );
+        }
+      case FailedResult(:final failure):
+        messenger.showSnackBar(SnackBar(content: Text(localizations.describeFailure(failure))));
+    }
+  }
+
   void _switchTo(Future<void> Function(BuildContext context, InventoryItem item) openOtherSheet) {
     final parentContext = Navigator.of(context).context;
     Navigator.of(context).pop();
@@ -249,6 +280,19 @@ class _TakeOrDiscardSheetState extends ConsumerState<_TakeOrDiscardSheet> {
                 icon: const Icon(Icons.edit_outlined),
                 label: Text(localizations.correctAction),
               ),
+              TextButton.icon(
+                onPressed: _toggleOpened,
+                icon: Icon(
+                  widget.item.batch.isOpened
+                      ? Icons.inventory_2_outlined
+                      : Icons.lock_open_outlined,
+                ),
+                label: Text(
+                  widget.item.batch.isOpened
+                      ? localizations.markNotOpenedAction
+                      : localizations.markOpenedAction,
+                ),
+              ),
             ],
           ),
         ],
@@ -269,9 +313,14 @@ class _MoveSheet extends ConsumerStatefulWidget {
 class _MoveSheetState extends ConsumerState<_MoveSheet> {
   late Quantity _amount = widget.item.batch.quantityRemaining;
   CompartmentIdentifier? _destination;
+  bool _startsFreshToday = true;
   bool _isSaving = false;
 
-  Future<void> _confirm(CompartmentIdentifier destination, String destinationName) async {
+  Future<void> _confirm(
+    CompartmentIdentifier destination,
+    String destinationName, {
+    required bool startsFreshToday,
+  }) async {
     setState(() => _isSaving = true);
     final localizations = InventoryLocalizations.of(context);
     final amountText = context.quantityFormatter.format(_amount);
@@ -284,6 +333,7 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
           stockBatchIdentifier: widget.item.batch.identifier,
           destinationCompartmentIdentifier: destination,
           quantity: _amount,
+          startsFreshToday: startsFreshToday,
         );
     if (!mounted) return;
     switch (result) {
@@ -305,11 +355,33 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
     final localizations = InventoryLocalizations.of(context);
     final layout = ref.watch(storageLayoutProvider).value ?? StorageLayout.empty;
     final nameResolver = context.compartmentDisplayNameResolver(layout);
-    final destinations = [
+    // The batch's own domain first, so a move to the next shelf is one tap.
+    final sourceDomain = layout.domainOfCompartment(widget.item.batch.compartmentIdentifier);
+    final otherCompartments = [
       for (final compartment in layout.activeCompartments)
         if (compartment.identifier != widget.item.batch.compartmentIdentifier) compartment,
     ];
+    final destinations = [
+      ...otherCompartments.where(
+        (compartment) => layout.domainOfCompartment(compartment.identifier) == sourceDomain,
+      ),
+      ...otherCompartments.where(
+        (compartment) => layout.domainOfCompartment(compartment.identifier) != sourceDomain,
+      ),
+    ];
     final selectedDestination = _destination ?? destinations.firstOrNull?.identifier;
+    // Into another domain that resets the clock, such as the freezer.
+    final destinationDomain = selectedDestination == null
+        ? null
+        : layout.domainOfCompartment(selectedDestination);
+    final storedTodayLabel = destinationDomain == null || destinationDomain == sourceDomain
+        ? null
+        : ref
+              .watch(registeredStorageDomainsProvider)
+              .where((domain) => domain.identifier == destinationDomain)
+              .firstOrNull
+              ?.storedTodayLabelBuilder
+              ?.call(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -346,6 +418,13 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
             amount: _amount,
             onAmountChanged: (amount) => setState(() => _amount = amount),
           ),
+          if (storedTodayLabel != null)
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(storedTodayLabel),
+              value: _startsFreshToday,
+              onChanged: (value) => setState(() => _startsFreshToday = value),
+            ),
           const SizedBox(height: FoodieSpacing.large),
           FilledButton(
             onPressed: _isSaving || selectedDestination == null
@@ -353,6 +432,7 @@ class _MoveSheetState extends ConsumerState<_MoveSheet> {
                 : () => _confirm(
                     selectedDestination,
                     nameResolver.compartmentNameOf(selectedDestination),
+                    startsFreshToday: storedTodayLabel != null && _startsFreshToday,
                   ),
             child: Text(localizations.moveAmountButton(context.quantityFormatter.format(_amount))),
           ),

@@ -59,6 +59,48 @@ class InventoryLocalizationsEn extends InventoryLocalizations {
   }
 
   @override
+  String openedAgo(String age) {
+    return 'opened $age';
+  }
+
+  @override
+  String bestBeforeHint(String shelfLife) {
+    return 'Usually keeps $shelfLife';
+  }
+
+  @override
+  String get bestBeforeToday => 'Today';
+
+  @override
+  String get bestBeforePlusOneDay => '+1 day';
+
+  @override
+  String get bestBeforePlusThreeDays => '+3 days';
+
+  @override
+  String get bestBeforePlusOneWeek => '+1 week';
+
+  @override
+  String get bestBeforeNone => 'None';
+
+  @override
+  String get bestBeforePickDate => 'Date';
+
+  @override
+  String get noBestBefore => 'No date';
+
+  @override
+  String get markOpenedAction => 'Mark as opened';
+
+  @override
+  String get markNotOpenedAction => 'Mark as not opened';
+
+  @override
+  String markedOpenedSnackbar(String product) {
+    return '$product marked as opened';
+  }
+
+  @override
   String get useToday => 'Use today';
 
   @override

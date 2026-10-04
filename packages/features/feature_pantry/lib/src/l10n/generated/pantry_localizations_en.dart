@@ -21,6 +21,9 @@ class PantryLocalizationsEn extends PantryLocalizations {
   String get addTitle => 'Add to the pantry';
 
   @override
+  String get bestBeforeLabel => 'Best before';
+
+  @override
   String get pantryName => 'Pantry';
 
   @override

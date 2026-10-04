@@ -155,6 +155,78 @@ abstract class InventoryLocalizations {
   /// **'added {age}'**
   String frozenAgo(String age);
 
+  /// No description provided for @openedAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'opened {age}'**
+  String openedAgo(String age);
+
+  /// No description provided for @bestBeforeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually keeps {shelfLife}'**
+  String bestBeforeHint(String shelfLife);
+
+  /// No description provided for @bestBeforeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get bestBeforeToday;
+
+  /// No description provided for @bestBeforePlusOneDay.
+  ///
+  /// In en, this message translates to:
+  /// **'+1 day'**
+  String get bestBeforePlusOneDay;
+
+  /// No description provided for @bestBeforePlusThreeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'+3 days'**
+  String get bestBeforePlusThreeDays;
+
+  /// No description provided for @bestBeforePlusOneWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'+1 week'**
+  String get bestBeforePlusOneWeek;
+
+  /// No description provided for @bestBeforeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get bestBeforeNone;
+
+  /// No description provided for @bestBeforePickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get bestBeforePickDate;
+
+  /// No description provided for @noBestBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'No date'**
+  String get noBestBefore;
+
+  /// No description provided for @markOpenedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as opened'**
+  String get markOpenedAction;
+
+  /// No description provided for @markNotOpenedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as not opened'**
+  String get markNotOpenedAction;
+
+  /// No description provided for @markedOpenedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'{product} marked as opened'**
+  String markedOpenedSnackbar(String product);
+
   /// No description provided for @useToday.
   ///
   /// In en, this message translates to:

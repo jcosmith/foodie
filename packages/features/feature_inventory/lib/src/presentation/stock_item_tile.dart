@@ -39,11 +39,14 @@ class StockItemTile extends StatelessWidget {
             level: item.useByStatus.level,
             label: localizations.useByBadgeLabel(item, today),
           ),
-          Text(
-            localizations.frozenAgo(
+          Text(switch (batch.openedOn) {
+            final openedOn? => localizations.openedAgo(
+              context.storageAgeFormatter.formatRelativeAge(since: openedOn, today: today),
+            ),
+            null => localizations.frozenAgo(
               context.storageAgeFormatter.formatRelativeAge(since: batch.storedOn, today: today),
             ),
-          ),
+          }),
         ],
       ),
       trailing: Semantics(

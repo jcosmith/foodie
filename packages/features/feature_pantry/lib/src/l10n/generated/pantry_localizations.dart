@@ -118,6 +118,12 @@ abstract class PantryLocalizations {
   /// **'Add to the pantry'**
   String get addTitle;
 
+  /// No description provided for @bestBeforeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best before'**
+  String get bestBeforeLabel;
+
   /// No description provided for @pantryName.
   ///
   /// In en, this message translates to:

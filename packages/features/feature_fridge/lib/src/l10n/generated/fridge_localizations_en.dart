@@ -21,6 +21,9 @@ class FridgeLocalizationsEn extends FridgeLocalizations {
   String get addTitle => 'Add to the fridge';
 
   @override
+  String get bestBeforeLabel => 'Best before';
+
+  @override
   String get fridgeName => 'Fridge';
 
   @override

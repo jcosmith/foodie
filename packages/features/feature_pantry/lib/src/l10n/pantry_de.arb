@@ -4,6 +4,7 @@
   "domainDescription": "Trockenes, Konserven, Brot und Getränke",
   "storedOnLabel": "Gekauft am",
   "addTitle": "In den Vorrat legen",
+  "bestBeforeLabel": "Mindestens haltbar bis",
   "pantryName": "Vorratskammer",
   "pantryDescription": "Vorratskammer",
   "kitchenCupboardName": "Küchenschrank",

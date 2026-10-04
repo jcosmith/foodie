@@ -21,6 +21,9 @@ class FridgeLocalizationsDe extends FridgeLocalizations {
   String get addTitle => 'In den Kühlschrank legen';
 
   @override
+  String get bestBeforeLabel => 'Mindestens haltbar bis';
+
+  @override
   String get fridgeName => 'Kühlschrank';
 
   @override

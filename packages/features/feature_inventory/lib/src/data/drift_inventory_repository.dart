@@ -85,6 +85,19 @@ final class DriftInventoryRepository implements InventoryRepository {
       _inventoryDao.updateBatchCompartment(stockBatchIdentifier.value, compartmentIdentifier.value);
 
   @override
+  Future<void> updateDates(
+    StockBatchIdentifier stockBatchIdentifier, {
+    required CalendarDate storedOn,
+    required CalendarDate? bestBeforeOn,
+    required CalendarDate? openedOn,
+  }) => _inventoryDao.updateBatchDates(
+    stockBatchIdentifier.value,
+    storedOn: storedOn,
+    bestBeforeOn: bestBeforeOn,
+    openedOn: openedOn,
+  );
+
+  @override
   Future<void> appendMovement(InventoryMovement movement) => _inventoryDao.appendMovement(
     InventoryMovementRow(
       movementIdentifier: movement.identifier.value,

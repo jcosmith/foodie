@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:core_design_system/testing.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_freezer/feature_freezer.dart';
@@ -8,6 +10,7 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'support/inventory_test_harness.dart';
 import 'support/shelves_module.dart';
@@ -89,22 +92,35 @@ void main() {
         await twoDomains.addStoragePlace(ShelvesModule.cupboard);
         return productKey == null ? null : twoDomains.seededProduct(productKey);
       });
+      // A router underneath, so saving can close the form.
+      final router = GoRouter(
+        initialLocation: '/start',
+        routes: [
+          GoRoute(path: '/start', builder: (context, state) => const Scaffold()),
+          GoRoute(
+            path: '/add',
+            builder: (context, state) => AddStockBatchScreen(
+              domainIdentifier: domain,
+              initialProductIdentifier: product?.identifier,
+            ),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: twoDomains.container,
-          child: buildLocalizedTestApplication(
+          child: buildLocalizedTestRouterApplication(
+            routerConfig: router,
             featureLocalizationDelegates: [
               ...const InventoryFeatureModule().localizationDelegates,
               ...const ProductCatalogFeatureModule().localizationDelegates,
               ...const StorageLayoutFeatureModule().localizationDelegates,
             ],
-            home: AddStockBatchScreen(
-              domainIdentifier: domain,
-              initialProductIdentifier: product?.identifier,
-            ),
           ),
         ),
       );
+      unawaited(router.push('/add'));
       for (var round = 0; round < 3; round++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
         await tester.pumpAndSettle();

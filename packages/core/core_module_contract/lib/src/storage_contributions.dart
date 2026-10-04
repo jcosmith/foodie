@@ -28,6 +28,8 @@ final class StorageDomainContribution {
     required this.storedOnLabelBuilder,
     required this.countsDiscardsAsWaste,
     this.addTitleBuilder,
+    this.bestBeforeLabelBuilder,
+    this.storedTodayLabelBuilder,
   });
 
   final StorageDomainIdentifier identifier;
@@ -52,6 +54,16 @@ final class StorageDomainContribution {
   /// The title of the add form inside the domain's tab: "Add to the
   /// freezer"; `null` shows a plain "Add".
   final LocalizedTextBuilder? addTitleBuilder;
+
+  /// When set, the add form asks for the date printed on the package, under
+  /// this label: "Best before", or "Expires" for supplies. `null` (the
+  /// freezer) leaves the date out, as freezing keeps its own time.
+  final LocalizedTextBuilder? bestBeforeLabelBuilder;
+
+  /// When set, moving a batch into this domain from another one offers to
+  /// start its dates again today under this label, such as "Frozen today",
+  /// because freezing resets the clock for most food.
+  final LocalizedTextBuilder? storedTodayLabelBuilder;
 
   /// Whether throwing something away from this domain is food waste;
   /// used-up dish soap never is (architecture 10.7, "Waste is a domain property").

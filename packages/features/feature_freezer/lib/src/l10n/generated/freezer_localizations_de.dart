@@ -21,6 +21,9 @@ class FreezerLocalizationsDe extends FreezerLocalizations {
   String get addTitle => 'In den Tiefkühler legen';
 
   @override
+  String get storedTodayLabel => 'Heute eingefroren';
+
+  @override
   String get uprightName => 'Gefrierschrank';
 
   @override

@@ -85,6 +85,20 @@ final class StockBatchMoved extends StockBatchEvent {
   final StockBatchIdentifier? splitOffBatchIdentifier;
 }
 
+/// A batch was marked as opened, or as not opened again; its use-by date
+/// may have moved.
+final class StockBatchOpened extends StockBatchEvent {
+  const StockBatchOpened({
+    required super.stockBatchIdentifier,
+    required super.productIdentifier,
+    required this.openedOn,
+    required super.occurredAt,
+  });
+
+  /// `null` when the batch was marked as not opened.
+  final CalendarDate? openedOn;
+}
+
 /// The remaining amount was set to what is really left, or a removal was undone.
 final class StockBatchCorrected extends StockBatchEvent {
   const StockBatchCorrected({
