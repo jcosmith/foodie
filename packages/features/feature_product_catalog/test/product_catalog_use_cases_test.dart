@@ -24,6 +24,11 @@ final class _DairyCatalogModule extends FeatureModuleBase {
         shelfLifeAfterOpeningDays: 4,
         iconEmoji: '🥛',
       ),
+      SeededCategoryContribution(
+        catalogKey: 'testCleaning',
+        domainIdentifier: StorageDomainIdentifier.household,
+        iconEmoji: '🧽',
+      ),
     ],
     products: const [
       SeededProductContribution(
@@ -41,6 +46,13 @@ final class _DairyCatalogModule extends FeatureModuleBase {
         canonicalUnit: QuantityUnit.piece,
         defaultPackageDisplayAmount: 20,
         iconEmoji: '🧊',
+      ),
+      SeededProductContribution(
+        catalogKey: 'testDishSoap',
+        categoryCatalogKey: 'testCleaning',
+        canonicalUnit: QuantityUnit.piece,
+        defaultPackageDisplayAmount: 1,
+        iconEmoji: '🧴',
       ),
     ],
     categoryNameBuilder: (context, catalogKey) => null,
@@ -118,11 +130,11 @@ void main() {
       await twoModules.read(seedCatalogUseCaseProvider).execute();
 
       final catalog = await twoModules.readCatalog();
-      final dairy = catalog.categories.last;
+      final dairy = catalog.categories.singleWhere((c) => c.catalogKey == 'testDairy');
       expect(dairy.catalogKey, 'testDairy');
       expect(
         dairy.sortOrder,
-        greaterThan(catalog.categories[catalog.categories.length - 2].sortOrder),
+        greaterThan(catalog.categories.singleWhere((c) => c.catalogKey == 'other').sortOrder),
       );
       expect(dairy.storageDomain, StorageDomainIdentifier.fridge);
       expect(dairy.recommendedMaximumStorageDays, 7);
@@ -137,6 +149,30 @@ void main() {
       );
       // A product may live in another module's category.
       expect(seededProduct(catalog, 'testIceCubes').categoryIdentifier, isNot(dairy.identifier));
+    });
+
+    test('supplies keep no time: a category and its products may have no shelf life', () async {
+      final twoModules = ProductCatalogTestHarness(
+        registeredModules: const [FreezerFeatureModule(), _DairyCatalogModule()],
+      );
+      addTearDown(twoModules.dispose);
+      await twoModules.read(seedCatalogUseCaseProvider).execute();
+
+      final catalog = await twoModules.readCatalog();
+      final cleaning = catalog.categories.singleWhere((c) => c.catalogKey == 'testCleaning');
+      expect(cleaning.recommendedMaximumStorageDays, isNull);
+      expect(cleaning.storageDomain, StorageDomainIdentifier.household);
+      expect(
+        catalog.recommendedMaximumStorageDaysOf(seededProduct(catalog, 'testDishSoap')),
+        isNull,
+      );
+
+      // A shelf life can still be given to the category later.
+      await twoModules
+          .read(changeCategoryStorageLimitUseCaseProvider)
+          .execute(categoryIdentifier: cleaning.identifier, recommendedMaximumStorageDays: 30);
+      final changed = await twoModules.readCatalog();
+      expect(changed.categoryOf(cleaning.identifier)!.recommendedMaximumStorageDays, 30);
     });
 
     test('a category added by a later version goes after the user\'s own sort order', () async {

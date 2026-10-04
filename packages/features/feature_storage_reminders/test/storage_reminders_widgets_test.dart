@@ -108,7 +108,7 @@ void main() {
     final vegetables = catalog!.categories.firstWhere(
       (category) => category.catalogKey == 'vegetables',
     );
-    Future<int> vegetableDays() async {
+    Future<int?> vegetableDays() async {
       final changedCatalog = await tester.runAsync(
         () => harness.read(productCatalogQueryServiceProvider).readCatalog(),
       );

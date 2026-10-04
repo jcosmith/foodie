@@ -238,6 +238,34 @@ void main() {
     await _stopApplication(tester);
   });
 
+  testWidgets('the Household tab is off until switched on in Options', (tester) async {
+    tester.platformDispatcher.localesTestValue = const [Locale('en')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    await _startApplication(tester);
+    expect(find.text('Household'), findsNothing);
+
+    await _openOptions(tester);
+    final householdSwitch = find.widgetWithText(SwitchListTile, 'Household');
+    await tester.ensureVisible(householdSwitch);
+    await _settle(tester);
+    expect(find.text('Cleaning, laundry, bathroom and kitchen paper'), findsOneWidget);
+    expect(tester.widget<SwitchListTile>(householdSwitch).value, isFalse);
+    await tester.tap(householdSwitch);
+    await _settle(tester);
+
+    expect(
+      [
+        for (final destination in tester.widgetList<NavigationDestination>(
+          find.byType(NavigationDestination),
+        ))
+          destination.label,
+      ],
+      ['Home', 'Freezer', 'Fridge', 'Pantry', 'Household', 'Lists', 'More'],
+    );
+
+    await _stopApplication(tester);
+  });
+
   testWidgets('switches language and theme in Options, in sync with the system', (tester) async {
     tester.platformDispatcher.localesTestValue = const [Locale('en')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
