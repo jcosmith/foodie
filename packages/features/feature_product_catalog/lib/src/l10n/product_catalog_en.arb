@@ -82,5 +82,16 @@
   "genericFailure": "That did not work. Please try again.",
   "pieceLabelLabel": "Name for one piece (optional)",
   "pieceLabelHint": "Shown instead of “pcs”, for example slices",
-  "pieceLabelSuggestions": "slices,whole,halves,quarters,portions"
+  "pieceLabelSuggestions": "slices,whole,halves,quarters,portions",
+  "changeUnitAction": "Change unit…",
+  "changeUnitDialogTitle": "Count in another unit",
+  "changeUnitDialogText": "Foodie keeps this product with its stock and history as it is, hidden from lists, and adds the same product in the new unit. Stock already stored stays until used up. A package size and restock rule need entering again.",
+  "unitChangedSnackbar": "Now counted in {unit}",
+  "@unitChangedSnackbar": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  }
 }

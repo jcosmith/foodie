@@ -1,3 +1,4 @@
+import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_barcode_scanning/feature_barcode_scanning.dart';
 import 'package:feature_barcode_scanning/src/application/barcode_scanning_providers.dart';
@@ -47,6 +48,25 @@ void main() {
   test('learning a code again moves it to the right product', () async {
     await learn('4001234567891', spinach);
     await learn('4001234567891', mincedMeat);
+
+    final resolution = await scan('4001234567891') as RecognizedBarcode;
+    expect(resolution.product.identifier, mincedMeat.identifier);
+  });
+
+  test('codes follow a product replaced by one in another unit', () async {
+    await learn('4001234567891', spinach);
+    harness.read(barcodesFollowReplacedProductsProvider);
+
+    // Stands in for the catalog's unit change, which publishes this.
+    await harness
+        .read(domainEventBusProvider)
+        .publish(
+          ProductUnitChanged(
+            previousProductIdentifier: spinach.identifier,
+            productIdentifier: mincedMeat.identifier,
+            occurredAt: DateTime.utc(2026, 10, 4),
+          ),
+        );
 
     final resolution = await scan('4001234567891') as RecognizedBarcode;
     expect(resolution.product.identifier, mincedMeat.identifier);

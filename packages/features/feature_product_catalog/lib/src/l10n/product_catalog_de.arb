@@ -40,5 +40,9 @@
   "genericFailure": "Das hat nicht geklappt. Bitte versuche es noch einmal.",
   "pieceLabelLabel": "Name für ein Stück (optional)",
   "pieceLabelHint": "Wird statt „Stück“ angezeigt, zum Beispiel Scheiben",
-  "pieceLabelSuggestions": "Scheiben,Ganze,Hälften,Viertel,Portionen"
+  "pieceLabelSuggestions": "Scheiben,Ganze,Hälften,Viertel,Portionen",
+  "changeUnitAction": "Einheit ändern …",
+  "changeUnitDialogTitle": "In anderer Einheit zählen",
+  "changeUnitDialogText": "Foodie behält dieses Produkt mit Vorrat und Verlauf unverändert, ausgeblendet aus den Listen, und legt dasselbe Produkt in der neuen Einheit an. Bereits Eingelagertes bleibt, bis es aufgebraucht ist. Packungsgröße und Nachkauf-Regel müssen neu eingegeben werden.",
+  "unitChangedSnackbar": "Jetzt in {unit} gezählt"
 }

@@ -302,6 +302,58 @@ void main() {
     expect((await harness.readCatalog()).productOf(bread.identifier)!.pieceLabel, isNull);
   });
 
+  group('changing the unit', () {
+    test('adds the product in the new unit and archives the old one', () async {
+      await harness.read(seedCatalogUseCaseProvider).execute();
+      final bread = seededProduct(await harness.readCatalog(), 'wholegrainBread');
+
+      final result = await harness
+          .read(changeProductUnitUseCaseProvider)
+          .execute(
+            productIdentifier: bread.identifier,
+            newUnit: QuantityUnit.gram,
+            displayName: 'Wholegrain bread',
+          );
+
+      final catalog = await harness.readCatalog();
+      final replacement = catalog.productOf(result.valueOrNull!)!;
+      final old = catalog.productOf(bread.identifier)!;
+      expect(replacement.canonicalUnit, QuantityUnit.gram);
+      expect(replacement.customName, 'Wholegrain bread');
+      expect(replacement.categoryIdentifier, bread.categoryIdentifier);
+      expect(replacement.iconEmoji, bread.iconEmoji);
+      expect(replacement.recommendedMaximumStorageDays, bread.recommendedMaximumStorageDays);
+      expect(replacement.defaultPackageQuantity, isNull, reason: 'it was in pieces');
+      expect(replacement.catalogKey, isNull);
+      expect(old.isArchived, isTrue);
+      expect(old.canonicalUnit, QuantityUnit.piece);
+      final event = harness.publishedEvents.whereType<ProductUnitChanged>().single;
+      expect(event.previousProductIdentifier, bread.identifier);
+      expect(event.productIdentifier, replacement.identifier);
+    });
+
+    test('refuses the same unit and an archived product', () async {
+      await harness.read(seedCatalogUseCaseProvider).execute();
+      final spinach = seededProduct(await harness.readCatalog(), 'leafSpinach');
+      final changeUnit = harness.read(changeProductUnitUseCaseProvider);
+
+      final sameUnit = await changeUnit.execute(
+        productIdentifier: spinach.identifier,
+        newUnit: QuantityUnit.gram,
+        displayName: 'Spinach',
+      );
+      await harness.read(archiveProductUseCaseProvider).execute(spinach.identifier);
+      final archived = await changeUnit.execute(
+        productIdentifier: spinach.identifier,
+        newUnit: QuantityUnit.piece,
+        displayName: 'Spinach',
+      );
+
+      expect(sameUnit.failureOrNull, isA<InvalidProductSetting>());
+      expect(archived.failureOrNull, isA<ProductNotFound>());
+    });
+  });
+
   test('remembers a default drawer until it is cleared', () async {
     await harness.read(seedCatalogUseCaseProvider).execute();
     final drawers = await harness.setUpStoragePlace();

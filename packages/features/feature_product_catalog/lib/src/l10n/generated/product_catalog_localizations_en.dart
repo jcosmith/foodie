@@ -152,4 +152,19 @@ class ProductCatalogLocalizationsEn extends ProductCatalogLocalizations {
 
   @override
   String get pieceLabelSuggestions => 'slices,whole,halves,quarters,portions';
+
+  @override
+  String get changeUnitAction => 'Change unit…';
+
+  @override
+  String get changeUnitDialogTitle => 'Count in another unit';
+
+  @override
+  String get changeUnitDialogText =>
+      'Foodie keeps this product with its stock and history as it is, hidden from lists, and adds the same product in the new unit. Stock already stored stays until used up. A package size and restock rule need entering again.';
+
+  @override
+  String unitChangedSnackbar(String unit) {
+    return 'Now counted in $unit';
+  }
 }

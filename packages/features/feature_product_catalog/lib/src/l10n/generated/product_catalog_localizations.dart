@@ -340,6 +340,30 @@ abstract class ProductCatalogLocalizations {
   /// In en, this message translates to:
   /// **'slices,whole,halves,quarters,portions'**
   String get pieceLabelSuggestions;
+
+  /// No description provided for @changeUnitAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change unit…'**
+  String get changeUnitAction;
+
+  /// No description provided for @changeUnitDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Count in another unit'**
+  String get changeUnitDialogTitle;
+
+  /// No description provided for @changeUnitDialogText.
+  ///
+  /// In en, this message translates to:
+  /// **'Foodie keeps this product with its stock and history as it is, hidden from lists, and adds the same product in the new unit. Stock already stored stays until used up. A package size and restock rule need entering again.'**
+  String get changeUnitDialogText;
+
+  /// No description provided for @unitChangedSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Now counted in {unit}'**
+  String unitChangedSnackbar(String unit);
 }
 
 class _ProductCatalogLocalizationsDelegate

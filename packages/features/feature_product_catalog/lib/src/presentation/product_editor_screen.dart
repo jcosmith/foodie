@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_localization/core_localization.dart';
@@ -16,6 +18,7 @@ import '../domain/product_icon_image.dart';
 import '../domain/product_name_policy.dart';
 import '../l10n/generated/product_catalog_localizations.dart';
 import 'catalog_localization.dart';
+import 'product_catalog_routes.dart';
 import 'product_tile.dart';
 
 /// Creates a product, or edits one when [productIdentifier] is set. A new
@@ -209,6 +212,61 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
     if (mounted) context.pop();
   }
 
+  /// "Change unit…": asks for the new unit, then replaces the product with
+  /// one in that unit and opens its editor instead of this one.
+  Future<void> _changeUnit(Product product) async {
+    final localizations = ProductCatalogLocalizations.of(context);
+    final commonLocalizations = context.commonLocalizations;
+    final quantityFormatter = context.quantityFormatter;
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+    final displayName = _nameController.text.trim().isEmpty
+        ? context.productDisplayNameResolver.productName(product)
+        : _nameController.text;
+    final newUnit = await showDialog<QuantityUnit>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(localizations.changeUnitDialogTitle),
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: FoodieSpacing.large),
+            child: Text(localizations.changeUnitDialogText),
+          ),
+          const SizedBox(height: FoodieSpacing.small),
+          for (final unit in QuantityUnit.values)
+            if (unit != product.canonicalUnit)
+              SimpleDialogOption(
+                onPressed: () => Navigator.of(dialogContext).pop(unit),
+                child: Text(quantityFormatter.unitName(unit)),
+              ),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(commonLocalizations.actionCancel),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (newUnit == null || !mounted) return;
+    final result = await ref
+        .read(changeProductUnitUseCaseProvider)
+        .execute(productIdentifier: product.identifier, newUnit: newUnit, displayName: displayName);
+    if (!mounted) return;
+    switch (result) {
+      case SuccessfulResult(value: final newProductIdentifier):
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(localizations.unitChangedSnackbar(quantityFormatter.unitName(newUnit))),
+          ),
+        );
+        unawaited(router.pushReplacement(ProductCatalogRoutes.productEditor(newProductIdentifier)));
+      case FailedResult(:final failure):
+        messenger.showSnackBar(SnackBar(content: Text(localizations.describeFailure(failure))));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = ProductCatalogLocalizations.of(context);
@@ -306,12 +364,22 @@ class _ProductEditorScreenState extends ConsumerState<ProductEditorScreen> {
                 ? (selection) => setState(() => _unit = selection.single)
                 : null,
           ),
-          if (!_isNewProduct)
+          if (product != null && !product.isArchived)
             Padding(
               padding: const EdgeInsets.only(top: FoodieSpacing.extraSmall),
-              child: Text(
-                localizations.unitLockedHint,
-                style: Theme.of(context).textTheme.bodySmall,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      localizations.unitLockedHint,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _changeUnit(product),
+                    child: Text(localizations.changeUnitAction),
+                  ),
+                ],
               ),
             ),
           if (_unit == QuantityUnit.piece) ...[

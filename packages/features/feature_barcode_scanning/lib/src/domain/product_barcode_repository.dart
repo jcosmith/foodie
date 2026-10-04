@@ -11,4 +11,8 @@ abstract interface class ProductBarcodeRepository {
   Future<void> saveBarcode(ProductBarcode barcode);
 
   Future<void> deleteBarcode(String barcodeValue);
+
+  /// Moves the codes of [from] to [to], when a product was replaced by one
+  /// in another unit.
+  Future<void> moveBarcodes({required ProductIdentifier from, required ProductIdentifier to});
 }

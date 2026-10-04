@@ -28,4 +28,13 @@ class ProductBarcodesDao extends DatabaseAccessor<ApplicationDatabase>
 
   Future<void> deleteBarcode(String barcodeValue) =>
       (delete(productBarcodes)..where((barcode) => barcode.barcodeValue.equals(barcodeValue))).go();
+
+  /// Moves every code of one product to another, when a product is replaced.
+  Future<void> moveBarcodes({
+    required String fromProductIdentifier,
+    required String toProductIdentifier,
+  }) =>
+      (update(productBarcodes)
+            ..where((barcode) => barcode.productIdentifier.equals(fromProductIdentifier)))
+          .write(ProductBarcodesCompanion(productIdentifier: Value(toProductIdentifier)));
 }
