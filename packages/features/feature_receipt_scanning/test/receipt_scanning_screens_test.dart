@@ -232,6 +232,40 @@ void main() {
       expect(find.text('Magazine'), findsOneWidget);
     });
 
+    testWidgets('a search hit far down a long receipt is scrolled into view', (tester) async {
+      await prepare(tester);
+      final rows = [
+        ['Fresh Market'],
+        for (var number = 1; number <= 30; number++) ['Item $number', '1.00'],
+        ['Olive oil', '6.99'],
+        ['TOTAL', '36.99'],
+      ];
+      final receiptIdentifier = (await tester.runAsync(() async {
+        final review = await harness.review(rows);
+        return (await harness
+                .read(confirmReceiptUseCaseProvider)
+                .execute(review, decisions: const {}))
+            .valueOrNull!;
+      }))!;
+      final receipt = (await tester.runAsync(
+        () => harness.read(receiptQueryServiceProvider).readReceipt(receiptIdentifier),
+      ))!;
+      final oliveOil = receipt.lines.singleWhere((line) => line.text == 'Olive oil');
+
+      await showApp(tester);
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1;
+      await _settle(tester);
+      unawaited(
+        GoRouter.of(tester.element(find.byType(Scaffold).first)).push(
+          ReceiptScanningRoutes.receipt(receiptIdentifier, highlightedLine: oliveOil.identifier),
+        ),
+      );
+      await _settle(tester);
+
+      expect(find.text('Olive oil').hitTestable(), findsOneWidget);
+    });
+
     testWidgets('filters by store, period and amount', (tester) async {
       await prepare(tester);
       await archiveWithOpenLines(tester);
