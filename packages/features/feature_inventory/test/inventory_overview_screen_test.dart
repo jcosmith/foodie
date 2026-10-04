@@ -17,7 +17,7 @@ void main() {
 
   Future<void> showOverviewWithMincedMeat(WidgetTester tester) async {
     await tester.runAsync(() async {
-      final drawers = await harness.setUpCatalogAndFreezer();
+      final drawers = await harness.setUpCatalogAndStoragePlace();
       await harness.addBatch(
         product: await harness.seededProduct('mincedMeat'),
         compartment: drawers.first,
@@ -68,13 +68,13 @@ void main() {
 
   testWidgets('marks a batch past its storage time as overdue', (tester) async {
     await tester.runAsync(() async {
-      final drawers = await harness.setUpCatalogAndFreezer();
+      final drawers = await harness.setUpCatalogAndStoragePlace();
       await harness.addBatch(
         product: await harness.seededProduct('mincedMeat'),
         compartment: drawers.first,
         amountInBaseUnits: 500,
         // Meat keeps for about 9 months (270 days).
-        frozenOn: InventoryTestHarness.today.addDays(-300),
+        storedOn: InventoryTestHarness.today.addDays(-300),
       );
     });
     await tester.pumpWidget(
@@ -98,7 +98,7 @@ void main() {
 
   testWidgets('"Eat first" lists the least freshness time left first', (tester) async {
     await tester.runAsync(() async {
-      final drawers = await harness.setUpCatalogAndFreezer();
+      final drawers = await harness.setUpCatalogAndStoragePlace();
       for (final (catalogKey, storedDays) in [
         ('leafSpinach', 200), // 365 days: 165 left
         ('mincedMeat', 30), // 270 days: 240 left
@@ -108,7 +108,7 @@ void main() {
           product: await harness.seededProduct(catalogKey),
           compartment: drawers.first,
           amountInBaseUnits: 1,
-          frozenOn: InventoryTestHarness.today.addDays(-storedDays),
+          storedOn: InventoryTestHarness.today.addDays(-storedDays),
         );
       }
     });
@@ -139,7 +139,7 @@ void main() {
   group('drawer groups', () {
     Future<void> showTwoDrawers(WidgetTester tester) async {
       await tester.runAsync(() async {
-        final drawers = await harness.setUpCatalogAndFreezer();
+        final drawers = await harness.setUpCatalogAndStoragePlace();
         for (final (catalogKey, drawerIndex, storedDays) in [
           ('leafSpinach', 0, 200), // 365 days: 165 left
           ('wholegrainBread', 0, 10), // 90 days: 80 left
@@ -149,7 +149,7 @@ void main() {
             product: await harness.seededProduct(catalogKey),
             compartment: drawers[drawerIndex],
             amountInBaseUnits: 1,
-            frozenOn: InventoryTestHarness.today.addDays(-storedDays),
+            storedOn: InventoryTestHarness.today.addDays(-storedDays),
           );
         }
       });

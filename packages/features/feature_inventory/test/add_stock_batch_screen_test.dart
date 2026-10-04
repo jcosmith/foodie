@@ -19,7 +19,7 @@ void main() {
   /// default drawer.
   Future<void> showAddFormForMincedMeat(WidgetTester tester, {int? defaultDrawerIndex}) async {
     final mincedMeat = await tester.runAsync(() async {
-      final drawers = await harness.setUpCatalogAndFreezer();
+      final drawers = await harness.setUpCatalogAndStoragePlace();
       final mincedMeat = await harness.seededProduct('mincedMeat');
       await harness.addBatch(product: mincedMeat, compartment: drawers[0], amountInBaseUnits: 500);
       if (defaultDrawerIndex != null) {

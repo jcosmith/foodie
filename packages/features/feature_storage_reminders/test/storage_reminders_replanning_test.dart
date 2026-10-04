@@ -17,14 +17,14 @@ void main() {
   Future<void> addBatchDueIn(Product product, int dayOffset) async {
     final storageDays = await harness.storageDaysOf(product);
     final daysUntilEatSoon = (storageDays * 0.85).ceil();
-    await harness.addBatch(product, frozenOn: harness.today.addDays(dayOffset - daysUntilEatSoon));
+    await harness.addBatch(product, storedOn: harness.today.addDays(dayOffset - daysUntilEatSoon));
   }
 
   Map<int, NotificationRequest> scheduled() => harness.notificationServices.scheduledRequests;
 
   setUp(() async {
     harness = StorageRemindersTestHarness();
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     await harness
         .read(preferencesStoreProvider)
         .write(ApplicationPreferenceKeys.languageCode, 'en');

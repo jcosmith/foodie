@@ -18,58 +18,58 @@ void main() {
   });
   tearDown(() => harness.dispose());
 
-  Future<FreezerIdentifier> createFreezer(
-    FreezerTemplate template, {
+  Future<StoragePlaceIdentifier> createStoragePlace(
+    StorageTemplate template, {
     String enteredName = '',
   }) async {
     final result = await harness
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(template: template, enteredName: enteredName, defaultNames: _defaultNames);
     return result.valueOrNull!;
   }
 
-  Future<List<Compartment>> compartmentsOf(FreezerIdentifier freezerIdentifier) async =>
-      (await harness.readLayout()).freezerLayoutOf(freezerIdentifier)!.compartments;
+  Future<List<Compartment>> compartmentsOf(StoragePlaceIdentifier storagePlaceIdentifier) async =>
+      (await harness.readLayout()).storagePlaceLayoutOf(storagePlaceIdentifier)!.compartments;
 
   group('creating a freezer from a template', () {
     test('creates numbered drawers with differing colour tags', () async {
-      final freezerIdentifier = await createFreezer(FreezerTemplate.uprightWithFiveDrawers);
+      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithFiveDrawers);
 
-      final compartments = await compartmentsOf(freezerIdentifier);
+      final compartments = await compartmentsOf(storagePlaceIdentifier);
       expect(compartments.map((compartment) => compartment.defaultNumber), [1, 2, 3, 4, 5]);
       expect(compartments.map((compartment) => compartment.colorTagIndex), [0, 1, 2, 3, 4]);
       expect(harness.publishedEvents.whereType<CompartmentCreated>(), hasLength(5));
     });
 
     test('appends further freezers and refuses a duplicate name', () async {
-      final kitchen = await createFreezer(
-        FreezerTemplate.uprightWithThreeDrawers,
+      final kitchen = await createStoragePlace(
+        StorageTemplate.uprightWithThreeDrawers,
         enteredName: 'Kitchen',
       );
-      final cellar = await createFreezer(FreezerTemplate.chestWithBaskets);
+      final cellar = await createStoragePlace(StorageTemplate.chestWithBaskets);
 
       final duplicate = await harness
-          .read(createFreezerFromTemplateUseCaseProvider)
+          .read(createStoragePlaceFromTemplateUseCaseProvider)
           .execute(
-            template: FreezerTemplate.empty,
+            template: StorageTemplate.empty,
             enteredName: 'KITCHEN',
             defaultNames: _defaultNames,
           );
 
       expect(duplicate.failureOrNull, isA<LayoutNameAlreadyTaken>());
       final layout = await harness.readLayout();
-      expect(layout.freezers.map((freezerLayout) => freezerLayout.freezer.identifier), [
+      expect(layout.storagePlaces.map((storagePlaceLayout) => storagePlaceLayout.storagePlace.identifier), [
         kitchen,
         cellar,
       ]);
-      expect(layout.freezerOf(kitchen)!.customName, 'Kitchen');
+      expect(layout.storagePlaceOf(kitchen)!.customName, 'Kitchen');
     });
   });
 
   group('renaming a compartment', () {
     test('stores a custom name and goes back to the default when cleared', () async {
-      final freezerIdentifier = await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
-      final firstDrawer = (await compartmentsOf(freezerIdentifier)).first;
+      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final firstDrawer = (await compartmentsOf(storagePlaceIdentifier)).first;
       final renameCompartment = harness.read(renameCompartmentUseCaseProvider);
 
       await renameCompartment.execute(
@@ -77,20 +77,20 @@ void main() {
         enteredName: 'Vegetables',
         defaultNames: _defaultNames,
       );
-      expect((await compartmentsOf(freezerIdentifier)).first.customName, 'Vegetables');
+      expect((await compartmentsOf(storagePlaceIdentifier)).first.customName, 'Vegetables');
 
       await renameCompartment.execute(
         compartmentIdentifier: firstDrawer.identifier,
         enteredName: '',
         defaultNames: _defaultNames,
       );
-      expect((await compartmentsOf(freezerIdentifier)).first.customName, isNull);
+      expect((await compartmentsOf(storagePlaceIdentifier)).first.customName, isNull);
       expect(harness.publishedEvents.whereType<CompartmentRenamed>(), hasLength(2));
     });
 
     test('refuses the default name another drawer still shows', () async {
-      final freezerIdentifier = await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
-      final firstDrawer = (await compartmentsOf(freezerIdentifier)).first;
+      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final firstDrawer = (await compartmentsOf(storagePlaceIdentifier)).first;
 
       final result = await harness
           .read(renameCompartmentUseCaseProvider)
@@ -104,16 +104,16 @@ void main() {
     });
 
     test('allows the same name in different freezers', () async {
-      final kitchen = await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
-      final cellar = await createFreezer(
-        FreezerTemplate.uprightWithThreeDrawers,
+      final kitchen = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final cellar = await createStoragePlace(
+        StorageTemplate.uprightWithThreeDrawers,
         enteredName: 'Cellar',
       );
       final renameCompartment = harness.read(renameCompartmentUseCaseProvider);
 
-      for (final freezerIdentifier in [kitchen, cellar]) {
+      for (final storagePlaceIdentifier in [kitchen, cellar]) {
         final result = await renameCompartment.execute(
-          compartmentIdentifier: (await compartmentsOf(freezerIdentifier)).first.identifier,
+          compartmentIdentifier: (await compartmentsOf(storagePlaceIdentifier)).first.identifier,
           enteredName: 'Ice cream',
           defaultNames: _defaultNames,
         );
@@ -123,30 +123,30 @@ void main() {
   });
 
   test('a new compartment never reuses the number of a removed one', () async {
-    final freezerIdentifier = await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
-    final lastDrawer = (await compartmentsOf(freezerIdentifier)).last;
+    final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+    final lastDrawer = (await compartmentsOf(storagePlaceIdentifier)).last;
     await harness
         .read(moveContentsAndArchiveCompartmentUseCaseProvider)
         .execute(compartmentIdentifier: lastDrawer.identifier);
 
-    await harness.read(addCompartmentUseCaseProvider).execute(freezerIdentifier);
+    await harness.read(addCompartmentUseCaseProvider).execute(storagePlaceIdentifier);
 
-    final compartments = await compartmentsOf(freezerIdentifier);
+    final compartments = await compartmentsOf(storagePlaceIdentifier);
     expect(compartments.map((compartment) => compartment.defaultNumber), [1, 2, 4]);
     expect(compartments.last.colorTagIndex, 3);
   });
 
   test('reorders compartments and rejects an incomplete order', () async {
-    final freezerIdentifier = await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
-    final compartments = await compartmentsOf(freezerIdentifier);
+    final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+    final compartments = await compartmentsOf(storagePlaceIdentifier);
     final reorderCompartments = harness.read(reorderCompartmentsUseCaseProvider);
 
     final incomplete = await reorderCompartments.execute(
-      freezerIdentifier: freezerIdentifier,
+      storagePlaceIdentifier: storagePlaceIdentifier,
       orderedCompartmentIdentifiers: [compartments.first.identifier],
     );
     await reorderCompartments.execute(
-      freezerIdentifier: freezerIdentifier,
+      storagePlaceIdentifier: storagePlaceIdentifier,
       orderedCompartmentIdentifiers: [
         for (final compartment in compartments.reversed) compartment.identifier,
       ],
@@ -154,15 +154,15 @@ void main() {
 
     expect(incomplete.failureOrNull, isA<InvalidOrder>());
     expect(
-      (await compartmentsOf(freezerIdentifier)).map((compartment) => compartment.defaultNumber),
+      (await compartmentsOf(storagePlaceIdentifier)).map((compartment) => compartment.defaultNumber),
       [3, 2, 1],
     );
   });
 
   group('removing a compartment', () {
     test('keeps the last compartment of a freezer', () async {
-      final freezerIdentifier = await createFreezer(FreezerTemplate.empty);
-      final onlyDrawer = (await compartmentsOf(freezerIdentifier)).single;
+      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.empty);
+      final onlyDrawer = (await compartmentsOf(storagePlaceIdentifier)).single;
 
       final result = await harness
           .read(moveContentsAndArchiveCompartmentUseCaseProvider)
@@ -172,8 +172,8 @@ void main() {
     });
 
     test('asks for a destination when the compartment holds items', () async {
-      final freezerIdentifier = await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
-      final [firstDrawer, secondDrawer, _] = await compartmentsOf(freezerIdentifier);
+      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final [firstDrawer, secondDrawer, _] = await compartmentsOf(storagePlaceIdentifier);
       compartmentContents.setItemCount(firstDrawer.identifier, 4);
       final removeCompartment = harness.read(moveContentsAndArchiveCompartmentUseCaseProvider);
 
@@ -197,7 +197,7 @@ void main() {
       ]);
       final layout = await harness.readLayout();
       expect(layout.compartmentOf(firstDrawer.identifier)!.isArchived, isTrue);
-      expect(layout.archivedCompartmentsOf(freezerIdentifier), hasLength(1));
+      expect(layout.archivedCompartmentsOf(storagePlaceIdentifier), hasLength(1));
       final archivedEvent = harness.publishedEvents.whereType<CompartmentArchived>().single;
       expect(archivedEvent.contentsMovedToCompartmentIdentifier, secondDrawer.identifier);
     });
@@ -205,28 +205,28 @@ void main() {
 
   group('removing a freezer', () {
     test('keeps the last freezer', () async {
-      final freezerIdentifier = await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
+      final storagePlaceIdentifier = await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
 
-      final result = await harness.read(archiveFreezerUseCaseProvider).execute(freezerIdentifier);
+      final result = await harness.read(archiveStoragePlaceUseCaseProvider).execute(storagePlaceIdentifier);
 
-      expect(result.failureOrNull, isA<LastFreezerCannotBeRemoved>());
+      expect(result.failureOrNull, isA<LastStoragePlaceCannotBeRemoved>());
     });
 
     test('only removes an empty freezer, together with its compartments', () async {
-      await createFreezer(FreezerTemplate.uprightWithThreeDrawers);
-      final cellar = await createFreezer(FreezerTemplate.chestWithBaskets);
+      await createStoragePlace(StorageTemplate.uprightWithThreeDrawers);
+      final cellar = await createStoragePlace(StorageTemplate.chestWithBaskets);
       final firstBasket = (await compartmentsOf(cellar)).first;
       compartmentContents.setItemCount(firstBasket.identifier, 2);
-      final archiveFreezer = harness.read(archiveFreezerUseCaseProvider);
+      final archiveStoragePlace = harness.read(archiveStoragePlaceUseCaseProvider);
 
-      final whileFull = await archiveFreezer.execute(cellar);
+      final whileFull = await archiveStoragePlace.execute(cellar);
       compartmentContents.removeAllItems();
-      final whenEmpty = await archiveFreezer.execute(cellar);
+      final whenEmpty = await archiveStoragePlace.execute(cellar);
 
-      expect(whileFull.failureOrNull, isA<FreezerNotEmpty>());
+      expect(whileFull.failureOrNull, isA<StoragePlaceNotEmpty>());
       expect(whenEmpty, const Result<Unit, StorageLayoutFailure>.success(unit));
       final layout = await harness.readLayout();
-      expect(layout.freezers, hasLength(1));
+      expect(layout.storagePlaces, hasLength(1));
       expect(layout.compartmentOf(firstBasket.identifier)!.isArchived, isTrue);
     });
   });

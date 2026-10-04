@@ -16,7 +16,7 @@ final class EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => switch (storageKind) {
+  String storagePlaceName(StorageKind storageKind) => switch (storageKind) {
     StorageKind.upright => 'Freezer',
     StorageKind.chest => 'Chest freezer',
     StorageKind.fridgeFreezerCompartment => 'Fridge freezer',

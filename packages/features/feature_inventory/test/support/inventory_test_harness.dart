@@ -18,7 +18,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -65,10 +65,10 @@ final class InventoryTestHarness {
   InventoryRepository get repository => read(inventoryRepositoryProvider);
 
   /// Seeds the catalog and creates a freezer with three drawers.
-  Future<List<Compartment>> setUpCatalogAndFreezer() async {
+  Future<List<Compartment>> setUpCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(_ModuleInitializationContext(this));
-    await read(createFreezerFromTemplateUseCaseProvider).execute(
-      template: FreezerTemplate.uprightWithThreeDrawers,
+    await read(createStoragePlaceFromTemplateUseCaseProvider).execute(
+      template: StorageTemplate.uprightWithThreeDrawers,
       enteredName: '',
       defaultNames: const _EnglishLayoutDefaultNames(),
     );
@@ -84,14 +84,14 @@ final class InventoryTestHarness {
     required Product product,
     required Compartment compartment,
     required int amountInBaseUnits,
-    CalendarDate? frozenOn,
+    CalendarDate? storedOn,
   }) async {
     final result = await read(addStockBatchUseCaseProvider).execute(
       AddStockBatchCommand(
         productIdentifier: product.identifier,
         compartmentIdentifier: compartment.identifier,
         quantity: Quantity(amountInBaseUnits: amountInBaseUnits, unit: product.canonicalUnit),
-        frozenOn: frozenOn ?? today,
+        storedOn: storedOn ?? today,
       ),
     );
     return result.valueOrNull!;

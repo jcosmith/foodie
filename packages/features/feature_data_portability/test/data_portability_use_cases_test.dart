@@ -71,7 +71,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -261,13 +261,13 @@ void main() {
     await const ProductCatalogFeatureModule().initializeModule(
       _ContainerInitializationContext(container),
     );
-    final freezerCreation = await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+    final storagePlaceCreation = await container
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: StorageTemplate.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
-    expect(freezerCreation.isSuccess, isTrue);
+    expect(storagePlaceCreation.isSuccess, isTrue);
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
     final catalog = await container.read(productCatalogQueryServiceProvider).readCatalog();
     final mincedMeat = catalog.activeProducts.firstWhere(
@@ -281,7 +281,7 @@ void main() {
                     productIdentifier: mincedMeat.identifier,
                     compartmentIdentifier: layout.activeCompartments.first.identifier,
                     quantity: const Quantity(amountInBaseUnits: 500, unit: QuantityUnit.gram),
-                    frozenOn: CalendarDate(2026, 9, 1),
+                    storedOn: CalendarDate(2026, 9, 1),
                     note: 'For lasagne, "the good one"',
                   ),
                 ))
@@ -312,7 +312,7 @@ void main() {
     final csvExport = container.read(csvExportUseCaseProvider);
 
     final contentsLines = (await csvExport.buildCsv(
-      CsvExportKind.freezerContents,
+      CsvExportKind.stockContents,
       texts,
     )).split('\r\n');
     final historyLines = (await csvExport.buildCsv(CsvExportKind.history, texts)).split('\r\n');
@@ -331,9 +331,9 @@ void main() {
       _ContainerInitializationContext(container),
     );
     await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: StorageTemplate.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
     await const DataPortabilityFeatureModule().initializeModule(
@@ -353,7 +353,7 @@ void main() {
               amountInBaseUnits: 1,
               unit: catalog.activeProducts.first.canonicalUnit,
             ),
-            frozenOn: CalendarDate(2026, 10, 1),
+            storedOn: CalendarDate(2026, 10, 1),
           ),
         );
     final firstReminder = notificationServices.scheduledRequests[7200];

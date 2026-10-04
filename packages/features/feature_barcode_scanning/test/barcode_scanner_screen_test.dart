@@ -22,7 +22,7 @@ void main() {
   tearDown(() => harness.dispose());
 
   Future<void> prepare(WidgetTester tester) => tester.runAsync(() async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     spinach = await harness.productWithKey('leafSpinach');
   });
 
@@ -94,8 +94,8 @@ void main() {
   testWidgets('scan to remove suggests the oldest bag and opens the take sheet', (tester) async {
     await prepare(tester);
     await tester.runAsync(() async {
-      await harness.addBatch(spinach, amountInBaseUnits: 300, frozenOn: CalendarDate(2026, 9, 20));
-      await harness.addBatch(spinach, amountInBaseUnits: 700, frozenOn: CalendarDate(2026, 6, 1));
+      await harness.addBatch(spinach, amountInBaseUnits: 300, storedOn: CalendarDate(2026, 9, 20));
+      await harness.addBatch(spinach, amountInBaseUnits: 700, storedOn: CalendarDate(2026, 6, 1));
       final resolution = await harness
           .read(resolveBarcodeUseCaseProvider)
           .execute(const ScannedBarcode(value: '4001234567891', symbology: BarcodeSymbology.ean13));

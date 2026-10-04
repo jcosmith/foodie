@@ -17,7 +17,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -82,7 +82,7 @@ void main() {
     await container
         .read(completeOnboardingUseCaseProvider)
         .execute(
-          freezerTemplate: FreezerTemplate.uprightWithFiveDrawers,
+          storageTemplate: StorageTemplate.uprightWithFiveDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
 
@@ -92,23 +92,23 @@ void main() {
       isTrue,
     );
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
-    expect(layout.freezers.single.compartments, hasLength(5));
+    expect(layout.storagePlaces.single.compartments, hasLength(5));
   });
 
   test('never adds a second freezer', () async {
     final completeOnboarding = container.read(completeOnboardingUseCaseProvider);
     for (final template in [
-      FreezerTemplate.chestWithBaskets,
-      FreezerTemplate.uprightWithThreeDrawers,
+      StorageTemplate.chestWithBaskets,
+      StorageTemplate.uprightWithThreeDrawers,
     ]) {
       await completeOnboarding.execute(
-        freezerTemplate: template,
+        storageTemplate: template,
         defaultNames: const _EnglishLayoutDefaultNames(),
       );
     }
 
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
-    expect(layout.freezers, hasLength(1));
-    expect(layout.freezers.single.freezer.storageKind, StorageKind.chest);
+    expect(layout.storagePlaces, hasLength(1));
+    expect(layout.storagePlaces.single.storagePlace.storageKind, StorageKind.chest);
   });
 }

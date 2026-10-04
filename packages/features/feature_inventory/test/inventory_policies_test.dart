@@ -1,5 +1,7 @@
 import 'package:core_foundation/core_foundation.dart';
 import 'package:feature_inventory/domain.dart';
+import 'package:feature_product_catalog/domain.dart';
+import 'package:feature_storage_layout/domain.dart';
 import 'package:feature_inventory/src/domain/removal_amount_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -41,28 +43,28 @@ void main() {
 
   group('StorageAgePolicy', () {
     test('finds the first day of each status', () {
-      final frozenOn = CalendarDate(2026, 1, 1);
+      final storedOn = CalendarDate(2026, 1, 1);
       for (final storageDays in [1, 7, 30, 90, 180, 365]) {
         for (final status in StorageAgeStatus.values) {
           final firstDay = StorageAgePolicy.firstDayWithStatus(
-            frozenOn: frozenOn,
+            storedOn: storedOn,
             recommendedMaximumStorageDays: storageDays,
             status: status,
           );
           StorageAgeStatus statusOn(CalendarDate day) => StorageAgePolicy.evaluate(
-            frozenOn: frozenOn,
+            storedOn: storedOn,
             today: day,
             recommendedMaximumStorageDays: storageDays,
           );
           expect(statusOn(firstDay).index, greaterThanOrEqualTo(status.index));
-          if (firstDay != frozenOn) {
+          if (firstDay != storedOn) {
             expect(statusOn(firstDay.addDays(-1)).index, lessThan(status.index));
           }
         }
       }
       expect(
         StorageAgePolicy.firstDayWithStatus(
-          frozenOn: frozenOn,
+          storedOn: storedOn,
           recommendedMaximumStorageDays: 100,
           status: StorageAgeStatus.urgent,
         ),
@@ -73,7 +75,7 @@ void main() {
     final today = CalendarDate(2026, 10, 2);
 
     StorageAgeStatus statusAfter(int storedDays) => StorageAgePolicy.evaluate(
-      frozenOn: today.addDays(-storedDays),
+      storedOn: today.addDays(-storedDays),
       today: today,
       recommendedMaximumStorageDays: 100,
     );
@@ -90,15 +92,15 @@ void main() {
     });
 
     test('a batch is overdue from the day its storage time is used up', () {
-      final frozenOn = CalendarDate(2026, 1, 1);
+      final storedOn = CalendarDate(2026, 1, 1);
       expect(
         StorageAgePolicy.firstDayWithStatus(
-          frozenOn: frozenOn,
+          storedOn: storedOn,
           recommendedMaximumStorageDays: 90,
           status: StorageAgeStatus.overdue,
         ),
         StorageAgePolicy.storageLimitReachedOn(
-          frozenOn: frozenOn,
+          storedOn: storedOn,
           recommendedMaximumStorageDays: 90,
         ),
       );
@@ -107,11 +109,64 @@ void main() {
     test('without a recommendation everything stays fresh', () {
       expect(
         StorageAgePolicy.evaluate(
-          frozenOn: today.addDays(-1000),
+          storedOn: today.addDays(-1000),
           today: today,
           recommendedMaximumStorageDays: 0,
         ),
         StorageAgeStatus.fresh,
+      );
+    });
+  });
+
+  group('StockBatch dates', () {
+    StockBatch batch({CalendarDate? bestBeforeOn, CalendarDate? openedOn}) => StockBatch(
+      identifier: const StockBatchIdentifier('batch-1'),
+      productIdentifier: const ProductIdentifier('product-1'),
+      compartmentIdentifier: const CompartmentIdentifier('shelf-1'),
+      initialQuantity: const Quantity(amountInBaseUnits: 1000, unit: QuantityUnit.milliliter),
+      quantityRemaining: const Quantity(amountInBaseUnits: 1000, unit: QuantityUnit.milliliter),
+      storedOn: CalendarDate(2026, 10, 1),
+      bestBeforeOn: bestBeforeOn,
+      openedOn: openedOn,
+      createdAt: DateTime.utc(2026, 10, 1),
+    );
+
+    test('only the stored-on date is required; best-before and opened-on are optional', () {
+      final plain = batch();
+      expect(plain.storedOn, CalendarDate(2026, 10, 1));
+      expect(plain.bestBeforeOn, isNull);
+      expect(plain.openedOn, isNull);
+      expect(plain.isOpened, isFalse);
+    });
+
+    test('opening a batch records the day and keeps everything else', () {
+      final opened = batch(bestBeforeOn: CalendarDate(2026, 10, 9)).copyWith(
+        openedOn: () => CalendarDate(2026, 10, 3),
+      );
+      expect(opened.openedOn, CalendarDate(2026, 10, 3));
+      expect(opened.isOpened, isTrue);
+      expect(opened.bestBeforeOn, CalendarDate(2026, 10, 9));
+      expect(opened, isNot(batch(bestBeforeOn: CalendarDate(2026, 10, 9))));
+      expect(opened.copyWith(openedOn: () => null).isOpened, isFalse);
+    });
+  });
+
+  group('DiscardReason', () {
+    test('adds expired and spoiled, stored by name', () {
+      expect(DiscardReason.fromStorageName('expired'), DiscardReason.expired);
+      expect(DiscardReason.fromStorageName('spoiled'), DiscardReason.spoiled);
+      expect(DiscardReason.fromStorageName('freezerBurn'), DiscardReason.freezerBurn);
+    });
+
+    test('freezer burn is only offered for frozen food', () {
+      expect(
+        DiscardReason.offeredFor(isFrozen: true),
+        containsAll([DiscardReason.freezerBurn, DiscardReason.expired, DiscardReason.spoiled]),
+      );
+      expect(DiscardReason.offeredFor(isFrozen: false), isNot(contains(DiscardReason.freezerBurn)));
+      expect(
+        DiscardReason.offeredFor(isFrozen: false),
+        containsAll([DiscardReason.tooOld, DiscardReason.expired, DiscardReason.spoiled]),
       );
     });
   });

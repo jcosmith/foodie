@@ -18,7 +18,7 @@ void main() {
 
   setUp(() async {
     harness = StorageRemindersTestHarness();
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
   });
   tearDown(() => harness.dispose());
 
@@ -42,7 +42,7 @@ void main() {
   Future<void> addOldBatch(WidgetTester tester, String catalogKey, int daysAgo) async {
     await tester.runAsync(() async {
       final product = await harness.productWithKey(catalogKey);
-      await harness.addBatch(product, frozenOn: harness.today.addDays(-daysAgo));
+      await harness.addBatch(product, storedOn: harness.today.addDays(-daysAgo));
     });
   }
 

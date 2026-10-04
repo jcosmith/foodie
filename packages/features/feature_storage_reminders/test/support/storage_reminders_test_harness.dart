@@ -16,7 +16,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';
@@ -67,12 +67,12 @@ final class StorageRemindersTestHarness {
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);
 
-  Future<void> seedCatalogAndFreezer() async {
+  Future<void> seedCatalogAndStoragePlace() async {
     await const ProductCatalogFeatureModule().initializeModule(initializationContext);
     await container
-        .read(createFreezerFromTemplateUseCaseProvider)
+        .read(createStoragePlaceFromTemplateUseCaseProvider)
         .execute(
-          template: FreezerTemplate.uprightWithThreeDrawers,
+          template: StorageTemplate.uprightWithThreeDrawers,
           defaultNames: const _EnglishLayoutDefaultNames(),
         );
   }
@@ -87,7 +87,7 @@ final class StorageRemindersTestHarness {
     return catalog.recommendedMaximumStorageDaysOf(product)!;
   }
 
-  Future<StockBatchIdentifier> addBatch(Product product, {required CalendarDate frozenOn}) async {
+  Future<StockBatchIdentifier> addBatch(Product product, {required CalendarDate storedOn}) async {
     final layout = await container.read(storageLayoutQueryServiceProvider).readStorageLayout();
     final result = await container
         .read(addStockBatchUseCaseProvider)
@@ -98,7 +98,7 @@ final class StorageRemindersTestHarness {
             quantity:
                 product.defaultPackageQuantity ??
                 Quantity(amountInBaseUnits: 1, unit: product.canonicalUnit),
-            frozenOn: frozenOn,
+            storedOn: storedOn,
           ),
         );
     return result.valueOrNull!;

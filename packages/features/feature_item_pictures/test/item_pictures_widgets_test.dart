@@ -23,7 +23,7 @@ void main() {
   tearDown(() => harness.dispose());
 
   Future<void> prepare(WidgetTester tester) => tester.runAsync(() async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     await harness.startPictureModule();
     spinach = await harness.productWithKey('leafSpinach');
   });

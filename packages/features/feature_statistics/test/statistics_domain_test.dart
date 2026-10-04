@@ -20,6 +20,7 @@ Category _category(CategoryIdentifier identifier, String? catalogKey, int sortOr
   recommendedMaximumStorageDays: 180,
   iconEmoji: '❄️',
   sortOrder: sortOrder,
+  storageDomain: StorageDomainIdentifier.freezer,
 );
 
 StatisticsMovementFact _fact({

@@ -23,6 +23,7 @@ void main() {
         recommendedMaximumStorageDays: 365,
         iconEmoji: '🥦',
         sortOrder: 0,
+        storageDomain: 'freezer',
       ),
     );
     for (final productIdentifier in ['peas', 'spinach']) {

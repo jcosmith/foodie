@@ -1,6 +1,6 @@
 import 'package:core_design_system/testing.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
-import 'package:feature_storage_layout/src/presentation/freezer_layout_editor_screen.dart';
+import 'package:feature_storage_layout/src/presentation/storage_place_editor_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,15 +17,15 @@ void main() {
   });
   tearDown(() => harness.dispose());
 
-  Future<FreezerIdentifier> showEditor(
+  Future<StoragePlaceIdentifier> showEditor(
     WidgetTester tester, {
     Locale locale = const Locale('en'),
   }) async {
-    final freezerIdentifier = (await tester.runAsync(
+    final storagePlaceIdentifier = (await tester.runAsync(
       () => harness
-          .read(createFreezerFromTemplateUseCaseProvider)
+          .read(createStoragePlaceFromTemplateUseCaseProvider)
           .execute(
-            template: FreezerTemplate.uprightWithThreeDrawers,
+            template: StorageTemplate.uprightWithThreeDrawers,
             defaultNames: const EnglishLayoutDefaultNames(),
           ),
     ))!.valueOrNull!;
@@ -35,12 +35,12 @@ void main() {
         child: buildLocalizedTestApplication(
           locale: locale,
           featureLocalizationDelegates: const StorageLayoutFeatureModule().localizationDelegates,
-          home: FreezerLayoutEditorScreen(freezerIdentifier: freezerIdentifier),
+          home: StoragePlaceEditorScreen(storagePlaceIdentifier: storagePlaceIdentifier),
         ),
       ),
     );
     await _settle(tester);
-    return freezerIdentifier;
+    return storagePlaceIdentifier;
   }
 
   testWidgets('shows the drawers with their translated default names', (tester) async {
@@ -65,9 +65,9 @@ void main() {
   });
 
   testWidgets('adds a drawer and asks where the items of a removed drawer go', (tester) async {
-    final freezerIdentifier = await showEditor(tester);
+    final storagePlaceIdentifier = await showEditor(tester);
     final layout = (await tester.runAsync(harness.readLayout))!;
-    final firstDrawer = layout.freezerLayoutOf(freezerIdentifier)!.compartments.first;
+    final firstDrawer = layout.storagePlaceLayoutOf(storagePlaceIdentifier)!.compartments.first;
     compartmentContents.setItemCount(firstDrawer.identifier, 2);
 
     await tester.tap(find.text('Add drawer'));

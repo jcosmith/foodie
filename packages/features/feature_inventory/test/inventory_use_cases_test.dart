@@ -16,7 +16,7 @@ void main() {
 
   setUp(() async {
     harness = InventoryTestHarness();
-    drawers = await harness.setUpCatalogAndFreezer();
+    drawers = await harness.setUpCatalogAndStoragePlace();
     mincedMeat = await harness.seededProduct('mincedMeat');
     fishFingers = await harness.seededProduct('fishFingers');
   });
@@ -48,12 +48,12 @@ void main() {
 
     test('refuses nothing, a wrong unit and a date in the future', () async {
       final addStockBatch = harness.read(addStockBatchUseCaseProvider);
-      AddStockBatchCommand command({required Quantity quantity, CalendarDate? frozenOn}) =>
+      AddStockBatchCommand command({required Quantity quantity, CalendarDate? storedOn}) =>
           AddStockBatchCommand(
             productIdentifier: mincedMeat.identifier,
             compartmentIdentifier: drawers[0].identifier,
             quantity: quantity,
-            frozenOn: frozenOn ?? InventoryTestHarness.today,
+            storedOn: storedOn ?? InventoryTestHarness.today,
           );
 
       expect(
@@ -68,9 +68,9 @@ void main() {
       );
       expect(
         (await addStockBatch.execute(
-          command(quantity: grams(500), frozenOn: InventoryTestHarness.today.addDays(1)),
+          command(quantity: grams(500), storedOn: InventoryTestHarness.today.addDays(1)),
         )).failureOrNull,
-        isA<FrozenOnInFuture>(),
+        isA<StoredOnInFuture>(),
       );
       expect(await harness.read(inventoryQueryServiceProvider).readActiveBatches(), isEmpty);
     });
@@ -81,7 +81,7 @@ void main() {
         productIdentifier: product.identifier,
         compartmentIdentifier: drawers[1].identifier,
         quantity: quantity,
-        frozenOn: InventoryTestHarness.today,
+        storedOn: InventoryTestHarness.today,
       );
       final fishFingerBox = fishFingers.defaultPackageQuantity!;
 
@@ -219,7 +219,7 @@ void main() {
         product: fishFingers,
         compartment: drawers[0],
         amountInBaseUnits: 15000,
-        frozenOn: InventoryTestHarness.today.addDays(-30),
+        storedOn: InventoryTestHarness.today.addDays(-30),
       );
 
       final result = await harness
@@ -236,7 +236,7 @@ void main() {
       expect(splitOffBatch.parentBatchIdentifier, batchIdentifier);
       expect(splitOffBatch.compartmentIdentifier, drawers[2].identifier);
       expect(splitOffBatch.quantityRemaining.amountInBaseUnits, 5000);
-      expect(splitOffBatch.frozenOn, originalBatch.frozenOn);
+      expect(splitOffBatch.storedOn, originalBatch.storedOn);
       expect(originalBatch.quantityRemaining.amountInBaseUnits, 10000);
       expect(originalBatch.compartmentIdentifier, drawers[0].identifier);
     });
@@ -308,7 +308,7 @@ void main() {
       product: mincedMeat,
       compartment: drawers[1],
       amountInBaseUnits: 500,
-      frozenOn: InventoryTestHarness.today.addDays(-250),
+      storedOn: InventoryTestHarness.today.addDays(-250),
     );
 
     // Riverpod pauses providers nobody listens to.

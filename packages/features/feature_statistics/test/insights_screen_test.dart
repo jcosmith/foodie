@@ -66,7 +66,7 @@ Future<void> _settle(WidgetTester tester) async {
 
 /// Peas and chicken by weight, pizza by the piece, over the last 40 days.
 Future<void> _recordHistory(StatisticsTestHarness harness) async {
-  await harness.seedCatalogAndFreezer();
+  await harness.seedCatalogAndStoragePlace();
   final peas = await harness.productWithKey('gardenPeas');
   final chicken = await harness.productWithKey('chickenBreast');
   final pizza = await harness.productWithKey('pizzaMargherita');
@@ -88,7 +88,7 @@ void main() {
   tearDown(() => harness.dispose());
 
   testWidgets('explains that insights need some history first', (tester) async {
-    await tester.runAsync(harness.seedCatalogAndFreezer);
+    await tester.runAsync(harness.seedCatalogAndStoragePlace);
     await _pumpInsights(tester, harness);
 
     expect(find.text('No activity yet'), findsOneWidget);

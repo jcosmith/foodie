@@ -241,9 +241,9 @@ void main() {
               marker: const ColumnBarMarker(position: 2, label: '6 mo'),
               onColumnTapped: tappedColumns.add,
             ),
-            FreezerMap(
+            StorageMap(
               drawers: const [
-                FreezerMapDrawer(
+                StorageMapCompartment(
                   label: 'Drawer 1',
                   tagColor: Colors.blue,
                   itemCountLabel: '3 items',

@@ -29,7 +29,7 @@ void main() {
 
   setUp(() async {
     harness = RestockTestHarness();
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     await const RestockFeatureModule().initializeModule(harness.initializationContext);
     spinach = await harness.productWithKey('leafSpinach');
   });
@@ -111,7 +111,7 @@ void main() {
         .read(tickShoppingListEntryUseCaseProvider)
         .execute(entryIdentifier, isChecked: true);
 
-    final result = await harness.read(putTickedItemsInFreezerUseCaseProvider).execute();
+    final result = await harness.read(putTickedItemsAwayUseCaseProvider).execute();
 
     final layout = await harness.read(storageLayoutQueryServiceProvider).readStorageLayout();
     final newBatch =
@@ -122,7 +122,7 @@ void main() {
     expect(result.valueOrNull, 1);
     expect(newBatch.compartmentIdentifier, layout.activeCompartments[2].identifier);
     expect(newBatch.quantityRemaining, peas.defaultPackageQuantity);
-    expect(newBatch.frozenOn, harness.today);
+    expect(newBatch.storedOn, harness.today);
     expect(await shoppingList(), isEmpty);
   });
 
@@ -146,7 +146,7 @@ void main() {
         .read(tickShoppingListEntryUseCaseProvider)
         .execute(automaticEntry.identifier, isChecked: true);
 
-    await harness.read(putTickedItemsInFreezerUseCaseProvider).execute();
+    await harness.read(putTickedItemsAwayUseCaseProvider).execute();
 
     expect(await stockOf(spinach), _grams(3000));
     expect(await shoppingList(), isEmpty);

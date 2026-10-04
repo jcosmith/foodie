@@ -24,7 +24,7 @@ void main() {
 
   setUp(() async {
     harness = RestockTestHarness();
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     await const RestockFeatureModule().initializeModule(harness.initializationContext);
     spinach = await harness.productWithKey('leafSpinach');
     await harness

@@ -58,9 +58,9 @@ final class ProductCatalogTestHarness {
       container.read(productCatalogQueryServiceProvider).readCatalog();
 
   /// Creates a freezer with three drawers, for products' default drawers.
-  Future<List<Compartment>> setUpFreezer() async {
-    await read(createFreezerFromTemplateUseCaseProvider).execute(
-      template: FreezerTemplate.uprightWithThreeDrawers,
+  Future<List<Compartment>> setUpStoragePlace() async {
+    await read(createStoragePlaceFromTemplateUseCaseProvider).execute(
+      template: StorageTemplate.uprightWithThreeDrawers,
       enteredName: 'Freezer',
       defaultNames: const _EnglishLayoutDefaultNames(),
     );
@@ -78,7 +78,7 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
   const _EnglishLayoutDefaultNames();
 
   @override
-  String freezerName(StorageKind storageKind) => 'Freezer';
+  String storagePlaceName(StorageKind storageKind) => 'Freezer';
 
   @override
   String compartmentName(StorageKind storageKind, int number) => 'Drawer $number';

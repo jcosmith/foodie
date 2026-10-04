@@ -65,7 +65,7 @@ Future<void> _settle(WidgetTester tester) async {
 /// Today is Friday 2 October 2026. Peas eaten on Saturday 12 and Sunday 27
 /// September, pizza on Tuesday 29 September; chicken thrown away.
 Future<void> _recordHistory(StatisticsTestHarness harness) async {
-  await harness.seedCatalogAndFreezer();
+  await harness.seedCatalogAndStoragePlace();
   final peas = await harness.productWithKey('gardenPeas');
   final chicken = await harness.productWithKey('chickenBreast');
   final pizza = await harness.productWithKey('pizzaMargherita');
@@ -100,7 +100,7 @@ void main() {
     expect(find.bySemanticsLabel('< 1 mo: 2'), findsOneWidget);
     expect(find.bySemanticsLabel('1–3 mo: 1'), findsOneWidget);
     expect(find.text('Freezer map'), findsOneWidget);
-    expect(find.byType(FreezerMap), findsOneWidget);
+    expect(find.byType(StorageMap), findsOneWidget);
     // The contributed chart sees the same 90-day period.
     expect(find.text('Contributed: 90 days, 0 categories'), findsOneWidget);
   });
@@ -162,7 +162,7 @@ void main() {
   });
 
   test('saved views keep every filter choice through the preference codec', () async {
-    await harness.seedCatalogAndFreezer();
+    await harness.seedCatalogAndStoragePlace();
     final catalog = await harness.read(productCatalogQueryServiceProvider).readCatalog();
     final layout = await harness.read(storageLayoutQueryServiceProvider).readStorageLayout();
     final filter = SuggestedStatisticsView.weekendMeals

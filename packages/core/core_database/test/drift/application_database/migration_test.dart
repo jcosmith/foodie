@@ -1,4 +1,5 @@
 import 'package:core_database/src/application_database.dart';
+import 'package:core_foundation/core_foundation.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -61,5 +62,47 @@ void main() {
         ]);
       },
     );
+  });
+  test('upgrading from v8 to v9 renames freezers to storage places and keeps every row', () async {
+    final schema = await verifier.schemaAt(8);
+    final oldDatabase = schema.rawDatabase;
+    const createdAt = '2026-09-01T10:00:00.000Z';
+    oldDatabase
+      ..execute(
+        "INSERT INTO freezers VALUES ('freezer-1', 'kitchen_freezer', 'Kitchen', 'upright', 0, 0, '$createdAt')",
+      )
+      ..execute(
+        "INSERT INTO compartments VALUES ('drawer-1', 'freezer-1', 1, NULL, 0, 0, 0, '$createdAt')",
+      )
+      ..execute("INSERT INTO categories VALUES ('category-1', 'vegetables', NULL, 365, '🥦', 0)")
+      ..execute(
+        "INSERT INTO products (product_identifier, category_identifier, catalog_key, canonical_unit, "
+        "is_archived, created_at) VALUES ('product-1', 'category-1', 'leafSpinach', 'gram', 0, '$createdAt')",
+      )
+      ..execute(
+        "INSERT INTO stock_batches (stock_batch_identifier, product_identifier, compartment_identifier, "
+        "quantity_unit, initial_quantity, quantity_remaining, frozen_on, best_before_on, created_at) "
+        "VALUES ('batch-1', 'product-1', 'drawer-1', 'gram', 1000, 800, '2026-08-01', '2027-08-01', '$createdAt')",
+      );
+
+    final database = ApplicationDatabase(schema.newConnection());
+    addTearDown(database.close);
+
+    final storagePlace = (await database.storageLayoutDao.readStoragePlaces()).single;
+    expect(storagePlace.storagePlaceIdentifier, 'freezer-1');
+    expect(storagePlace.customName, 'Kitchen');
+    expect(storagePlace.storageKind, 'upright');
+    expect((await database.storageLayoutDao.readCompartments()).single.storagePlaceIdentifier, 'freezer-1');
+
+    final category = (await database.productCatalogDao.readCategories()).single;
+    expect(category.storageDomain, 'freezer');
+    expect(category.shelfLifeAfterOpeningDays, isNull);
+    expect((await database.productCatalogDao.readProduct('product-1'))!.shelfLifeAfterOpeningDays, isNull);
+
+    final batch = (await database.inventoryDao.readBatch('batch-1'))!;
+    expect(batch.storedOn, CalendarDate(2026, 8, 1));
+    expect(batch.bestBeforeOn, CalendarDate(2027, 8, 1));
+    expect(batch.openedOn, isNull);
+    expect(batch.quantityRemaining, 800);
   });
 }
