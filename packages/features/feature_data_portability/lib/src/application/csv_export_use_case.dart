@@ -65,8 +65,8 @@ final class CsvExportUseCase {
     final csvText = await buildCsv(kind, texts);
     final dateText = CalendarDate.fromDateTime(_clock.nowLocal()).toIso8601String();
     final fileName = switch (kind) {
-      CsvExportKind.stockContents => 'freezer-contents-$dateText.csv',
-      CsvExportKind.history => 'freezer-history-$dateText.csv',
+      CsvExportKind.stockContents => 'foodie-contents-$dateText.csv',
+      CsvExportKind.history => 'foodie-history-$dateText.csv',
     };
     return _fileStore.saveFile(
       fileName: fileName,

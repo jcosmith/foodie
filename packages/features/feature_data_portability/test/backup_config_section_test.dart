@@ -118,7 +118,7 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Save backup').last);
     await _settleUntilFound(tester, find.text('Backup saved'));
 
-    expect(fileStore.savedFileName, 'freezer-backup-2026-10-02.freezerbackup');
+    expect(fileStore.savedFileName, 'foodie-backup-2026-10-02.foodiebackup');
     expect(fileStore.savedBytes, isNotEmpty);
     expect(find.text('No backup yet'), findsNothing);
   });
@@ -166,7 +166,7 @@ void main() {
     await _settleUntilFound(tester, find.text('Backup saved'));
 
     final manifest = await tester.runAsync(() async {
-      final backupFile = File('${temporaryDirectory.path}/saved.freezerbackup')
+      final backupFile = File('${temporaryDirectory.path}/saved.foodiebackup')
         ..writeAsBytesSync(fileStore.savedBytes!);
       final inspection = await DatabaseBackupGateway(
         database,

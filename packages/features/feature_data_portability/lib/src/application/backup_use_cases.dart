@@ -27,7 +27,7 @@ final class CreateBackupUseCase {
        _clock = clock,
        _applicationVersion = applicationVersion;
 
-  static const String fileExtension = 'freezerbackup';
+  static const String fileExtension = 'foodiebackup';
 
   final DatabaseBackupGateway _backupGateway;
   final BackupFileAccess _pictureFiles;
@@ -56,7 +56,7 @@ final class CreateBackupUseCase {
 
     final createdAt = _clock.nowUtc();
     final fileName =
-        'freezer-backup-${CalendarDate.fromDateTime(_clock.nowLocal()).toIso8601String()}'
+        'foodie-backup-${CalendarDate.fromDateTime(_clock.nowLocal()).toIso8601String()}'
         '.$fileExtension';
     final scratchDirectory = await _fileStore.createScratchDirectory();
     try {

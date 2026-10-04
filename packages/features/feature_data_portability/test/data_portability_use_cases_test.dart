@@ -158,7 +158,7 @@ void main() {
   test('saves a backup and remembers when', () async {
     await saveBackup();
 
-    expect(fileStore.savedFileName, 'freezer-backup-2026-10-02.freezerbackup');
+    expect(fileStore.savedFileName, 'foodie-backup-2026-10-02.foodiebackup');
     expect(
       await container
           .read(preferencesStoreProvider)

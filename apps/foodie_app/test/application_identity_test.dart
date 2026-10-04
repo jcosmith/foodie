@@ -4,8 +4,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 // The app is called Foodie everywhere a user or a developer sees its name,
-// while the Android application id stays, so an installed app updates in
-// place without losing its data (architecture 10.7, "App shell").
+// including its Android application id and iOS bundle id, so installing it
+// no longer offers to update the former Freezer app (architecture 10.7,
+// "App shell"). Data from Freezer moves over with a backup.
 void main() {
   String read(String relativePath) => File(relativePath).readAsStringSync();
 
@@ -30,20 +31,16 @@ void main() {
     expect(infoPlist, contains('<key>CFBundleName</key>\n\t<string>foodie_app</string>'));
   });
 
-  test('the Android application id is unchanged so updates install over 0.1.x', () {
+  test('the Android and iOS ids are Foodie ids, not the former Freezer app', () {
+    final gradle = read('android/app/build.gradle.kts');
+    expect(gradle, contains('applicationId = "io.github.jcosmith.foodie"'));
+    expect(gradle, contains('namespace = "io.github.jcosmith.foodie"'));
+    expect(gradle, isNot(contains('freezer')));
     expect(
-      read('android/app/build.gradle.kts'),
-      contains('applicationId = "io.github.jcosmith.freezer_app"'),
+      File('android/app/src/main/kotlin/io/github/jcosmith/foodie/MainActivity.kt').existsSync(),
+      isTrue,
     );
-  });
-
-  test('version 0.0.2 keeps a build number above 0.1.1+2, so phones update in place', () {
-    final version = RegExp(
-      r'^version: ([0-9.]+)\+([0-9]+)$',
-      multiLine: true,
-    ).firstMatch(read('pubspec.yaml'))!;
-    expect(version.group(1), '0.0.2');
-    expect(int.parse(version.group(2)!), greaterThan(2));
+    expect(read('ios/Runner.xcodeproj/project.pbxproj'), isNot(contains('freezerApp')));
   });
 
   test('the release build tolerates the ML Kit models it leaves out', () {

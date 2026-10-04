@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "io.github.jcosmith.freezer_app"
+    namespace = "io.github.jcosmith.foodie"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -18,7 +18,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.jcosmith.freezer_app"
+        applicationId = "io.github.jcosmith.foodie"
         // flutter_secure_storage needs API 23 for its Keystore-based ciphers.
         minSdk = maxOf(flutter.minSdkVersion, 23)
         targetSdk = flutter.targetSdkVersion

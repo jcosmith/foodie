@@ -79,7 +79,7 @@ final class DevicePlatformServices implements ApplicationPlatformServices {
   /// nothing: its per-app language setting restarts the app in that
   /// language, which Flutter reports as the phone's locale.
   static const MethodChannel _applicationLanguageChannel = MethodChannel(
-    'io.github.jcosmith.freezer/application_language',
+    'io.github.jcosmith.foodie/application_language',
   );
 
   @override
