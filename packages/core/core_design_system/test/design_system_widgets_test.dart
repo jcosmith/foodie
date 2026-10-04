@@ -20,6 +20,25 @@ Widget _wrapInApp(Widget child, {Locale locale = SupportedLocales.english, Theme
     );
 
 void main() {
+  testWidgets('a filled field keeps its floating label inside the field', (tester) async {
+    final controller = TextEditingController(text: 'Peas');
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      _wrapInApp(
+        SizedBox(
+          width: 300,
+          child: TextField(
+            controller: controller,
+            decoration: const InputDecoration(labelText: 'Product'),
+          ),
+        ),
+      ),
+    );
+    final field = tester.getRect(find.byType(InputDecorator));
+    final label = tester.getRect(find.text('Product'));
+    expect(label.top, greaterThanOrEqualTo(field.top), reason: 'not on the top edge');
+  });
+
   testWidgets('age badge shows a symbol and a word, not only a colour', (tester) async {
     await tester.pumpWidget(_wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.urgent)));
     expect(find.text('▲ Use now'), findsOneWidget);
