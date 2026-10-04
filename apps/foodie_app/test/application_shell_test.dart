@@ -266,6 +266,31 @@ void main() {
     await _stopApplication(tester);
   });
 
+  testWidgets('seven tab labels stay on one line on a narrow phone', (tester) async {
+    tester.platformDispatcher.localesTestValue = const [Locale('en')];
+    addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+    tester.view.physicalSize = const Size(360, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await _startApplication(tester);
+    await _openOptions(tester);
+    final householdSwitch = find.widgetWithText(SwitchListTile, 'Household');
+    await tester.ensureVisible(householdSwitch);
+    await _settle(tester);
+    await tester.tap(householdSwitch);
+    await _settle(tester);
+
+    Finder label(String text) =>
+        find.descendant(of: find.byType(NavigationBar), matching: find.text(text));
+    final oneLine = tester.getSize(label('Home')).height;
+    for (final text in ['Freezer', 'Fridge', 'Pantry', 'Household', 'Lists', 'More']) {
+      expect(tester.getSize(label(text)).height, oneLine, reason: text);
+      expect(tester.getSize(label(text)).width, lessThanOrEqualTo(360 / 7), reason: text);
+    }
+
+    await _stopApplication(tester);
+  });
+
   testWidgets('Receipts join the Lists tab once receipt scanning is switched on', (tester) async {
     tester.platformDispatcher.localesTestValue = const [Locale('en')];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
