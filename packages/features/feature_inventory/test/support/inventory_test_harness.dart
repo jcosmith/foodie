@@ -104,6 +104,7 @@ final class InventoryTestHarness {
     required Compartment compartment,
     required int amountInBaseUnits,
     CalendarDate? storedOn,
+    CalendarDate? bestBeforeOn,
   }) async {
     final result = await read(addStockBatchUseCaseProvider).execute(
       AddStockBatchCommand(
@@ -111,6 +112,7 @@ final class InventoryTestHarness {
         compartmentIdentifier: compartment.identifier,
         quantity: Quantity(amountInBaseUnits: amountInBaseUnits, unit: product.canonicalUnit),
         storedOn: storedOn ?? today,
+        bestBeforeOn: bestBeforeOn,
       ),
     );
     return result.valueOrNull!;

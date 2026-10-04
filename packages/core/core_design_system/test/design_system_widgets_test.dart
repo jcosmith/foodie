@@ -22,13 +22,21 @@ Widget _wrapInApp(Widget child, {Locale locale = SupportedLocales.english, Theme
 void main() {
   testWidgets('age badge shows a symbol and a word, not only a colour', (tester) async {
     await tester.pumpWidget(_wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.urgent)));
-    expect(find.text('▲ Eat now'), findsOneWidget);
+    expect(find.text('▲ Use now'), findsOneWidget);
   });
 
-  testWidgets('an overdue item says so instead of "Eat now"', (tester) async {
+  testWidgets('age badge can say when to use the item instead', (tester) async {
+    await tester.pumpWidget(
+      _wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.urgent, label: 'Use today')),
+    );
+    expect(find.text('▲ Use today'), findsOneWidget);
+    expect(find.bySemanticsLabel('Use today'), findsOneWidget);
+  });
+
+  testWidgets('an overdue item says so instead of "Use now"', (tester) async {
     await tester.pumpWidget(_wrapInApp(const StorageAgeBadge(level: StorageAgeLevel.overdue)));
     expect(find.text('✕ Overdue'), findsOneWidget);
-    expect(find.textContaining('Eat now'), findsNothing);
+    expect(find.textContaining('Use now'), findsNothing);
   });
 
   testWidgets('age badge is translated', (tester) async {

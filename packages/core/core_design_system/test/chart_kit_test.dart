@@ -261,7 +261,7 @@ void main() {
       ),
     );
     await tester.tap(find.bySemanticsLabel('Wed: 5'));
-    await tester.tap(find.bySemanticsLabel('Drawer 1, 3 items, Fresh: 2, Eat now: 1'));
+    await tester.tap(find.bySemanticsLabel('Drawer 1, 3 items, Fresh: 2, Use now: 1'));
     expect(tappedColumns, [2]);
     expect(tappedDrawers, [0]);
     expect(find.text('▲ 6 mo'), findsOneWidget);

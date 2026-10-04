@@ -148,7 +148,48 @@ void main() {
     await _settle(tester);
 
     expect(find.text('✕ Overdue'), findsOneWidget);
-    expect(find.textContaining('Eat now'), findsNothing);
+    expect(find.textContaining('Use now'), findsNothing);
+  });
+
+  testWidgets('badges say by when to use food that is due soon', (tester) async {
+    final today = InventoryTestHarness.today;
+    await tester.runAsync(() async {
+      final drawers = await harness.setUpCatalogAndStoragePlace();
+      for (final (catalogKey, bestBeforeOn) in [
+        ('leafSpinach', today),
+        ('mincedMeat', today.addDays(1)),
+        ('wholegrainBread', today.addDays(3)),
+        ('gardenPeas', today.addDays(-1)),
+      ]) {
+        await harness.addBatch(
+          product: await harness.seededProduct(catalogKey),
+          compartment: drawers.first,
+          amountInBaseUnits: 500,
+          storedOn: today.addDays(-10),
+          bestBeforeOn: bestBeforeOn,
+        );
+      }
+    });
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: harness.container,
+        child: buildLocalizedTestApplication(
+          featureLocalizationDelegates: [
+            ...const InventoryFeatureModule().localizationDelegates,
+            ...const ProductCatalogFeatureModule().localizationDelegates,
+            ...const StorageLayoutFeatureModule().localizationDelegates,
+          ],
+          home: const InventoryOverviewScreen(domainIdentifier: StorageDomainIdentifier.freezer),
+        ),
+      ),
+    );
+    await _settle(tester);
+
+    expect(find.text('▲ Use today'), findsOneWidget);
+    expect(find.text('◐ Use by tomorrow'), findsOneWidget);
+    // 2 October 2026 is a Friday.
+    expect(find.text('◐ Use by Mon'), findsOneWidget);
+    expect(find.text('✕ Past best before'), findsOneWidget);
   });
 
   testWidgets('"Use first" lists the least freshness time left first', (tester) async {

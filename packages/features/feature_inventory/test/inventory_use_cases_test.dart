@@ -319,7 +319,8 @@ void main() {
     final item = overview.items.single;
     expect(item.product.identifier, mincedMeat.identifier);
     expect(item.compartment?.identifier, drawers[1].identifier);
-    expect(item.storageAgeStatus, StorageAgeStatus.urgent);
+    expect(item.useByStatus, UseByStatus.urgent);
+    expect(item.useBy?.lastGoodDay, InventoryTestHarness.today.addDays(19));
     expect(overview.itemsIn(drawers[1].identifier), [item]);
   });
 }

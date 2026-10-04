@@ -41,80 +41,119 @@ void main() {
     });
   });
 
-  group('StorageAgePolicy', () {
+  group('UseByPolicy', () {
+    final today = CalendarDate(2026, 10, 2);
+
+    UseByDeadline shelfLifeOf(int days, {CalendarDate? storedOn}) =>
+        UseByPolicy.deadlineOf(storedOn: storedOn ?? today, shelfLifeDays: days)!;
+
+    test('the earliest of shelf life, best before and opened wins', () {
+      final storedOn = CalendarDate(2026, 10, 1);
+      final onlyShelfLife = UseByPolicy.deadlineOf(storedOn: storedOn, shelfLifeDays: 30)!;
+      expect(onlyShelfLife.reason, UseByReason.shelfLife);
+      expect(onlyShelfLife.lastGoodDay, CalendarDate(2026, 10, 30));
+      expect(onlyShelfLife.overdueFrom, CalendarDate(2026, 10, 31));
+
+      final bestBefore = UseByPolicy.deadlineOf(
+        storedOn: storedOn,
+        shelfLifeDays: 30,
+        bestBeforeOn: CalendarDate(2026, 10, 10),
+      )!;
+      expect(bestBefore.reason, UseByReason.bestBefore);
+      expect(bestBefore.lastGoodDay, CalendarDate(2026, 10, 10));
+
+      final opened = UseByPolicy.deadlineOf(
+        storedOn: storedOn,
+        shelfLifeDays: 30,
+        bestBeforeOn: CalendarDate(2026, 10, 10),
+        openedOn: CalendarDate(2026, 10, 3),
+        shelfLifeAfterOpeningDays: 3,
+      )!;
+      expect(opened.reason, UseByReason.opened);
+      expect(opened.countsFrom, CalendarDate(2026, 10, 3));
+      expect(opened.lastGoodDay, CalendarDate(2026, 10, 5));
+
+      expect(
+        UseByPolicy.deadlineOf(
+          storedOn: storedOn,
+          openedOn: CalendarDate(2026, 10, 3),
+          shelfLifeAfterOpeningDays: null,
+        ),
+        isNull,
+        reason: 'opening matters only with a shelf life after opening',
+      );
+      expect(UseByPolicy.deadlineOf(storedOn: storedOn), isNull, reason: 'most supplies');
+      expect(UseByPolicy.deadlineOf(storedOn: storedOn, shelfLifeDays: 0), isNull);
+    });
+
+    test('fresh until 60 %, aging until 85 %, urgent until used up, then overdue', () {
+      final deadline = shelfLifeOf(100, storedOn: today);
+      UseByStatus statusAfter(int days) => deadline.statusOn(today.addDays(days));
+      expect(statusAfter(0), UseByStatus.fresh);
+      expect(statusAfter(59), UseByStatus.fresh);
+      expect(statusAfter(60), UseByStatus.aging);
+      expect(statusAfter(84), UseByStatus.aging);
+      expect(statusAfter(85), UseByStatus.urgent);
+      expect(statusAfter(99), UseByStatus.urgent);
+      expect(statusAfter(100), UseByStatus.overdue);
+      expect(statusAfter(400), UseByStatus.overdue);
+    });
+
+    test('food that keeps a day or two is due at once', () {
+      final oneDay = shelfLifeOf(1);
+      expect(oneDay.lastGoodDay, today);
+      expect(oneDay.statusOn(today), UseByStatus.urgent, reason: 'use today');
+      expect(oneDay.statusOn(today.addDays(1)), UseByStatus.overdue);
+
+      final twoDays = shelfLifeOf(2);
+      expect(twoDays.statusOn(today), UseByStatus.aging, reason: 'use by tomorrow');
+      expect(twoDays.statusOn(today.addDays(1)), UseByStatus.urgent);
+      expect(twoDays.daysLeftOn(today), 1);
+    });
+
+    test('a best-before date already passed when stored is overdue at once', () {
+      final deadline = UseByPolicy.deadlineOf(storedOn: today, bestBeforeOn: today.addDays(-2))!;
+      expect(deadline.statusOn(today), UseByStatus.overdue);
+      expect(deadline.firstDayWithStatus(UseByStatus.overdue), today.addDays(-1));
+    });
+
     test('finds the first day of each status', () {
-      final storedOn = CalendarDate(2026, 1, 1);
-      for (final storageDays in [1, 7, 30, 90, 180, 365]) {
-        for (final status in StorageAgeStatus.values) {
-          final firstDay = StorageAgePolicy.firstDayWithStatus(
-            storedOn: storedOn,
-            recommendedMaximumStorageDays: storageDays,
-            status: status,
-          );
-          StorageAgeStatus statusOn(CalendarDate day) => StorageAgePolicy.evaluate(
-            storedOn: storedOn,
-            today: day,
-            recommendedMaximumStorageDays: storageDays,
-          );
-          expect(statusOn(firstDay).index, greaterThanOrEqualTo(status.index));
-          if (firstDay != storedOn) {
-            expect(statusOn(firstDay.addDays(-1)).index, lessThan(status.index));
+      for (final storageDays in [1, 2, 3, 7, 30, 90, 180, 365]) {
+        final deadline = shelfLifeOf(storageDays);
+        for (final status in UseByStatus.values) {
+          final firstDay = deadline.firstDayWithStatus(status);
+          expect(deadline.statusOn(firstDay).index, greaterThanOrEqualTo(status.index));
+          if (firstDay != today) {
+            expect(deadline.statusOn(firstDay.addDays(-1)).index, lessThan(status.index));
           }
         }
+        expect(deadline.firstDayWithStatus(UseByStatus.overdue), deadline.overdueFrom);
       }
       expect(
-        StorageAgePolicy.firstDayWithStatus(
-          storedOn: storedOn,
-          recommendedMaximumStorageDays: 100,
-          status: StorageAgeStatus.urgent,
-        ),
+        shelfLifeOf(100, storedOn: CalendarDate(2026, 1, 1)).firstDayWithStatus(UseByStatus.urgent),
         CalendarDate(2026, 3, 27),
       );
     });
 
-    final today = CalendarDate(2026, 10, 2);
-
-    StorageAgeStatus statusAfter(int storedDays) => StorageAgePolicy.evaluate(
-      storedOn: today.addDays(-storedDays),
-      today: today,
-      recommendedMaximumStorageDays: 100,
-    );
-
-    test('fresh until 60 %, aging until 85 %, urgent until 100 %, then overdue', () {
-      expect(statusAfter(0), StorageAgeStatus.fresh);
-      expect(statusAfter(59), StorageAgeStatus.fresh);
-      expect(statusAfter(60), StorageAgeStatus.aging);
-      expect(statusAfter(84), StorageAgeStatus.aging);
-      expect(statusAfter(85), StorageAgeStatus.urgent);
-      expect(statusAfter(99), StorageAgeStatus.urgent);
-      expect(statusAfter(100), StorageAgeStatus.overdue);
-      expect(statusAfter(400), StorageAgeStatus.overdue);
-    });
-
-    test('a batch is overdue from the day its storage time is used up', () {
-      final storedOn = CalendarDate(2026, 1, 1);
-      expect(
-        StorageAgePolicy.firstDayWithStatus(
-          storedOn: storedOn,
-          recommendedMaximumStorageDays: 90,
-          status: StorageAgeStatus.overdue,
-        ),
-        StorageAgePolicy.storageLimitReachedOn(
-          storedOn: storedOn,
-          recommendedMaximumStorageDays: 90,
-        ),
+    test('a batch gives its own dates to the policy', () {
+      final batch = StockBatch(
+        identifier: const StockBatchIdentifier('b'),
+        productIdentifier: const ProductIdentifier('p'),
+        compartmentIdentifier: const CompartmentIdentifier('c'),
+        initialQuantity: const Quantity(amountInBaseUnits: 1000, unit: QuantityUnit.milliliter),
+        quantityRemaining: const Quantity(amountInBaseUnits: 1000, unit: QuantityUnit.milliliter),
+        storedOn: today,
+        bestBeforeOn: today.addDays(10),
+        openedOn: today.addDays(1),
+        createdAt: DateTime.utc(2026, 10, 2),
       );
-    });
-
-    test('without a recommendation everything stays fresh', () {
-      expect(
-        StorageAgePolicy.evaluate(
-          storedOn: today.addDays(-1000),
-          today: today,
-          recommendedMaximumStorageDays: 0,
-        ),
-        StorageAgeStatus.fresh,
-      );
+      final deadline = UseByPolicy.deadlineOfBatch(
+        batch,
+        shelfLifeDays: 30,
+        shelfLifeAfterOpeningDays: 3,
+      )!;
+      expect(deadline.reason, UseByReason.opened);
+      expect(deadline.lastGoodDay, today.addDays(3));
     });
   });
 

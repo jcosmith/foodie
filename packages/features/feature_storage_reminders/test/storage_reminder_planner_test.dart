@@ -7,14 +7,18 @@ import 'package:flutter_test/flutter_test.dart';
 RemindableBatch _batch(
   String identifier, {
   required CalendarDate storedOn,
-  required int storageDays,
+  int? storageDays,
+  CalendarDate? bestBeforeOn,
   CalendarDate? storedSince,
 }) => RemindableBatch(
   stockBatchIdentifier: StockBatchIdentifier(identifier),
   productIdentifier: ProductIdentifier('product-$identifier'),
-  storedOn: storedOn,
   storedSince: storedSince ?? storedOn,
-  recommendedMaximumStorageDays: storageDays,
+  deadline: UseByPolicy.deadlineOf(
+    storedOn: storedOn,
+    shelfLifeDays: storageDays,
+    bestBeforeOn: bestBeforeOn,
+  )!,
 );
 
 void main() {
@@ -128,5 +132,27 @@ void main() {
 
     expect(digests, hasLength(StorageReminderPlanner.planningHorizonDays));
     expect(digests.last.dayOffset, StorageReminderPlanner.planningHorizonDays - 1);
+  });
+
+  test('food that keeps one day is in tonight\'s digest; best before tomorrow is tomorrow\'s', () {
+    final rolls = _batch('rolls', storedOn: today, storageDays: 1);
+    final yoghurt = _batch(
+      'yoghurt',
+      storedOn: today.addDays(-3),
+      storageDays: 300,
+      bestBeforeOn: today.addDays(1),
+    );
+
+    final digests = StorageReminderPlanner.plan(
+      batches: [rolls, yoghurt],
+      settings: settings,
+      nowLocal: nowLocal,
+    );
+
+    expect(digests.first.dayOffset, 0);
+    expect(digests.first.batchesToEatSoon, [rolls]);
+    expect(digests[1].dayOffset, 1);
+    expect(digests[1].batchesToEatSoon, [rolls, yoghurt], reason: 'the rolls are past their day');
+    expect(digests[1].newlyDueCount, 2);
   });
 }
