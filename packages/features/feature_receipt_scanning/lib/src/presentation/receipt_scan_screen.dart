@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_foundation/core_foundation.dart';
-import 'package:core_localization/core_localization.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:flutter/material.dart';
@@ -310,13 +309,4 @@ final class ReceiptReviewDraft {
     for (final MapEntry(key: position, value: remember) in _ignored.entries)
       position: IgnoreReceiptLine(remember: remember),
   };
-}
-
-/// A small helper so lists can name a product and its amount.
-String describeSuggestion(BuildContext context, ReceiptReviewLine line) {
-  final product = line.product;
-  if (product == null) return line.text;
-  final name = context.productDisplayNameResolver.productName(product);
-  final quantity = line.quantity;
-  return quantity == null ? name : '$name · ${context.quantityFormatter.format(quantity)}';
 }

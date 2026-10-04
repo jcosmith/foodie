@@ -92,6 +92,27 @@ class ReceiptScanningDao extends DatabaseAccessor<ApplicationDatabase>
     return {for (final row in await query.get()) row.read(receiptPages.pictureReference)!};
   }
 
+  /// Pages that still have an image, of receipts created before [instant].
+  Future<List<ReceiptPageRow>> readPagesWithPicturesCreatedBefore(DateTime instant) {
+    final query =
+        select(receiptPages).join([
+          innerJoin(receipts, receipts.receiptIdentifier.equalsExp(receiptPages.receiptIdentifier)),
+        ])..where(
+          receiptPages.pictureReference.isNotNull() &
+              receipts.createdAt.isSmallerThanValue(instant),
+        );
+    return query.map((row) => row.readTable(receiptPages)).get();
+  }
+
+  /// Forgets a page's image; its text stays.
+  Future<void> clearPictureReference(String receiptIdentifier, int pageNumber) =>
+      (update(receiptPages)..where(
+            (page) =>
+                page.receiptIdentifier.equals(receiptIdentifier) &
+                page.pageNumber.equals(pageNumber),
+          ))
+          .write(const ReceiptPagesCompanion(pictureReference: Value(null)));
+
   Future<void> insertReceipt(ReceiptRow receipt) => into(receipts).insert(receipt);
 
   Future<void> insertPage(ReceiptPageRow page) => into(receiptPages).insert(page);

@@ -388,6 +388,90 @@ abstract class ReceiptScanningLocalizations {
   /// In en, this message translates to:
   /// **'This line was already resolved.'**
   String get lineNotOpen;
+
+  /// No description provided for @photoRetentionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep receipt photos'**
+  String get photoRetentionLabel;
+
+  /// No description provided for @photoRetentionExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'The text of every receipt stays searchable; older photos are deleted to save space.'**
+  String get photoRetentionExplanation;
+
+  /// No description provided for @photoRetentionForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Until I delete the receipt'**
+  String get photoRetentionForever;
+
+  /// No description provided for @photoRetentionMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months} months'**
+  String photoRetentionMonths(int months);
+
+  /// No description provided for @correctText.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct text'**
+  String get correctText;
+
+  /// No description provided for @correctTextHint.
+  ///
+  /// In en, this message translates to:
+  /// **'As printed on the receipt'**
+  String get correctTextHint;
+
+  /// No description provided for @recognisedAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognised as: {text}'**
+  String recognisedAs(String text);
+
+  /// No description provided for @filterAllStores.
+  ///
+  /// In en, this message translates to:
+  /// **'All stores'**
+  String get filterAllStores;
+
+  /// No description provided for @filterAnyTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Any time'**
+  String get filterAnyTime;
+
+  /// No description provided for @filterLastMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months, plural, =1{Last month} other{Last {months} months}}'**
+  String filterLastMonths(int months);
+
+  /// No description provided for @filterAnyAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Any amount'**
+  String get filterAnyAmount;
+
+  /// No description provided for @filterUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {amount}'**
+  String filterUpTo(String amount);
+
+  /// No description provided for @filterOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Over {amount}'**
+  String filterOver(String amount);
+
+  /// No description provided for @noFilteredReceipts.
+  ///
+  /// In en, this message translates to:
+  /// **'No receipt matches these filters.'**
+  String get noFilteredReceipts;
 }
 
 class _ReceiptScanningLocalizationsDelegate

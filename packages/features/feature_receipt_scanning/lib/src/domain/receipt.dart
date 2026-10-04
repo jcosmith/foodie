@@ -69,6 +69,29 @@ final class ReceiptLine {
       status != ReceiptLineStatus.ignored &&
       stockBatchIdentifier == null;
 
+  /// The line with the user's reading of a misread text; `null` or the
+  /// recognised text itself removes the correction.
+  ReceiptLine withCorrectedText(String? text) {
+    final corrected = text?.trim();
+    return ReceiptLine(
+      identifier: identifier,
+      receiptIdentifier: receiptIdentifier,
+      position: position,
+      kind: kind,
+      recognizedText: recognizedText,
+      correctedText: corrected == null || corrected.isEmpty || corrected == recognizedText
+          ? null
+          : corrected,
+      quantity: quantity,
+      unitPriceInCents: unitPriceInCents,
+      lineTotalInCents: lineTotalInCents,
+      weightInGrams: weightInGrams,
+      status: status,
+      productIdentifier: productIdentifier,
+      stockBatchIdentifier: stockBatchIdentifier,
+    );
+  }
+
   ReceiptLine resolved({
     required ReceiptLineStatus status,
     ProductIdentifier? productIdentifier,

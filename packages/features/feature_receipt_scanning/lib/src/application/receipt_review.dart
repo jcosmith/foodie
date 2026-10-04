@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import '../domain/receipt_line_matcher.dart';
 import '../domain/receipt_parser.dart';
 import '../domain/receipt_rows.dart';
+import '../domain/receipt_text.dart';
 
 /// One photographed page as on-device text recognition read it.
 @immutable
@@ -17,8 +18,11 @@ final class RecognizedReceiptPage {
   /// The encrypted page image, once it is stored.
   final String? pictureReference;
 
-  /// The page's text exactly as recognised, kept for reference.
-  String get rawText => [for (final row in ReceiptRows.fromLines(lines)) row.text].join('\n');
+  /// The page's text as recognised, kept for reference; card and loyalty
+  /// numbers are masked here too, as nothing stored may keep them.
+  String get rawText => [
+    for (final row in ReceiptRows.fromLines(lines)) ReceiptText.maskPrivateNumbers(row.text),
+  ].join('\n');
 }
 
 /// One priced row on the review list, with what the app suggests for it.

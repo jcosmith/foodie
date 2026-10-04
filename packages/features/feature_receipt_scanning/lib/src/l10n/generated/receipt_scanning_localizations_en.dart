@@ -207,4 +207,63 @@ class ReceiptScanningLocalizationsEn extends ReceiptScanningLocalizations {
 
   @override
   String get lineNotOpen => 'This line was already resolved.';
+
+  @override
+  String get photoRetentionLabel => 'Keep receipt photos';
+
+  @override
+  String get photoRetentionExplanation =>
+      'The text of every receipt stays searchable; older photos are deleted to save space.';
+
+  @override
+  String get photoRetentionForever => 'Until I delete the receipt';
+
+  @override
+  String photoRetentionMonths(int months) {
+    return '$months months';
+  }
+
+  @override
+  String get correctText => 'Correct text';
+
+  @override
+  String get correctTextHint => 'As printed on the receipt';
+
+  @override
+  String recognisedAs(String text) {
+    return 'Recognised as: $text';
+  }
+
+  @override
+  String get filterAllStores => 'All stores';
+
+  @override
+  String get filterAnyTime => 'Any time';
+
+  @override
+  String filterLastMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Last $months months',
+      one: 'Last month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filterAnyAmount => 'Any amount';
+
+  @override
+  String filterUpTo(String amount) {
+    return 'Up to $amount';
+  }
+
+  @override
+  String filterOver(String amount) {
+    return 'Over $amount';
+  }
+
+  @override
+  String get noFilteredReceipts => 'No receipt matches these filters.';
 }

@@ -7,6 +7,7 @@ import 'package:feature_storage_layout/feature_storage_layout.dart';
 import '../domain/receipt.dart';
 import '../domain/receipt_line_matcher.dart';
 import '../domain/receipt_parser.dart';
+import '../domain/receipt_photo_retention.dart';
 import '../domain/receipt_quantity_policy.dart';
 import '../domain/receipt_repository.dart';
 import '../domain/receipt_rows.dart';
@@ -162,8 +163,10 @@ final class PrepareReceiptReviewUseCase {
     );
   }
 
-  /// The product's own default, the compartment it went into last time, the
-  /// first of its category's domain, or the first of all.
+  /// The product's own default, the compartment it went into last time, or
+  /// the first of its category's domain. Never a place of another domain:
+  /// milk is not suggested for the freezer because the fridge is off; the
+  /// user then picks the place.
   Future<Compartment?> _suggestCompartment(
     Product product,
     ProductCatalog catalog,
@@ -176,8 +179,7 @@ final class PrepareReceiptReviewUseCase {
     final domain = catalog.categoryOfProduct(product)?.storageDomain;
     return find(product.defaultCompartmentIdentifier) ??
         find(await _inventory.readLastCompartmentOfProduct(product.identifier)) ??
-        (domain == null ? null : layout.activeCompartmentsIn(domain).firstOrNull) ??
-        active.firstOrNull;
+        (domain == null ? null : layout.activeCompartmentsIn(domain).firstOrNull);
   }
 
   /// Long receipts come as several photos: each page continues below the
@@ -513,4 +515,49 @@ ReceiptTextMapping? learnedMapping({
     ),
     _ => null,
   };
+}
+
+/// Corrects a misread line (architecture 10.10, "Correcting text"): the
+/// correction is shown and indexed, the recognised text kept for reference.
+final class CorrectReceiptLineTextUseCase {
+  const CorrectReceiptLineTextUseCase({required ReceiptRepository repository})
+    : _repository = repository;
+
+  final ReceiptRepository _repository;
+
+  Future<Result<ReceiptLine, ReceiptScanningFailure>> execute(
+    ReceiptLineIdentifier receiptLineIdentifier,
+    String? correctedText,
+  ) async {
+    final line = await _repository.readLine(receiptLineIdentifier);
+    if (line == null) return const Result.failure(ReceiptLineNotOpen());
+    final corrected = line.withCorrectedText(correctedText);
+    await _repository.replaceLine(corrected, searchText: corrected.text);
+    return Result.success(corrected);
+  }
+}
+
+/// Deletes the photos of receipts older than the chosen time; their text
+/// stays searchable.
+final class ApplyReceiptPhotoRetentionUseCase {
+  const ApplyReceiptPhotoRetentionUseCase({
+    required ReceiptRepository repository,
+    required ReceiptPageImages pageImages,
+    required Clock clock,
+  }) : _repository = repository,
+       _pageImages = pageImages,
+       _clock = clock;
+
+  final ReceiptRepository _repository;
+  final ReceiptPageImages _pageImages;
+  final Clock _clock;
+
+  /// Returns how many photos were deleted.
+  Future<int> execute(ReceiptPhotoRetention retention) async {
+    final cutoff = retention.cutoffBefore(_clock.nowUtc());
+    if (cutoff == null) return 0;
+    final references = await _repository.forgetPicturesCreatedBefore(cutoff);
+    await _pageImages.delete(references);
+    return references.length;
+  }
 }

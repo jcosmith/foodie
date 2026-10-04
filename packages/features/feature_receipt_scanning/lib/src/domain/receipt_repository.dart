@@ -23,6 +23,10 @@ abstract interface class ReceiptRepository {
   /// Every page image a receipt refers to.
   Future<Set<String>> readPictureReferences();
 
+  /// Forgets the images of receipts created before [instant] and returns
+  /// their references, so the files can be deleted.
+  Future<List<String>> forgetPicturesCreatedBefore(DateTime instant);
+
   /// Search hits for [tokens], each a normalised word matched as a prefix;
   /// all of them must occur in the same receipt row or line.
   Future<List<ReceiptSearchHit>> search(List<String> tokens);

@@ -15,6 +15,7 @@ dependencies:
   core_localization: any
   core_media_storage: any
   core_module_contract: any
+  core_preferences: any
   feature_inventory: any
   feature_product_catalog: any
   feature_storage_layout: any

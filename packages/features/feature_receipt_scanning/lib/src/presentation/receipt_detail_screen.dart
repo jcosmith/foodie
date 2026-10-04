@@ -97,6 +97,7 @@ class _ReceiptBody extends ConsumerWidget {
     final result = await ref
         .read(resolveReceiptLineUseCaseProvider)
         .execute(line.identifier, decision);
+    if (!context.mounted) return;
     ref.invalidate(receiptProvider(receipt.identifier));
     if (result case FailedResult(:final failure)) {
       messenger.showSnackBar(
@@ -109,6 +110,17 @@ class _ReceiptBody extends ConsumerWidget {
         ),
       );
     }
+  }
+
+  /// Lets the user fix a misread line; the correction is indexed instead.
+  Future<void> _correct(BuildContext context, WidgetRef ref, ReceiptLine line) async {
+    final corrected = await showDialog<String>(
+      context: context,
+      builder: (context) => _CorrectTextDialog(line: line),
+    );
+    if (corrected == null || !context.mounted) return;
+    await ref.read(correctReceiptLineTextUseCaseProvider).execute(line.identifier, corrected);
+    if (context.mounted) ref.invalidate(receiptProvider(receipt.identifier));
   }
 
   /// Adds the line with what the app would suggest for [product], asking for
@@ -196,6 +208,7 @@ class _ReceiptBody extends ConsumerWidget {
             onAdd: (product) => _add(context, ref, line, product),
             onPickProduct: () => _pickAndAdd(context, ref, line),
             onIgnore: () => _resolve(context, ref, const IgnoreReceiptLine(), line),
+            onCorrect: () => _correct(context, ref, line),
           ),
         ],
         const SizedBox(height: FoodieSpacing.large),
@@ -210,6 +223,7 @@ class _ReceiptBody extends ConsumerWidget {
               line.stockBatchIdentifier != null ? Icons.check_circle : Icons.remove_circle_outline,
               color: line.stockBatchIdentifier != null ? colors.statusFresh : colors.textMuted,
             ),
+            onTap: () => _correct(context, ref, line),
             title: Text(line.text, style: receiptTextStyle(context)),
             subtitle: Text(switch ((line.stockBatchIdentifier, line.productIdentifier)) {
               (_?, final productIdentifier?) => switch (catalog?.productOf(productIdentifier)) {
@@ -233,6 +247,7 @@ class _OpenLineCard extends StatelessWidget {
     required this.onAdd,
     required this.onPickProduct,
     required this.onIgnore,
+    required this.onCorrect,
   });
 
   final ReceiptLine line;
@@ -243,6 +258,7 @@ class _OpenLineCard extends StatelessWidget {
   final ValueChanged<Product> onAdd;
   final VoidCallback onPickProduct;
   final VoidCallback onIgnore;
+  final VoidCallback onCorrect;
 
   @override
   Widget build(BuildContext context) {
@@ -268,6 +284,12 @@ class _OpenLineCard extends StatelessWidget {
               children: [
                 Expanded(child: Text(line.text, style: receiptTextStyle(context))),
                 Text(formatCents(context, line.lineTotalInCents), style: receiptTextStyle(context)),
+                IconButton(
+                  tooltip: localizations.correctText,
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.edit_outlined, size: 18),
+                  onPressed: onCorrect,
+                ),
               ],
             ),
             const SizedBox(height: FoodieSpacing.extraSmall),
@@ -345,5 +367,52 @@ class _PageImage extends ConsumerWidget {
       AsyncError() => const SizedBox(width: 100, child: Icon(Icons.broken_image_outlined)),
       _ => const SizedBox(width: 100, child: Center(child: CircularProgressIndicator())),
     };
+  }
+}
+
+/// Asks for the line as printed; returns `null` when cancelled.
+class _CorrectTextDialog extends StatefulWidget {
+  const _CorrectTextDialog({required this.line});
+
+  final ReceiptLine line;
+
+  @override
+  State<_CorrectTextDialog> createState() => _CorrectTextDialogState();
+}
+
+class _CorrectTextDialogState extends State<_CorrectTextDialog> {
+  late final TextEditingController _text = TextEditingController(text: widget.line.text);
+
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = ReceiptScanningLocalizations.of(context);
+    return AlertDialog(
+      title: Text(localizations.correctText),
+      content: TextField(
+        controller: _text,
+        autofocus: true,
+        decoration: InputDecoration(
+          hintText: localizations.correctTextHint,
+          helperText: localizations.recognisedAs(widget.line.recognizedText),
+        ),
+        onSubmitted: (text) => Navigator.of(context).pop(text),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.commonLocalizations.actionCancel),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(_text.text),
+          child: Text(context.commonLocalizations.actionSave),
+        ),
+      ],
+    );
   }
 }

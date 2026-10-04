@@ -210,4 +210,63 @@ class ReceiptScanningLocalizationsDe extends ReceiptScanningLocalizations {
 
   @override
   String get lineNotOpen => 'Diese Zeile ist schon erledigt.';
+
+  @override
+  String get photoRetentionLabel => 'Kassenbon-Fotos behalten';
+
+  @override
+  String get photoRetentionExplanation =>
+      'Der Text jedes Kassenbons bleibt durchsuchbar; ältere Fotos werden gelöscht, um Platz zu sparen.';
+
+  @override
+  String get photoRetentionForever => 'Bis ich den Kassenbon lösche';
+
+  @override
+  String photoRetentionMonths(int months) {
+    return '$months Monate';
+  }
+
+  @override
+  String get correctText => 'Text korrigieren';
+
+  @override
+  String get correctTextHint => 'Wie auf dem Bon gedruckt';
+
+  @override
+  String recognisedAs(String text) {
+    return 'Erkannt als: $text';
+  }
+
+  @override
+  String get filterAllStores => 'Alle Geschäfte';
+
+  @override
+  String get filterAnyTime => 'Jederzeit';
+
+  @override
+  String filterLastMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Letzte $months Monate',
+      one: 'Letzter Monat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filterAnyAmount => 'Jeder Betrag';
+
+  @override
+  String filterUpTo(String amount) {
+    return 'Bis $amount';
+  }
+
+  @override
+  String filterOver(String amount) {
+    return 'Über $amount';
+  }
+
+  @override
+  String get noFilteredReceipts => 'Kein Kassenbon passt zu diesen Filtern.';
 }

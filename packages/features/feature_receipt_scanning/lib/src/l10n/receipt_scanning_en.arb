@@ -142,5 +142,54 @@
       }
     }
   },
-  "lineNotOpen": "This line was already resolved."
+  "lineNotOpen": "This line was already resolved.",
+  "photoRetentionLabel": "Keep receipt photos",
+  "photoRetentionExplanation": "The text of every receipt stays searchable; older photos are deleted to save space.",
+  "photoRetentionForever": "Until I delete the receipt",
+  "photoRetentionMonths": "{months} months",
+  "@photoRetentionMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "correctText": "Correct text",
+  "correctTextHint": "As printed on the receipt",
+  "recognisedAs": "Recognised as: {text}",
+  "@recognisedAs": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "filterAllStores": "All stores",
+  "filterAnyTime": "Any time",
+  "filterLastMonths": "{months, plural, =1{Last month} other{Last {months} months}}",
+  "@filterLastMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "filterAnyAmount": "Any amount",
+  "filterUpTo": "Up to {amount}",
+  "@filterUpTo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "filterOver": "Over {amount}",
+  "@filterOver": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "noFilteredReceipts": "No receipt matches these filters."
 }

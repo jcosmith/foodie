@@ -113,6 +113,16 @@ final class DriftReceiptRepository implements ReceiptRepository {
   Future<Set<String>> readPictureReferences() => _dao.readPictureReferences();
 
   @override
+  Future<List<String>> forgetPicturesCreatedBefore(DateTime instant) =>
+      _transactionRunner.runInTransaction(() async {
+        final pages = await _dao.readPagesWithPicturesCreatedBefore(instant);
+        for (final page in pages) {
+          await _dao.clearPictureReference(page.receiptIdentifier, page.pageNumber);
+        }
+        return [for (final page in pages) page.pictureReference!];
+      });
+
+  @override
   Future<List<ReceiptSearchHit>> search(List<String> tokens) async {
     final words = [
       for (final token in tokens)

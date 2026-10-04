@@ -274,3 +274,12 @@ class _FlaggedLineCard extends StatelessWidget {
     );
   }
 }
+
+/// "Minced meat · 500 g", or the receipt text without a product.
+String describeSuggestion(BuildContext context, ReceiptReviewLine line) {
+  final product = line.product;
+  if (product == null) return line.text;
+  final name = context.productDisplayNameResolver.productName(product);
+  final quantity = line.quantity;
+  return quantity == null ? name : '$name · ${context.quantityFormatter.format(quantity)}';
+}

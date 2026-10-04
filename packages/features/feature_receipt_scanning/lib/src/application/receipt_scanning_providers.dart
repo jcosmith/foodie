@@ -4,12 +4,14 @@ import 'package:core_database/core_database.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_media_storage/core_media_storage.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:core_preferences/core_preferences.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_layout/feature_storage_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/receipt.dart';
+import '../domain/receipt_photo_retention.dart';
 import '../domain/receipt_repository.dart';
 import 'receipt_capture.dart';
 import 'receipt_page_images.dart';
@@ -108,4 +110,29 @@ final deleteReceiptUseCaseProvider = Provider<DeleteReceiptUseCase>(
     repository: ref.watch(receiptRepositoryProvider),
     pageImages: ref.watch(receiptPageImagesProvider),
   ),
+);
+
+abstract final class ReceiptPreferenceKeys {
+  static final PreferenceKey<ReceiptPhotoRetention> photoRetention = PreferenceKey.enumeration(
+    moduleNamespace: 'receipts',
+    name: 'photo_retention',
+    defaultValue: ReceiptPhotoRetention.forever,
+    values: ReceiptPhotoRetention.values,
+  );
+}
+
+final receiptPhotoRetentionProvider = StreamProvider<ReceiptPhotoRetention>(
+  (ref) => ref.watch(preferencesStoreProvider).watch(ReceiptPreferenceKeys.photoRetention),
+);
+
+final applyReceiptPhotoRetentionUseCaseProvider = Provider<ApplyReceiptPhotoRetentionUseCase>(
+  (ref) => ApplyReceiptPhotoRetentionUseCase(
+    repository: ref.watch(receiptRepositoryProvider),
+    pageImages: ref.watch(receiptPageImagesProvider),
+    clock: ref.watch(clockProvider),
+  ),
+);
+
+final correctReceiptLineTextUseCaseProvider = Provider<CorrectReceiptLineTextUseCase>(
+  (ref) => CorrectReceiptLineTextUseCase(repository: ref.watch(receiptRepositoryProvider)),
 );

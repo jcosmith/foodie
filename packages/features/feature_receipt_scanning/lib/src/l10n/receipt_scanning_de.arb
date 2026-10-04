@@ -48,5 +48,19 @@
   "lineWithPrice": "{text} · {price}",
   "totalAmount": "Summe {amount}",
   "pageImageLabel": "Seite {number}",
-  "lineNotOpen": "Diese Zeile ist schon erledigt."
+  "lineNotOpen": "Diese Zeile ist schon erledigt.",
+  "photoRetentionLabel": "Kassenbon-Fotos behalten",
+  "photoRetentionExplanation": "Der Text jedes Kassenbons bleibt durchsuchbar; ältere Fotos werden gelöscht, um Platz zu sparen.",
+  "photoRetentionForever": "Bis ich den Kassenbon lösche",
+  "photoRetentionMonths": "{months} Monate",
+  "correctText": "Text korrigieren",
+  "correctTextHint": "Wie auf dem Bon gedruckt",
+  "recognisedAs": "Erkannt als: {text}",
+  "filterAllStores": "Alle Geschäfte",
+  "filterAnyTime": "Jederzeit",
+  "filterLastMonths": "{months, plural, =1{Letzter Monat} other{Letzte {months} Monate}}",
+  "filterAnyAmount": "Jeder Betrag",
+  "filterUpTo": "Bis {amount}",
+  "filterOver": "Über {amount}",
+  "noFilteredReceipts": "Kein Kassenbon passt zu diesen Filtern."
 }

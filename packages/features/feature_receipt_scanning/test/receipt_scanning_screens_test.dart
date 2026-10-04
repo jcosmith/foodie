@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:core_design_system/core_design_system.dart';
 import 'package:core_localization/core_localization.dart';
 import 'package:core_media_storage/core_media_storage.dart';
+import 'package:core_preferences/core_preferences.dart';
 import 'package:feature_receipt_scanning/feature_receipt_scanning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -231,6 +232,65 @@ void main() {
       expect(find.text('Magazine'), findsOneWidget);
     });
 
+    testWidgets('filters by store, period and amount', (tester) async {
+      await prepare(tester);
+      await archiveWithOpenLines(tester);
+      await tester.runAsync(() async {
+        final review = await harness.review([
+          ['Corner Shop'],
+          ['Garden peas', '61.99'],
+          ['TOTAL', '61.99'],
+          ['01.05.2026'],
+        ]);
+        await harness.read(confirmReceiptUseCaseProvider).execute(review, decisions: const {});
+      });
+      await showApp(tester, home: segment);
+      expect(find.textContaining('Fresh Market'), findsOneWidget);
+      expect(find.textContaining('Corner Shop'), findsOneWidget);
+
+      await tester.tap(find.text('All stores'));
+      await _settle(tester);
+      await tester.tap(find.text('Corner Shop').last);
+      await _settle(tester);
+      expect(find.textContaining('Fresh Market'), findsNothing);
+      expect(find.textContaining('Corner Shop'), findsWidgets);
+
+      await tester.tap(find.text('Any time'));
+      await _settle(tester);
+      await tester.tap(find.text('Last 3 months').last);
+      await _settle(tester);
+      expect(find.text('No receipt matches these filters.'), findsOneWidget);
+
+      await tester.tap(find.text('Last 3 months'));
+      await _settle(tester);
+      await tester.tap(find.text('Any time').last);
+      await _settle(tester);
+      await tester.ensureVisible(find.text('Any amount'));
+      await tester.tap(find.text('Any amount'));
+      await _settle(tester);
+      await tester.tap(find.text('Over 50.00').last);
+      await _settle(tester);
+      expect(find.textContaining('Corner Shop'), findsWidgets);
+    });
+
+    testWidgets('a misread line can be corrected', (tester) async {
+      await prepare(tester);
+      final receiptIdentifier = await archiveWithOpenLines(tester);
+      await showApp(tester, push: ReceiptScanningRoutes.receipt(receiptIdentifier));
+
+      await tester.tap(
+        find.descendant(of: cardOf('MINCED BEEF 500G'), matching: find.byTooltip('Correct text')),
+      );
+      await _settle(tester);
+      expect(find.text('Recognised as: MINCED BEEF 500G'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'Minced beef 500 g');
+      await tester.tap(find.text('Save'));
+      await _settle(tester);
+
+      expect(find.text('Minced beef 500 g'), findsOneWidget);
+      expect(find.text('MINCED BEEF 500G'), findsNothing);
+    });
+
     testWidgets('open lines can be resolved later', (tester) async {
       await prepare(tester);
       final receiptIdentifier = await archiveWithOpenLines(tester);
@@ -281,6 +341,28 @@ void main() {
       expect(
         module.buildRoutes().whereType<GoRoute>().map((route) => route.path),
         everyElement(startsWith('/receipts')),
+      );
+    });
+
+    testWidgets('Options keep photos as long as chosen', (tester) async {
+      await prepare(tester);
+      await showApp(
+        tester,
+        home: (context) =>
+            Scaffold(body: harness.receiptModule.configSections.single.builder(context)),
+      );
+      expect(find.text('Until I delete the receipt'), findsOneWidget);
+
+      await tester.tap(find.text('Until I delete the receipt'));
+      await _settle(tester);
+      await tester.tap(find.text('6 months').last);
+      await _settle(tester);
+
+      expect(
+        await tester.runAsync(
+          () => harness.read(preferencesStoreProvider).read(ReceiptPreferenceKeys.photoRetention),
+        ),
+        ReceiptPhotoRetention.sixMonths,
       );
     });
 

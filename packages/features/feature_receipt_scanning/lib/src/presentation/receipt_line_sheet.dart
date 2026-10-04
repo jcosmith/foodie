@@ -106,6 +106,7 @@ class _ReceiptLineSheetState extends ConsumerState<_ReceiptLineSheet> {
           const SizedBox(height: FoodieSpacing.medium),
           DropdownButtonFormField<CompartmentIdentifier>(
             initialValue: selected,
+            isExpanded: true,
             decoration: InputDecoration(labelText: localizations.compartmentLabel),
             items: [
               for (final compartment in compartments)

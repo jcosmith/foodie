@@ -105,6 +105,8 @@ void main() {
       expect(receipt.totalInCents, 1693);
       expect(receipt.purchasedOn, CalendarDate(2026, 10, 3));
       expect(receipt.text, isNot(contains('4711')), reason: 'card numbers are masked');
+      expect(receipt.pages.single.rawRecognizedText, isNot(contains('4711')));
+      expect(receipt.pages.single.rawRecognizedText, contains('MINCED BEEF 500G'));
       expect(receipt.lines, hasLength(5));
       final added = receipt.lines.where((line) => line.stockBatchIdentifier != null);
       expect(
@@ -271,6 +273,52 @@ void main() {
 
       expect(summaries.map((receipt) => receipt.storeName), ['Corner Shop', 'Fresh Market']);
       expect(summaries.first.openLineCount, 1);
+    });
+
+    test('a corrected line is shown and searched, the recognised text kept', () async {
+      final receiptIdentifier = await confirmShopping(await harness.review(_shopping));
+      final queries = harness.read(receiptQueryServiceProvider);
+      final magazine = (await queries.readReceipt(
+        receiptIdentifier,
+      ))!.lines.singleWhere((line) => line.text == 'Magazine');
+
+      await harness
+          .read(correctReceiptLineTextUseCaseProvider)
+          .execute(magazine.identifier, 'Weekly magazine');
+
+      final corrected = (await queries.readReceipt(
+        receiptIdentifier,
+      ))!.lines.singleWhere((line) => line.identifier == magazine.identifier);
+      expect(corrected.text, 'Weekly magazine');
+      expect(corrected.recognizedText, 'Magazine');
+      expect((await queries.search('weekly')).single.matchingLine!.identifier, magazine.identifier);
+    });
+
+    test('old photos go after the chosen time; the text stays searchable', () async {
+      harness.camera.queuedPages.add(receiptPage(_shopping));
+      final photo = (await harness.camera.takePhoto())!;
+      final page = (await harness.read(readReceiptPageUseCaseProvider).execute(photo)).valueOrNull!;
+      final review = await harness
+          .read(prepareReceiptReviewUseCaseProvider)
+          .execute(pages: [page], names: harness.names);
+      final receiptIdentifier =
+          (await harness.read(confirmReceiptUseCaseProvider).execute(review, decisions: const {}))
+              .valueOrNull!;
+      final retention = harness.read(applyReceiptPhotoRetentionUseCaseProvider);
+      expect(harness.receiptImages.filesByName, hasLength(1));
+
+      harness.clock.advanceBy(const Duration(days: 200));
+      expect(await retention.execute(ReceiptPhotoRetention.twelveMonths), 0);
+      expect(await retention.execute(ReceiptPhotoRetention.forever), 0);
+      expect(await retention.execute(ReceiptPhotoRetention.sixMonths), 1);
+
+      expect(harness.receiptImages.filesByName, isEmpty);
+      final receipt = (await harness
+          .read(receiptQueryServiceProvider)
+          .readReceipt(receiptIdentifier))!;
+      expect(receipt.pages.single.pictureReference, isNull);
+      expect(receipt.pages.single.rawRecognizedText, contains('Garden peas'));
+      expect(await harness.read(receiptQueryServiceProvider).search('peas'), hasLength(1));
     });
 
     test('deleting a receipt removes it from the archive and the search', () async {

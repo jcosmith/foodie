@@ -1,5 +1,6 @@
 import 'package:core_database/core_database.dart';
 import 'package:core_module_contract/core_module_contract.dart';
+import 'package:core_preferences/core_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import 'data/drift_receipt_repository.dart';
 import 'data/image_picker_receipt_photo_source.dart';
 import 'data/ml_kit_receipt_text_recognizer.dart';
 import 'l10n/generated/receipt_scanning_localizations.dart';
+import 'presentation/receipt_config_section.dart';
 import 'presentation/receipt_scanning_routes.dart';
 import 'presentation/receipts_segment.dart';
 
@@ -88,10 +90,25 @@ final class ReceiptScanningFeatureModule extends FeatureModuleBase {
     ),
   ];
 
-  /// Removes page images no receipt refers to: those of a scan the app was
-  /// closed in the middle of, or left by a deletion that was cut short.
+  @override
+  List<ConfigSectionContribution> get configSections => [
+    ConfigSectionContribution(
+      identifier: '$identifier.retention',
+      sortOrder: 70,
+      titleBuilder: (context) => ReceiptScanningLocalizations.of(context).segmentTitle,
+      builder: (context) => const ReceiptConfigSection(),
+    ),
+  ];
+
+  /// Deletes photos older than the chosen time, then page images no receipt
+  /// refers to: those of a scan the app was closed in the middle of, or left
+  /// by a deletion that was cut short.
   @override
   Future<void> initializeModule(ModuleInitializationContext context) async {
+    final retention = await context
+        .read(preferencesStoreProvider)
+        .read(ReceiptPreferenceKeys.photoRetention);
+    await context.read(applyReceiptPhotoRetentionUseCaseProvider).execute(retention);
     final references = await context.read(receiptRepositoryProvider).readPictureReferences();
     await context.read(receiptPageImagesProvider).sweep(references);
   }
