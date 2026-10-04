@@ -5,7 +5,6 @@ import 'package:core_events/event_bus_provider.dart';
 import 'package:core_foundation/core_foundation.dart';
 import 'package:core_foundation/foundation_providers.dart';
 import 'package:core_module_contract/core_module_contract.dart';
-
 import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
@@ -29,8 +28,14 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
 
 /// A provider container over an in-memory database with the catalog seeded,
 /// one freezer and the restock module wired up. 2 October 2026, 09:00 UTC.
+///
+/// With [enabledModules] set, the domains of the other [registeredModules]
+/// are switched off.
 final class RestockTestHarness {
-  RestockTestHarness() {
+  RestockTestHarness({
+    List<FeatureModule> registeredModules = const [FreezerFeatureModule()],
+    List<FeatureModule>? enabledModules,
+  }) {
     final dependencies = ModuleDependencies(
       clock: clock,
       identifierGenerator: SequentialIdentifierGenerator(),
@@ -41,7 +46,9 @@ final class RestockTestHarness {
     container = ProviderContainer(
       overrides: [
         applicationDatabaseProvider.overrideWithValue(database),
-        registeredFeatureModulesProvider.overrideWithValue(const [FreezerFeatureModule()]),
+        registeredFeatureModulesProvider.overrideWithValue(registeredModules),
+        if (enabledModules != null)
+          enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(enabledModules)),
         clockProvider.overrideWithValue(clock),
         identifierGeneratorProvider.overrideWithValue(dependencies.identifierGenerator),
         domainEventBusProvider.overrideWithValue(dependencies.domainEventBus),

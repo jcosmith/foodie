@@ -113,6 +113,21 @@ void main() {
         [1, 2],
       );
     });
+
+    test('paused domains leave the active places; unknown kinds and names stay', () {
+      final withoutPantry = layout.withoutDomains({StorageDomainIdentifier.pantry});
+      expect(withoutPantry.storagePlaces.map((entry) => entry.storagePlace), [freezer, unknown]);
+      expect(withoutPantry.activeCompartments.map((c) => c.storagePlaceIdentifier), [
+        freezer.identifier,
+        unknown.identifier,
+      ]);
+      expect(withoutPantry.storagePlaceOf(cupboard.identifier), cupboard);
+      expect(
+        withoutPantry.domainOfCompartment(const CompartmentIdentifier('cupboard-1')),
+        StorageDomainIdentifier.pantry,
+      );
+      expect(identical(layout.withoutDomains(const {}), layout), isTrue);
+    });
   });
 
   group('storage kinds and templates come from the registered modules', () {

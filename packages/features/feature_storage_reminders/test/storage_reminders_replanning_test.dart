@@ -1,10 +1,14 @@
+import 'package:core_foundation/core_foundation.dart';
+import 'package:core_module_contract/core_module_contract.dart';
 import 'package:core_notifications/core_notifications.dart';
 import 'package:core_preferences/core_preferences.dart';
+import 'package:feature_freezer/feature_freezer.dart';
 import 'package:feature_inventory/feature_inventory.dart';
 import 'package:feature_product_catalog/feature_product_catalog.dart';
 import 'package:feature_storage_reminders/feature_storage_reminders.dart';
 import 'package:feature_storage_reminders/src/application/storage_reminder_settings_store.dart';
 import 'package:feature_storage_reminders/src/application/storage_reminders_providers.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/storage_reminders_test_harness.dart';
@@ -109,4 +113,58 @@ void main() {
     expect(settings, StorageReminderSettings.defaults);
     expect(settings.digestHour, 18);
   });
+
+  group('a switched-off domain', () {
+    late StorageRemindersTestHarness pausedFreezer;
+
+    setUp(() async {
+      pausedFreezer = StorageRemindersTestHarness(
+        registeredModules: const [FreezerFeatureModule(), _PantryModule()],
+        enabledModules: const [_PantryModule()],
+      );
+      await pausedFreezer.seedCatalogAndStoragePlace();
+      await pausedFreezer.read(enabledFeatureModulesProvider.future);
+      await const StorageRemindersFeatureModule().initializeModule(
+        pausedFreezer.initializationContext,
+      );
+    });
+    tearDown(() => pausedFreezer.dispose());
+
+    test('gets no reminders for its food', () async {
+      final product = await pausedFreezer.productWithKey('mincedMeat');
+      final storageDays = await pausedFreezer.storageDaysOf(product);
+      await pausedFreezer.addBatch(
+        product,
+        storedOn: pausedFreezer.today.addDays(2 - (storageDays * 0.85).ceil()),
+      );
+      await pausedFreezer.read(storageReminderReplanningCoordinatorProvider).requestRecomputation();
+
+      expect(pausedFreezer.notificationServices.scheduledRequests, isEmpty);
+    });
+  });
+}
+
+String _label(BuildContext context) => 'Pantry';
+
+/// Another domain, so the freezer can be the one switched off.
+final class _PantryModule extends FeatureModuleBase {
+  const _PantryModule();
+
+  @override
+  String get moduleIdentifier => 'pantry';
+
+  @override
+  ModuleAvailability get availability =>
+      const ModuleAvailability.optional(isEnabledByDefault: true);
+
+  @override
+  StorageDomainContribution get storageDomain => const StorageDomainContribution(
+    identifier: StorageDomainIdentifier.pantry,
+    sortOrder: 30,
+    iconEmoji: '🥫',
+    labelBuilder: _label,
+    descriptionBuilder: _label,
+    storedOnLabelBuilder: _label,
+    countsDiscardsAsWaste: true,
+  );
 }

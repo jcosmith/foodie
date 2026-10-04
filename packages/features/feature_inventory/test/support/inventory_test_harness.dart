@@ -31,9 +31,13 @@ final class _EnglishLayoutDefaultNames implements LayoutDefaultNames {
 /// The catalog, the layout and the inventory on an in-memory database, wired
 /// as the app wires them.
 final class InventoryTestHarness {
-  /// Storage kinds and catalogs come from [registeredModules].
-  InventoryTestHarness({this.registeredModules = const [FreezerFeatureModule()]})
-    : database = createInMemoryApplicationDatabase(clock: clock) {
+  /// Storage kinds and catalogs come from [registeredModules]. With
+  /// [enabledModules] set, the domains of the other modules are switched off;
+  /// without it the switches stay unknown and nothing is paused.
+  InventoryTestHarness({
+    this.registeredModules = const [FreezerFeatureModule()],
+    this.enabledModules = const [],
+  }) : database = createInMemoryApplicationDatabase(clock: clock) {
     final eventBus = InProcessDomainEventBus(logger: RecordingLogger());
     eventBus.subscribe<DomainEvent>(publishedEvents.add);
     final dependencies = ModuleDependencies(
@@ -49,6 +53,7 @@ final class InventoryTestHarness {
   static final CalendarDate today = CalendarDate(2026, 10, 2);
 
   final List<FeatureModule> registeredModules;
+  final List<FeatureModule> enabledModules;
   final ApplicationDatabase database;
   final List<DomainEvent> publishedEvents = [];
   late final ProviderContainer container;
@@ -62,7 +67,7 @@ final class InventoryTestHarness {
     ...const ProductCatalogFeatureModule().buildProviderOverrides(dependencies),
     ...const StorageLayoutFeatureModule().buildProviderOverrides(dependencies),
     ...const InventoryFeatureModule().buildProviderOverrides(dependencies),
-    enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(const [])),
+    enabledFeatureModulesProvider.overrideWith((ref) => Stream.value(enabledModules)),
   ];
 
   TValue read<TValue>(ProviderListenable<TValue> provider) => container.read(provider);

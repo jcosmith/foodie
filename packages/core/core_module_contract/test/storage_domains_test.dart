@@ -180,6 +180,20 @@ void main() {
     ]);
   });
 
+  test('switched-off domains are paused; nothing is paused while none is known', () async {
+    final container = _containerWith({'freezer'});
+    expect(
+      container.read(pausedStorageDomainIdentifiersProvider),
+      isEmpty,
+      reason: 'the switches are still loading',
+    );
+    await container.read(enabledFeatureModulesProvider.future);
+    expect(container.read(pausedStorageDomainIdentifiersProvider), {
+      StorageDomainIdentifier.fridge,
+      StorageDomainIdentifier.household,
+    });
+  });
+
   test('the last enabled domain cannot be switched off; other modules can', () {
     expect(canSwitchModuleOff(_freezer, enabledModules: const [_freezer, _PlainModule()]), isFalse);
     expect(canSwitchModuleOff(_freezer, enabledModules: const [_freezer, _fridge]), isTrue);
