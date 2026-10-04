@@ -161,6 +161,12 @@ void main() {
       expect(_module.storageDomain.labelBuilder(context), 'Freezer');
       expect(_module.storageDomain.storedOnLabelBuilder(context), 'Frozen on');
       expect(_module.storageDomain.addTitleBuilder!(context), 'Add to the freezer');
+      expect(_module.storageDomain.storedTodayLabelBuilder!(context), 'Frozen today');
+      expect(
+        _module.storageDomain.bestBeforeLabelBuilder,
+        isNull,
+        reason: 'frozen food keeps its own time',
+      );
     });
     await _withContext(tester, const Locale('de'), (context) {
       final upright = _module.storageKinds.first;

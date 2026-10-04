@@ -79,10 +79,15 @@ void main() {
     });
     tearDown(() => twoDomains.dispose());
 
-    Future<void> showAddForm(WidgetTester tester, {StorageDomainIdentifier? domain}) async {
-      await tester.runAsync(() async {
+    Future<void> showAddForm(
+      WidgetTester tester, {
+      StorageDomainIdentifier? domain,
+      String? productKey,
+    }) async {
+      final product = await tester.runAsync(() async {
         await twoDomains.setUpCatalogAndStoragePlace();
         await twoDomains.addStoragePlace(ShelvesModule.cupboard);
+        return productKey == null ? null : twoDomains.seededProduct(productKey);
       });
       await tester.pumpWidget(
         UncontrolledProviderScope(
@@ -93,7 +98,10 @@ void main() {
               ...const ProductCatalogFeatureModule().localizationDelegates,
               ...const StorageLayoutFeatureModule().localizationDelegates,
             ],
-            home: AddStockBatchScreen(domainIdentifier: domain),
+            home: AddStockBatchScreen(
+              domainIdentifier: domain,
+              initialProductIdentifier: product?.identifier,
+            ),
           ),
         ),
       );
@@ -118,6 +126,59 @@ void main() {
       expect(find.text('Add to the freezer'), findsOneWidget);
       expect(find.widgetWithText(ChoiceChip, 'Shelf 1'), findsNothing);
       expect(find.text('Frozen on'), findsOneWidget);
+      expect(find.text('Best before'), findsNothing, reason: 'frozen food keeps its own time');
+    });
+
+    testWidgets('a best-before date is pre-filled from the shelf life and quick to change', (
+      tester,
+    ) async {
+      // Wholegrain bread keeps 90 days; added on 2 October 2026.
+      await showAddForm(
+        tester,
+        domain: StorageDomainIdentifier.pantry,
+        productKey: 'wholegrainBread',
+      );
+
+      expect(find.text('Best before'), findsOneWidget);
+      expect(find.text('Dec 30, 2026'), findsOneWidget);
+      expect(find.text('Usually keeps about 3 months'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('+3 days'));
+      await tester.tap(find.text('+3 days'));
+      await tester.pumpAndSettle();
+      expect(find.text('Oct 5, 2026'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Save'));
+      await tester.tap(find.text('Save'));
+      for (var round = 0; round < 3; round++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pumpAndSettle();
+      }
+      final batches = (await tester.runAsync(twoDomains.repository.readActiveBatches))!;
+      expect(batches.single.bestBeforeOn, CalendarDate(2026, 10, 5));
+    });
+
+    testWidgets('a best-before date can be left out', (tester) async {
+      await showAddForm(
+        tester,
+        domain: StorageDomainIdentifier.pantry,
+        productKey: 'wholegrainBread',
+      );
+
+      await tester.ensureVisible(find.text('None'));
+      await tester.tap(find.text('None'));
+      await tester.pumpAndSettle();
+      expect(find.text('Dec 30, 2026'), findsNothing);
+      expect(find.text('No date'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Save'));
+      await tester.tap(find.text('Save'));
+      for (var round = 0; round < 3; round++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+        await tester.pumpAndSettle();
+      }
+      final batches = (await tester.runAsync(twoDomains.repository.readActiveBatches))!;
+      expect(batches.single.bestBeforeOn, isNull);
     });
 
     testWidgets('from Home, every place is offered and the date follows the choice', (

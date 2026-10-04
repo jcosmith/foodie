@@ -34,6 +34,7 @@ final class ShelvesModule extends FeatureModuleBase {
     descriptionBuilder: (context) => 'Cupboards and shelves',
     storedOnLabelBuilder: (context) => 'Bought on',
     addTitleBuilder: (context) => 'Add to the cupboard',
+    bestBeforeLabelBuilder: (context) => 'Best before',
     countsDiscardsAsWaste: true,
   );
 

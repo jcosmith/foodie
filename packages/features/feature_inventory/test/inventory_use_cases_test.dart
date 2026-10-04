@@ -241,6 +241,53 @@ void main() {
       expect(originalBatch.compartmentIdentifier, drawers[0].identifier);
     });
 
+    test('a split-off part keeps the best-before and opened dates', () async {
+      final batchIdentifier = await harness.addBatch(
+        product: fishFingers,
+        compartment: drawers[0],
+        amountInBaseUnits: 15000,
+        bestBeforeOn: InventoryTestHarness.today.addDays(20),
+      );
+      await harness.read(markStockBatchOpenedUseCaseProvider).execute(batchIdentifier);
+
+      final result = await harness
+          .read(moveStockBatchUseCaseProvider)
+          .execute(
+            stockBatchIdentifier: batchIdentifier,
+            destinationCompartmentIdentifier: drawers[2].identifier,
+            quantity: const Quantity(amountInBaseUnits: 5000, unit: QuantityUnit.piece),
+          );
+
+      final splitOffBatch = await harness.readBatch(result.valueOrNull!);
+      expect(splitOffBatch.bestBeforeOn, InventoryTestHarness.today.addDays(20));
+      expect(splitOffBatch.openedOn, InventoryTestHarness.today);
+    });
+
+    test('moving with a fresh start dates the batch today and drops the old dates', () async {
+      final batchIdentifier = await harness.addBatch(
+        product: fishFingers,
+        compartment: drawers[0],
+        amountInBaseUnits: 15000,
+        storedOn: InventoryTestHarness.today.addDays(-5),
+        bestBeforeOn: InventoryTestHarness.today.addDays(2),
+      );
+      await harness.read(markStockBatchOpenedUseCaseProvider).execute(batchIdentifier);
+
+      final result = await harness
+          .read(moveStockBatchUseCaseProvider)
+          .execute(
+            stockBatchIdentifier: batchIdentifier,
+            destinationCompartmentIdentifier: drawers[1].identifier,
+            quantity: const Quantity(amountInBaseUnits: 15000, unit: QuantityUnit.piece),
+            startsFreshToday: true,
+          );
+
+      final moved = await harness.readBatch(result.valueOrNull!);
+      expect(moved.storedOn, InventoryTestHarness.today);
+      expect(moved.bestBeforeOn, isNull);
+      expect(moved.openedOn, isNull);
+    });
+
     test('refuses the drawer it is already in', () async {
       final batchIdentifier = await addMincedMeat();
 
@@ -253,6 +300,35 @@ void main() {
           );
 
       expect(result.failureOrNull, isA<AlreadyInCompartment>());
+    });
+  });
+
+  group('opening', () {
+    test('marks a batch as opened today and announces it, and can take it back', () async {
+      final batchIdentifier = await addMincedMeat();
+
+      final result = await harness
+          .read(markStockBatchOpenedUseCaseProvider)
+          .execute(batchIdentifier);
+
+      expect(result.isSuccess, isTrue);
+      expect((await harness.readBatch(batchIdentifier)).openedOn, InventoryTestHarness.today);
+      expect(
+        harness.publishedEvents.whereType<StockBatchOpened>().single.stockBatchIdentifier,
+        batchIdentifier,
+      );
+
+      await harness
+          .read(markStockBatchOpenedUseCaseProvider)
+          .execute(batchIdentifier, isOpened: false);
+      expect((await harness.readBatch(batchIdentifier)).openedOn, isNull);
+    });
+
+    test('refuses a batch that is gone', () async {
+      final result = await harness
+          .read(markStockBatchOpenedUseCaseProvider)
+          .execute(const StockBatchIdentifier('missing'));
+      expect(result.failureOrNull, isA<StockBatchNotFound>());
     });
   });
 

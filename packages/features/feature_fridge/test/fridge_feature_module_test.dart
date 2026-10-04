@@ -141,6 +141,7 @@ void main() {
       expect(_module.storageKinds.last.compartmentNameBuilder(context, 1), 'Rack 1');
       expect(_module.storageDomain.labelBuilder(context), 'Fridge');
       expect(_module.storageDomain.storedOnLabelBuilder(context), 'Bought on');
+      expect(_module.storageDomain.bestBeforeLabelBuilder!(context), 'Best before');
       expect(_module.storageDomain.addTitleBuilder!(context), 'Add to the fridge');
       expect(_module.catalog.productNameBuilder(const Locale('en'), 'milk'), 'Milk');
     });
